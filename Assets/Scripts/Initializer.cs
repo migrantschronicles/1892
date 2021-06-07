@@ -36,6 +36,31 @@ public class Initializer : MonoBehaviour
 
         StartButton.onClick.AddListener(FixPosition);
         map.OnCityClick += ChooseTransport;
+
+        var luxIndex = map.GetCountryIndex("Luxembourg");
+        var frIndex = map.GetCountryIndex("France");
+        var grIndex = map.GetCountryIndex("Germany");
+
+        var startLine = map.GetCountry(luxIndex).latlonCenter;
+        var endLine = map.GetCountry(frIndex).latlonCenter;
+        var endLine2 = map.GetCountry(grIndex).latlonCenter;
+
+        //map.AddLine(startLine, endLine, new Color(181f / 255f, 147f / 255f, 54f / 255f, 0.3f), 0, 0, 0.001f, 0);
+        //var r = map.AddLine(startLine, endLine, new Color(240f / 255f, 210f / 255f, 122f / 255f), 0, 10, 0.001f, 0);
+
+        //r.OnLineDrawingEnd += (LineMarkerAnimator lma) => {
+            //map.AddLine(endLine, endLine2, new Color(181f / 255f, 147f / 255f, 54f / 255f, 0.3f), 0, 0, 0.001f, 0);
+            //map.AddLine(endLine, endLine2, new Color(240f / 255f, 210f / 255f, 122f / 255f), 0, 10, 0.001f, 0);
+        //};
+
+        //map.AddLine(endLine, endLine2, new Color(181f / 255f, 147f / 255f, 54f / 255f, 0.3f), 0, 0, 0.001f, 0);
+        //map.AddLine(endLine, endLine2, new Color(240f / 255f, 210f / 255f, 122f / 255f), 0, 10, 0.001f, 0);
+        //map.AddLine(startLine, endLine, new Color(240f / 255f, 210f / 255f, 122f / 255f), 0, 0, 0.001f, 0);
+    }
+
+    private void dd(LineMarkerAnimator lma)
+    {
+        throw new System.NotImplementedException();
     }
 
     void FixPosition()
@@ -113,6 +138,15 @@ public class Initializer : MonoBehaviour
 
     void Update()
     {
-        
+        var luxIndex = map.GetCountryIndex("Luxembourg");
+        var frIndex = map.GetCountryIndex("France");
+
+        var startLine = map.GetCountry(luxIndex).latlonCenter;
+        var endLine = map.GetCountry(frIndex).latlonCenter;
+
+        //map.AddLine(startLine, endLine, Color.red, 0, 0, 0.001f, 0);
+        //map.AddLine(startLine, endLine, Color.green, 0, 10, 0.001f, 0);
+
+        //map.AddText("bla", map.GetCountry(luxIndex).sphereCenter, Color.red);
     }
 }

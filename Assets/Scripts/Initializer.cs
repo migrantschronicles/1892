@@ -85,41 +85,41 @@ public class Initializer : MonoBehaviour
         lastClickedCity = cityIndex;
         nextPos = map.GetCity(lastClickedCity).latlon;
 
-        //panel = new GameObject("Panel");
-        //panel.AddComponent<CanvasRenderer>();
+        // panel = new GameObject("Panel");
+        // panel.AddComponent<CanvasRenderer>();
 
-        //var rt = panel.transform;
-        //rt.localScale = new Vector3(5f, 4f, 1f);
+        // var rt = panel.transform;
+        // rt.localScale = new Vector3(5f, 4f, 1f);
 
-        //Image i = panel.AddComponent<Image>();
-        //i.color = new Color(237, 242, 239, 0.5f);
+        // Image i = panel.AddComponent<Image>();
+        // i.color = new Color(237, 242, 239, 0.5f);
 
-        //GameObject b1 = new GameObject();
-        //b1.transform.parent = panel.transform;
-        //b1.AddComponent<RectTransform>();
-        //b1.AddComponent<Button>();
-        //b1.AddComponent<Text>();
-        //b1.transform.position = new Vector3(10, 10, 10);
-        //b1.GetComponent<RectTransform>().localScale = new Vector3(2,2,2);
-        //b1.GetComponent<Button>().onClick.AddListener(FlyToCity);
-        //b1.transform.SetParent(panel.transform, false);
-        //var t = b1.GetComponent<Button>().GetComponentInChildren<Text>();
+        // GameObject b1 = new GameObject();
+        // b1.transform.parent = panel.transform;
+        // b1.AddComponent<RectTransform>();
+        // b1.AddComponent<Button>();
+        // b1.AddComponent<Text>();
+        // b1.transform.position = new Vector3(10, 10, 10);
+        // b1.GetComponent<RectTransform>().localScale = new Vector3(2,2,2);
+        // b1.GetComponent<Button>().onClick.AddListener(FlyToCity);
+        // b1.transform.SetParent(panel.transform, false);
+        // var t = b1.GetComponent<Button>().GetComponentInChildren<Text>();
 
 
-        //var b1_ = b1.GetComponent<Button>();
-        //t.text = "Transport 1";
-        //var t1 = b1.GetComponentInChildren<Text>().text = "Transport 1";
+        // var b1_ = b1.GetComponent<Button>();
+        // t.text = "Transport 1";
+        // var t1 = b1.GetComponentInChildren<Text>().text = "Transport 1";
 
-        //GameObject b2 = new GameObject();
-        //b2.transform.parent = panel.transform;
-        //b2.AddComponent<RectTransform>();
-        //b2.AddComponent<Button>();
-        //b2.AddComponent<Text>();
-        //b2.GetComponentInChildren<Text>().text = "Transport 2";
-        //b2.transform.position = new Vector3(40, 10, 10);
-        //b2.GetComponent<RectTransform>().localScale = new Vector3(2, 2, 2);
-        //b2.GetComponent<Button>().onClick.AddListener(FlyToCity);
-        //b2.transform.SetParent(panel.transform, false);
+        // GameObject b2 = new GameObject();
+        // b2.transform.parent = panel.transform;
+        // b2.AddComponent<RectTransform>();
+        // b2.AddComponent<Button>();
+        // b2.AddComponent<Text>();
+        // b2.GetComponentInChildren<Text>().text = "Transport 2";
+        // b2.transform.position = new Vector3(40, 10, 10);
+        // b2.GetComponent<RectTransform>().localScale = new Vector3(2, 2, 2);
+        // b2.GetComponent<Button>().onClick.AddListener(FlyToCity);
+        // b2.transform.SetParent(panel.transform, false);
 
         Popup.transform.SetParent(UICanvas.transform, true);
     }
@@ -133,7 +133,7 @@ public class Initializer : MonoBehaviour
 
     public void DrawLine()
     {
-        //map.AddLine(prevPos, nextPos, Color.red, 1, map.navigationTime, 1, 1);
+        // map.AddLine(prevPos, nextPos, Color.red, 1, map.navigationTime, 1, 1);
     }    
 
     void Update()

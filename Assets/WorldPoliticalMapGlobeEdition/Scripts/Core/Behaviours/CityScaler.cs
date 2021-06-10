@@ -9,7 +9,7 @@ namespace WPM {
 	/// </summary>
 	public class CityScaler : MonoBehaviour {
 
-		const int CITY_SIZE_ON_SCREEN = 10;
+		const int CITY_SIZE_ON_SCREEN = 15;
 		Vector3 lastCamPos, lastPos;
 		float lastIconSize;
 		float lastCustomSize;

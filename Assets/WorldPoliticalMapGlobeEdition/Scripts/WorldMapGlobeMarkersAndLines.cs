@@ -353,6 +353,8 @@ namespace WPM {
             tm.alignment = TextAlignment.Center;
             tm.anchor = TextAnchor.MiddleCenter;
             tm.color = color;
+            tm.characterSize = 0.03f;
+            tm.fontSize = 350;
             return tm;
         }
 
@@ -468,9 +470,46 @@ namespace WPM {
             LineMarkerAnimator lma = newLine.GetComponent<LineMarkerAnimator>();
             lma.SetVertices(latlon);
             lma.color = color;
+            lma.arcElevation = 0;
             lma.lineWidth = lineWidth;
-            lma.lineMaterial = markerMatLine;
+            lma.lineMaterial = GetColoredMarkerLineMaterial(color);
             lma.earthInvertedMode = _earthInvertedMode;
+            lma.reuseMaterial = true;
+            return lma;
+        }
+
+        public LineMarkerAnimator AddLineCustom(Vector2[] latlon, Color color, float lineWidth)
+        {
+            CheckMarkersLayer();
+            GameObject newLine = new GameObject("MarkerLine", typeof(LineMarkerAnimator));
+            newLine.transform.SetParent(markersLayer.transform, false);
+            newLine.layer = markersLayer.layer;
+            LineMarkerAnimator lma = newLine.GetComponent<LineMarkerAnimator>();
+            lma.SetVerticesCustom(latlon);
+            lma.color = color;
+            lma.arcElevation = 0;
+            lma.lineWidth = lineWidth;
+            lma.lineMaterial = GetColoredMarkerLineMaterial(color);
+            lma.earthInvertedMode = _earthInvertedMode;
+            lma.reuseMaterial = true;
+            return lma;
+        }
+
+        public LineMarkerAnimator AddLineCustom(Vector2[] latlon, Color color, float lineWidth, float speed)
+        {
+            CheckMarkersLayer();
+            GameObject newLine = new GameObject("MarkerLine", typeof(LineMarkerAnimator));
+            newLine.transform.SetParent(markersLayer.transform, false);
+            newLine.layer = markersLayer.layer;
+            LineMarkerAnimator lma = newLine.GetComponent<LineMarkerAnimator>();
+            lma.SetVerticesCustom(latlon);
+            lma.color = color;
+            lma.arcElevation = 0;
+            lma.lineWidth = lineWidth;
+            lma.lineMaterial = GetColoredMarkerLineMaterial(color);
+            lma.earthInvertedMode = _earthInvertedMode;
+            lma.reuseMaterial = true;
+            lma.duration = speed;
             return lma;
         }
 

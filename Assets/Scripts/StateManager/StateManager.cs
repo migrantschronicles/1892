@@ -5,29 +5,29 @@ using UnityEngine;
 
 public class StateManager : IStateManager
 {
-    private StateModel currentState;
+    private State currentState;
 
     public StateManager()
     {
-        currentState = new StateModel()
-        {
-            StartDate = Constants.StartDate,
-            AvailableMoney = Constants.InitialBalance,
-            AvailableFood = Constants.InitialFood,
-            LuggageNumber = Constants.InitialLuggageNumber,
-            AvailableCityIds = Constants.InitialCityIds,
-            AvailableItemIds = Constants.InitialItemIds
-        };
+        //currentState = new State()
+        //{
+        //    StartDate = Constants.StartDate,
+        //    AvailableMoney = Constants.InitialBalance,
+        //    AvailableFood = Constants.InitialFood,
+        //    LuggageNumber = Constants.InitialLuggageNumber,
+        //    AvailableCityNames = CityData.InitialCityIds,
+        //    AvailableItemIds = Constants.InitialItemIds
+        //};
     }
 
-    public StateModel GetCurrentState()
+    public State GetCurrentState()
     {
         return currentState;
     }
 
     public int GetCurrentCityId()
     {
-        return currentState.CurrentCityId;
+        return 0;// currentState.CurrentCityName;
     }
 
     public void UpdateHealth(int delta)
@@ -39,8 +39,8 @@ public class StateManager : IStateManager
 
     public void MoveToCity(int cityId)
     {
-        currentState.PreviousCityId = currentState.CurrentCityId;
-        currentState.CurrentCityId = cityId;
+        currentState.PreviousCityName = currentState.CurrentCityName;
+        currentState.CurrentCityName = "";// cityId;
     }
 
     #endregion

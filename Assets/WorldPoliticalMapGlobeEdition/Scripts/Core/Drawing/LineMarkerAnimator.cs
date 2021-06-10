@@ -32,7 +32,7 @@ namespace WPM {
         /// <summary>
         /// The number of line points. Increase to improve line resolution. Descrease to improve performance.
         /// </summary>
-        public int numPoints = 256;
+        public int numPoints = 0;
 
 		/// <summary>
 		/// The material used to render the line. See reuseMaterial property.
@@ -90,6 +90,7 @@ namespace WPM {
 			}
 			_lr.textureMode = LineTextureMode.Tile;
 			_lr.numCornerVertices = 3;
+			_lr.numCapVertices = 5;
 		}
 
 
@@ -181,7 +182,24 @@ namespace WPM {
 				vertices [s] = sPos;
 			}
 		}
-	
+
+		public void SetVerticesCustom(Vector2[] latlon)
+		{
+			if (latlon == null || latlon.Length < 2)
+			{
+				return;
+			}
+
+			var spherePoints = new Vector3[latlon.Length];
+
+			for (int k = 0; k < latlon.Length; k++)
+			{
+				spherePoints[k] = Conversion.GetSpherePointFromLatLon(latlon[k]);
+			}
+
+			vertices = spherePoints;
+		}
+
 		// Update is called once per frame
 		void Update () {
 			if (Time.time >= startAutoFadeTime) {

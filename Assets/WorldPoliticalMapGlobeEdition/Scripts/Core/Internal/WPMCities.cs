@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
 using WPM.Poly2Tri;
+using System.Linq;
 
 namespace WPM {
 
@@ -223,6 +224,12 @@ namespace WPM {
             int layer = gameObject.layer;
             for (int k = 0; k < cityCount; k++) {
                 City city = cities[k];
+
+                if(!CityData.CityNames.Contains(city.name) && city.cityClass != CITY_CLASS.COUNTRY_CAPITAL)
+                {
+                    continue;
+                }
+
                 Country country = countries[city.countryIndex];
                 city.isShown = !country.hidden && ((((int)city.cityClass & _cityClassAlwaysShow) != 0) || (minPopulation == 0 || city.population >= minPopulation));
                 if (city.isShown) {

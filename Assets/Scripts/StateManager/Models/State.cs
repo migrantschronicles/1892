@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class StateModel
+public class State
 {
     public DateTime StartDate { get; set; }
 
@@ -18,13 +16,13 @@ public class StateModel
 
     public int LuggageNumber { get; set; }
 
-    public int CurrentCityId { get; set; }
+    public string CurrentCityName { get; set; }
 
-    public int PreviousCityId { get; set; }
+    public string PreviousCityName { get; set; }
 
-    public IEnumerable<int> AvailableCityIds { get; set; }
+    public IEnumerable<string> AvailableCityNames { get; set; }
 
-    public IEnumerable<int> VisitedCityIds { get; set; }
+    public IEnumerable<string> VisitedCityNames { get; set; }
 
     public IEnumerable<int> AvailableItemIds { get; set; }
 }

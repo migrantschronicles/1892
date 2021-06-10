@@ -10,6 +10,9 @@ public class Initializer : MonoBehaviour
     public WorldMapGlobe map;
 
     public Button StartButton;
+    public Button CenterButton;
+
+    public Text CurrentCity;
 
     public Canvas UICanvas;
 
@@ -26,13 +29,23 @@ public class Initializer : MonoBehaviour
     {
         map = WorldMapGlobe.instance;
         var countries = map.countries;
-        foreach(var c in countries)
-        {
-            c.labelVisible = false;
-        }
+        //foreach(var c in countries)
+        //{
+        //    c.labelVisible = false;
+        //}
         //map.DrawLine();
         //var allCountries = map.countries;
         //allCountries.ForEach(c => c.hidden = true);
+
+        var list = map.GetCityIndex("Luxembourg");
+        var list2 = map.GetCityIndex("Brussels");
+        var list3 = map.GetCityIndex("Antwerpen"); //add
+        var list4 = map.GetCityIndex("Rotterdam");
+        var list5 = map.GetCityIndex("Metz");
+        var list6 = map.GetCityIndex("Arlon");
+        var list7 = map.GetCityIndex("Pfaffenthal"); //?
+
+        CenterButton.onClick.AddListener(CenterCurrentPosition);
 
         StartButton.onClick.AddListener(FixPosition);
         map.OnCityClick += ChooseTransport;
@@ -40,22 +53,39 @@ public class Initializer : MonoBehaviour
         var luxIndex = map.GetCountryIndex("Luxembourg");
         var frIndex = map.GetCountryIndex("France");
         var grIndex = map.GetCountryIndex("Germany");
+        var itIndex = map.GetCountryIndex("Italy");
 
-        var startLine = map.GetCountry(luxIndex).latlonCenter;
-        var endLine = map.GetCountry(frIndex).latlonCenter;
-        var endLine2 = map.GetCountry(grIndex).latlonCenter;
+        new CityManager(map).DrawLabels();
+        map.rightButtonDragBehaviour = DRAG_BEHAVIOUR.None;
 
-        //map.AddLine(startLine, endLine, new Color(181f / 255f, 147f / 255f, 54f / 255f, 0.3f), 0, 0, 0.001f, 0);
-        //var r = map.AddLine(startLine, endLine, new Color(240f / 255f, 210f / 255f, 122f / 255f), 0, 10, 0.001f, 0);
+        CurrentCity.GetComponent<Text>().text = $"Current City: {map.GetCity("Luxembourg", "Luxembourg").name}";
 
-        //r.OnLineDrawingEnd += (LineMarkerAnimator lma) => {
-            //map.AddLine(endLine, endLine2, new Color(181f / 255f, 147f / 255f, 54f / 255f, 0.3f), 0, 0, 0.001f, 0);
-            //map.AddLine(endLine, endLine2, new Color(240f / 255f, 210f / 255f, 122f / 255f), 0, 10, 0.001f, 0);
-        //};
+        map.SetZoomLevel(0);
+        map.FlyToLocation(map.GetCountry(luxIndex).latlonCenter);
 
-        //map.AddLine(endLine, endLine2, new Color(181f / 255f, 147f / 255f, 54f / 255f, 0.3f), 0, 0, 0.001f, 0);
-        //map.AddLine(endLine, endLine2, new Color(240f / 255f, 210f / 255f, 122f / 255f), 0, 10, 0.001f, 0);
-        //map.AddLine(startLine, endLine, new Color(240f / 255f, 210f / 255f, 122f / 255f), 0, 0, 0.001f, 0);
+        var marker = new NavigationMarker(map);
+
+        foreach (var leg in CityData.CoordinatesByCity)
+        {
+            marker.MarkLeg(leg.Value);
+            marker.TravelLeg(leg.Value, 20);
+        }
+
+        //var marker = new NavigationMarker(map);
+        //marker.MarkPath(CityManager.CoordinatesByPath[(CityManager.Luxembourg, CityManager.Paris)], new Color(196f / 255f, 184f / 255f, 149f / 255f, 0.3f));
+        //marker.TravelPath(CityManager.CoordinatesByPath[(CityManager.Luxembourg, CityManager.Paris)], new Color(240f / 255f, 210f / 255f, 122f / 255f), 10);
+    }
+
+    private void CenterCurrentPosition()
+    {
+        var initSpeed = map.navigationTime;
+
+        map.navigationTime = 1;
+        var luxIndex = map.GetCountryIndex("Luxembourg");
+        map.FlyToLocation(map.GetCountry(luxIndex).latlonCenter).Then(() => map.ZoomTo(0, 1));
+        map.ZoomTo(0, 1);
+
+        map.navigationTime = initSpeed;
     }
 
     private void dd(LineMarkerAnimator lma)
@@ -129,6 +159,9 @@ public class Initializer : MonoBehaviour
         Popup.transform.parent = null;
 
         map.FlyToCity(lastClickedCity);
+
+        //var marker = new NavigationMarker(map);
+        //marker.TravelPath(Cities.CoordinatesByPath[(Cities.Brussels, Cities.Antwerp)], new Color(240f / 255f, 210f / 255f, 122f / 255f), 10);
     }
 
     public void DrawLine()

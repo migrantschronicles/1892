@@ -5,7 +5,7 @@ using UnityEngine;
 
 public interface IStateManager
 {
-    public StateModel GetCurrentState();
+    public State GetCurrentState();
 
     public int GetCurrentCityId();
 

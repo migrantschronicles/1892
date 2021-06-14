@@ -1446,7 +1446,7 @@ namespace WPM {
 
             zoomDistance = 0;
             if (wheelDampingStart > 0) {
-                float t = (Time.time - wheelDampingStart) / (_zoomDamping + 0.0001f);
+                float t = (wheelDampingStart - Time.time) / (zoomDamping + 0.0001f);
                 if (t < 0) {
                     t = 0;
                     wheelDampingStart = 0;

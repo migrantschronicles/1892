@@ -2,9 +2,9 @@ public class Transportation
 {
     public TransportationType Type { get; set; }
 
-    public int Speed { get; set; }
+    public int Speed => TransportationData.TransportationSpeedByType[Type];
 
-    public int LuggageSpace { get; set; }
+    public int LuggageSpace => TransportationData.TransportationSpaceByType[Type];
 
-    public int TicketCost { get; set; }
+    public int TicketCost => TransportationData.TransportationCostByType[Type];
 }

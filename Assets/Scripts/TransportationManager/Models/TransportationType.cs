@@ -1,6 +1,6 @@
 public enum TransportationType
 {
-    OnFoot,
+    Foot,
     Train,
     StageCoach,
     SteamShip

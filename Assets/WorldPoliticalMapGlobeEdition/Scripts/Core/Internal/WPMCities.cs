@@ -225,7 +225,7 @@ namespace WPM {
             for (int k = 0; k < cityCount; k++) {
                 City city = cities[k];
 
-                if(!CityData.CityNames.Contains(city.name) && city.cityClass != CITY_CLASS.COUNTRY_CAPITAL)
+                if(city.cityClass != CITY_CLASS.COUNTRY_CAPITAL)
                 {
                     continue;
                 }

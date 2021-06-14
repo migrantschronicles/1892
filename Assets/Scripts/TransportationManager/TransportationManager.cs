@@ -7,10 +7,7 @@ public class TransportationManager : ITransportationManager
     {
         if(!string.IsNullOrEmpty(origin) && !string.IsNullOrEmpty(destination))
         {
-            if (TransportationData.TransportationByCity.ContainsKey((origin, destination)))
-            {
-                return TransportationData.TransportationByCity[(origin, destination)];
-            }
+            return TransportationData.GetAllTransportation(origin, destination);
         }
 
         return Enumerable.Empty<Transportation>();

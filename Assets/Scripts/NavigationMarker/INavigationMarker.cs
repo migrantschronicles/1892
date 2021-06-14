@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
-using WPM;
 
 public interface INavigationMarker
 {
-    LineMarkerAnimator MarkLeg(IEnumerable<Vector2> coordinates);
+    void DiscoverLeg(string legKey, IEnumerable<Vector2> coordinates);
 
-    LineMarkerAnimator TravelLeg(IEnumerable<Vector2> coordinates, float duration);
+    void TravelLeg(string legKey, IEnumerable<Vector2> coordinates);
 
-    void ClearLeg(LineMarkerAnimator leg);
+    bool IsLegMarked(string legKey);
+
+    bool IsLegTraveled(string legKey);
+
+    void ClearLeg(string legKey);
 }

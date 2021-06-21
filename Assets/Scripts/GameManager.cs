@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     private INavigationMarker NavigationMarker;
     private ITransportationManager TransportationManager;
     private ICityMarker CityManager;
+    private IGlobeDesigner GlobeDesigner;
 
     private WorldMapGlobe map;
     private State state;
@@ -17,6 +18,9 @@ public class GameManager : MonoBehaviour
     public Button DiscoverLegButton;
     public Button CapitalsButton;
     public Text CurrentCityText;
+
+    private Country highlightedCountry;
+    private Country previousHighlightedCountry;
 
     public GameManager()
     {
@@ -36,6 +40,31 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         CityManager.UpdateLabels();
+
+        UpdateHighlightedCountry();
+    }
+
+    private void UpdateHighlightedCountry()
+    {
+        highlightedCountry = map.countryHighlighted;
+
+        if (highlightedCountry != null && highlightedCountry != previousHighlightedCountry)
+        {
+            GlobeDesigner.UpdateSelectionTexture(highlightedCountry.name, true);
+
+            if(previousHighlightedCountry != null)
+            {
+                GlobeDesigner.UpdateSelectionTexture(previousHighlightedCountry.name);
+            }
+
+            previousHighlightedCountry = highlightedCountry;
+        }
+        else if(highlightedCountry == null && previousHighlightedCountry != null)
+        {
+            GlobeDesigner.UpdateSelectionTexture(previousHighlightedCountry.name);
+
+            previousHighlightedCountry = null;
+        }
     }
 
     private void Initialize()
@@ -45,9 +74,12 @@ public class GameManager : MonoBehaviour
         CityManager = new CityMarker(map);
         NavigationMarker = new NavigationMarker(map);
         TransportationManager = new TransportationManager();
+        GlobeDesigner = new GlobeDesigner(map);
 
         //CityManager.DrawLabels();
         CityManager.DrawLabel(CityData.Luxembourg);
+
+        GlobeDesigner.AssignTextures();
 
         InitializeMissingCities();
         Navigate();

@@ -8,7 +8,7 @@ using WPM;
 public class CityMarker : ICityMarker
 {
     private static Vector3 LabelOffset = new Vector3(0, 0.002f, 0.00f);
-    private static Color LabelColor = new Color(210f / 255f, 260f / 255f, 202f / 255f);
+    private static Color LabelColor = new Color(79f / 255f, 15f / 255f, 17f / 255f);
 
     private const float MinLabelScale = 0.0015f;
     private const float MaxLabelScale = 0.0045f;

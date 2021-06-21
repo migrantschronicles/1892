@@ -9,8 +9,8 @@ public class NavigationMarker : INavigationMarker
     private const float MarkLineWidth = 0.001f;
     private const float TravelLineWidth = 0.0005f;
 
-    private static Color MarkLineColor = new Color(196f / 255f, 184f / 255f, 149f / 255f, 0.3f);
-    private static Color TravelLineColor = new Color(240f / 255f, 210f / 255f, 122f / 255f);
+    private static Color MarkLineColor = new Color(69f / 255f, 48f / 255f, 34f / 255f, 0.4f);
+    private static Color TravelLineColor = new Color(255f / 255f, 234f / 255f, 0f / 255f);
 
     private readonly WorldMapGlobe map;
 

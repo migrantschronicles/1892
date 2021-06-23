@@ -104,7 +104,8 @@ namespace WPM {
         void PerformZoomInOut(float distance) {
             Vector3 vector = zoomDir * (Vector3.Distance(transform.position, pivotTransform.position) * distance * zoomSpeed * Time.deltaTime * 60f);
             if (_zoomMode == ZOOM_MODE.CAMERA_MOVES) {
-                pivotTransform.position = pivotTransform.position - vector;
+                var result = (pivotTransform.position - vector).z;
+                pivotTransform.position = new Vector3(pivotTransform.position.x, pivotTransform.position.y, Math.Max(result, -0.8f));
             } else {
                 transform.position = transform.position + vector;
             }

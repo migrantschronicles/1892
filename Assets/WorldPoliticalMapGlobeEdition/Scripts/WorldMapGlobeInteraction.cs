@@ -129,7 +129,7 @@ namespace WPM {
 
         [SerializeField]
         NAVIGATION_MODE
-            _navigationMode = NAVIGATION_MODE.EARTH_ROTATES;
+            _navigationMode = NAVIGATION_MODE.CAMERA_ROTATES;
 
         /// <summary>
         /// Changes the navigation mode so it's the Earth or the Camera which rotates when FlyToxxx methods are called.
@@ -981,6 +981,20 @@ namespace WPM {
         /// <param name="destinationZoomLevel"></param>
         public CallbackHandler ZoomTo(float destinationZoomLevel) {
             return ZoomTo(destinationZoomLevel, _navigationTime);
+        }
+
+        public void PerformZoomInOutCustom(float distance)
+        {
+            Vector3 vector = zoomDir * (Vector3.Distance(transform.position, pivotTransform.position) * distance * 1f * Time.deltaTime * 60f);
+            if (_zoomMode == ZOOM_MODE.CAMERA_MOVES)
+            {
+                var result = (pivotTransform.position - vector).z;
+                pivotTransform.position = new Vector3(pivotTransform.position.x, pivotTransform.position.y, Math.Max(result, -0.8f));
+            }
+            else
+            {
+                transform.position = transform.position + vector;
+            }
         }
 
         /// <summary>

@@ -89,7 +89,7 @@ namespace WPM {
 				_lr = gameObject.AddComponent<LineRenderer> ();
 			}
 			_lr.textureMode = LineTextureMode.Tile;
-			_lr.numCornerVertices = 3;
+			_lr.numCornerVertices = 5;
 			_lr.numCapVertices = 5;
 		}
 

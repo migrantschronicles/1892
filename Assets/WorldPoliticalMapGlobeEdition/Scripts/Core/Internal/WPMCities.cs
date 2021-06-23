@@ -17,6 +17,9 @@ namespace WPM {
 
     public partial class WorldMapGlobe : MonoBehaviour {
 
+        //custom
+        private List<string> newCityNames = new List<string>();
+
         const float CITY_HIT_PRECISION = 0.001f;
         const string CITY_ATTRIB_DEFAULT_FILENAME = "citiesAttrib";
 
@@ -174,6 +177,17 @@ namespace WPM {
 
         #region Drawing stuff
 
+        //custom
+        public void DrawCity(string name)
+        {
+            if(!newCityNames.Contains(name))
+            {
+                newCityNames.Add(name);
+
+                DrawCities();
+            }
+        }
+
         /// <summary>
         /// Redraws the cities. This is automatically called by Redraw(). Used internally by the Map Editor. You should not need to call this method directly.
         /// </summary>
@@ -207,7 +221,10 @@ namespace WPM {
             normalCities.transform.SetParent(citiesLayer.transform, false);
             normalCities.layer = gameObject.layer;
             bool combineMeshesActive = _combineCityMeshes && Application.isPlaying;
-            float scale = CityScaler.GetScale(this);
+
+            //use fixed scale
+            float scale = 0.003f;//CityScaler.GetScale(this);
+
             Vector3 cityScale = new Vector3(scale, scale, 1f);
 
             // Draw city marks
@@ -225,7 +242,7 @@ namespace WPM {
             for (int k = 0; k < cityCount; k++) {
                 City city = cities[k];
 
-                if(!CityData.CityNames.Contains(city.name) && city.cityClass != CITY_CLASS.COUNTRY_CAPITAL)
+                if(city.cityClass != CITY_CLASS.COUNTRY_CAPITAL && !newCityNames.Contains(city.name))
                 {
                     continue;
                 }
@@ -234,29 +251,38 @@ namespace WPM {
                 city.isShown = !country.hidden && ((((int)city.cityClass & _cityClassAlwaysShow) != 0) || (minPopulation == 0 || city.population >= minPopulation));
                 if (city.isShown) {
                     GameObject cityObj, cityParent;
-                    switch (city.cityClass) {
-                        case CITY_CLASS.COUNTRY_CAPITAL:
-                            cityObj = Instantiate(citySpotCapitalCountry);
-                            if (!combineMeshesActive) {
-                                cityObj.GetComponent<Renderer>().sharedMaterial = citiesCountryCapitalMat;
-                            }
-                            cityParent = countryCapitals;
-                            break;
-                        case CITY_CLASS.REGION_CAPITAL:
-                            cityObj = Instantiate(citySpotCapitalRegion);
-                            if (!combineMeshesActive) {
-                                cityObj.GetComponent<Renderer>().sharedMaterial = citiesRegionCapitalMat;
-                            }
-                            cityParent = regionCapitals;
-                            break;
-                        default:
-                            cityObj = Instantiate(citySpot);
-                            if (!combineMeshesActive) {
-                                cityObj.GetComponent<Renderer>().sharedMaterial = citiesNormalMat;
-                            }
-                            cityParent = normalCities;
-                            break;
+                    //switch (city.cityClass) {
+                    //    case CITY_CLASS.COUNTRY_CAPITAL:
+                    //        cityObj = Instantiate(citySpotCapitalCountry);
+                    //        if (!combineMeshesActive) {
+                    //            cityObj.GetComponent<Renderer>().sharedMaterial = citiesCountryCapitalMat;
+                    //        }
+                    //        cityParent = countryCapitals;
+                    //        break;
+                    //    case CITY_CLASS.REGION_CAPITAL:
+                    //        cityObj = Instantiate(citySpotCapitalRegion);
+                    //        if (!combineMeshesActive) {
+                    //            cityObj.GetComponent<Renderer>().sharedMaterial = citiesRegionCapitalMat;
+                    //        }
+                    //        cityParent = regionCapitals;
+                    //        break;
+                    //    default:
+                    //        cityObj = Instantiate(citySpot);
+                    //        if (!combineMeshesActive) {
+                    //            cityObj.GetComponent<Renderer>().sharedMaterial = citiesNormalMat;
+                    //        }
+                    //        cityParent = normalCities;
+                    //        break;
+                    //}
+
+                    //do not differentiate cities
+                    cityObj = Instantiate(citySpotCapitalCountry);
+                    if (!combineMeshesActive)
+                    {
+                        cityObj.GetComponent<Renderer>().sharedMaterial = citiesCountryCapitalMat;
                     }
+                    cityParent = countryCapitals;
+
                     cityObj.layer = layer;
                     cityObj.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
                     cityObj.transform.SetParent(cityParent.transform, false);
@@ -294,7 +320,9 @@ namespace WPM {
 
             CityScaler cityScaler = citiesLayer.GetComponent<CityScaler>() ?? citiesLayer.AddComponent<CityScaler>();
             cityScaler.map = this;
-            cityScaler.ScaleCities();
+
+            //use fixed scale
+            //cityScaler.ScaleCities();
 
             if (combineMeshesActive) {
                 DestroyImmediate(cityScaler);

@@ -3,7 +3,7 @@ using System;
 public class Leg
 {
     //unique identifier, implement ids later
-    public string Key => Origin + Destination + Transportation.Type;
+    public string Key => Origin + Destination;
 
     public string Origin { get; set; }
 

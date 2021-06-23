@@ -40,7 +40,7 @@ namespace WPM {
         public const string WPM_OVERLAY_NAME = "WPMOverlay";
         const float MIN_FIELD_OF_VIEW = 10.0f;
         const float MAX_FIELD_OF_VIEW = 85.0f;
-        const float MIN_ZOOM_DISTANCE = 0.05f;
+        const float MIN_ZOOM_DISTANCE = 0.03f;
         // 0.58f;
         const float EARTH_RADIUS_KM = 6371f;
         const int SMOOTH_STRAIGHTEN_ON_POLES = -1;

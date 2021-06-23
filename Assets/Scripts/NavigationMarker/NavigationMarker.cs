@@ -9,7 +9,7 @@ public class NavigationMarker : INavigationMarker
     private const float MarkLineWidth = 0.001f;
     private const float TravelLineWidth = 0.0005f;
 
-    private static Color MarkLineColor = new Color(69f / 255f, 48f / 255f, 34f / 255f, 0.4f);
+    private static Color MarkLineColor = new Color(0f / 255f, 0f / 255f, 0f / 255f, 0.3f);
     private static Color TravelLineColor = new Color(255f / 255f, 234f / 255f, 0f / 255f);
 
     private readonly WorldMapGlobe map;
@@ -18,6 +18,10 @@ public class NavigationMarker : INavigationMarker
     private Dictionary<string, LineMarkerAnimator> traveledLegMarkers = new Dictionary<string, LineMarkerAnimator>();
 
     private bool isNavigating;
+
+    public Action TravelCompleted { get; set; }
+
+    public Action DiscoverCompleted { get; set; }
 
     public NavigationMarker(WorldMapGlobe map)
     {
@@ -33,6 +37,7 @@ public class NavigationMarker : INavigationMarker
         isNavigating = true;
 
         var marker = map.AddLineCustom(coordinates.ToArray(), MarkLineColor, MarkLineWidth, 3);
+        marker.OnLineDrawingEnd += (e) => DiscoverCompleted?.Invoke();
 
         if (!markedLegMarkers.ContainsKey(legKey))
         {
@@ -56,6 +61,7 @@ public class NavigationMarker : INavigationMarker
         //var duration = TransportationData.TransportationSpeedByType[type];
 
         var marker = map.AddLineCustom(coordinates.ToArray(), TravelLineColor, TravelLineWidth, 10);
+        marker.OnLineDrawingEnd += (e) => TravelCompleted?.Invoke();
 
         if (!traveledLegMarkers.ContainsKey(legKey))
         {
@@ -65,7 +71,7 @@ public class NavigationMarker : INavigationMarker
         var distance = GetDistance(coordinates.First().x, coordinates.First().y, coordinates.Last().x, coordinates.Last().y);
         var duration = Math.Max((float)(distance / 20000), 1f);
 
-        Navigate(coordinates.First(), coordinates.Last(), 10);
+        Navigate(coordinates.First() + new Vector2(1f, 0), coordinates.Last() + new Vector2(1f, 0), 10, 70);
     }
 
     public bool IsLegMarked(string legKey)
@@ -93,12 +99,12 @@ public class NavigationMarker : INavigationMarker
         }
     }
 
-    private void Navigate(Vector2 start, Vector2 end, float duration)
+    private void Navigate(Vector2 start, Vector2 end, float duration, float pitch = 35)
     {
         var initZoom = map.GetZoomLevel();
         var initPitch = map.pitch;
 
-        map.pitch = 35;
+        map.pitch = pitch;
         map.SetZoomLevel(0);
         map.FlyToLocation(start, 0).Then(() => 
         {

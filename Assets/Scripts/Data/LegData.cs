@@ -197,9 +197,8 @@ public static class LegData
     public static IReadOnlyDictionary<string, IEnumerable<Vector2>> CoordinatesByLegKey = new ReadOnlyDictionary<string, IEnumerable<Vector2>>(
         new Dictionary<string, IEnumerable<Vector2>>()
         {
-            #region Foot
             {
-                CityData.Luxembourg + CityData.Antwerp + TransportationType.Foot,
+                CityData.Luxembourg + CityData.Antwerp,
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Luxembourg],
@@ -214,7 +213,7 @@ public static class LegData
                 }
             },
             {
-                CityData.Luxembourg + CityData.Brussels + TransportationType.Foot,
+                CityData.Luxembourg + CityData.Brussels,
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Luxembourg],
@@ -228,7 +227,7 @@ public static class LegData
                 }
             },
             {
-                CityData.Brussels  + CityData.Antwerp + TransportationType.Foot,
+                CityData.Brussels  + CityData.Antwerp,
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Brussels],
@@ -238,7 +237,7 @@ public static class LegData
                 }
             },
             {
-                CityData.Antwerp + CityData.Rotterdam + TransportationType.Foot,
+                CityData.Antwerp + CityData.Rotterdam,
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Antwerp],
@@ -248,7 +247,7 @@ public static class LegData
                 }
             },
             {
-                CityData.Luxembourg + CityData.Paris + TransportationType.Foot,
+                CityData.Luxembourg + CityData.Paris,
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Luxembourg],
@@ -262,7 +261,7 @@ public static class LegData
                 }
             },
             {
-                CityData.Luxembourg + CityData.Metz + TransportationType.Foot,
+                CityData.Luxembourg + CityData.Metz,
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Luxembourg],
@@ -270,7 +269,7 @@ public static class LegData
                 }
             },
             {
-                CityData.Metz + CityData.Paris + TransportationType.Foot,
+                CityData.Metz + CityData.Paris,
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Metz],
@@ -278,7 +277,7 @@ public static class LegData
                 }
             },
             {
-                CityData.Luxembourg + CityData.Arlon + TransportationType.Foot,
+                CityData.Luxembourg + CityData.Arlon,
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Luxembourg],
@@ -286,86 +285,13 @@ public static class LegData
                 }
             },
             {
-                CityData.Arlon + CityData.Brussels + TransportationType.Foot,
-                new List<Vector2>()
-                {
-                    CityData.LatLonByCity[CityData.Arlon],
-                    CityData.LatLonByCity[CityData.Brussels]
-                }
-            },
-            #endregion
-            #region Train
-            {
-                CityData.Luxembourg + CityData.Antwerp + TransportationType.Train,
-                new List<Vector2>()
-                {
-                    CityData.LatLonByCity[CityData.Luxembourg],
-                    CityData.LatLonByCity[CityData.Antwerp]
-                }
-            },
-            {
-                CityData.Luxembourg + CityData.Brussels + TransportationType.Train,
-                new List<Vector2>()
-                {
-                    CityData.LatLonByCity[CityData.Luxembourg],
-                    CityData.LatLonByCity[CityData.Brussels]
-                }
-            },
-            {
-                CityData.Brussels + CityData.Antwerp + TransportationType.Train,
-                new List<Vector2>()
-                {
-                    CityData.LatLonByCity[CityData.Brussels],
-                    CityData.LatLonByCity[CityData.Antwerp]
-                }
-            },
-            {
-                CityData.Antwerp + CityData.Rotterdam + TransportationType.Train,
-                new List<Vector2>()
-                {
-                    CityData.LatLonByCity[CityData.Antwerp],
-                    CityData.LatLonByCity[CityData.Rotterdam]
-                }
-            },
-            {
-                CityData.Luxembourg + CityData.Paris + TransportationType.Train,
-                new List<Vector2>()
-                {
-                    CityData.LatLonByCity[CityData.Luxembourg],
-                    new Vector2(49.439557f, 6.129303f),
-                    new Vector2(49.114632f, 5.679365f),
-                    new Vector2(48.999441f, 4.746566f),
-                    new Vector2(49.078663f, 4.219809f),
-                    new Vector2(49.100248f, 3.616234f),
-                    new Vector2(48.818921f, 2.771228f),
-                    CityData.LatLonByCity[CityData.Paris]
-                }
-            },
-            {
-                CityData.Luxembourg + CityData.Metz + TransportationType.Train,
-                new List<Vector2>()
-                {
-                    CityData.LatLonByCity[CityData.Luxembourg],
-                    CityData.LatLonByCity[CityData.Metz]
-                }
-            },
-            {
-                CityData.Metz + CityData.Paris + TransportationType.Train,
-                new List<Vector2>()
-                {
-                    CityData.LatLonByCity[CityData.Metz],
-                    CityData.LatLonByCity[CityData.Paris]
-                }
-            },
-            {
-                CityData.Arlon + CityData.Brussels + TransportationType.Train,
+                CityData.Arlon + CityData.Brussels,
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Arlon],
                     CityData.LatLonByCity[CityData.Brussels]
                 }
             }
-            #endregion
         });
 
     #endregion

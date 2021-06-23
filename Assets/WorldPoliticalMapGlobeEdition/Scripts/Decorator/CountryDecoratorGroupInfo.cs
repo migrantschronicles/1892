@@ -188,9 +188,9 @@ namespace WPM {
 							//colorize all existing regions
 							foreach(var region in country.regions)
                             {
-								if(region.regionIndex != country.mainRegionIndex)
+								if(region.regionIndex != country.mainRegionIndex && region.rect2DArea > 2f)
                                 {
-									//map.ToggleCountryRegionSurface(countryIndex, region.regionIndex, true, decorator.fillColor, decorator.texture, decorator.textureScale, decorator.textureOffset, decorator.textureRotation);
+									map.ToggleCountryRegionSurface(countryIndex, region.regionIndex, true, decorator.fillColor, decorator.texture, decorator.textureScale, decorator.textureOffset, decorator.textureRotation);
                                 }
                             }
 						} else if (!decorator.isColorized && mainRegion.customMaterial != null) {

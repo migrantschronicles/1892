@@ -29,7 +29,7 @@ public class CityMarker : ICityMarker
         foreach (var city in map.cities.Where(c => c.cityClass == CITY_CLASS.COUNTRY_CAPITAL))
         {
             var labelPosition = Conversion.GetSpherePointFromLatLon(city.latlon.x, city.latlon.y) + LabelOffset;
-            var label = map.AddTextCustom(city.name, labelPosition, LabelColor, GetCurrentScale());
+            var label = map.AddTextCustom(city.name, labelPosition, LabelColor, GetCurrentScale(), fontStyle: FontStyle.Bold);
 
             labels.Add(label);
         }
@@ -40,7 +40,7 @@ public class CityMarker : ICityMarker
         if (!labels.Any(l => l.text == name))
         {
             var labelPosition = Conversion.GetSpherePointFromLatLon(CityData.LatLonByCity[name].x, CityData.LatLonByCity[name].y) + LabelOffset;
-            var label = map.AddTextCustom(name, labelPosition, LabelColor, GetCurrentScale());
+            var label = map.AddTextCustom(name, labelPosition, LabelColor, GetCurrentScale(), fontStyle: FontStyle.Bold);
 
             labels.Add(label);
         }

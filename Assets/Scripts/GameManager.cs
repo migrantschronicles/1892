@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,8 +20,20 @@ public class GameManager : MonoBehaviour
     public Button CapitalsButton;
     public Text CurrentCityText;
 
+    public Canvas UICanvas;
+    public GameObject TransportationHolder;
+    public List<RawImage> Transportation;
+
+    public GameObject TransportationButtonHolder;
+    public List<Button> TransportationButton;
+
+    public ScrollRect TransportationPopup; 
+
     private Country highlightedCountry;
     private Country previousHighlightedCountry;
+
+    private City origin;
+    private City destination;
 
     public GameManager()
     {
@@ -105,6 +118,9 @@ public class GameManager : MonoBehaviour
         DiscoverLegButton.onClick.AddListener(DiscoverLeg);
         CapitalsButton.onClick.AddListener(DrawCapitals);
         map.OnCityClick += OnCityClicked;
+
+        NavigationMarker.TravelCompleted += OnTravelCompleted;
+        NavigationMarker.DiscoverCompleted += OnDiscoverCompleted;
     }
 
     private void DrawCapitals()
@@ -125,6 +141,9 @@ public class GameManager : MonoBehaviour
                 CityManager.DrawLabel(leg.Origin);
                 CityManager.DrawLabel(leg.Destination);
 
+                map.DrawCity(leg.Origin);
+                map.DrawCity(leg.Destination);
+
                 break;
             }
         }
@@ -132,16 +151,49 @@ public class GameManager : MonoBehaviour
 
     private void OnCityClicked(int cityIndex)
     {
-        var currentCity = map.GetCity(CityData.CountryByCity[state.CurrentCityName], state.CurrentCityName);
-        var nextCity = map.GetCity(cityIndex);
-        var legKey = currentCity.name + nextCity.name + TransportationType.Foot;
+        origin = map.GetCity(CityData.CountryByCity[state.CurrentCityName], state.CurrentCityName);
+        destination = map.GetCity(cityIndex);
+        var legKey = origin?.name + destination?.name;
 
-        if (currentCity != null && nextCity != null && LegData.CoordinatesByLegKey.ContainsKey(legKey))
+        if (origin != null && destination != null && LegData.CoordinatesByLegKey.ContainsKey(legKey))
         {
             if (NavigationMarker.IsLegMarked(legKey))
             {
-                state.PreviousCityName = currentCity.name;
-                state.CurrentCityName = nextCity.name;
+                TransportationPopup.transform.SetParent(UICanvas.transform, true);
+            }
+        }
+    }
+
+    public void OnTransportationClicked(string transportation)
+    {
+        if(!string.IsNullOrEmpty(transportation))
+        {
+            if(Enum.TryParse(transportation, out TransportationType type))
+            {
+                TravelLeg(origin, destination, type);
+
+                TransportationPopup.transform.SetParent(null);
+            }
+        }
+    }
+
+    private void TravelLeg(City origin, City destination, TransportationType type)
+    {
+        var legKey = origin?.name + destination?.name;
+
+        if (origin != null && destination != null && LegData.CoordinatesByLegKey.ContainsKey(legKey))
+        {
+            if (NavigationMarker.IsLegMarked(legKey))
+            {
+                state.PreviousCityName = origin.name;
+                state.CurrentCityName = destination.name;
+
+                var transportationUI = Transportation.FirstOrDefault(t => t.name == type.ToString());
+
+                if(transportationUI != null)
+                {
+                    transportationUI.transform.SetParent(UICanvas.transform, true);
+                }
 
                 NavigationMarker.TravelLeg(legKey, LegData.CoordinatesByLegKey[legKey]);
 
@@ -150,9 +202,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void OnTravelCompleted()
+    {
+        foreach(var transportationUI in Transportation)
+        {
+            transportationUI.transform.SetParent(null);
+        }
+    }
+
+    private void OnDiscoverCompleted()
+    {
+    }
+
     private void Navigate()
     {
-        map.SetZoomLevel(0);
+        map.SetZoomLevel(0.05f);
         map.FlyToLocation(map.GetCity(CityData.CountryByCity[state.CurrentCityName], state.CurrentCityName).latlon);
     }
 

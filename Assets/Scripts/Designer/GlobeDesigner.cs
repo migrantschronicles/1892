@@ -15,14 +15,12 @@ public class GlobeDesigner : IGlobeDesigner
     private const string Netherlands = "Netherlands";
     private const string Belgium = "Belgium";
 
-    private const string Common = "CommonLow";
-    private const string Water = "Water";
+    private const string Common = "Common";
 
     private WorldMapGlobe map;
 
     private Dictionary<string, Texture2D> textureByCountry = new Dictionary<string, Texture2D>();
     private Dictionary<string, Texture2D> selectionTextureByCountry = new Dictionary<string, Texture2D>();
-    private Texture2D waterTexture;
 
     private bool isTexturesLoaded = false;
 
@@ -39,10 +37,6 @@ public class GlobeDesigner : IGlobeDesigner
 
         foreach (var country in map.countries)
         {
-            if(country.name =="Italy")
-            {
-
-            }
             map.decorator.SetCountryDecorator(0, country.name, new CountryDecorator
             {
                 labelVisible = false,
@@ -96,8 +90,6 @@ public class GlobeDesigner : IGlobeDesigner
             selectionTextureByCountry.Add(Netherlands, Resources.Load(TextureFolderPath + Netherlands + SelectionTextureText) as Texture2D);
             selectionTextureByCountry.Add(Belgium, Resources.Load(TextureFolderPath + Belgium + SelectionTextureText) as Texture2D);
             selectionTextureByCountry.Add(Common, Resources.Load(TextureFolderPath + Common + SelectionTextureText) as Texture2D);
-
-            waterTexture = Resources.Load(TextureFolderPath + Water) as Texture2D;
         }
         catch
         {

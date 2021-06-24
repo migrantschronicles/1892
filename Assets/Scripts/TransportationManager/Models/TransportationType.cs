@@ -1,7 +1,9 @@
 public enum TransportationType
 {
-    OnFoot,
+    Foot,
     Train,
     StageCoach,
-    SteamShip
+    Boat,
+    TramRail,
+    Cart
 }

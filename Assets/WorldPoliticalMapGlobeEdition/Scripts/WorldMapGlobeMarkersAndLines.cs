@@ -353,9 +353,46 @@ namespace WPM {
             tm.alignment = TextAlignment.Center;
             tm.anchor = TextAnchor.MiddleCenter;
             tm.color = color;
+            return tm;
+        }
+
+        public TextMesh AddTextCustom(string name, Vector3 sphereLocation, Color color, float scale = 0.004f, Font font = null, FontStyle fontStyle = FontStyle.Normal)
+        {
+            if (fontMaterial == null)
+            {
+                fontMaterial = Instantiate<Material>(Resources.Load<Material>("Materials/Font"));
+            }
+            GameObject go = new GameObject(name);
+            go.layer = gameObject.layer;
+            go.transform.SetParent(transform, false);
+            go.transform.localPosition = sphereLocation; // <-- the location of the city in spherical coordinates
+            go.transform.localScale = Vector3.one * scale;
+            go.transform.LookAt(_pivotTransform.position);
+            TextMesh tm = go.AddComponent<TextMesh>();
+            if (font != null)
+            {
+                tm.font = font;
+            }
+            if (fontStyle != FontStyle.Normal)
+            {
+                tm.fontStyle = fontStyle;
+            }
+            fontMaterial.mainTexture = tm.font.material.mainTexture;
+            fontMaterial.renderQueue = 5000;
+            go.GetComponent<Renderer>().sharedMaterial = fontMaterial;
+            tm.text = name;
+            tm.alignment = TextAlignment.Center;
+            tm.anchor = TextAnchor.MiddleCenter;
+            tm.color = color;
             tm.characterSize = 0.03f;
             tm.fontSize = 350;
             return tm;
+        }
+
+        public void UpdateTextCustom(TextMesh tm, float scale)
+        {
+            tm.transform.LookAt(new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y + pitch, -mainCamera.transform.position.z));
+            tm.transform.localScale = Vector3.one * scale;
         }
 
 
@@ -364,7 +401,6 @@ namespace WPM {
         /// </summary>
         public void AddMarker(GameObject marker, Vector3 sphereLocation, float markerScale) {
             mAddMarker(marker, sphereLocation, markerScale, false, 0f, true);
-
         }
 
         /// <summary>
@@ -375,6 +411,21 @@ namespace WPM {
         /// <param name="baseLineAtBottom">Takes into account the height of the gameobject mesh and uses the bottom of the object as the reference instead of the middle.</param>
         public void AddMarker(GameObject marker, Vector3 sphereLocation, float markerScale, bool isBillboard, float surfaceSeparation = 0f, bool baseLineAtBottom = false, bool preserveOriginalRotation = true) {
             mAddMarker(marker, sphereLocation, markerScale, isBillboard, surfaceSeparation, baseLineAtBottom, preserveOriginalRotation);
+        }
+
+        public void UpdateMarkerPosition(GameObject marker, Vector3 sphereLocation, float markerScale, float surfaceSeparation = 0f, bool baseLineAtBottom = false)
+        {
+            float height = 0;
+            if (baseLineAtBottom)
+            {
+                if (marker.GetComponent<MeshFilter>() != null)
+                    height = marker.GetComponent<MeshFilter>().sharedMesh.bounds.size.y;
+                else if (marker.GetComponent<Collider>() != null)
+                    height = marker.GetComponent<Collider>().bounds.size.y;
+            }
+            height += surfaceSeparation;
+            var h = height * markerScale / sphereLocation.magnitude;
+            marker.transform.localPosition = _earthInvertedMode ? sphereLocation * (1.0f - h) : sphereLocation * (1.0f + h * 0.5f);
         }
 
         /// <summary>
@@ -490,6 +541,7 @@ namespace WPM {
             lma.arcElevation = 0;
             lma.lineWidth = lineWidth;
             lma.lineMaterial = GetColoredMarkerLineMaterial(color);
+            lma.lineMaterial.renderQueue = 4000;
             lma.earthInvertedMode = _earthInvertedMode;
             lma.reuseMaterial = true;
             return lma;
@@ -507,6 +559,7 @@ namespace WPM {
             lma.arcElevation = 0;
             lma.lineWidth = lineWidth;
             lma.lineMaterial = GetColoredMarkerLineMaterial(color);
+            lma.lineMaterial.renderQueue = 4500;
             lma.earthInvertedMode = _earthInvertedMode;
             lma.reuseMaterial = true;
             lma.duration = speed;

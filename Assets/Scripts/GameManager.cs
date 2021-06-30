@@ -13,16 +13,20 @@ public class GameManager : MonoBehaviour
     private IGlobeDesigner GlobeDesigner;
 
     private WorldMapGlobe map;
-    private State state;
+    private StateManager stateManager;
+
+    private int currentTransportationComponent = 0;
 
     public Button CenterButton;
     public Button DiscoverLegButton;
     public Button CapitalsButton;
+    public Button AnimateButton;
+    public Button HideButton;
     public Text CurrentCityText;
 
     public Canvas UICanvas;
     public GameObject TransportationHolder;
-    public List<RawImage> Transportation;
+    public List<Component> Transportation;
 
     public GameObject TransportationButtonHolder;
     public List<Button> TransportationButton;
@@ -37,12 +41,7 @@ public class GameManager : MonoBehaviour
 
     public GameManager()
     {
-        state = new State()
-        {
-            CurrentCityName = CityData.Luxembourg,
-            AvailableCityNames = new List<string>() { CityData.Luxembourg },
-            VisitedCityNames = new List<string>() { CityData.Luxembourg }
-        };
+        stateManager = new StateManager();
     }
 
     void Start()
@@ -117,10 +116,34 @@ public class GameManager : MonoBehaviour
         CenterButton.onClick.AddListener(NavigateCurrentCity);
         DiscoverLegButton.onClick.AddListener(DiscoverLeg);
         CapitalsButton.onClick.AddListener(DrawCapitals);
+        AnimateButton.onClick.AddListener(ShowNextTransportation);
+        HideButton.onClick.AddListener(HideTransportation);
         map.OnCityClick += OnCityClicked;
 
         NavigationMarker.TravelCompleted += OnTravelCompleted;
         NavigationMarker.DiscoverCompleted += OnDiscoverCompleted;
+    }
+
+    private void ShowNextTransportation()
+    {
+        HideTransportation();
+
+        var transportationUI = Transportation[currentTransportationComponent % (Transportation.Count - 1)];
+
+        if (transportationUI != null)
+        {
+            transportationUI.transform.SetParent(UICanvas.transform, true);
+
+            currentTransportationComponent++;
+        }
+    }
+
+    private void HideTransportation()
+    {
+        foreach (var transportationUI in Transportation)
+        {
+            transportationUI.transform.SetParent(null);
+        }
     }
 
     private void DrawCapitals()
@@ -151,7 +174,9 @@ public class GameManager : MonoBehaviour
 
     private void OnCityClicked(int cityIndex)
     {
-        origin = map.GetCity(CityData.CountryByCity[state.CurrentCityName], state.CurrentCityName);
+        StateManager.CurrentState.FreezeTime = true;
+
+        origin = map.GetCity(CityData.CountryByCity[StateManager.CurrentState.CurrentCityName], StateManager.CurrentState.CurrentCityName);
         destination = map.GetCity(cityIndex);
         var legKey = origin?.name + destination?.name;
 
@@ -160,6 +185,33 @@ public class GameManager : MonoBehaviour
             if (NavigationMarker.IsLegMarked(legKey))
             {
                 TransportationPopup.transform.SetParent(UICanvas.transform, true);
+
+                foreach(var button in TransportationButton)
+                {
+                    if(Enum.TryParse(button.name, out TransportationType type))
+                    {
+                        var cost = button.transform.GetComponentsInChildren<Text>().FirstOrDefault(t => t.name == "Cost");
+                        var luggageSpace = button.transform.GetComponentsInChildren<Text>().FirstOrDefault(t => t.name == "LuggageSpace");
+                        var duration = button.transform.GetComponentsInChildren<Text>().FirstOrDefault(t => t.name == "Duration");
+
+                        if (cost != null)
+                        {
+                            cost.text = $"Cost: {TransportationData.TransportationCostByType[type]}";
+                        }
+
+                        if (luggageSpace != null)
+                        {
+                            luggageSpace.text = $"Luggage: {TransportationData.TransportationSpaceByType[type]}";
+                        }
+
+                        if (duration != null)
+                        {
+                            var distance = NavigationMarker.GetDistance(LegData.CoordinatesByLegKey[legKey].First(), LegData.CoordinatesByLegKey[legKey].Last());
+                            var time = TimeSpan.FromHours(distance / 1000 / TransportationData.TransportationSpeedByType[type]).ToString(@"dd\:hh\:mm");
+                            duration.text = $"Duration: {time}";
+                        }
+                    }
+                }
             }
         }
     }
@@ -173,6 +225,8 @@ public class GameManager : MonoBehaviour
                 TravelLeg(origin, destination, type);
 
                 TransportationPopup.transform.SetParent(null);
+
+                StateManager.CurrentState.AvailableMoney -= TransportationData.TransportationCostByType[type];
             }
         }
     }
@@ -185,8 +239,8 @@ public class GameManager : MonoBehaviour
         {
             if (NavigationMarker.IsLegMarked(legKey))
             {
-                state.PreviousCityName = origin.name;
-                state.CurrentCityName = destination.name;
+                StateManager.CurrentState.PreviousCityName = origin.name;
+                StateManager.CurrentState.CurrentCityName = destination.name;
 
                 var transportationUI = Transportation.FirstOrDefault(t => t.name == type.ToString());
 
@@ -195,7 +249,7 @@ public class GameManager : MonoBehaviour
                     transportationUI.transform.SetParent(UICanvas.transform, true);
                 }
 
-                NavigationMarker.TravelLeg(legKey, LegData.CoordinatesByLegKey[legKey]);
+                NavigationMarker.TravelLeg(legKey, LegData.CoordinatesByLegKey[legKey], type);
 
                 SetCurrentCityText();
             }
@@ -217,12 +271,12 @@ public class GameManager : MonoBehaviour
     private void Navigate()
     {
         map.SetZoomLevel(0.05f);
-        map.FlyToLocation(map.GetCity(CityData.CountryByCity[state.CurrentCityName], state.CurrentCityName).latlon);
+        map.FlyToLocation(map.GetCity(CityData.CountryByCity[StateManager.CurrentState.CurrentCityName], StateManager.CurrentState.CurrentCityName).latlon);
     }
 
     private void SetCurrentCityText()
     {
-        CurrentCityText.GetComponent<Text>().text = $"Current City: {state.CurrentCityName}";
+        CurrentCityText.GetComponent<Text>().text = $"{StateManager.CurrentState.CurrentCityName}";
     }
 
     private void NavigateCurrentCity()
@@ -231,7 +285,7 @@ public class GameManager : MonoBehaviour
 
         map.navigationTime = 1;
         var luxIndex = map.GetCountryIndex("Luxembourg");
-        map.FlyToLocation(map.GetCity(CityData.CountryByCity[state.CurrentCityName], state.CurrentCityName).latlon);
+        map.FlyToLocation(map.GetCity(CityData.CountryByCity[StateManager.CurrentState.CurrentCityName], StateManager.CurrentState.CurrentCityName).latlon);
         map.ZoomTo(0, 1);
 
         map.navigationTime = initSpeed;

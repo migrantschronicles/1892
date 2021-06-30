@@ -187,6 +187,26 @@ public static class LegData
                 Type = TransportationType.Train
             },
             Distance = 489
+        },
+        new Leg
+        {
+            Origin = CityData.Paris,
+            Destination = CityData.Havre,
+            Transportation = new Transportation
+            {
+                Type = TransportationType.Foot
+            },
+            Distance = 197
+        },
+         new Leg
+        {
+            Origin = CityData.Paris,
+            Destination = CityData.Havre,
+            Transportation = new Transportation
+            {
+                Type = TransportationType.Train
+            },
+            Distance = 197
         }
     });
 
@@ -217,12 +237,9 @@ public static class LegData
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Luxembourg],
-                    new Vector2(49.590535f, 5.938688f),
-                    new Vector2(49.746964f, 5.406444f),
-                    new Vector2(49.899352f, 5.077221f),
-                    new Vector2(50.199173f, 4.940045f),
-                    new Vector2(50.308053f, 5.174745f),
-                    new Vector2(50.537872f, 4.280484f),
+                    new Vector2(49.86277585341321f, 5.537109375000001f),
+                    new Vector2(50.28933925329178f, 5.053710937500001f),
+                    new Vector2(50.548344490674786f, 4.581298828125001f),
                     CityData.LatLonByCity[CityData.Brussels]
                 }
             },
@@ -231,8 +248,7 @@ public static class LegData
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Brussels],
-                    new Vector2(50.990710f, 4.232159f),
-                    new Vector2(51.141448f, 4.222194f),
+                    new Vector2(51.048301133312265f, 4.312133789062501f),
                     CityData.LatLonByCity[CityData.Antwerp]
                 }
             },
@@ -241,8 +257,8 @@ public static class LegData
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Antwerp],
-                    new Vector2(51.515580f, 4.639210f),
-                    new Vector2(51.737235f, 4.644697f),
+                    new Vector2(51.49164465653034f, 4.312133789062501f),
+                    new Vector2(51.70660846336452f, 4.350585937500001f),
                     CityData.LatLonByCity[CityData.Rotterdam]
                 }
             },
@@ -265,6 +281,7 @@ public static class LegData
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Luxembourg],
+                    new Vector2(49.31796095602274f, 6.212768554687501f),
                     CityData.LatLonByCity[CityData.Metz]
                 }
             },
@@ -273,7 +290,22 @@ public static class LegData
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Metz],
+                    new Vector2(48.89722676235675f, 5.548095703125f),
+                    new Vector2(48.705462895790575f, 5.020751953125f),
+                    new Vector2(48.647427805533546f, 4.586791992187501f),
+                    new Vector2(48.69458640884518f, 3.6584472656250004f),
+                    new Vector2(48.65105695744785f, 2.8070068359375004f),
                     CityData.LatLonByCity[CityData.Paris]
+                }
+            },
+            {
+                CityData.Paris + CityData.Havre,
+                new List<Vector2>()
+                {
+                    CityData.LatLonByCity[CityData.Paris],
+                    new Vector2(49.26780455063753f, 1.7907714843750002f),
+                    new Vector2(49.224772722794825f, 0.81298828125f),
+                    CityData.LatLonByCity[CityData.Havre]
                 }
             },
             {
@@ -281,6 +313,7 @@ public static class LegData
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Luxembourg],
+                    new Vector2(49.651626391830476f, 6.001281738281251f),
                     CityData.LatLonByCity[CityData.Arlon]
                 }
             },
@@ -289,6 +322,9 @@ public static class LegData
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Arlon],
+                    new Vector2(50.1241000426924f, 5.5810546875f),
+                    new Vector2(50.49595785216966f, 5.202026367187501f),
+                    new Vector2(50.73297844827752f, 4.812011718750001f),
                     CityData.LatLonByCity[CityData.Brussels]
                 }
             }

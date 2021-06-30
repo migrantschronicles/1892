@@ -18,6 +18,7 @@ public static class CityData
     public const string Metz = "Metz";
     public const string Arlon = "Arlon";
     public const string Paris = "Paris";
+    public const string Havre = "Havre";
 
     public static IReadOnlyDictionary<string, string> CountryByCity = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>()
     {
@@ -28,6 +29,7 @@ public static class CityData
         { Metz, France },
         { Arlon, Belgium },
         { Paris, France },
+        { Havre, France }
     });
 
     public static IReadOnlyDictionary<string, Vector2> LatLonByCity = new ReadOnlyDictionary<string, Vector2>(
@@ -53,6 +55,9 @@ public static class CityData
            },
            {
                Paris, new Vector2(48.8566f, 2.3522f)
+           },
+           {
+               Havre, new Vector2(49.4938975f, 0.1079732f)
            }
        });
 }

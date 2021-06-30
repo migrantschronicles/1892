@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -17,16 +18,16 @@ public static class TransportationData
                 TransportationType.Train, 30
             },
             {
-                TransportationType.StageCoach, 10
+                TransportationType.StageCoach, 15
             },
             {
-                TransportationType.Boat, 15
+                TransportationType.Boat, 17
             },
             {
-                TransportationType.TramRail, 15
+                TransportationType.TramRail, 18
             },
             {
-                TransportationType.Cart, 15
+                TransportationType.Cart, 16
             }
         });
 
@@ -57,24 +58,29 @@ public static class TransportationData
        new ReadOnlyDictionary<TransportationType, int>(new Dictionary<TransportationType, int>()
        {
             {
-                TransportationType.Foot, 1
+                TransportationType.Foot, 0
             },
             {
-                TransportationType.Train, 1
+                TransportationType.Train, 45
             },
             {
-                TransportationType.StageCoach, 1
+                TransportationType.StageCoach, 51
             },
             {
-                TransportationType.Boat, 1
+                TransportationType.Boat, 90
             },
             {
-                TransportationType.TramRail, 1
+                TransportationType.TramRail, 46
             },
             {
-                TransportationType.Cart, 1
+                TransportationType.Cart, 33
             }
        });
+
+    public static TimeSpan GetDuration(TransportationType type, float distance)
+    {
+        return TimeSpan.FromHours(distance / TransportationSpaceByType[type]);
+    }
 
     public static IEnumerable<Transportation> GetAllTransportation(string origin, string destination)
     {

@@ -10,11 +10,15 @@ public interface INavigationMarker
 
     void DiscoverLeg(string legKey, IEnumerable<Vector2> coordinates);
 
-    void TravelLeg(string legKey, IEnumerable<Vector2> coordinates);
+    void TravelLeg(string legKey, IEnumerable<Vector2> coordinates, TransportationType transportation);
 
     bool IsLegMarked(string legKey);
 
     bool IsLegTraveled(string legKey);
 
     void ClearLeg(string legKey);
+
+    double GetDistance(double longitude, double latitude, double otherLongitude, double otherLatitude);
+
+    double GetDistance(Vector2 start, Vector2 end);
 }

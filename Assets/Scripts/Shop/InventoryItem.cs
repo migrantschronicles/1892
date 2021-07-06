@@ -14,7 +14,6 @@ public class InventoryItem : MonoBehaviour
 
     public void Checker()
     {
-        Debug.Log(itemName);
         if (itemName == "" || itemName == null || itemName == " ") { 
             empty = true;
             GetComponent<Image>().sprite = null;

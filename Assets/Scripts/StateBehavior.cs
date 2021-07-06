@@ -13,7 +13,7 @@ public class StateBehavior : MonoBehaviour
     public Text MoneyText;
     public Text FoodText;
 
-    private float minuteDelta = 0.4f;
+    private float minuteDelta = 0.6f;
     private float time = 0f;
 
     void Start()

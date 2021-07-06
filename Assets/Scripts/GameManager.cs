@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 using WPM;
@@ -88,7 +89,7 @@ public class GameManager : MonoBehaviour
         TransportationManager = new TransportationManager();
         GlobeDesigner = new GlobeDesigner(map);
 
-        //CityManager.DrawLabels();
+        StateManager.CurrentState.FreezeTime = true;
         CityManager.DrawLabel(CityData.Luxembourg);
 
         GlobeDesigner.AssignTextures();
@@ -241,6 +242,7 @@ public class GameManager : MonoBehaviour
             {
                 StateManager.CurrentState.PreviousCityName = origin.name;
                 StateManager.CurrentState.CurrentCityName = destination.name;
+                map.DrawCities();
 
                 var transportationUI = Transportation.FirstOrDefault(t => t.name == type.ToString());
 
@@ -270,8 +272,15 @@ public class GameManager : MonoBehaviour
 
     private void Navigate()
     {
-        map.SetZoomLevel(0.05f);
-        map.FlyToLocation(map.GetCity(CityData.CountryByCity[StateManager.CurrentState.CurrentCityName], StateManager.CurrentState.CurrentCityName).latlon);
+        map.SetZoomLevel(0.65f);
+        map.FlyToLocation(map.GetCity("Japan", "Tokyo").latlon, 0, 0.65f).Then(() => 
+        {
+            map.FlyToLocation(map.GetCity(CityData.CountryByCity[StateManager.CurrentState.CurrentCityName], StateManager.CurrentState.CurrentCityName).latlon, 2, 0.65f).Then(() => 
+            {
+                //map.ZoomTo(0f, 1.5f);
+            });
+            map.ZoomTo(0f, 4f);
+        });
     }
 
     private void SetCurrentCityText()

@@ -17,6 +17,8 @@ public class CityMarker : ICityMarker
 
     private IList<TextMesh> labels = new List<TextMesh>();
 
+    public static List<string> Labels { get; } = new List<string>();
+
     public CityMarker(WorldMapGlobe map)
     {
         if (map == null) throw new ArgumentNullException(nameof(map));
@@ -32,6 +34,7 @@ public class CityMarker : ICityMarker
             var label = map.AddTextCustom(city.name, labelPosition, LabelColor, GetCurrentScale(), fontStyle: FontStyle.Bold);
 
             labels.Add(label);
+            Labels.Add(city.name);
         }
     }
 
@@ -43,6 +46,7 @@ public class CityMarker : ICityMarker
             var label = map.AddTextCustom(name, labelPosition, LabelColor, GetCurrentScale(), fontStyle: FontStyle.Bold);
 
             labels.Add(label);
+            Labels.Add(name);
         }
     }
 
@@ -62,6 +66,7 @@ public class CityMarker : ICityMarker
         }
 
         labels.Clear();
+        Labels.Clear();
     }
 
     private float GetCurrentScale()

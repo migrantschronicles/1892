@@ -12,6 +12,8 @@ public interface INavigationMarker
 
     void TravelLeg(string legKey, IEnumerable<Vector2> coordinates, TransportationType transportation);
 
+    void TravelCustomLeg(string legKey, IEnumerable<Vector2> coordinates, CustomTransportation transportation);
+
     bool IsLegMarked(string legKey);
 
     bool IsLegTraveled(string legKey);

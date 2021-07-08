@@ -7,7 +7,27 @@ public static class LegData
     #region Legs
 
     public static IReadOnlyCollection<Leg> Legs = new ReadOnlyCollection<Leg>(new List<Leg>() 
-    { 
+    {
+        new Leg
+        {
+            Origin = CityData.Pfaffenthal,
+            Destination = CityData.Luxembourg,
+            Transportation = new Transportation
+            {
+                Type = TransportationType.Foot
+            },
+            Distance = 300
+        },
+        new Leg
+        {
+            Origin = CityData.Pfaffenthal,
+            Destination = CityData.Luxembourg,
+            Transportation = new Transportation
+            {
+                Type = TransportationType.StageCoach
+            },
+            Distance = 300
+        },
         new Leg
         {
             Origin = CityData.Luxembourg,
@@ -217,6 +237,14 @@ public static class LegData
     public static IReadOnlyDictionary<string, IEnumerable<Vector2>> CoordinatesByLegKey = new ReadOnlyDictionary<string, IEnumerable<Vector2>>(
         new Dictionary<string, IEnumerable<Vector2>>()
         {
+            {
+                CityData.Pfaffenthal + CityData.Luxembourg,
+                new List<Vector2>()
+                {
+                    CityData.LatLonByCity[CityData.Pfaffenthal],
+                    CityData.LatLonByCity[CityData.Luxembourg]
+                }
+            },
             {
                 CityData.Luxembourg + CityData.Antwerp,
                 new List<Vector2>()

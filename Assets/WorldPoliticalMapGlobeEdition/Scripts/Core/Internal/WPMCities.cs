@@ -279,7 +279,7 @@ namespace WPM {
 
                     cityParent = normalCities;
 
-                    if (city.name == StateManager.CurrentState.CurrentCityName)
+                    if (city.name == StateManager.CurrentState?.CurrentCityName)
                     {
                         scale = 0.002f;
                         cityScale = new Vector3(scale, scale, 1f);
@@ -292,7 +292,7 @@ namespace WPM {
 
                     if (!combineMeshesActive)
                     {
-                        if (city.name == StateManager.CurrentState.CurrentCityName)
+                        if (city.name == StateManager.CurrentState?.CurrentCityName)
                         {
                             cityObj.GetComponent<Renderer>().sharedMaterial = citiesCountryCapitalMat;
                         }

@@ -11,14 +11,14 @@ public class StateManager : IStateManager
     {
         CurrentState = new State()
         {
-            StartDate = new DateTime(1892, 8, 21, 8, 0, 0),
+            StartDate = new DateTime(1892, 9, 6, 8, 0, 0),
             AvailableMoney = Constants.InitialBalance,
             AvailableFood = Constants.InitialFood,
             LuggageNumber = Constants.InitialLuggageNumber,
             AvailableItemIds = Constants.InitialItemIds,
-            CurrentCityName = CityData.Luxembourg,
-            AvailableCityNames = new List<string>() { CityData.Luxembourg },
-            VisitedCityNames = new List<string>() { CityData.Luxembourg }
+            CurrentCityName = CityData.Pfaffenthal,
+            AvailableCityNames = new List<string>() { CityData.Pfaffenthal },
+            VisitedCityNames = new List<string>() { CityData.Pfaffenthal }
         };
     }
 

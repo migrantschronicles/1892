@@ -7,9 +7,9 @@ public static class Constants
 {
     public static DateTime StartDate = new DateTime();
 
-    public static int InitialBalance = 1000;
+    public static int InitialBalance = 250;
 
-    public static int InitialFood = 10;
+    public static int InitialFood = 5;
 
     public static int InitialHealth = 100;
 

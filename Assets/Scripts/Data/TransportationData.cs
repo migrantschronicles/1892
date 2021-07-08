@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using UnityEngine;
 
 public static class TransportationData
 {
-    //todo: estimate speed, luggage space and costs
-
-    //average speed: km/h
+    //Average Speed: km/h
     public static IReadOnlyDictionary<TransportationType, int> TransportationSpeedByType =
         new ReadOnlyDictionary<TransportationType, int>(new Dictionary<TransportationType, int>()
         {
@@ -31,6 +30,7 @@ public static class TransportationData
             }
         });
 
+    //Luggage Space
     public static IReadOnlyDictionary<TransportationType, int> TransportationSpaceByType =
        new ReadOnlyDictionary<TransportationType, int>(new Dictionary<TransportationType, int>()
        {
@@ -67,7 +67,7 @@ public static class TransportationData
                 TransportationType.StageCoach, 51
             },
             {
-                TransportationType.Boat, 90
+                TransportationType.Boat, 70
             },
             {
                 TransportationType.TramRail, 46
@@ -90,6 +90,14 @@ public static class TransportationData
     public static IReadOnlyDictionary<string, IEnumerable<TransportationType>> TransportationByLegKey = new ReadOnlyDictionary<string, IEnumerable<TransportationType>>(
         new Dictionary<string, IEnumerable<TransportationType>>()
         {
+            {
+                CityData.Pfaffenthal + CityData.Luxembourg,
+                new List<TransportationType>()
+                {
+                    TransportationType.Foot,
+                    TransportationType.StageCoach
+                }
+            },
             {
                 CityData.Luxembourg + CityData.Antwerp,
                 new List<TransportationType>()
@@ -190,4 +198,27 @@ public static class TransportationData
                 }
             }
         });
+
+    public static IReadOnlyDictionary<TransportationType, (string Name, Vector2 Size)> TransportationIconByType =
+      new ReadOnlyDictionary<TransportationType, (string, Vector2)>(new Dictionary<TransportationType, (string, Vector2)>()
+      {
+            {
+                TransportationType.Foot, ("foot_icon", new Vector2(35, 35))
+            },
+            {
+                TransportationType.Train, ("train_icon", new Vector2(35, 35))
+            },
+            {
+                TransportationType.StageCoach, ("carriage_icon", new Vector2(35, 35))
+            },
+            {
+                TransportationType.Boat, ("boat_icon", new Vector2(35, 35))
+            },
+            {
+                TransportationType.TramRail, ("tram_icon", new Vector2(35, 35))
+            },
+            {
+                TransportationType.Cart, ("carriage_icon", new Vector2(35, 35))
+            }
+      });
 }

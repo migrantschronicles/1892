@@ -38,7 +38,7 @@ public static class CityData
        new Dictionary<string, Vector2>()
        {
            {
-               Pfaffenthal, new Vector2(49.6247f, 6.1337f)
+               Pfaffenthal, new Vector2(49.738830f, 6.237488f)
            },
            {
                Luxembourg, new Vector2(49.61171f, 6.129978f)

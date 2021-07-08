@@ -47,6 +47,26 @@ public class NavigationMarker : INavigationMarker
         Navigate(coordinates.First(), coordinates.Last(), 3, 35);
     }
 
+    public void TravelCustomLeg(string legKey, IEnumerable<Vector2> coordinates, CustomTransportation transportation)
+    {
+        if (isNavigating) return;
+
+        isNavigating = true;
+
+        var distance = GetDistance(coordinates.First().x, coordinates.First().y, coordinates.Last().x, coordinates.Last().y);
+        var duration = Math.Max((float)(distance / (transportation.Speed * 1000)), 1f);
+
+        var marker = map.AddLineCustom(coordinates.ToArray(), TravelLineColor, TravelLineWidth, duration);
+        marker.OnLineDrawingEnd += (e) => TravelCompleted?.Invoke();
+
+        if (!traveledLegMarkers.ContainsKey(legKey))
+        {
+            traveledLegMarkers.Add(legKey, marker);
+        }
+
+        Navigate(coordinates.First() + new Vector2(1f, 0), coordinates.Last() + new Vector2(1f, 0), duration, 70, transportation);
+    }
+
     public void TravelLeg(string legKey, IEnumerable<Vector2> coordinates, TransportationType transportation)
     {
         if (isNavigating) return;
@@ -126,6 +146,26 @@ public class NavigationMarker : INavigationMarker
                 isNavigating = false;
                 StateManager.CurrentState.FreezeTime = false;
                 StateManager.CurrentState.ElapsedTime += TimeSpan.FromHours(GetDistance(start, end) / 1000 / TransportationData.TransportationSpeedByType[transportation]);
+            });
+        });
+    }
+
+    private void Navigate(Vector2 start, Vector2 end, float duration, float pitch, CustomTransportation transportation)
+    {
+        var initZoom = map.GetZoomLevel();
+        var initPitch = map.pitch;
+
+        map.pitch = pitch;
+        map.SetZoomLevel(0);
+        map.FlyToLocation(start + new Vector2(0, 0.1f), 0).Then(() =>
+        {
+            map.FlyToLocation(end + new Vector2(0, 0.1f), duration, 0.03f).Then(() =>
+            {
+                map.FlyToLocation(start + new Vector2(0, 0.1f), 0, initZoom);
+                map.pitch = initPitch;
+                isNavigating = false;
+                StateManager.CurrentState.FreezeTime = false;
+                StateManager.CurrentState.ElapsedTime += TimeSpan.FromHours(GetDistance(start, end) / 1000 / transportation.Speed);
             });
         });
     }

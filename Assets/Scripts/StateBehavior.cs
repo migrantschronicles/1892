@@ -43,6 +43,10 @@ public class StateBehavior : MonoBehaviour
 
         if (DateText.GetComponent<Text>().text != currentDateText)
         {
+            if(string.IsNullOrEmpty(DateText.GetComponent<Text>().text))
+            {
+                StateManager.CurrentState.AvailableFood -= 3;
+            }
             DateText.GetComponent<Text>().text = currentDateText;
         }
 

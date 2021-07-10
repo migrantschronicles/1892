@@ -12,6 +12,19 @@ public class InventoryItem : MonoBehaviour
     public string location; // Shop or Inventory
     public Sprite image;
 
+    public void Update()
+    {
+        if (GetComponent<Image>().sprite == null && image != null)
+        {
+            GetComponent<Image>().sprite = image;
+        }
+        else if (GetComponent<Image>().sprite != null && empty) 
+        {
+            image = null;
+            GetComponent<Image>().sprite = image;
+        }
+    }
+
     public void Checker()
     {
         if (itemName == "" || itemName == null || itemName == " ") { 
@@ -31,6 +44,7 @@ public class InventoryItem : MonoBehaviour
         value = 0;
         location = null;
         GetComponent<Image>().sprite = null;
+        Debug.Log("Image should be null");
         gameObject.transform.Find("Border").gameObject.SetActive(false);
     }
 

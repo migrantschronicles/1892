@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShopInteractives : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class ShopInteractives : MonoBehaviour
     public GameObject shopButton;
     public GameObject childrenButton;
     public GameObject backButton;
+    public GameObject blurryBG;
     
     public GameObject shopFrame;
     public GameObject childFrame;
@@ -32,12 +34,13 @@ public class ShopInteractives : MonoBehaviour
         shopButton.SetActive(true);
         childrenButton.SetActive(true);
         backButton.SetActive(false);
+        blurryBG.SetActive(false);
 
         shopFrame.SetActive(false);
         leftArrow.SetActive(false);
         rightArrow.SetActive(false);
 
-        //childFrame.SetActive(false);
+        childFrame.SetActive(false);
 
         
     }
@@ -47,6 +50,7 @@ public class ShopInteractives : MonoBehaviour
         shopButton.SetActive(false);
         childrenButton.SetActive(false);
         backButton.SetActive(true);
+        blurryBG.SetActive(true);
 
         shopFrame.SetActive(true);
 
@@ -57,8 +61,21 @@ public class ShopInteractives : MonoBehaviour
         shopButton.SetActive(false);
         childrenButton.SetActive(false);
         backButton.SetActive(true);
+        blurryBG.SetActive(true);
 
-        //childFrame.SetActive(true);
+        childFrame.SetActive(true);
 
+    }
+
+    public void InventoryItemClick(InventoryItem item) 
+    {
+        if (!item.empty && item.location == "Luggage") 
+        {
+            leftArrow.SetActive(true);
+        }
+        else if (!item.empty && item.location == "Shop")
+        {
+            rightArrow.SetActive(true);
+        }
     }
 }

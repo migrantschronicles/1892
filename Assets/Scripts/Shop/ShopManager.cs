@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -72,16 +73,18 @@ public class ShopManager : MonoBehaviour
         // Updating the money
         totalMoney += moneyChanges;
         moneyChanges = 0;
-        moneyChangesUI.SetActive(false); //Turning off money UI
+        moneyChangesUI.SetActive(false); 
 
         // Resetting addition lists
         foreach (InventoryItem item in luggageItems) 
         {
-            item.gameObject.transform.Find("Border").gameObject.SetActive(false); // Remove highlight
+            item.gameObject.transform.Find("Border").gameObject.SetActive(false); 
+            item.GetComponent<Button>().interactable = true;
         }
         foreach (InventoryItem item in shopItems)
         {
-            item.gameObject.transform.Find("Border").gameObject.SetActive(false); // Remove highlight
+            item.gameObject.transform.Find("Border").gameObject.SetActive(false);
+            item.GetComponent<Button>().interactable = true;
         }
 
         luggageAdditions.Clear();
@@ -98,38 +101,49 @@ public class ShopManager : MonoBehaviour
         backButton.SetActive(true);
         moneyChangesUI.SetActive(false); //Turning off money UI
         moneyChanges = 0;
-
+        Debug.Log("Rejecting 1");
         // Resetting addition lists
-        foreach (InventoryItem item in luggageAdditions)
+        foreach (InventoryItem item in luggageAdditions.ToList())
         {
             item.gameObject.transform.Find("Border").gameObject.SetActive(false); // Remove highlight
             transferItem(item);
             luggageAdditions.Remove(item);
             Debug.Log(item);
         }
-        foreach (InventoryItem item in shopAdditions)
+        Debug.Log("Rejecting 2");
+        foreach (InventoryItem item in shopAdditions.ToList())
         {
+            Debug.Log("Rejecting 2.1");
             item.gameObject.transform.Find("Border").gameObject.SetActive(false); // Remove highlight
+            Debug.Log("Rejecting 2.2");
             transferItem(item);
+            Debug.Log("Rejecting 2.3");
             shopAdditions.Remove(item);
+            Debug.Log("Rejecting 2.4");
             Debug.Log(item);
+            Debug.Log("Rejecting 2.5");
         }
+        Debug.Log("Rejecting 3");
 
         foreach (InventoryItem item in shopItems) {
             item.gameObject.transform.Find("Border").gameObject.SetActive(false); // Remove highlight
+            item.GetComponent<Button>().interactable = true;
         }
+        Debug.Log("Rejecting 4");
         foreach (InventoryItem item in luggageItems)
         {
             item.gameObject.transform.Find("Border").gameObject.SetActive(false); // Remove highlight
+            item.GetComponent<Button>().interactable = true;
         }
-
+        Debug.Log("Rejecting 5");
         luggageAdditions.Clear();
         shopAdditions.Clear();
-
+        Debug.Log("Rejecting 6");
         moneyChangesUI.SetActive(false);
         leftArrow.SetActive(false);
         rightArrow.SetActive(false);
         moneyChanges = 0;
+        Debug.Log("Rejecting Final!");
     }
 
     public void StorageChecker() {
@@ -151,12 +165,13 @@ public class ShopManager : MonoBehaviour
             foreach (InventoryItem item1 in shopItems) 
             {
                 if (item1.empty && !doneFlag) {
+                    item1.GetComponent<Image>().sprite = item.image;
+                    item1.image = item.image;
                     item1.itemName = item.itemName;
                     item1.location = "Shop";
                     item1.value = item.value;
                     item1.type = item.type;
                     item1.empty = false;
-                    item1.GetComponent<Image>().sprite = item.image;
 
                     moneyChanges += item.value;
                     //Highlight
@@ -165,6 +180,7 @@ public class ShopManager : MonoBehaviour
                     returnedItem = item1;
                     item.ResetItem();
                     doneFlag = true;
+                    item1.GetComponent<Button>().interactable = false;
                 }
             }
         }else if(item.location == "Shop") {
@@ -173,12 +189,14 @@ public class ShopManager : MonoBehaviour
             {
                 if (item1.empty && !doneFlag)
                 {
+                    item1.GetComponent<Image>().sprite = item.image;
+                    item1.image = item.image;
                     item1.itemName = item.itemName;
                     item1.location = "Luggage";
                     item1.value = item.value;
                     item1.type = item.type;
                     item1.empty = false;
-                    item1.GetComponent<Image>().sprite = item.image;
+                    
 
                     moneyChanges -= item.value;
                     //Highlight
@@ -187,6 +205,7 @@ public class ShopManager : MonoBehaviour
                     returnedItem = item1;
                     item.ResetItem();
                     doneFlag = true;
+                    item1.GetComponent<Button>().interactable = false;
                 }
             }
         }

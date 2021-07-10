@@ -154,7 +154,7 @@ public partial class GameManager : MonoBehaviour
 
     private void GoToCurrentCity()
     {
-        LevelManager.StartLevel("StartingScene-Pfaffenthal");
+        LevelManager.StartLevel("Pfaffenthal");
     }
 
     private void DrawCapitals()
@@ -267,7 +267,7 @@ public partial class GameManager : MonoBehaviour
             {
                 //map.ZoomTo(0f, 1.5f);
             });
-            map.ZoomTo(0f, 4f).Then(() => LevelManager.StartLevel("StartingScene-Pfaffenthal"));
+            map.ZoomTo(0f, 4f).Then(() => LevelManager.StartLevel("Pfaffenthal"));
         });
     }
 

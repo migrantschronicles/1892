@@ -10,7 +10,7 @@ public interface INavigationMarker
 
     void DiscoverLeg(string legKey, IEnumerable<Vector2> coordinates);
 
-    void DiscoverLegCustom(IEnumerable<Vector2> coordinates);
+    void DiscoverLegCustom(IEnumerable<Vector2> coordinates, int duration);
 
     void TravelLeg(string legKey, IEnumerable<Vector2> coordinates, TransportationType transportation);
 

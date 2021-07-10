@@ -268,8 +268,8 @@ public partial class GameManager : MonoBehaviour
         var canvasWidth = UICanvas.gameObject.GetComponent<RectTransform>().rect.width;
         var canvasHeight = UICanvas.gameObject.GetComponent<RectTransform>().rect.height;
 
-        activeDiscoverPanel.transform.position = new Vector3((canvasWidth - width) / 2, (canvasHeight - height) / 2, 0);
         activeDiscoverPanel.transform.SetParent(UICanvas.transform);
+        activeDiscoverPanel.transform.localPosition = Vector3.zero;
     }
 
     private void CloseDiscoveryPanel()

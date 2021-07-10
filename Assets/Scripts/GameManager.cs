@@ -14,7 +14,7 @@ public partial class GameManager : MonoBehaviour
     public static ICityMarker CityManager;
     public static IGlobeDesigner GlobeDesigner;
 
-    private static WorldMapGlobe map;
+    public static WorldMapGlobe map;
     private static StateManager stateManager;
 
     public Button CenterButton;

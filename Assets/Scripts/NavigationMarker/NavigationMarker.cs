@@ -47,16 +47,16 @@ public class NavigationMarker : INavigationMarker
         Navigate(coordinates.First(), coordinates.Last(), 3, 35);
     }
 
-    public void DiscoverLegCustom(IEnumerable<Vector2> coordinates)
+    public void DiscoverLegCustom(IEnumerable<Vector2> coordinates, int duration)
     {
         if (isNavigating) return;
 
         isNavigating = true;
 
-        var marker = map.AddLineCustom(coordinates.ToArray(), MarkLineColor, MarkLineWidth, 3);
+        var marker = map.AddLineCustom(coordinates.ToArray(), MarkLineColor, MarkLineWidth, duration);
         marker.OnLineDrawingEnd += (e) => DiscoverCompleted?.Invoke();
 
-        Navigate(coordinates.First(), coordinates.Last(), 3, 35);
+        Navigate(coordinates.First(), coordinates.Last(), duration, 35);
     }
 
     public void TravelCustomLeg(string legKey, IEnumerable<Vector2> coordinates, CustomTransportation transportation)

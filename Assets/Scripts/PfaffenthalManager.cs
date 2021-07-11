@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CityManager : MonoBehaviour
+public class PfaffenthalManager : MonoBehaviour
 {
     public Canvas UI;
     public Button GlobeButton;
@@ -12,24 +10,28 @@ public class CityManager : MonoBehaviour
     public Button StartButton;
     public Button KatrinTalkButton;
     public Button JhangTalkButton;
-    public RawImage StartPopup;
+    public GameObject StartPopup;
 
-    public RectTransform KatrinDialog;
-    public RectTransform KatrinDialog1;
-    public RectTransform KatrinDialog2;
+    public GameObject KatrinDialog;
+    public GameObject KatrinDialog1;
+    public GameObject KatrinDialog2;
     public Button KatrinDialog1Button;
     public Button KatrinDialog1EndButton;
     public Button KatrinDialog2Button;
     public Button KatrinDialog2EndButton;
 
-    public RectTransform JhangDialog;
-    public RectTransform JhangDialog1;
+    public GameObject JhangDialog;
+    public GameObject JhangDialog1;
     public Button JhangDialog1Button;
     public Button JhangDialog1EndButton;
 
-    public RectTransform Family;
-    public RectTransform Katrin;
-    public RectTransform Jhang;
+    public GameObject Mother;
+    public GameObject Boy;
+    public GameObject Girl;
+
+    public GameObject NPCPanel;
+
+    public GameObject Blur;
 
     private TimeSpan buttonAnimationTime;
     private const string startButtonText = "click to start";
@@ -59,6 +61,12 @@ public class CityManager : MonoBehaviour
 
         JhangDialog1Button.onClick.AddListener(TalkToJhang1);
         JhangDialog1EndButton.onClick.AddListener(EndJhangDialog1);
+
+        KatrinDialog.SetActive(false);
+        KatrinDialog1.SetActive(false);
+        KatrinDialog2.SetActive(false);
+        JhangDialog.SetActive(false);
+        JhangDialog1.SetActive(false);
     }
 
     private void GoToGlobe()
@@ -69,31 +77,31 @@ public class CityManager : MonoBehaviour
     private void TalkToKatrin()
     {
         HideAll();
-        KatrinDialog.SetParent(UI.transform);
+        KatrinDialog.SetActive(true);
     }
 
     private void TalkToKatrin1()
     {
-        KatrinDialog.SetParent(null);
-        KatrinDialog1.SetParent(UI.transform);
+        KatrinDialog.SetActive(false);
+        KatrinDialog1.SetActive(true);
     }
 
     private void TalkToKatrin2()
     {
-        KatrinDialog.SetParent(null);
-        KatrinDialog2.SetParent(UI.transform);
+        KatrinDialog.SetActive(false);
+        KatrinDialog2.SetActive(true);
     }
 
     private void EndKatrinDialog1()
     {
-        KatrinDialog1.SetParent(null);
+        KatrinDialog1.SetActive(false);
         UnhideAll();
     }
 
     private void EndKatrinDialog2()
     {
-        KatrinDialog2.SetParent(null);
-        Katrin.GetComponentInChildren<Button>().transform.SetParent(null);
+        KatrinDialog2.SetActive(false);
+        NPCPanel.transform.Find("KatrinButton").gameObject.SetActive(false);
         UnhideAll();
 
         spokeToKatrin = true;
@@ -102,19 +110,19 @@ public class CityManager : MonoBehaviour
     private void TalkToJhang()
     {
         HideAll();
-        JhangDialog.SetParent(UI.transform);
+        JhangDialog.SetActive(true);
     }
 
     private void TalkToJhang1()
     {
-        JhangDialog.SetParent(null);
-        JhangDialog1.SetParent(UI.transform);
+        JhangDialog.SetActive(false);
+        JhangDialog1.SetActive(true);
     }
 
     private void EndJhangDialog1()
     {
-        JhangDialog1.SetParent(null);
-        Jhang.GetComponentInChildren<Button>().transform.SetParent(null);
+        JhangDialog1.SetActive(false);
+        NPCPanel.transform.Find("JhangButton").gameObject.SetActive(false);
         UnhideAll();
 
         spokeToJhang = true;
@@ -125,16 +133,18 @@ public class CityManager : MonoBehaviour
 
     private void HideAll()
     {
-        Family.transform.SetParent(null);
-        Katrin.transform.SetParent(null);
-        Jhang.transform.SetParent(null);
+        Mother.SetActive(false);
+        Boy.SetActive(false);
+        Girl.SetActive(false);
+        NPCPanel.SetActive(false);
     }
 
     private void UnhideAll()
     {
-        Family.transform.SetParent(UI.transform);
-        Katrin.transform.SetParent(UI.transform);
-        Jhang.transform.SetParent(UI.transform);
+        Mother.SetActive(true);
+        Boy.SetActive(true);
+        Girl.SetActive(true);
+        NPCPanel.SetActive(true);
     }
 
     void Update()
@@ -148,19 +158,20 @@ public class CityManager : MonoBehaviour
         StateManager.CurrentState.FreezeTime = false;
         isInitialized = true;
 
-        StartPopup.transform.SetParent(null);
-        Katrin.SetParent(UI.transform);
-        Jhang.SetParent(UI.transform);
+        StartPopup.SetActive(false);
+        NPCPanel.SetActive(true);
 
-        if(spokeToKatrin)
+        if (spokeToKatrin)
         {
-            Katrin.GetComponentInChildren<Button>().transform.SetParent(null);
+            NPCPanel.transform.Find("KatrinButton").gameObject.SetActive(false);
         }
 
         if(spokeToJhang)
         {
-            Jhang.GetComponentInChildren<Button>().transform.SetParent(null);
+            NPCPanel.transform.Find("JhangButton").gameObject.SetActive(false);
         }
+
+        Blur.SetActive(false);
     }
 
     private void AnimateStartButton()

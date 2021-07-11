@@ -6,16 +6,12 @@ using UnityEngine.UI;
 
 public class ShopManager : MonoBehaviour
 {
+    public List<InventorySlot> shopSlots = new List<InventorySlot>(12);
+    public List<InventorySlot> luggageSlots = new List<InventorySlot>(12);
 
-    public List<InventoryItem> shopItems = new List<InventoryItem>(12);
-    public List<InventoryItem> luggageItems = new List<InventoryItem>(12);
-
-    public float totalMoney = 50;
-
-
-    public float moneyChanges = 0;
-    public List<InventoryItem> shopAdditions;
-    public List<InventoryItem> luggageAdditions;
+    public int moneyChanges = 0;
+    public List<InventorySlot> shopAdditions;
+    public List<InventorySlot> luggageAdditions;
 
     [Space(20)]
     public GameObject moneyChangesUI;
@@ -25,36 +21,49 @@ public class ShopManager : MonoBehaviour
     public GameObject rightArrow;
     public GameObject backButton;
 
-
     // Start is called before the first frame update
     void Start()
     {
-        foreach (InventoryItem item in luggageItems) {
-            item.location = "Luggage";
-        }
-        foreach (InventoryItem item in shopItems)
+        foreach (var id in StateManager.CurrentState.AvailableItemIds) 
         {
-            item.location = "Shop";
+            foreach(var slot in shopSlots)
+            {
+                if(slot.isEmpty)
+                {
+                    slot.isEmpty = false;
+                    slot.location = "Luggage";
+                    slot.value = InventoryData.InventoryById[id].Price;
+                    slot.IconKey = InventoryData.InventoryById[id].Name;
+                }
+            }
+        }
+
+        foreach (var slot in shopSlots)
+        {
+            slot.isEmpty = false;
+            slot.location = "Shop";
+            slot.value = InventoryData.InventoryById[10].Price;
+            slot.IconKey = InventoryData.InventoryById[10].Name;
+            break;
         }
     }
 
     private void Update()
     {
-        moneyText.GetComponent<Text>().text = totalMoney.ToString();
-
         if (luggageAdditions.Count == 0 && shopAdditions.Count == 0)
+        {
             moneyChanges = 0;
-
+        }
     }
 
 
-    public void PickItem(InventoryItem item) {
-        if (!item.empty)
+    public void PickItem(InventorySlot item) {
+        if (!item.isEmpty)
         {
             backButton.SetActive(false);
             // Show money changes
             moneyChangesUI.SetActive(true);
-            InventoryItem newItem = transferItem(item);
+            InventorySlot newItem = transferItem(item);
 
             // Handle temporary placements
             if (newItem.location == "Shop")
@@ -71,17 +80,17 @@ public class ShopManager : MonoBehaviour
     public void AcceptChanges() {
 
         // Updating the money
-        totalMoney += moneyChanges;
+        StateManager.CurrentState.AvailableMoney += moneyChanges;
         moneyChanges = 0;
         moneyChangesUI.SetActive(false); 
 
         // Resetting addition lists
-        foreach (InventoryItem item in luggageItems) 
+        foreach (InventorySlot item in luggageSlots) 
         {
             item.gameObject.transform.Find("Border").gameObject.SetActive(false); 
             item.GetComponent<Button>().interactable = true;
         }
-        foreach (InventoryItem item in shopItems)
+        foreach (InventorySlot item in shopSlots)
         {
             item.gameObject.transform.Find("Border").gameObject.SetActive(false);
             item.GetComponent<Button>().interactable = true;
@@ -103,7 +112,7 @@ public class ShopManager : MonoBehaviour
         moneyChanges = 0;
         Debug.Log("Rejecting 1");
         // Resetting addition lists
-        foreach (InventoryItem item in luggageAdditions.ToList())
+        foreach (InventorySlot item in luggageAdditions.ToList())
         {
             item.gameObject.transform.Find("Border").gameObject.SetActive(false); // Remove highlight
             transferItem(item);
@@ -111,7 +120,7 @@ public class ShopManager : MonoBehaviour
             Debug.Log(item);
         }
         Debug.Log("Rejecting 2");
-        foreach (InventoryItem item in shopAdditions.ToList())
+        foreach (InventorySlot item in shopAdditions.ToList())
         {
             Debug.Log("Rejecting 2.1");
             item.gameObject.transform.Find("Border").gameObject.SetActive(false); // Remove highlight
@@ -125,12 +134,12 @@ public class ShopManager : MonoBehaviour
         }
         Debug.Log("Rejecting 3");
 
-        foreach (InventoryItem item in shopItems) {
+        foreach (InventorySlot item in shopSlots) {
             item.gameObject.transform.Find("Border").gameObject.SetActive(false); // Remove highlight
             item.GetComponent<Button>().interactable = true;
         }
         Debug.Log("Rejecting 4");
-        foreach (InventoryItem item in luggageItems)
+        foreach (InventorySlot item in luggageSlots)
         {
             item.gameObject.transform.Find("Border").gameObject.SetActive(false); // Remove highlight
             item.GetComponent<Button>().interactable = true;
@@ -147,31 +156,31 @@ public class ShopManager : MonoBehaviour
     }
 
     public void StorageChecker() {
-        foreach (InventoryItem item in luggageItems) {
+        foreach (InventorySlot item in luggageSlots) {
             item.Checker();
         }
-        foreach (InventoryItem item in shopItems) {
+        foreach (InventorySlot item in shopSlots) {
             item.Checker();
         }
     }
 
-    public InventoryItem transferItem(InventoryItem item) 
+    public InventorySlot transferItem(InventorySlot item) 
     {
-        InventoryItem returnedItem = null;
+        InventorySlot returnedItem = null;
         item.gameObject.transform.Find("Border").gameObject.SetActive(false);
         // Luggage to Shop
         if (item.location == "Luggage") {
             bool doneFlag = false;
-            foreach (InventoryItem item1 in shopItems) 
+            foreach (InventorySlot item1 in shopSlots) 
             {
-                if (item1.empty && !doneFlag) {
-                    item1.GetComponent<Image>().sprite = item.image;
-                    item1.image = item.image;
+                if (item1.isEmpty && !doneFlag) {
+                    item1.GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/{item.IconKey}");
+                    item1.IconKey = item.IconKey;
                     item1.itemName = item.itemName;
                     item1.location = "Shop";
                     item1.value = item.value;
                     item1.type = item.type;
-                    item1.empty = false;
+                    item1.isEmpty = false;
 
                     moneyChanges += item.value;
                     //Highlight
@@ -185,17 +194,17 @@ public class ShopManager : MonoBehaviour
             }
         }else if(item.location == "Shop") {
             bool doneFlag = false;
-            foreach (InventoryItem item1 in luggageItems)
+            foreach (InventorySlot item1 in luggageSlots)
             {
-                if (item1.empty && !doneFlag)
+                if (item1.isEmpty && !doneFlag)
                 {
-                    item1.GetComponent<Image>().sprite = item.image;
-                    item1.image = item.image;
+                    item1.GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/{item.IconKey}");
+                    item1.IconKey = item.IconKey;
                     item1.itemName = item.itemName;
                     item1.location = "Luggage";
                     item1.value = item.value;
                     item1.type = item.type;
-                    item1.empty = false;
+                    item1.isEmpty = false;
                     
 
                     moneyChanges -= item.value;

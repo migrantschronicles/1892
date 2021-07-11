@@ -16,7 +16,7 @@ public static class LegData
             {
                 Type = TransportationType.Foot
             },
-            Distance = 300
+            Distance = 500
         },
         new Leg
         {
@@ -26,7 +26,7 @@ public static class LegData
             {
                 Type = TransportationType.StageCoach
             },
-            Distance = 300
+            Distance = 500
         },
         new Leg
         {
@@ -36,7 +36,7 @@ public static class LegData
             {
                 Type = TransportationType.Foot
             },
-            Distance = 300
+            Distance = 500
         },
         new Leg
         {
@@ -46,7 +46,7 @@ public static class LegData
             {
                 Type = TransportationType.Train
             },
-            Distance = 250
+            Distance = 500
         },
         new Leg
         {

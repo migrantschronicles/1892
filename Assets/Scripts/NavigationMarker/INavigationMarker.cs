@@ -8,6 +8,8 @@ public interface INavigationMarker
 
     Action DiscoverCompleted { get; set; }
 
+    Action DiscoverStarted { get; set; }
+
     void DiscoverLeg(string legKey, IEnumerable<Vector2> coordinates);
 
     void DiscoverLegCustom(IEnumerable<Vector2> coordinates, int duration);

@@ -5,17 +5,16 @@ using UnityEngine.UI;
 
 public class ShopInteractives : MonoBehaviour
 {
-
     public GameObject shopButton;
     public GameObject childrenButton;
     public GameObject backButton;
-    public GameObject blurryBG;
     
     public GameObject shopFrame;
-    public GameObject childFrame;
 
     public GameObject leftArrow;
     public GameObject rightArrow;
+
+    public GameObject Blur;
 
     // Start is called before the first frame update
     void Start()
@@ -34,15 +33,11 @@ public class ShopInteractives : MonoBehaviour
         shopButton.SetActive(true);
         childrenButton.SetActive(true);
         backButton.SetActive(false);
-        blurryBG.SetActive(false);
+        Blur.SetActive(false);
 
         shopFrame.SetActive(false);
         leftArrow.SetActive(false);
-        rightArrow.SetActive(false);
-
-        childFrame.SetActive(false);
-
-        
+        rightArrow.SetActive(false);    
     }
 
     public void ShopClick() 
@@ -50,10 +45,9 @@ public class ShopInteractives : MonoBehaviour
         shopButton.SetActive(false);
         childrenButton.SetActive(false);
         backButton.SetActive(true);
-        blurryBG.SetActive(true);
+        Blur.SetActive(true);
 
         shopFrame.SetActive(true);
-
     }
 
     public void ChildClick()
@@ -61,19 +55,15 @@ public class ShopInteractives : MonoBehaviour
         shopButton.SetActive(false);
         childrenButton.SetActive(false);
         backButton.SetActive(true);
-        blurryBG.SetActive(true);
-
-        childFrame.SetActive(true);
-
     }
 
-    public void InventoryItemClick(InventoryItem item) 
+    public void InventoryItemClick(InventorySlot item) 
     {
-        if (!item.empty && item.location == "Luggage") 
+        if (!item.isEmpty && item.location == "Luggage") 
         {
             leftArrow.SetActive(true);
         }
-        else if (!item.empty && item.location == "Shop")
+        else if (!item.isEmpty && item.location == "Shop")
         {
             rightArrow.SetActive(true);
         }

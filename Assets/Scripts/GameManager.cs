@@ -37,12 +37,17 @@ public partial class GameManager : MonoBehaviour
     private static bool isInitialized = false;
     private static GameObject instance;
 
+    public Text NewRoute;
+    public static GameManager currentGameManager;
+
     public GameManager()
     {
         if(stateManager == null)
         {
             stateManager = new StateManager();
         }
+
+        currentGameManager = this;
     }
 
     void Awake()
@@ -143,6 +148,7 @@ public partial class GameManager : MonoBehaviour
         map.OnCityClick += OnCityClicked;
 
         NavigationMarker.TravelCompleted += OnTravelCompleted;
+        NavigationMarker.DiscoverStarted += OnDiscoverStarted;
         NavigationMarker.DiscoverCompleted += OnDiscoverCompleted;
 
         AddCustomTransportationButton.onClick.AddListener(OpenCustomTransportationForm);
@@ -170,6 +176,8 @@ public partial class GameManager : MonoBehaviour
 
             if(leg != null && !NavigationMarker.IsLegMarked(leg.Key))
             {
+                NewRoute.GetComponent<Text>().enabled = true;
+
                 NavigationMarker.DiscoverLeg(keyValue.Key, keyValue.Value);
 
                 CityManager.DrawLabel(leg.Origin);
@@ -252,10 +260,21 @@ public partial class GameManager : MonoBehaviour
     private void OnTravelCompleted()
     {
         DestroyTransportationIllustration();
+
+        if(StateManager.CurrentState.CurrentCityName == CityData.Luxembourg)
+        {
+            LevelManager.StartLevel("Luxembourg");
+        }
+    }
+
+    private void OnDiscoverStarted()
+    {
+        NewRoute.GetComponent<Text>().enabled = true;
     }
 
     private void OnDiscoverCompleted()
     {
+        NewRoute.GetComponent<Text>().enabled = false;
     }
 
     private void Navigate()

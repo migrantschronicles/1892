@@ -59,11 +59,11 @@ public class ShopInteractives : MonoBehaviour
 
     public void InventoryItemClick(InventorySlot item) 
     {
-        if (!item.isEmpty && item.location == "Luggage") 
+        if (!item.IsEmpty && item.Location == "Luggage") 
         {
             leftArrow.SetActive(true);
         }
-        else if (!item.isEmpty && item.location == "Shop")
+        else if (!item.IsEmpty && item.Location == "Shop")
         {
             rightArrow.SetActive(true);
         }

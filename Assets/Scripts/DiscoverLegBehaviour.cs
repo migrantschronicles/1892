@@ -1,8 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using WPM;
 
 public class DiscoverLegBehaviour : MonoBehaviour
 {
@@ -26,25 +26,8 @@ public class DiscoverLegBehaviour : MonoBehaviour
     {
         DiscoverButton.onClick.AddListener(DiscoverLeg);
 
-        Origin.options = new List<Dropdown.OptionData>() 
-        {
-            new Dropdown.OptionData(CityData.Luxembourg),
-            new Dropdown.OptionData(CityData.Brussels),
-            new Dropdown.OptionData(CityData.Paris),
-            new Dropdown.OptionData(CityData.Rotterdam),
-            new Dropdown.OptionData(CityData.Havre),
-            new Dropdown.OptionData(CityData.Antwerp)
-        };
-
-        Destination.options = new List<Dropdown.OptionData>()
-        {
-            new Dropdown.OptionData(CityData.Luxembourg),
-            new Dropdown.OptionData(CityData.Brussels),
-            new Dropdown.OptionData(CityData.Paris),
-            new Dropdown.OptionData(CityData.Rotterdam),
-            new Dropdown.OptionData(CityData.Havre),
-            new Dropdown.OptionData(CityData.Antwerp)
-        };
+        Origin.options = GameManager.map.cities.Where(c => c.cityClass == CITY_CLASS.COUNTRY_CAPITAL).Select(c => new Dropdown.OptionData(c.name)).ToList();
+        Destination.options = GameManager.map.cities.Where(c => c.cityClass == CITY_CLASS.COUNTRY_CAPITAL).Select(c => new Dropdown.OptionData(c.name)).ToList();
     }
 
     private void DiscoverLeg()
@@ -67,7 +50,7 @@ public class DiscoverLegBehaviour : MonoBehaviour
 
         var coordinates = new List<Vector2>();
 
-        coordinates.Add(CityData.LatLonByCity[Origin.options[Origin.value].text]);
+        coordinates.Add(GameManager.map.cities.First(c => c.name == Origin.options[Origin.value].text).latlon);
 
         if (isLatLon1)
         {
@@ -84,7 +67,7 @@ public class DiscoverLegBehaviour : MonoBehaviour
             coordinates.Add(new Vector2((float)lat3, (float)lon3));
         }
 
-        coordinates.Add(CityData.LatLonByCity[Destination.options[Destination.value].text]);
+        coordinates.Add(GameManager.map.cities.First(c => c.name == Destination.options[Destination.value].text).latlon);
 
         var duration = 5;
 

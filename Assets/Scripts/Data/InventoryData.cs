@@ -71,15 +71,15 @@ public static class InventoryData
                 Volume = 1
             }
         },
-        //{
-        //    6,
-        //    new InventoryModel
-        //    {
-        //        Name = FoodKey,
-        //        Price = 5,
-        //        Volume = 1
-        //    }
-        //},
+        {
+            6,
+            new InventoryModel
+            {
+                Name = FoodKey,
+                Price = 5,
+                Volume = 1
+            }
+        },
         {
             7,
             new InventoryModel
@@ -89,15 +89,15 @@ public static class InventoryData
                 Volume = 1
             }
         },
-        //{
-        //    8,
-        //    new InventoryModel
-        //    {
-        //        Name = MoneyKey,
-        //        Price = 5,
-        //        Volume = 1
-        //    }
-        //},
+        {
+            8,
+            new InventoryModel
+            {
+                Name = MoneyKey,
+                Price = 5,
+                Volume = 1
+            }
+        },
         {
             9,
             new InventoryModel

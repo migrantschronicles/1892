@@ -42,7 +42,8 @@ public class CityMarker : ICityMarker
     {
         if (!labels.Any(l => l.text == name))
         {
-            var labelPosition = Conversion.GetSpherePointFromLatLon(CityData.LatLonByCity[name].x, CityData.LatLonByCity[name].y) + LabelOffset;
+            var latLon = CityData.LatLonByCity.ContainsKey(name) ? CityData.LatLonByCity[name] : map.cities.First(c => c.name == name).latlon;
+            var labelPosition = Conversion.GetSpherePointFromLatLon(latLon.x, latLon.y) + LabelOffset;
             var label = map.AddTextCustom(name, labelPosition, LabelColor, GetCurrentScale(), fontStyle: FontStyle.Bold);
 
             labels.Add(label);

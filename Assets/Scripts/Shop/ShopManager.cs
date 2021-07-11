@@ -26,23 +26,24 @@ public class ShopManager : MonoBehaviour
     {
         foreach (var id in StateManager.CurrentState.AvailableItemIds) 
         {
-            foreach(var slot in shopSlots)
+            foreach(var slot in luggageSlots)
             {
-                if(slot.isEmpty)
+                if(slot.IsEmpty)
                 {
-                    slot.isEmpty = false;
-                    slot.location = "Luggage";
-                    slot.value = InventoryData.InventoryById[id].Price;
+                    slot.IsEmpty = false;
+                    slot.Location = "Luggage";
+                    slot.Value = InventoryData.InventoryById[id].Price;
                     slot.IconKey = InventoryData.InventoryById[id].Name;
+                    break;
                 }
             }
         }
 
         foreach (var slot in shopSlots)
         {
-            slot.isEmpty = false;
-            slot.location = "Shop";
-            slot.value = InventoryData.InventoryById[10].Price;
+            slot.IsEmpty = false;
+            slot.Location = "Shop";
+            slot.Value = InventoryData.InventoryById[10].Price;
             slot.IconKey = InventoryData.InventoryById[10].Name;
             break;
         }
@@ -58,7 +59,7 @@ public class ShopManager : MonoBehaviour
 
 
     public void PickItem(InventorySlot item) {
-        if (!item.isEmpty)
+        if (!item.IsEmpty)
         {
             backButton.SetActive(false);
             // Show money changes
@@ -66,7 +67,7 @@ public class ShopManager : MonoBehaviour
             InventorySlot newItem = transferItem(item);
 
             // Handle temporary placements
-            if (newItem.location == "Shop")
+            if (newItem.Location == "Shop")
             {
                 luggageAdditions.Add(newItem);
             }
@@ -169,20 +170,20 @@ public class ShopManager : MonoBehaviour
         InventorySlot returnedItem = null;
         item.gameObject.transform.Find("Border").gameObject.SetActive(false);
         // Luggage to Shop
-        if (item.location == "Luggage") {
+        if (item.Location == "Luggage") {
             bool doneFlag = false;
             foreach (InventorySlot item1 in shopSlots) 
             {
-                if (item1.isEmpty && !doneFlag) {
+                if (item1.IsEmpty && !doneFlag) {
                     item1.GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/{item.IconKey}");
                     item1.IconKey = item.IconKey;
-                    item1.itemName = item.itemName;
-                    item1.location = "Shop";
-                    item1.value = item.value;
-                    item1.type = item.type;
-                    item1.isEmpty = false;
+                    item1.ItemName = item.ItemName;
+                    item1.Location = "Shop";
+                    item1.Value = item.Value;
+                    item1.Type = item.Type;
+                    item1.IsEmpty = false;
 
-                    moneyChanges += item.value;
+                    moneyChanges += item.Value;
                     //Highlight
                     item1.gameObject.transform.Find("Border").gameObject.SetActive(true);
 
@@ -192,22 +193,22 @@ public class ShopManager : MonoBehaviour
                     item1.GetComponent<Button>().interactable = false;
                 }
             }
-        }else if(item.location == "Shop") {
+        }else if(item.Location == "Shop") {
             bool doneFlag = false;
             foreach (InventorySlot item1 in luggageSlots)
             {
-                if (item1.isEmpty && !doneFlag)
+                if (item1.IsEmpty && !doneFlag)
                 {
                     item1.GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/{item.IconKey}");
                     item1.IconKey = item.IconKey;
-                    item1.itemName = item.itemName;
-                    item1.location = "Luggage";
-                    item1.value = item.value;
-                    item1.type = item.type;
-                    item1.isEmpty = false;
+                    item1.ItemName = item.ItemName;
+                    item1.Location = "Luggage";
+                    item1.Value = item.Value;
+                    item1.Type = item.Type;
+                    item1.IsEmpty = false;
                     
 
-                    moneyChanges -= item.value;
+                    moneyChanges -= item.Value;
                     //Highlight
                     item1.gameObject.transform.Find("Border").gameObject.SetActive(true);
                     //luggageAdditions.Add(item1);

@@ -16,17 +16,7 @@ public class ShopInteractives : MonoBehaviour
 
     public GameObject Blur;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public Button GoToGlobe;
 
     public void BackClick()
     {
@@ -67,5 +57,10 @@ public class ShopInteractives : MonoBehaviour
         {
             rightArrow.SetActive(true);
         }
+    }
+
+    public void GoToGlobeScene()
+    {
+        LevelManager.StartLevel("GlobeScene");
     }
 }

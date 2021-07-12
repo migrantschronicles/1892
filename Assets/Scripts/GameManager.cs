@@ -160,7 +160,14 @@ public partial class GameManager : MonoBehaviour
 
     private void GoToCurrentCity()
     {
-        LevelManager.StartLevel("Pfaffenthal");
+        if (StateManager.CurrentState.CurrentCityName == CityData.Pfaffenthal)
+        {
+            LevelManager.StartLevel("Pfaffenthal");
+        }
+        else if(StateManager.CurrentState.CurrentCityName == CityData.Luxembourg)
+        {
+            LevelManager.StartLevel("Luxembourg");
+        }
     }
 
     private void DrawCapitals()
@@ -217,6 +224,8 @@ public partial class GameManager : MonoBehaviour
             {
                 StateManager.CurrentState.PreviousCityName = origin.name;
                 StateManager.CurrentState.CurrentCityName = destination.name;
+                StateManager.CurrentState.AvailableMoney -= TransportationData.TransportationCostByType[type];
+
                 map.DrawCities();
 
                 DisplayTransportationIllustration(type);

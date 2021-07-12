@@ -71,6 +71,11 @@ public partial class GameManager : MonoBehaviour
 
                     button.onClick.AddListener(delegate
                     {
+                        if(StateManager.CurrentState.AvailableMoney < TransportationData.TransportationCostByType[type])
+                        {
+                            return;
+                        }
+
                         foreach (var button in transportationButtonsToDestroy)
                         {
                             Destroy(button.gameObject);

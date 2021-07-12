@@ -7,7 +7,7 @@ public class PfaffenthalManager : MonoBehaviour
     public Canvas UI;
     public Button GlobeButton;
 
-    public Button StartButton;
+    public GameObject StartButton;
     public Button KatrinTalkButton;
     public Button JhangTalkButton;
     public GameObject StartPopup;
@@ -16,7 +16,6 @@ public class PfaffenthalManager : MonoBehaviour
     public GameObject KatrinDialog1;
     public GameObject KatrinDialog2;
     public Button KatrinDialog1Button;
-    public Button KatrinDialog1EndButton;
     public Button KatrinDialog2Button;
     public Button KatrinDialog2EndButton;
 
@@ -34,7 +33,6 @@ public class PfaffenthalManager : MonoBehaviour
     public GameObject Blur;
 
     private TimeSpan buttonAnimationTime;
-    private const string startButtonText = "click to start";
 
     private static bool spokeToKatrin;
     private static bool spokeToJhang;
@@ -47,14 +45,13 @@ public class PfaffenthalManager : MonoBehaviour
             StartGame();
         }
 
-        StartButton.onClick.AddListener(StartGame);
+        StartButton.SetActive(true);
         GlobeButton.onClick.AddListener(GoToGlobe);
 
         KatrinTalkButton.onClick.AddListener(TalkToKatrin);
         JhangTalkButton.onClick.AddListener(TalkToJhang);
 
         KatrinDialog1Button.onClick.AddListener(TalkToKatrin1);
-        KatrinDialog1EndButton.onClick.AddListener(EndKatrinDialog1);
 
         KatrinDialog2Button.onClick.AddListener(TalkToKatrin2);
         KatrinDialog2EndButton.onClick.AddListener(EndKatrinDialog2);
@@ -90,12 +87,6 @@ public class PfaffenthalManager : MonoBehaviour
     {
         KatrinDialog.SetActive(false);
         KatrinDialog2.SetActive(true);
-    }
-
-    private void EndKatrinDialog1()
-    {
-        KatrinDialog1.SetActive(false);
-        UnhideAll();
     }
 
     private void EndKatrinDialog2()
@@ -149,16 +140,15 @@ public class PfaffenthalManager : MonoBehaviour
 
     void Update()
     {
-        AnimateStartButton();
-        AnimateTalkButton();
     }
 
-    private void StartGame()
+    public void StartGame()
     {
         StateManager.CurrentState.FreezeTime = false;
         isInitialized = true;
 
         StartPopup.SetActive(false);
+        StartButton.SetActive(false);
         NPCPanel.SetActive(true);
 
         if (spokeToKatrin)
@@ -174,13 +164,25 @@ public class PfaffenthalManager : MonoBehaviour
         Blur.SetActive(false);
     }
 
+    public void CloseDialogs()
+    {
+        KatrinDialog.SetActive(false);
+        KatrinDialog1.SetActive(false);
+        KatrinDialog2.SetActive(false);
+        JhangDialog.SetActive(false);
+        JhangDialog1.SetActive(false);
+
+        UnhideAll();
+    }
+
+    //obsolete
     private void AnimateStartButton()
     {
         bool isEmpty = string.IsNullOrEmpty(StartButton.GetComponentInChildren<Text>().text);
 
         if (isEmpty && buttonAnimationTime > TimeSpan.FromMilliseconds(350) || !isEmpty && buttonAnimationTime > TimeSpan.FromMilliseconds(800))
         {
-            StartButton.GetComponentInChildren<Text>().text = isEmpty ? startButtonText : null;
+            StartButton.GetComponentInChildren<Text>().text = isEmpty ? "" : null;
             buttonAnimationTime = TimeSpan.Zero;
         }
         else
@@ -189,6 +191,7 @@ public class PfaffenthalManager : MonoBehaviour
         }
     }
 
+    //obsolete
     private void AnimateTalkButton()
     {
         bool isSmall = KatrinTalkButton.GetComponentInChildren<Image>().rectTransform.sizeDelta.x != 70;

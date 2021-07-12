@@ -14,37 +14,13 @@ public class InventorySlot : MonoBehaviour
     //Resources/Inventory/Highlights
     public string IconKey { get; set; }
 
-    public void Update()
-    {
-        if (GetComponent<Image>().sprite == null && !IsEmpty)
-        {
-            Sprite sprite = null;
-
-            if (Location == ItemOriginalLocation)
-            {
-                sprite = Resources.Load<Sprite>($"Inventory/{IconKey}");
-            }
-            else
-            {
-                sprite = Resources.Load<Sprite>($"Inventory/Highlights/{IconKey}");
-            }
-
-            GetComponent<Image>().sprite = sprite;
-        }
-        else if (GetComponent<Image>().sprite != null && IsEmpty) 
-        {
-            GetComponent<Image>().sprite = null;
-            IconKey = null;
-        }
-    }
-
     public void Check()
     {
         IsEmpty = !ItemId.HasValue;
 
         if (IsEmpty)
         {
-            GetComponent<Image>().sprite = null;
+            GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/empty");
         }
         else if (Location == ItemOriginalLocation)
         {
@@ -64,6 +40,6 @@ public class InventorySlot : MonoBehaviour
         Value = 0;
         Location = null;
         ItemOriginalLocation = null;
-        GetComponent<Image>().sprite = null;
+        GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/empty");
     }
 }

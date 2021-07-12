@@ -15,11 +15,26 @@ public class ShopInteractives : MonoBehaviour
     public GameObject rightArrow;
 
     public GameObject Blur;
+    public GameObject StartBlur;
+
+    public GameObject StartPanel;
 
     public Button GoToGlobe;
 
+    public void Start()
+    {
+        StartBlur.SetActive(true);
+        StartPanel.SetActive(true);
+        backButton.SetActive(true);
+        shopButton.SetActive(false);
+        childrenButton.SetActive(false);
+    }
+
     public void BackClick()
     {
+        StartBlur.SetActive(false);
+        StartPanel.SetActive(false);
+
         shopButton.SetActive(true);
         childrenButton.SetActive(true);
         backButton.SetActive(false);

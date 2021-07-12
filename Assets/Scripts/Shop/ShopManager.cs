@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public static class ShopData
 {
-    public static List<int> ShopItemIds = new List<int> { 10, 11, 12 };
+    public static List<int> ShopItemIds = new List<int> { 9,10,11,12 };
 }
 
 public class ShopManager : MonoBehaviour
@@ -60,14 +60,8 @@ public class ShopManager : MonoBehaviour
                 }
             }
         }
-    }
 
-    private void Update()
-    {
-        if (luggageAdditions.Count == 0 && shopAdditions.Count == 0)
-        {
-            moneyChanges = 0;
-        }
+        CheckStorage();
     }
 
     public void PickItem(InventorySlot item) 
@@ -160,14 +154,14 @@ public class ShopManager : MonoBehaviour
 
     public void CheckStorage() 
     {
-        foreach (InventorySlot item in luggageSlots) 
+        foreach (var slot in luggageSlots) 
         {
-            item.Check();
+            slot.Check();
         }
 
-        foreach (InventorySlot item in shopSlots) 
+        foreach (var slot in shopSlots) 
         {
-            item.Check();
+            slot.Check();
         }
     }
 

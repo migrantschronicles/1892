@@ -20,7 +20,7 @@ namespace WPM {
         //custom
         private List<string> newCityNames = new List<string>();
 
-        const float CITY_HIT_PRECISION = 0.001f;
+        const float CITY_HIT_PRECISION = 0.002f;
         const string CITY_ATTRIB_DEFAULT_FILENAME = "citiesAttrib";
 
         #region Internal variables
@@ -223,8 +223,7 @@ namespace WPM {
             bool combineMeshesActive = _combineCityMeshes && Application.isPlaying;
 
             //use fixed scale
-            float scale = 0.003f;//CityScaler.GetScale(this);
-
+            float scale = 0.0015f;//CityScaler.GetScale(this);
             Vector3 cityScale = new Vector3(scale, scale, 1f);
 
             // Draw city marks
@@ -277,11 +276,35 @@ namespace WPM {
 
                     //do not differentiate cities
                     cityObj = Instantiate(citySpotCapitalCountry);
+
+                    cityParent = normalCities;
+
+                    if (city.name == StateManager.CurrentState?.CurrentCityName)
+                    {
+                        scale = 0.002f;
+                        cityScale = new Vector3(scale, scale, 1f);
+                        cityParent = countryCapitals;
+                    }
+                    else if (CityMarker.Labels.Contains(city.name))
+                    {
+                        cityParent = regionCapitals;
+                    }
+
                     if (!combineMeshesActive)
                     {
-                        cityObj.GetComponent<Renderer>().sharedMaterial = citiesCountryCapitalMat;
+                        if (city.name == StateManager.CurrentState?.CurrentCityName)
+                        {
+                            cityObj.GetComponent<Renderer>().sharedMaterial = citiesCountryCapitalMat;
+                        }
+                        else if(CityMarker.Labels.Contains(city.name))
+                        {
+                            cityObj.GetComponent<Renderer>().sharedMaterial = citiesRegionCapitalMat;
+                        }
+                        else
+                        {
+                            cityObj.GetComponent<Renderer>().sharedMaterial = citiesNormalMat;
+                        }
                     }
-                    cityParent = countryCapitals;
 
                     cityObj.layer = layer;
                     cityObj.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;

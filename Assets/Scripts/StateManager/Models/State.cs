@@ -25,4 +25,6 @@ public class State
     public IEnumerable<string> VisitedCityNames { get; set; }
 
     public IEnumerable<int> AvailableItemIds { get; set; }
+
+    public bool FreezeTime { get; set; }
 }

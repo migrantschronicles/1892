@@ -1,33 +1,32 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using WPM;
 
-public class GameManager : MonoBehaviour
+public partial class GameManager : MonoBehaviour
 {
-    private INavigationMarker NavigationMarker;
-    private ITransportationManager TransportationManager;
-    private ICityMarker CityManager;
-    private IGlobeDesigner GlobeDesigner;
+    public static INavigationMarker NavigationMarker;
+    public static ITransportationManager TransportationManager;
+    public static ICityMarker CityManager;
+    public static IGlobeDesigner GlobeDesigner;
 
-    private WorldMapGlobe map;
-    private State state;
+    public static WorldMapGlobe map;
+    private static StateManager stateManager;
 
     public Button CenterButton;
     public Button DiscoverLegButton;
     public Button CapitalsButton;
+    public Button AnimateButton;
+    public Button HideButton;
     public Text CurrentCityText;
 
+    public Button CurrentCityButton;
+
     public Canvas UICanvas;
-    public GameObject TransportationHolder;
-    public List<RawImage> Transportation;
-
-    public GameObject TransportationButtonHolder;
-    public List<Button> TransportationButton;
-
-    public ScrollRect TransportationPopup; 
 
     private Country highlightedCountry;
     private Country previousHighlightedCountry;
@@ -35,19 +34,42 @@ public class GameManager : MonoBehaviour
     private City origin;
     private City destination;
 
+    private static bool isInitialized = false;
+    private static GameObject instance;
+
+    public Text NewRoute;
+    public static GameManager currentGameManager;
+
     public GameManager()
     {
-        state = new State()
+        if(stateManager == null)
         {
-            CurrentCityName = CityData.Luxembourg,
-            AvailableCityNames = new List<string>() { CityData.Luxembourg },
-            VisitedCityNames = new List<string>() { CityData.Luxembourg }
-        };
+            stateManager = new StateManager();
+        }
+
+        currentGameManager = this;
+    }
+
+    void Awake()
+    {
+        DontDestroyOnLoad(this);
     }
 
     void Start()
     {
-        Initialize();
+        if (instance == null)
+        {
+            instance = gameObject;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        if (!isInitialized)
+        {
+            Initialize();
+        }
     }
 
     void Update()
@@ -89,15 +111,18 @@ public class GameManager : MonoBehaviour
         TransportationManager = new TransportationManager();
         GlobeDesigner = new GlobeDesigner(map);
 
-        //CityManager.DrawLabels();
-        CityManager.DrawLabel(CityData.Luxembourg);
+        StateManager.CurrentState.FreezeTime = true;
+        CityManager.DrawLabel(CityData.Pfaffenthal);
 
         GlobeDesigner.AssignTextures();
 
         InitializeMissingCities();
-        Navigate();
         SetCurrentCityText();
         Subscribe();
+        map.DrawCity(CityData.Pfaffenthal);
+        Navigate();
+
+        isInitialized = true;
     }
 
     private void InitializeMissingCities()
@@ -117,10 +142,32 @@ public class GameManager : MonoBehaviour
         CenterButton.onClick.AddListener(NavigateCurrentCity);
         DiscoverLegButton.onClick.AddListener(DiscoverLeg);
         CapitalsButton.onClick.AddListener(DrawCapitals);
+        AnimateButton.onClick.AddListener(ShowNextTransportationIllustration);
+        HideButton.onClick.AddListener(DestroyTransportationIllustration);
+        CurrentCityButton.onClick.AddListener(GoToCurrentCity);
         map.OnCityClick += OnCityClicked;
 
         NavigationMarker.TravelCompleted += OnTravelCompleted;
+        NavigationMarker.DiscoverStarted += OnDiscoverStarted;
         NavigationMarker.DiscoverCompleted += OnDiscoverCompleted;
+
+        AddCustomTransportationButton.onClick.AddListener(OpenCustomTransportationForm);
+        HideCustomTransportationButton.onClick.AddListener(HideCustomTransportationForm);
+
+        OpenDiscoveryPanelButton.onClick.AddListener(OpenDiscoveryPanel);
+        CloseDiscoveryPanelButton.onClick.AddListener(CloseDiscoveryPanel);
+    }
+
+    private void GoToCurrentCity()
+    {
+        if (StateManager.CurrentState.CurrentCityName == CityData.Pfaffenthal)
+        {
+            LevelManager.StartLevel("Pfaffenthal");
+        }
+        else if(StateManager.CurrentState.CurrentCityName == CityData.Luxembourg)
+        {
+            LevelManager.StartLevel("Luxembourg");
+        }
     }
 
     private void DrawCapitals()
@@ -136,6 +183,8 @@ public class GameManager : MonoBehaviour
 
             if(leg != null && !NavigationMarker.IsLegMarked(leg.Key))
             {
+                NewRoute.GetComponent<Text>().enabled = true;
+
                 NavigationMarker.DiscoverLeg(keyValue.Key, keyValue.Value);
 
                 CityManager.DrawLabel(leg.Origin);
@@ -149,31 +198,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnCityClicked(int cityIndex)
+    public static void DiscoverLeg(string key)
     {
-        origin = map.GetCity(CityData.CountryByCity[state.CurrentCityName], state.CurrentCityName);
-        destination = map.GetCity(cityIndex);
-        var legKey = origin?.name + destination?.name;
+        var leg = LegData.Legs.FirstOrDefault(l => l.Key == key);
 
-        if (origin != null && destination != null && LegData.CoordinatesByLegKey.ContainsKey(legKey))
+        if (leg != null && !NavigationMarker.IsLegMarked(leg.Key))
         {
-            if (NavigationMarker.IsLegMarked(legKey))
-            {
-                TransportationPopup.transform.SetParent(UICanvas.transform, true);
-            }
-        }
-    }
+            NavigationMarker.DiscoverLeg(key, LegData.CoordinatesByLegKey[key]);
 
-    public void OnTransportationClicked(string transportation)
-    {
-        if(!string.IsNullOrEmpty(transportation))
-        {
-            if(Enum.TryParse(transportation, out TransportationType type))
-            {
-                TravelLeg(origin, destination, type);
+            CityManager.DrawLabel(leg.Origin);
+            CityManager.DrawLabel(leg.Destination);
 
-                TransportationPopup.transform.SetParent(null);
-            }
+            map.DrawCity(leg.Origin);
+            map.DrawCity(leg.Destination);
         }
     }
 
@@ -185,54 +222,118 @@ public class GameManager : MonoBehaviour
         {
             if (NavigationMarker.IsLegMarked(legKey))
             {
-                state.PreviousCityName = origin.name;
-                state.CurrentCityName = destination.name;
+                StateManager.CurrentState.PreviousCityName = origin.name;
+                StateManager.CurrentState.CurrentCityName = destination.name;
+                StateManager.CurrentState.AvailableMoney -= TransportationData.TransportationCostByType[type];
 
-                var transportationUI = Transportation.FirstOrDefault(t => t.name == type.ToString());
+                map.DrawCities();
 
-                if(transportationUI != null)
-                {
-                    transportationUI.transform.SetParent(UICanvas.transform, true);
-                }
+                DisplayTransportationIllustration(type);
 
-                NavigationMarker.TravelLeg(legKey, LegData.CoordinatesByLegKey[legKey]);
+                NavigationMarker.TravelLeg(legKey, LegData.CoordinatesByLegKey[legKey], type);
 
                 SetCurrentCityText();
             }
         }
     }
 
+    private void TravelCustomLeg(City origin, City destination, CustomTransportation transportation)
+    {
+        var legKey = origin?.name + destination?.name;
+
+        if (origin != null && destination != null && LegData.CoordinatesByLegKey.ContainsKey(legKey))
+        {
+            if (NavigationMarker.IsLegMarked(legKey))
+            {
+                StateManager.CurrentState.PreviousCityName = origin.name;
+                StateManager.CurrentState.CurrentCityName = destination.name;
+                map.DrawCities();
+
+                NavigationMarker.TravelCustomLeg(legKey, LegData.CoordinatesByLegKey[legKey], transportation);
+
+                SetCurrentCityText();
+            }
+        }
+    }
+
+    private void OnCityClicked(int cityIndex)
+    {
+        StateManager.CurrentState.FreezeTime = true;
+
+        origin = map.GetCity(CityData.CountryByCity[StateManager.CurrentState.CurrentCityName], StateManager.CurrentState.CurrentCityName);
+        destination = map.GetCity(cityIndex);
+
+        ConstructTransportationOptions();
+    }
+
     private void OnTravelCompleted()
     {
-        foreach(var transportationUI in Transportation)
+        DestroyTransportationIllustration();
+
+        if(StateManager.CurrentState.CurrentCityName == CityData.Luxembourg)
         {
-            transportationUI.transform.SetParent(null);
+            LevelManager.StartLevel("Luxembourg");
         }
+    }
+
+    private void OnDiscoverStarted()
+    {
+        NewRoute.GetComponent<Text>().enabled = true;
     }
 
     private void OnDiscoverCompleted()
     {
+        NewRoute.GetComponent<Text>().enabled = false;
     }
 
     private void Navigate()
     {
-        map.SetZoomLevel(0.05f);
-        map.FlyToLocation(map.GetCity(CityData.CountryByCity[state.CurrentCityName], state.CurrentCityName).latlon);
+        map.SetZoomLevel(0.65f);
+        map.FlyToLocation(map.GetCity("Japan", "Tokyo").latlon, 0, 0.65f).Then(() => 
+        {
+            map.FlyToLocation(map.GetCity(CityData.CountryByCity[StateManager.CurrentState.CurrentCityName], StateManager.CurrentState.CurrentCityName).latlon, 2, 0.65f).Then(() => 
+            {
+                //map.ZoomTo(0f, 1.5f);
+            });
+            map.ZoomTo(0f, 4f).Then(() => LevelManager.StartLevel("Pfaffenthal"));
+        });
     }
 
     private void SetCurrentCityText()
     {
-        CurrentCityText.GetComponent<Text>().text = $"Current City: {state.CurrentCityName}";
+        CurrentCityText.GetComponent<Text>().text = $"{StateManager.CurrentState.CurrentCityName}";
     }
 
     private void NavigateCurrentCity()
     {
+        if(StateManager.CurrentState == null)
+        {
+            return;
+        }
+
         var initSpeed = map.navigationTime;
 
         map.navigationTime = 1;
         var luxIndex = map.GetCountryIndex("Luxembourg");
-        map.FlyToLocation(map.GetCity(CityData.CountryByCity[state.CurrentCityName], state.CurrentCityName).latlon);
+        map.FlyToLocation(map.GetCity(CityData.CountryByCity[StateManager.CurrentState.CurrentCityName], StateManager.CurrentState.CurrentCityName).latlon);
         map.ZoomTo(0, 1);
+
+        map.navigationTime = initSpeed;
+    }
+
+    private void NavigateCurrentCity(float navTime)
+    {
+        if (StateManager.CurrentState == null)
+        {
+            return;
+        }
+
+        var initSpeed = map.navigationTime;
+
+        map.navigationTime = navTime;
+        var luxIndex = map.GetCountryIndex("Luxembourg");
+        map.FlyToLocation(map.GetCity(CityData.CountryByCity[StateManager.CurrentState.CurrentCityName], StateManager.CurrentState.CurrentCityName).latlon);
+        map.ZoomTo(0, navTime);
 
         map.navigationTime = initSpeed;
     }

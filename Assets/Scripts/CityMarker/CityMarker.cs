@@ -17,6 +17,8 @@ public class CityMarker : ICityMarker
 
     private IList<TextMesh> labels = new List<TextMesh>();
 
+    public static List<string> Labels { get; } = new List<string>();
+
     public CityMarker(WorldMapGlobe map)
     {
         if (map == null) throw new ArgumentNullException(nameof(map));
@@ -32,6 +34,7 @@ public class CityMarker : ICityMarker
             var label = map.AddTextCustom(city.name, labelPosition, LabelColor, GetCurrentScale(), fontStyle: FontStyle.Bold);
 
             labels.Add(label);
+            Labels.Add(city.name);
         }
     }
 
@@ -39,10 +42,12 @@ public class CityMarker : ICityMarker
     {
         if (!labels.Any(l => l.text == name))
         {
-            var labelPosition = Conversion.GetSpherePointFromLatLon(CityData.LatLonByCity[name].x, CityData.LatLonByCity[name].y) + LabelOffset;
+            var latLon = CityData.LatLonByCity.ContainsKey(name) ? CityData.LatLonByCity[name] : map.cities.First(c => c.name == name).latlon;
+            var labelPosition = Conversion.GetSpherePointFromLatLon(latLon.x, latLon.y) + LabelOffset;
             var label = map.AddTextCustom(name, labelPosition, LabelColor, GetCurrentScale(), fontStyle: FontStyle.Bold);
 
             labels.Add(label);
+            Labels.Add(name);
         }
     }
 
@@ -62,6 +67,7 @@ public class CityMarker : ICityMarker
         }
 
         labels.Clear();
+        Labels.Clear();
     }
 
     private float GetCurrentScale()

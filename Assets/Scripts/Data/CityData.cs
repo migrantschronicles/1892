@@ -11,6 +11,7 @@ public static class CityData
     public const string Netherlands = "Netherlands";
 
     //Cities
+    public const string Pfaffenthal = "Pfaffenthal";
     public const string Luxembourg = "Luxembourg";
     public const string Brussels = "Brussels";
     public const string Antwerp = "Antwerp";
@@ -18,9 +19,11 @@ public static class CityData
     public const string Metz = "Metz";
     public const string Arlon = "Arlon";
     public const string Paris = "Paris";
+    public const string Havre = "Havre";
 
     public static IReadOnlyDictionary<string, string> CountryByCity = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>()
     {
+        { Pfaffenthal, Luxembourg },
         { Luxembourg, Luxembourg },
         { Brussels, Belgium},
         { Antwerp, Belgium },
@@ -28,11 +31,15 @@ public static class CityData
         { Metz, France },
         { Arlon, Belgium },
         { Paris, France },
+        { Havre, France }
     });
 
     public static IReadOnlyDictionary<string, Vector2> LatLonByCity = new ReadOnlyDictionary<string, Vector2>(
        new Dictionary<string, Vector2>()
        {
+           {
+               Pfaffenthal, new Vector2(49.738830f, 6.237488f)
+           },
            {
                Luxembourg, new Vector2(49.61171f, 6.129978f)
            },
@@ -53,6 +60,9 @@ public static class CityData
            },
            {
                Paris, new Vector2(48.8566f, 2.3522f)
+           },
+           {
+               Havre, new Vector2(49.4938975f, 0.1079732f)
            }
        });
 }

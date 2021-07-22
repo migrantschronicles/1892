@@ -1,12 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using UnityEngine;
 
 public static class TransportationData
 {
-    //todo: estimate speed, luggage space and costs
-
-    //average speed: km/h
+    //Average Speed: km/h
     public static IReadOnlyDictionary<TransportationType, int> TransportationSpeedByType =
         new ReadOnlyDictionary<TransportationType, int>(new Dictionary<TransportationType, int>()
         {
@@ -17,19 +17,20 @@ public static class TransportationData
                 TransportationType.Train, 30
             },
             {
-                TransportationType.StageCoach, 10
+                TransportationType.StageCoach, 15
             },
             {
-                TransportationType.Boat, 15
+                TransportationType.Boat, 17
             },
             {
-                TransportationType.TramRail, 15
+                TransportationType.TramRail, 18
             },
             {
-                TransportationType.Cart, 15
+                TransportationType.Cart, 16
             }
         });
 
+    //Luggage Space
     public static IReadOnlyDictionary<TransportationType, int> TransportationSpaceByType =
        new ReadOnlyDictionary<TransportationType, int>(new Dictionary<TransportationType, int>()
        {
@@ -57,24 +58,29 @@ public static class TransportationData
        new ReadOnlyDictionary<TransportationType, int>(new Dictionary<TransportationType, int>()
        {
             {
-                TransportationType.Foot, 1
+                TransportationType.Foot, 0
             },
             {
-                TransportationType.Train, 1
+                TransportationType.Train, 45
             },
             {
-                TransportationType.StageCoach, 1
+                TransportationType.StageCoach, 51
             },
             {
-                TransportationType.Boat, 1
+                TransportationType.Boat, 70
             },
             {
-                TransportationType.TramRail, 1
+                TransportationType.TramRail, 46
             },
             {
-                TransportationType.Cart, 1
+                TransportationType.Cart, 33
             }
        });
+
+    public static TimeSpan GetDuration(TransportationType type, float distance)
+    {
+        return TimeSpan.FromHours(distance / TransportationSpaceByType[type]);
+    }
 
     public static IEnumerable<Transportation> GetAllTransportation(string origin, string destination)
     {
@@ -84,6 +90,14 @@ public static class TransportationData
     public static IReadOnlyDictionary<string, IEnumerable<TransportationType>> TransportationByLegKey = new ReadOnlyDictionary<string, IEnumerable<TransportationType>>(
         new Dictionary<string, IEnumerable<TransportationType>>()
         {
+            {
+                CityData.Pfaffenthal + CityData.Luxembourg,
+                new List<TransportationType>()
+                {
+                    TransportationType.Foot,
+                    TransportationType.StageCoach
+                }
+            },
             {
                 CityData.Luxembourg + CityData.Antwerp,
                 new List<TransportationType>()
@@ -184,4 +198,27 @@ public static class TransportationData
                 }
             }
         });
+
+    public static IReadOnlyDictionary<TransportationType, (string Name, Vector2 Size)> TransportationIconByType =
+      new ReadOnlyDictionary<TransportationType, (string, Vector2)>(new Dictionary<TransportationType, (string, Vector2)>()
+      {
+            {
+                TransportationType.Foot, ("foot_icon", new Vector2(35, 35))
+            },
+            {
+                TransportationType.Train, ("train_icon", new Vector2(35, 35))
+            },
+            {
+                TransportationType.StageCoach, ("carriage_icon", new Vector2(35, 35))
+            },
+            {
+                TransportationType.Boat, ("boat_icon", new Vector2(35, 35))
+            },
+            {
+                TransportationType.TramRail, ("tram_icon", new Vector2(35, 35))
+            },
+            {
+                TransportationType.Cart, ("cart_icon", new Vector2(35, 35))
+            }
+      });
 }

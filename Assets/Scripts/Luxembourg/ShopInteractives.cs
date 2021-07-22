@@ -72,6 +72,8 @@ public class ShopInteractives : MonoBehaviour
         leftArrow.SetActive(false);
         rightArrow.SetActive(false);
 
+        CloseChAll();
+
         isStarted = true;
     }
 

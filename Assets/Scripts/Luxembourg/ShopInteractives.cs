@@ -55,8 +55,16 @@ public class ShopInteractives : MonoBehaviour
 
         shopButton.SetActive(true);
         agentButton.SetActive(true);
-        childrenButton.SetActive(true);
-        ticketButton.SetActive(true);
+
+        if (isChDialogActive)
+        {
+            childrenButton.SetActive(true);
+        }
+        else
+        {
+            ticketButton.SetActive(true);
+        }
+
         backButton.SetActive(false);
         Blur.SetActive(false);
 
@@ -86,6 +94,8 @@ public class ShopInteractives : MonoBehaviour
         childrenButton.SetActive(false);
         ticketButton.SetActive(false);
         backButton.SetActive(true);
+
+        GotToChDialog1();
     }
 
     public void InventoryItemClick(InventorySlot item)
@@ -207,6 +217,50 @@ public class ShopInteractives : MonoBehaviour
         Dialog4.SetActive(false);
         Dialog5.SetActive(false);
         Dialog6.SetActive(false);
+    }
+
+    #endregion
+
+    #region Children Dialog
+
+    public GameObject ChDialog1;
+    public GameObject ChDialog2;
+    public GameObject ChDialog3;
+    public GameObject ChDialog4;
+
+    private static bool isChDialogActive = true;
+
+    public void GotToChDialog1()
+    {
+        CloseChAll();
+        ChDialog1.SetActive(true);
+    }
+
+    public void GotToChDialog2()
+    {
+        CloseChAll();
+        ChDialog2.SetActive(true);
+    }
+
+    public void GotToChDialog3()
+    {
+        CloseChAll();
+        ChDialog3.SetActive(true);
+    }
+
+    public void GotToChDialog4()
+    {
+        CloseChAll();
+        ChDialog4.SetActive(true);
+        isChDialogActive = false;
+    }
+
+    private void CloseChAll()
+    {
+        ChDialog1.SetActive(false);
+        ChDialog2.SetActive(false);
+        ChDialog3.SetActive(false);
+        ChDialog4.SetActive(false);
     }
 
     #endregion

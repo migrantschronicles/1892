@@ -30,6 +30,8 @@ public class PfaffenthalManager : MonoBehaviour
 
     public GameObject NPCPanel;
 
+    public GameObject Inventory;
+
     public GameObject Blur;
 
     private TimeSpan buttonAnimationTime;
@@ -150,6 +152,7 @@ public class PfaffenthalManager : MonoBehaviour
         StartPopup.SetActive(false);
         StartButton.SetActive(false);
         NPCPanel.SetActive(true);
+        Inventory.SetActive(true);
 
         if (spokeToKatrin)
         {

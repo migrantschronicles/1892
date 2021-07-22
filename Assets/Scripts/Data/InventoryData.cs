@@ -6,6 +6,14 @@ public class InventoryModel
     public string Name { get; set; }
     public int Price { get; set; }
     public int Volume { get; set; }
+    public InventoryLocation Location { get; set; }
+}
+
+public enum InventoryLocation
+{
+    AtHome,
+    OnHand,
+    LuxembougShop
 }
 
 public static class InventoryData
@@ -22,6 +30,11 @@ public static class InventoryData
     public const string PictureKey = "picture";
     public const string SewingKey = "sewing";
     public const string TeddyKey = "teddy";
+    public const string SuitcaseKey = "suitcase";
+    public const string MomCoatKey = "mom_coat";
+    public const string GirlCoatKey = "girl_coat";
+    public const string BoyCoatKey = "boy_coat";
+    public const string MedicineKey = "medicine";
 
     public static IReadOnlyDictionary<int, InventoryModel> InventoryById = new ReadOnlyDictionary<int, InventoryModel>(
     new Dictionary<int, InventoryModel>()
@@ -132,6 +145,56 @@ public static class InventoryData
                 Name = TeddyKey,
                 Price = 5,
                 Volume = 2
+            }
+        },
+        {
+            13,
+            new InventoryModel
+            {
+                Name = SuitcaseKey,
+                Price = 5,
+                Volume = 1,
+                Location = InventoryLocation.LuxembougShop
+            }
+        },
+        {
+            14,
+            new InventoryModel
+            {
+                Name = MomCoatKey,
+                Price = 5,
+                Volume = 2,
+                Location = InventoryLocation.LuxembougShop
+            }
+        },
+        {
+            15,
+            new InventoryModel
+            {
+                Name = GirlCoatKey,
+                Price = 5,
+                Volume = 1,
+                Location = InventoryLocation.LuxembougShop
+            }
+        },
+        {
+            16,
+            new InventoryModel
+            {
+                Name = BoyCoatKey,
+                Price = 5,
+                Volume = 1,
+                Location = InventoryLocation.LuxembougShop
+            }
+        },
+        {
+            17,
+            new InventoryModel
+            {
+                Name = MedicineKey,
+                Price = 5,
+                Volume = 1,
+                Location = InventoryLocation.LuxembougShop
             }
         }
     });

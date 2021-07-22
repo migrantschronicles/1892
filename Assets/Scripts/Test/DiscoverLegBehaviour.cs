@@ -26,8 +26,8 @@ public class DiscoverLegBehaviour : MonoBehaviour
     {
         DiscoverButton.onClick.AddListener(DiscoverLeg);
 
-        Origin.options = GameManager.map.cities.Where(c => c.cityClass == CITY_CLASS.COUNTRY_CAPITAL).Select(c => new Dropdown.OptionData(c.name)).ToList();
-        Destination.options = GameManager.map.cities.Where(c => c.cityClass == CITY_CLASS.COUNTRY_CAPITAL).Select(c => new Dropdown.OptionData(c.name)).ToList();
+        Origin.options = GameManager.map.cities.Where(c => c.cityClass == CITY_CLASS.COUNTRY_CAPITAL).Select(c => new Dropdown.OptionData(c.name)).OrderBy(c => c.text).ToList();
+        Destination.options = GameManager.map.cities.Where(c => c.cityClass == CITY_CLASS.COUNTRY_CAPITAL).Select(c => new Dropdown.OptionData(c.name)).OrderBy(c => c.text).ToList();
     }
 
     private void DiscoverLeg()

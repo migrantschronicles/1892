@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public static class ShopData
 {
-    public static List<int> ShopItemIds = new List<int> { 9,10,11,12 };
+    public static List<int> ShopItemIds = InventoryData.InventoryById.Where(i => i.Value.Location == InventoryLocation.LuxembougShop).Select(i => i.Key).ToList();
 }
 
 public class ShopManager : MonoBehaviour
@@ -51,6 +51,7 @@ public class ShopManager : MonoBehaviour
             {
                 if(slot.IsEmpty)
                 {
+                    slot.IsEmpty = false;
                     slot.ItemId = id;
                     slot.Location = "Shop";
                     slot.ItemOriginalLocation = "Shop";
@@ -72,6 +73,11 @@ public class ShopManager : MonoBehaviour
             moneyChangesUI.SetActive(true);
 
             InventorySlot updatedSlot = TransferItem(item);
+
+            if(updatedSlot == null)
+            {
+                return;
+            }
 
             if (updatedSlot.Location == "Shop")
             {

@@ -218,7 +218,7 @@ public static class TransportationData
                 TransportationType.TramRail, ("tram_icon", new Vector2(35, 35))
             },
             {
-                TransportationType.Cart, ("carriage_icon", new Vector2(35, 35))
+                TransportationType.Cart, ("cart_icon", new Vector2(35, 35))
             }
       });
 }

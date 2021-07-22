@@ -98,7 +98,7 @@ public partial class GameManager : MonoBehaviour
                     var luggageSpaceText = button.transform.Find("LuggageSpace").transform.GetComponentInChildren<Text>();
                     var durationText = button.transform.Find("Duration").transform.GetComponent<Text>();
 
-                    if (typeText != null)
+                    if (iconImage != null)
                     {
                         iconImage.sprite = Resources.Load<Sprite>($"TransportationResources/Icons/{TransportationData.TransportationIconByType[type].Name}");
                         //iconImage.rectTransform.sizeDelta = TransportationData.TransportationIconByType[type].Size;
@@ -158,9 +158,9 @@ public partial class GameManager : MonoBehaviour
                         var luggageSpaceText = button.transform.Find("LuggageSpace").transform.GetComponentInChildren<Text>();
                         var durationText = button.transform.Find("Duration").transform.GetComponent<Text>();
 
-                        if (typeText != null)
+                        if (iconImage != null)
                         {
-                            iconImage.sprite = Resources.Load<Sprite>($"TransportationResources/{custom.IconName}");
+                            iconImage.sprite = Resources.Load<Sprite>($"TransportationResources/Icons/{custom.IconName}");
                         }
 
                         if (typeText != null)

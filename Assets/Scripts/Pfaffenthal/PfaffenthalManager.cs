@@ -24,11 +24,7 @@ public class PfaffenthalManager : MonoBehaviour
     public Button JhangDialog1Button;
     public Button JhangDialog1EndButton;
 
-    public GameObject Mother;
-    public GameObject Boy;
-    public GameObject Girl;
-
-    public GameObject NPCPanel;
+    public GameObject Interactives;
 
     public GameObject Inventory;
 
@@ -94,7 +90,7 @@ public class PfaffenthalManager : MonoBehaviour
     private void EndKatrinDialog2()
     {
         KatrinDialog2.SetActive(false);
-        NPCPanel.transform.Find("KatrinButton").gameObject.SetActive(false);
+        Interactives.transform.Find("KatrinButton").gameObject.SetActive(false);
         UnhideAll();
 
         spokeToKatrin = true;
@@ -115,7 +111,7 @@ public class PfaffenthalManager : MonoBehaviour
     private void EndJhangDialog1()
     {
         JhangDialog1.SetActive(false);
-        NPCPanel.transform.Find("JhangButton").gameObject.SetActive(false);
+        Interactives.transform.Find("JhangButton").gameObject.SetActive(false);
         UnhideAll();
 
         spokeToJhang = true;
@@ -126,18 +122,12 @@ public class PfaffenthalManager : MonoBehaviour
 
     private void HideAll()
     {
-        Mother.SetActive(false);
-        Boy.SetActive(false);
-        Girl.SetActive(false);
-        NPCPanel.SetActive(false);
+        Interactives.SetActive(false);
     }
 
     private void UnhideAll()
     {
-        Mother.SetActive(true);
-        Boy.SetActive(true);
-        Girl.SetActive(true);
-        NPCPanel.SetActive(true);
+        Interactives.SetActive(true);
     }
 
     void Update()
@@ -151,17 +141,17 @@ public class PfaffenthalManager : MonoBehaviour
 
         StartPopup.SetActive(false);
         StartButton.SetActive(false);
-        NPCPanel.SetActive(true);
+        Interactives.SetActive(true);
         Inventory.SetActive(true);
 
         if (spokeToKatrin)
         {
-            NPCPanel.transform.Find("KatrinButton").gameObject.SetActive(false);
+            Interactives.transform.Find("KatrinButton").gameObject.SetActive(false);
         }
 
         if(spokeToJhang)
         {
-            NPCPanel.transform.Find("JhangButton").gameObject.SetActive(false);
+            Interactives.transform.Find("JhangButton").gameObject.SetActive(false);
         }
 
         Blur.SetActive(false);

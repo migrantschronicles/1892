@@ -6,7 +6,7 @@ using WPM;
 
 public class NavigationMarker : INavigationMarker
 {
-    private const float MarkLineWidth = 0.0008f;
+    private const float MarkLineWidth = 0.0006f;
     private const float TravelLineWidth = 0.0004f;
 
     private static Color MarkLineColor = new Color(112f / 255f, 112f / 255f, 110f / 255f, 0.4f);
@@ -83,7 +83,7 @@ public class NavigationMarker : INavigationMarker
             traveledLegMarkers.Add(legKey, marker);
         }
 
-        Navigate(coordinates.First() + new Vector2(1f, 0), coordinates.Last() + new Vector2(1f, 0), duration, 70, transportation);
+        Navigate(coordinates.First() + new Vector2(1f, 0), coordinates.Last() + new Vector2(1f, 0), duration, 50, transportation);
     }
 
     public void TravelLeg(string legKey, IEnumerable<Vector2> coordinates, TransportationType transportation)
@@ -104,7 +104,7 @@ public class NavigationMarker : INavigationMarker
             traveledLegMarkers.Add(legKey, marker);
         }
 
-        Navigate(coordinates.First() + new Vector2(1f, 0), coordinates.Last() + new Vector2(1f, 0), duration, 70, transportation);
+        Navigate(coordinates.First() + new Vector2(1f, 0), coordinates.Last() + new Vector2(1f, 0), duration, 50, transportation);
     }
 
     public bool IsLegMarked(string legKey)
@@ -139,11 +139,11 @@ public class NavigationMarker : INavigationMarker
 
         map.pitch = pitch;
         map.SetZoomLevel(0);
-        map.FlyToLocation(start + new Vector2(0, 0.1f), 0).Then(() => 
+        map.FlyToLocation(start, 0).Then(() => 
         {
-            map.FlyToLocation(end + new Vector2(0, 0.1f), duration, 0.03f).Then(() =>
+            map.FlyToLocation(end, duration, 0.03f).Then(() =>
             {
-                map.FlyToLocation(start + new Vector2(0, 0.1f), 0, initZoom);
+                map.FlyToLocation(start, 0, initZoom);
                 map.pitch = initPitch;
                 isNavigating = false;
             });
@@ -157,11 +157,11 @@ public class NavigationMarker : INavigationMarker
 
         map.pitch = pitch;
         map.SetZoomLevel(0);
-        map.FlyToLocation(start + new Vector2(0, 0.1f), 0).Then(() =>
+        map.FlyToLocation(start - new Vector2(1f, 0), 0).Then(() =>
         {
-            map.FlyToLocation(end + new Vector2(0, 0.1f), duration, 0.03f).Then(() =>
+            map.FlyToLocation(end - new Vector2(1f, 0), duration, 0.02f).Then(() =>
             {
-                map.FlyToLocation(start + new Vector2(0, 0.1f), 0, initZoom);
+                map.FlyToLocation(start - new Vector2(1f, 0), 0, initZoom);
                 map.pitch = initPitch;
                 isNavigating = false;
                 StateManager.CurrentState.FreezeTime = false;
@@ -177,11 +177,11 @@ public class NavigationMarker : INavigationMarker
 
         map.pitch = pitch;
         map.SetZoomLevel(0);
-        map.FlyToLocation(start + new Vector2(0, 0.1f), 0).Then(() =>
+        map.FlyToLocation(start, 0).Then(() =>
         {
-            map.FlyToLocation(end + new Vector2(0, 0.1f), duration, 0.03f).Then(() =>
+            map.FlyToLocation(end, duration, 0.03f).Then(() =>
             {
-                map.FlyToLocation(start + new Vector2(0, 0.1f), 0, initZoom);
+                map.FlyToLocation(start, 0, initZoom);
                 map.pitch = initPitch;
                 isNavigating = false;
                 StateManager.CurrentState.FreezeTime = false;

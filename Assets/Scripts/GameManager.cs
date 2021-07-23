@@ -270,9 +270,11 @@ public partial class GameManager : MonoBehaviour
     {
         DestroyTransportationIllustration();
 
-        if(StateManager.CurrentState.CurrentCityName == CityData.Luxembourg)
+        if(StateManager.CurrentState.CurrentCityName == CityData.Luxembourg ||
+           StateManager.CurrentState.CurrentCityName == CityData.Paris ||
+           StateManager.CurrentState.CurrentCityName == CityData.Brussels)
         {
-            LevelManager.StartLevel("Luxembourg");
+            LevelManager.StartLevel(StateManager.CurrentState.CurrentCityName);
         }
     }
 

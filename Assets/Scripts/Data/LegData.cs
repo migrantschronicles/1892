@@ -242,6 +242,8 @@ public static class LegData
                 new List<Vector2>()
                 {
                     CityData.LatLonByCity[CityData.Pfaffenthal],
+                    //new Vector2(49.906723f, 6.017303f),
+                    new Vector2(49.760865f, 6.113434f),
                     CityData.LatLonByCity[CityData.Luxembourg]
                 }
             },

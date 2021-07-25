@@ -13,6 +13,8 @@ public class ShopInteractives : MonoBehaviour
     public GameObject ticketButton;
     public GameObject agentButton;
 
+    public GameObject AgentPopupInfo;
+
     public GameObject TicketSetting;
 
     public GameObject shopFrame;
@@ -48,6 +50,24 @@ public class ShopInteractives : MonoBehaviour
         }
     }
 
+    public void AgentButtonClick()
+    {
+        AgentPopupInfo.SetActive(true);
+        backButton.SetActive(true);
+
+        shopButton.SetActive(false);
+        agentButton.SetActive(false);
+
+        if (isChDialogActive)
+        {
+            childrenButton.SetActive(false);
+        }
+        else
+        {
+            ticketButton.SetActive(false);
+        }
+    }
+
     public void BackClick()
     {
         StartBlur.SetActive(false);
@@ -71,6 +91,8 @@ public class ShopInteractives : MonoBehaviour
         shopFrame.SetActive(false);
         leftArrow.SetActive(false);
         rightArrow.SetActive(false);
+
+        AgentPopupInfo.SetActive(false);
 
         CloseChAll();
 

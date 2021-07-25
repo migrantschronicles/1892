@@ -57,15 +57,13 @@ public class ParisManager : MonoBehaviour
 
     void Start()
     {
-        NPCPanel.SetActive(false);
-        StartButton.SetActive(true);
-        GlobeButton.onClick.AddListener(GoToGlobe);
-
-        if (isInitialized)
+        if (!isInitialized)
         {
             StartGame();
         }
-        
+        NPCPanel.SetActive(false);
+        StartButton.SetActive(true);
+        GlobeButton.onClick.AddListener(GoToGlobe);
 
         GuydeMaupassantTalkButton.onClick.AddListener(TalkToMaupassant);
         MattisTalkButton.onClick.AddListener(TalkToMattis);

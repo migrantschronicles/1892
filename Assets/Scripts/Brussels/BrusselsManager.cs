@@ -74,7 +74,7 @@ public class BrusselsManager : MonoBehaviour
 
     void Start()
     {
-        if (isInitialized)
+        if (!isInitialized)
         {
             StartGame();
         }

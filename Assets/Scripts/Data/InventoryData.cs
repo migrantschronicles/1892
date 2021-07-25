@@ -40,6 +40,92 @@ public static class InventoryData
     public const string HorseTwoKey = "horse2";
     public const string LoliKey = "loli";
 
+    public static IReadOnlyDictionary<int, string> DescriptionById = new ReadOnlyDictionary<int, string>(
+    new Dictionary<int, string>()
+    {
+        {
+            1,
+            ""
+        },
+        {
+            2,
+            ""
+        },
+        {
+            3,
+            ""
+        },
+        {
+            4,
+            ""
+        },
+        {
+            5,
+            ""
+        },
+        //{
+        //    6,
+        //    ""
+        //},
+        {
+            7,
+            ""
+        },
+        {
+            8,
+            ""
+        },
+        {
+            9,
+            ""
+        },
+        {
+            10,
+            ""
+        },
+        {
+            11,
+            ""
+        },
+        {
+            12,
+            ""
+        },
+        {
+            13,
+            ""
+        },
+        {
+            14,
+            ""
+        },
+        {
+            15,
+            ""
+        },
+        {
+            16,
+            ""
+        },
+        {
+            17,
+            ""
+        },
+        {
+            18,
+            ""
+        },
+        {
+            19,
+            ""
+        },
+        {
+            20,
+            ""
+        }
+    });
+
+
     public static IReadOnlyDictionary<int, InventoryModel> InventoryById = new ReadOnlyDictionary<int, InventoryModel>(
     new Dictionary<int, InventoryModel>()
     {

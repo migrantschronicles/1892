@@ -548,42 +548,6 @@ public class InventoryManager : MonoBehaviour
         luggageInventoryIds = LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value).ToList();
         basketInventoryIds = BasketSlots.Concat(basketDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value).ToList();
 
-        //foreach (var slot in LuggageSlots)
-        //{
-        //    if (!slot.IsEmpty)
-        //    {
-        //        slot.ItemOriginalLocation = slot.Location;
-        //        slot.Check();
-        //    }
-        //}
-
-        //foreach (var slot in luggageDoubleSlots)
-        //{
-        //    if (!slot.IsEmpty)
-        //    {
-        //        slot.ItemOriginalLocation = slot.Location;
-        //        slot.Check();
-        //    }
-        //}
-
-        //foreach (var slot in BasketSlots)
-        //{
-        //    if (!slot.IsEmpty)
-        //    {
-        //        slot.ItemOriginalLocation = slot.Location;
-        //        slot.Check();
-        //    }
-        //}
-
-        //foreach (var slot in basketDoubleSlots)
-        //{
-        //    if (!slot.IsEmpty)
-        //    {
-        //        slot.ItemOriginalLocation = slot.Location;
-        //        slot.Check();
-        //    }
-        //}
-
         ReorganizeClean();
         UpdateButtons();
     }

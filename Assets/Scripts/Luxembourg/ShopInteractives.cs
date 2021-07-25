@@ -54,6 +54,18 @@ public class ShopInteractives : MonoBehaviour
     {
         AgentPopupInfo.SetActive(true);
         backButton.SetActive(true);
+
+        shopButton.SetActive(false);
+        agentButton.SetActive(false);
+
+        if (isChDialogActive)
+        {
+            childrenButton.SetActive(false);
+        }
+        else
+        {
+            ticketButton.SetActive(false);
+        }
     }
 
     public void BackClick()

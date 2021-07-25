@@ -41,11 +41,13 @@ public class PfaffenthalManager : MonoBehaviour
     public void OpenInventorySelection()
     {
         InventorySelection.SetActive(true);
+        HideAll();
     }
 
     public void CloseInventorySelection()
     {
         InventorySelection.SetActive(false);
+        UnhideAll();
     }
 
     void Start()

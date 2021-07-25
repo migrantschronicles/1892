@@ -109,16 +109,16 @@ public static class InventoryData
                 Location = InventoryLocation.AtHome
             }
         },
-        {
-            8,
-            new InventoryModel
-            {
-                Name = MoneyKey,
-                Price = 5,
-                Volume = 1,
-                Location = InventoryLocation.AtHome
-            }
-        },
+        //{
+        //    8,
+        //    new InventoryModel
+        //    {
+        //        Name = MoneyKey,
+        //        Price = 5,
+        //        Volume = 1,
+        //        Location = InventoryLocation.AtHome
+        //    }
+        //},
         {
             9,
             new InventoryModel

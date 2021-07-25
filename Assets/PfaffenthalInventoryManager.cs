@@ -31,7 +31,11 @@ public class InventoryManager : MonoBehaviour
     public GameObject SaveButton;
     public GameObject BackButton;
 
+    public GameObject PriceDeltaText;
+
     #endregion
+
+    private int priceDelta = 0;
 
     private const string Basket = "Basket";
     private const string Luggage = "Luggage";
@@ -47,6 +51,8 @@ public class InventoryManager : MonoBehaviour
 
     protected static List<int> basketInventoryIds = new List<int>();
     protected static List<int> luggageInventoryIds = new List<int>();
+
+    protected bool considerMoneyChange = false;
 
     void Start()
     {
@@ -110,7 +116,7 @@ public class InventoryManager : MonoBehaviour
 
             for (int j = 0; j < luggageRows; j++)
             {
-                isPositioned = TryPositionHorizontallyInLuggage(j, doubledItem, Luggage);
+                isPositioned = TryPositionVerticallyInLuggage(j, doubledItem, Luggage);
 
                 if (!isPositioned)
                 {
@@ -136,6 +142,7 @@ public class InventoryManager : MonoBehaviour
                     slot.ItemOriginalLocation = Luggage;
                     slot.Value = InventoryData.InventoryById[id].Price;
                     slot.IconKey = InventoryData.InventoryById[id].Name;
+                    slot.Check();
                     break;
                 }
             }
@@ -183,6 +190,17 @@ public class InventoryManager : MonoBehaviour
         BackButton.SetActive(!isLuggageUpdated && !isBasketUpdated);
         SaveButton.SetActive(isLuggageUpdated || isBasketUpdated);
         CancelButton.SetActive(isLuggageUpdated || isBasketUpdated);
+
+        if(considerMoneyChange)
+        {
+            priceDelta = LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue && s.ItemOriginalLocation != Luggage)
+                    .Sum(s => InventoryData.InventoryById[s.ItemId.Value].Price) - 
+                BasketSlots.Concat(basketDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue && s.ItemOriginalLocation != Basket)
+                    .Sum(s => InventoryData.InventoryById[s.ItemId.Value].Price);
+
+            PriceDeltaText.GetComponent<Text>().text = priceDelta.ToString();
+            PriceDeltaText.SetActive(priceDelta != 0);
+        }
     }
 
     #region Double Slot Item Positioning
@@ -496,6 +514,17 @@ public class InventoryManager : MonoBehaviour
 
     public void SaveChanges()
     {
+        if (StateManager.CurrentState.AvailableMoney + priceDelta < 0)
+        {
+            return;
+        }
+
+        if(considerMoneyChange)
+        {
+            StateManager.CurrentState.AvailableMoney += priceDelta;
+            priceDelta = 0;
+        }
+
         StateManager.CurrentState.AvailableItemIds = LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value);
         luggageInventoryIds = LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value).ToList();
         basketInventoryIds = BasketSlots.Concat(basketDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value).ToList();
@@ -541,22 +570,25 @@ public class InventoryManager : MonoBehaviour
 
     public void CancelChanges()
     {
-        BackButton.SetActive(true);
+        priceDelta = 0;
 
         bool allReverted = false;
 
         while(!allReverted)
         {
-            foreach(var slot in BasketSlots)
+            allReverted = !BasketSlots.Concat(LuggageSlots).Concat(luggageDoubleSlots).Concat(basketDoubleSlots)
+                .Where(s => !s.IsEmpty && s.ItemId.HasValue && s.Location != s.ItemOriginalLocation).Any();
+
+            if(allReverted)
+            {
+                break;
+            }
+
+            foreach (var slot in BasketSlots)
             {
                 if(!slot.IsEmpty && slot.ItemOriginalLocation != Basket)
                 {
-                    var updatedSlot = TransferItem(slot);
-
-                    if (updatedSlot == null)
-                    {
-                        break;
-                    }
+                    TransferItem(slot);
                 }
             }
 
@@ -564,25 +596,15 @@ public class InventoryManager : MonoBehaviour
             {
                 if (!slot.IsEmpty && slot.ItemOriginalLocation != Luggage)
                 {
-                    var updatedSlot = TransferItem(slot as DoubleInventorySlot);
-
-                    if (updatedSlot == null)
-                    {
-                        break;
-                    }
+                    TransferItem(slot as DoubleInventorySlot);
                 }
             }
 
             foreach (var slot in LuggageSlots)
             {
-                if (!slot.IsEmpty && slot.ItemOriginalLocation != Basket)
+                if (!slot.IsEmpty && slot.ItemOriginalLocation != Luggage)
                 {
-                    var updatedSlot = TransferItem(slot);
-
-                    if (updatedSlot == null)
-                    {
-                        break;
-                    }
+                    TransferItem(slot);
                 }
             }
 
@@ -590,16 +612,9 @@ public class InventoryManager : MonoBehaviour
             {
                 if (!slot.IsEmpty && slot.ItemOriginalLocation != Basket)
                 {
-                    var updatedSlot = TransferItem(slot as DoubleInventorySlot);
-
-                    if (updatedSlot == null)
-                    {
-                        break;
-                    }
+                    TransferItem(slot as DoubleInventorySlot);
                 }
             }
-
-            allReverted = BasketSlots.Concat(LuggageSlots).Concat(luggageDoubleSlots).Concat(basketDoubleSlots).All(i => i.Location == i.ItemOriginalLocation);
         }
 
         UpdateButtons();

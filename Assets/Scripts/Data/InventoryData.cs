@@ -45,7 +45,8 @@ public static class InventoryData
             {
                 Name = BagKey,
                 Price = 5,
-                Volume = 1
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             } 
         },
         {
@@ -54,7 +55,8 @@ public static class InventoryData
             {
                 Name = BibleKey,
                 Price = 5,
-                Volume = 1
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             }
         },
         {
@@ -63,7 +65,8 @@ public static class InventoryData
             {
                 Name = BirthCertificateKey,
                 Price = 5,
-                Volume = 1
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             }
         },
         {
@@ -72,7 +75,8 @@ public static class InventoryData
             {
                 Name = BlanketKey,
                 Price = 5,
-                Volume = 1
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             }
         },
         {
@@ -81,7 +85,8 @@ public static class InventoryData
             {
                 Name = EaringsKey,
                 Price = 5,
-                Volume = 1
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             }
         },
         {
@@ -90,7 +95,8 @@ public static class InventoryData
             {
                 Name = FoodKey,
                 Price = 5,
-                Volume = 1
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             }
         },
         {
@@ -99,7 +105,8 @@ public static class InventoryData
             {
                 Name = LocoKey,
                 Price = 5,
-                Volume = 1
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             }
         },
         {
@@ -108,7 +115,8 @@ public static class InventoryData
             {
                 Name = MoneyKey,
                 Price = 5,
-                Volume = 1
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             }
         },
         {
@@ -117,7 +125,8 @@ public static class InventoryData
             {
                 Name = NecklaceKey,
                 Price = 5,
-                Volume = 1
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             }
         },
         {
@@ -126,7 +135,8 @@ public static class InventoryData
             {
                 Name = PictureKey,
                 Price = 5,
-                Volume = 1
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             }
         },
         {
@@ -135,7 +145,8 @@ public static class InventoryData
             {
                 Name = SewingKey,
                 Price = 5,
-                Volume = 1
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             }
         },
         {
@@ -144,7 +155,8 @@ public static class InventoryData
             {
                 Name = TeddyKey,
                 Price = 5,
-                Volume = 2
+                Volume = 2,
+                Location = InventoryLocation.AtHome
             }
         },
         {

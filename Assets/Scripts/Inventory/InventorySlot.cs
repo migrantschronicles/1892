@@ -14,7 +14,7 @@ public class InventorySlot : MonoBehaviour
     //Resources/Inventory/Highlights
     public string IconKey { get; set; }
 
-    public void Check()
+    public virtual void Check()
     {
         IsEmpty = !ItemId.HasValue;
 
@@ -32,7 +32,7 @@ public class InventorySlot : MonoBehaviour
         }         
     }
 
-    public void ResetItem() 
+    public virtual void ResetItem() 
     {
         IsEmpty = true;
         ItemId = null;
@@ -40,6 +40,8 @@ public class InventorySlot : MonoBehaviour
         Value = 0;
         Location = null;
         ItemOriginalLocation = null;
+        IconKey = "empty";
         GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/empty");
+        gameObject.SetActive(true);
     }
 }

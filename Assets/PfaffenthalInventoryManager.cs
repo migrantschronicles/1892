@@ -153,6 +153,8 @@ public class InventoryManager : MonoBehaviour
 
     private void Reset()
     {
+        priceDelta = 0;
+
         foreach (var slot in BasketSlots)
         {
             slot.IsEmpty = true;
@@ -570,52 +572,52 @@ public class InventoryManager : MonoBehaviour
 
     public void CancelChanges()
     {
-        priceDelta = 0;
+        Start();
 
-        bool allReverted = false;
+        //bool allReverted = false;
 
-        while(!allReverted)
-        {
-            allReverted = !BasketSlots.Concat(LuggageSlots).Concat(luggageDoubleSlots).Concat(basketDoubleSlots)
-                .Where(s => !s.IsEmpty && s.ItemId.HasValue && s.Location != s.ItemOriginalLocation).Any();
+        //while (!allReverted)
+        //{
+        //    allReverted = !BasketSlots.Concat(LuggageSlots).Concat(luggageDoubleSlots).Concat(basketDoubleSlots)
+        //        .Where(s => !s.IsEmpty && s.ItemId.HasValue && s.Location != s.ItemOriginalLocation).Any();
 
-            if(allReverted)
-            {
-                break;
-            }
+        //    if(allReverted)
+        //    {
+        //        break;
+        //    }
 
-            foreach (var slot in BasketSlots)
-            {
-                if(!slot.IsEmpty && slot.ItemOriginalLocation != Basket)
-                {
-                    TransferItem(slot);
-                }
-            }
+        //    foreach (var slot in BasketSlots)
+        //    {
+        //        if(!slot.IsEmpty && slot.ItemOriginalLocation != Basket)
+        //        {
+        //            TransferItem(slot);
+        //        }
+        //    }
 
-            foreach (var slot in luggageDoubleSlots.ToList())
-            {
-                if (!slot.IsEmpty && slot.ItemOriginalLocation != Luggage)
-                {
-                    TransferItem(slot as DoubleInventorySlot);
-                }
-            }
+        //    foreach (var slot in luggageDoubleSlots.ToList())
+        //    {
+        //        if (!slot.IsEmpty && slot.ItemOriginalLocation != Luggage)
+        //        {
+        //            TransferItem(slot as DoubleInventorySlot);
+        //        }
+        //    }
 
-            foreach (var slot in LuggageSlots)
-            {
-                if (!slot.IsEmpty && slot.ItemOriginalLocation != Luggage)
-                {
-                    TransferItem(slot);
-                }
-            }
+        //    foreach (var slot in LuggageSlots)
+        //    {
+        //        if (!slot.IsEmpty && slot.ItemOriginalLocation != Luggage)
+        //        {
+        //            TransferItem(slot);
+        //        }
+        //    }
 
-            foreach (var slot in basketDoubleSlots.ToList())
-            {
-                if (!slot.IsEmpty && slot.ItemOriginalLocation != Basket)
-                {
-                    TransferItem(slot as DoubleInventorySlot);
-                }
-            }
-        }
+        //    foreach (var slot in basketDoubleSlots.ToList())
+        //    {
+        //        if (!slot.IsEmpty && slot.ItemOriginalLocation != Basket)
+        //        {
+        //            TransferItem(slot as DoubleInventorySlot);
+        //        }
+        //    }
+        //}
 
         UpdateButtons();
     }

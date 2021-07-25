@@ -35,6 +35,10 @@ public static class InventoryData
     public const string GirlCoatKey = "girl_coat";
     public const string BoyCoatKey = "boy_coat";
     public const string MedicineKey = "medicine";
+    public const string ChildBookKey = "child_book";
+    public const string HorseOneKey = "horse1";
+    public const string HorseTwoKey = "horse2";
+    public const string LoliKey = "loli";
 
     public static IReadOnlyDictionary<int, InventoryModel> InventoryById = new ReadOnlyDictionary<int, InventoryModel>(
     new Dictionary<int, InventoryModel>()
@@ -89,36 +93,36 @@ public static class InventoryData
                 Location = InventoryLocation.AtHome
             }
         },
-        {
-            6,
-            new InventoryModel
-            {
-                Name = FoodKey,
-                Price = 5,
-                Volume = 1,
-                Location = InventoryLocation.AtHome
-            }
-        },
+        //{
+        //    6,
+        //    new InventoryModel
+        //    {
+        //        Name = FoodKey,
+        //        Price = 5,
+        //        Volume = 1,
+        //        Location = InventoryLocation.AtHome
+        //    }
+        //},
         {
             7,
             new InventoryModel
             {
                 Name = LocoKey,
                 Price = 5,
+                Volume = 2,
+                Location = InventoryLocation.AtHome
+            }
+        },
+        {
+            8,
+            new InventoryModel
+            {
+                Name = ChildBookKey,
+                Price = 5,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
         },
-        //{
-        //    8,
-        //    new InventoryModel
-        //    {
-        //        Name = MoneyKey,
-        //        Price = 5,
-        //        Volume = 1,
-        //        Location = InventoryLocation.AtHome
-        //    }
-        //},
         {
             9,
             new InventoryModel
@@ -207,6 +211,36 @@ public static class InventoryData
                 Price = 5,
                 Volume = 1,
                 Location = InventoryLocation.LuxembougShop
+            }
+        },
+        {
+            18,
+            new InventoryModel
+            {
+                Name = HorseOneKey,
+                Price = 5,
+                Volume = 1,
+                Location = InventoryLocation.AtHome
+            }
+        },
+        {
+            19,
+            new InventoryModel
+            {
+                Name = HorseTwoKey,
+                Price = 5,
+                Volume = 1,
+                Location = InventoryLocation.AtHome
+            }
+        },
+        {
+            20,
+            new InventoryModel
+            {
+                Name = LoliKey,
+                Price = 5,
+                Volume = 1,
+                Location = InventoryLocation.AtHome
             }
         }
     });

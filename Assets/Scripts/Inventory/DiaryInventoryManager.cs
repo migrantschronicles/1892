@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class DiaryInventoryManager : MonoBehaviour
 {
+    #region Inventory Management
+
     public Text SelectionDescription;
 
     public List<InventorySlot> LuggageSlots = new List<InventorySlot>();
@@ -30,9 +32,9 @@ public class DiaryInventoryManager : MonoBehaviour
         get => currentSelection;
         set
         {
-            if(currentSelection != value && value != null)
+            if (currentSelection != value && value != null)
             {
-                if(currentSelection != null)
+                if (currentSelection != null)
                 {
                     currentSelection.IsSelected = false;
                     currentSelection.Check();
@@ -40,7 +42,15 @@ public class DiaryInventoryManager : MonoBehaviour
 
                 currentSelection = value;
                 currentSelection.IsSelected = true;
-                currentSelection.Check();
+
+                if (currentSelection is DoubleInventorySlot doubleSlot)
+                {
+                    doubleSlot.Check();
+                }
+                else
+                {
+                    currentSelection.Check();
+                }
 
                 if (currentSelection.ItemId.HasValue)
                 {
@@ -50,7 +60,7 @@ public class DiaryInventoryManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private void OnEnable()
     {
         Reset();
 
@@ -131,6 +141,31 @@ public class DiaryInventoryManager : MonoBehaviour
         }
 
         luggageDoubleSlots.Clear();
+    }
+
+    public void RemoveSelection()
+    {
+        if (CurrentSelection != null && CurrentSelection.ItemId.HasValue)
+        {
+            var list = StateManager.CurrentState.AvailableItemIds.ToList();
+            list.Remove(CurrentSelection.ItemId.Value);
+            StateManager.CurrentState.AvailableItemIds = list;
+
+            if (CurrentSelection is DoubleInventorySlot doubleSlot)
+            {
+                doubleSlot.ResetItem();
+                doubleSlot.Check();
+            }
+            else
+            {
+                CurrentSelection.ResetItem();
+                CurrentSelection.Check();
+            }
+
+            currentSelection = null;
+        }
+
+        SelectionDescription.GetComponent<Text>().text = string.Empty;
     }
 
     private bool TryPositionVerticallyInLuggage(int rowIdex, int itemId, string originalLocation)
@@ -216,6 +251,49 @@ public class DiaryInventoryManager : MonoBehaviour
 
     void Update()
     {
-        
+
     }
+
+    #endregion
+
+    #region Paging
+
+    public GameObject InventoryPage;
+    public GameObject DiaryPage;
+    public GameObject HealthPage;
+    public GameObject SettingPage;
+
+    public void DisplayInventoryPage()
+    {
+        InventoryPage.SetActive(true);
+        DiaryPage.SetActive(false);
+        HealthPage.SetActive(false);
+        SettingPage.SetActive(false);
+    }
+
+    public void DisplayDiaryPage()
+    {
+        InventoryPage.SetActive(false);
+        DiaryPage.SetActive(true);
+        HealthPage.SetActive(false);
+        SettingPage.SetActive(false);
+    }
+
+    public void DisplayHealthPage()
+    {
+        InventoryPage.SetActive(false);
+        DiaryPage.SetActive(false);
+        HealthPage.SetActive(true);
+        SettingPage.SetActive(false);
+    }
+
+    public void DisplaySettingPage()
+    {
+        InventoryPage.SetActive(false);
+        DiaryPage.SetActive(false);
+        HealthPage.SetActive(false);
+        SettingPage.SetActive(true);
+    }    
+
+    #endregion
 }

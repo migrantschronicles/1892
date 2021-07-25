@@ -40,91 +40,6 @@ public static class InventoryData
     public const string HorseTwoKey = "horse2";
     public const string LoliKey = "loli";
 
-    public static IReadOnlyDictionary<int, string> DescriptionById = new ReadOnlyDictionary<int, string>(
-    new Dictionary<int, string>()
-    {
-        {
-            1,
-            ""
-        },
-        {
-            2,
-            ""
-        },
-        {
-            3,
-            ""
-        },
-        {
-            4,
-            ""
-        },
-        {
-            5,
-            ""
-        },
-        //{
-        //    6,
-        //    ""
-        //},
-        {
-            7,
-            ""
-        },
-        {
-            8,
-            ""
-        },
-        {
-            9,
-            ""
-        },
-        {
-            10,
-            ""
-        },
-        {
-            11,
-            ""
-        },
-        {
-            12,
-            ""
-        },
-        {
-            13,
-            ""
-        },
-        {
-            14,
-            ""
-        },
-        {
-            15,
-            ""
-        },
-        {
-            16,
-            ""
-        },
-        {
-            17,
-            ""
-        },
-        {
-            18,
-            ""
-        },
-        {
-            19,
-            ""
-        },
-        {
-            20,
-            ""
-        }
-    });
-
 
     public static IReadOnlyDictionary<int, InventoryModel> InventoryById = new ReadOnlyDictionary<int, InventoryModel>(
     new Dictionary<int, InventoryModel>()
@@ -134,7 +49,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = BagKey,
-                Price = 5,
+                Price = 3,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             } 
@@ -144,7 +59,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = BibleKey,
-                Price = 5,
+                Price = 1,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
@@ -154,7 +69,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = BirthCertificateKey,
-                Price = 5,
+                Price = 1,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
@@ -164,7 +79,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = BlanketKey,
-                Price = 5,
+                Price = 2,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
@@ -174,7 +89,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = EaringsKey,
-                Price = 5,
+                Price = 4,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
@@ -194,7 +109,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = LocoKey,
-                Price = 5,
+                Price = 2,
                 Volume = 2,
                 Location = InventoryLocation.AtHome
             }
@@ -204,7 +119,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = ChildBookKey,
-                Price = 5,
+                Price = 2,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
@@ -214,7 +129,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = NecklaceKey,
-                Price = 5,
+                Price = 6,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
@@ -224,7 +139,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = PictureKey,
-                Price = 5,
+                Price = 1,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
@@ -234,7 +149,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = SewingKey,
-                Price = 5,
+                Price = 1,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
@@ -244,7 +159,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = TeddyKey,
-                Price = 5,
+                Price = 2,
                 Volume = 2,
                 Location = InventoryLocation.AtHome
             }
@@ -254,7 +169,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = SuitcaseKey,
-                Price = 5,
+                Price = 3,
                 Volume = 1,
                 Location = InventoryLocation.LuxembougShop
             }
@@ -264,7 +179,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = MomCoatKey,
-                Price = 5,
+                Price = 3,
                 Volume = 2,
                 Location = InventoryLocation.LuxembougShop
             }
@@ -274,7 +189,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = GirlCoatKey,
-                Price = 5,
+                Price = 2,
                 Volume = 1,
                 Location = InventoryLocation.LuxembougShop
             }
@@ -284,7 +199,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = BoyCoatKey,
-                Price = 5,
+                Price = 2,
                 Volume = 1,
                 Location = InventoryLocation.LuxembougShop
             }
@@ -304,7 +219,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = HorseOneKey,
-                Price = 5,
+                Price = 2,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
@@ -314,7 +229,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = HorseTwoKey,
-                Price = 5,
+                Price = 2,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
@@ -324,10 +239,96 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = LoliKey,
-                Price = 5,
+                Price = 1,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
+        }
+    });
+
+
+    public static IReadOnlyDictionary<int, string> DescriptionById = new ReadOnlyDictionary<int, string>(
+    new Dictionary<int, string>()
+    {
+        {
+            1,
+            $"Mrs Hutain gave it to you to bring it to her nephew Neckel in Luxembourg City. ({InventoryById[1].Price}\u20A3)"
+        },
+        {
+            2,
+            $"Your word is a lamp for my feet and a light on my path. ({InventoryById[2].Price}\u20A3)"
+        },
+        {
+            3,
+            $"Birth Certificates: 1 x Matti Beffort, 1 x Mreis Beffort, 1 x Elis Beffort. ({InventoryById[3].Price}\u20A3)"
+        },
+        {
+            4,
+            $"Fluffy and thick blanket for cold nights. ({InventoryById[4].Price}\u20A3)"
+        },
+        {
+            5,
+            $"Earings. ({InventoryById[5].Price}\u20A3)"
+        },
+        //{
+        //    6,
+        //    ""
+        //},
+        {
+            7,
+            $"Matti’s toy locomotive. He loves locomotives, although he has never seen one from the inside. ({InventoryById[7].Price}\u20A3)"
+        },
+        {
+            8,
+            $"Child book. ({InventoryById[8].Price}\u20A3)"
+        },
+        {
+            9,
+            $"Necklace. ({InventoryById[9].Price}\u20A3)"
+        },
+        {
+            10,
+            $"A picture of the family Beffort from Feb. 1892. ({InventoryById[10].Price}\u20A3)"
+        },
+        {
+            11,
+            $"Used to repair clothing. ({InventoryById[11].Price}\u20A3)"
+        },
+        {
+            12,
+            $"Mreis’ Teddy Bear. She used to play with it more often when she was younger, but it still seems quite important to her. ({InventoryById[12].Price}\u20A3)"
+        },
+        {
+            13,
+            $"Unlocks new suitcase. ({InventoryById[13].Price}\u20A3)"
+        },
+        {
+            14,
+            $"A warm coat for a grown woman. ({InventoryById[14].Price}\u20A3)"
+        },
+        {
+            15,
+            $"A warm coat for a girl. ({InventoryById[15].Price}\u20A3)"
+        },
+        {
+            16,
+            $"A warm coat  for a boy. ({InventoryById[16].Price}\u20A3)"
+        },
+        {
+            17,
+            $"This medicine might help against the cold. ({InventoryById[17].Price}\u20A3)"
+        },
+        {
+            18,
+            $"Horse toy. ({InventoryById[18].Price}\u20A3)"
+        },
+        {
+            19,
+            $"Horse toy. ({InventoryById[19].Price}\u20A3)"
+        },
+        {
+            20,
+            $"Lollipop. ({InventoryById[20].Price}\u20A3)"
         }
     });
 }

@@ -21,7 +21,7 @@ public class DoubleInventorySlot : InventorySlot
         }
         else if (Isvertical)
         {
-            if (Location == ItemOriginalLocation)
+            if (Location == ItemOriginalLocation && !IsSelected)
             {
                 GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/{IconKey}");
             }
@@ -32,7 +32,7 @@ public class DoubleInventorySlot : InventorySlot
         }
         else
         {
-            if (Location == ItemOriginalLocation)
+            if (Location == ItemOriginalLocation && !IsSelected)
             {
                 GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/{IconKey}_h");
             }

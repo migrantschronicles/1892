@@ -57,7 +57,7 @@ public class ParisManager : MonoBehaviour
 
     void Start()
     {
-        if (!isInitialized)
+        if (isInitialized)
         {
             StartGame();
         }
@@ -68,6 +68,7 @@ public class ParisManager : MonoBehaviour
         GuydeMaupassantTalkButton.onClick.AddListener(TalkToMaupassant);
         MattisTalkButton.onClick.AddListener(TalkToMattis);
         CholeraGuyTalkButton.onClick.AddListener(TalkToCholera);
+        EndCholeraButton.onClick.AddListener(EndCholeraDialog);
 
         Maupassant1Button.onClick.AddListener(TalkToMaupassant2);
         Maupassant2Button.onClick.AddListener(TalkToMaupassant3);

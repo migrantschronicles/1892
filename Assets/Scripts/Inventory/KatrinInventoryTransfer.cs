@@ -4,23 +4,21 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LuxembourgInventoryManager : MonoBehaviour
+public class KatrinInventoryTransfer : MonoBehaviour
 {
-    static LuxembourgInventoryManager()
+    static KatrinInventoryTransfer()
     {
-        basketInventoryIds = InventoryData.InventoryById.Where(i => i.Value.Location == InventoryLocation.LuxembougShop).Select(i => i.Key).ToList();
+        basketInventoryIds = InventoryData.InventoryById.Where(i => i.Value.Location == InventoryLocation.Katrin).Select(i => i.Key).ToList();
         luggageInventoryIds = StateManager.CurrentState.AvailableItemIds.ToList();
     }
 
-    public LuxembourgInventoryManager()
+    public KatrinInventoryTransfer()
     {
         basketColums = 4;
         basketRows = 3;
 
         luggageColums = 4;
         luggageRows = 3;
-
-        considerMoneyChange = true;
     }
 
     #region Core Logic

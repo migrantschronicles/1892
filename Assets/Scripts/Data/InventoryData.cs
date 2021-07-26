@@ -13,7 +13,8 @@ public enum InventoryLocation
 {
     AtHome,
     OnHand,
-    LuxembougShop
+    LuxembougShop,
+    Katrin
 }
 
 public static class InventoryData
@@ -35,6 +36,7 @@ public static class InventoryData
     public const string GirlCoatKey = "girl_coat";
     public const string BoyCoatKey = "boy_coat";
     public const string MedicineKey = "medicine";
+    public const string CholeraMedicineKey = "cholera_medicine";
     public const string ChildBookKey = "child_book";
     public const string HorseOneKey = "horse1";
     public const string HorseTwoKey = "horse2";
@@ -69,7 +71,7 @@ public static class InventoryData
             new InventoryModel
             {
                 Name = BirthCertificateKey,
-                Price = 1,
+                Price = 0,
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
@@ -243,6 +245,16 @@ public static class InventoryData
                 Volume = 1,
                 Location = InventoryLocation.AtHome
             }
+        },
+        {
+            21,
+            new InventoryModel
+            {
+                Name = CholeraMedicineKey,
+                Price = 5,
+                Volume = 1,
+                Location = InventoryLocation.Katrin
+            }
         }
     });
 
@@ -260,7 +272,7 @@ public static class InventoryData
         },
         {
             3,
-            $"Birth Certificates: 1 x Matti Beffort, 1 x Mreis Beffort, 1 x Elis Beffort. ({InventoryById[3].Price}\u20A3)"
+            $"Birth Certificates: 1 x Mattis Beffort, 1 x Mreis Beffort, 1 x Elis Beffort. ({InventoryById[3].Price}\u20A3)"
         },
         {
             4,
@@ -268,7 +280,7 @@ public static class InventoryData
         },
         {
             5,
-            $"Earings. ({InventoryById[5].Price}\u20A3)"
+            $"Earrings: a gift from J. B. Beffort to his daugther. ({InventoryById[5].Price}\u20A3)"
         },
         //{
         //    6,
@@ -276,15 +288,15 @@ public static class InventoryData
         //},
         {
             7,
-            $"Matti’s toy locomotive. He loves locomotives, although he has never seen one from the inside. ({InventoryById[7].Price}\u20A3)"
+            $"Mattis' toy locomotive. He loves locomotives, although he has never seen one from the inside. ({InventoryById[7].Price}\u20A3)"
         },
         {
             8,
-            $"Child book. ({InventoryById[8].Price}\u20A3)"
+            $"Children's book: a gift from J. B. Beffort to Mattis. ({InventoryById[8].Price}\u20A3)"
         },
         {
             9,
-            $"Necklace. ({InventoryById[9].Price}\u20A3)"
+            $"Necklace: a gift from J. B. Beffort to Elis. ({InventoryById[9].Price}\u20A3)"
         },
         {
             10,
@@ -320,15 +332,19 @@ public static class InventoryData
         },
         {
             18,
-            $"Horse toy. ({InventoryById[18].Price}\u20A3)"
+            $"Horse toy: Mattis' toy. ({InventoryById[18].Price}\u20A3)"
         },
         {
             19,
-            $"Horse toy. ({InventoryById[19].Price}\u20A3)"
+            $"Horse toy: Mreis' toy. ({InventoryById[19].Price}\u20A3)"
         },
         {
             20,
-            $"Lollipop. ({InventoryById[20].Price}\u20A3)"
+            $"Lollipop: a delicious, sweet delight. ({InventoryById[20].Price}\u20A3)"
+        },
+        {
+            21,
+            $"This medicine might help against cholera.  ({InventoryById[21].Price}\u20A3)"
         }
     });
 }

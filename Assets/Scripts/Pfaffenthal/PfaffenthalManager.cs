@@ -30,6 +30,8 @@ public class PfaffenthalManager : MonoBehaviour
 
     public GameObject InventorySelection;
 
+    public GameObject KatrinInventoryTransfer;
+
     public GameObject Blur;
 
     private TimeSpan buttonAnimationTime;
@@ -37,6 +39,12 @@ public class PfaffenthalManager : MonoBehaviour
     private static bool spokeToKatrin;
     private static bool spokeToJhang;
     private static bool isInitialized;
+
+    public void OpenKatrinInventoryTransfer()
+    {
+        KatrinInventoryTransfer.SetActive(true);
+        HideAll();
+    }
 
     public void OpenInventorySelection()
     {
@@ -47,6 +55,7 @@ public class PfaffenthalManager : MonoBehaviour
     public void CloseInventorySelection()
     {
         InventorySelection.SetActive(false);
+        KatrinInventoryTransfer.SetActive(false);
         UnhideAll();
     }
 

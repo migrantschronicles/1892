@@ -22,7 +22,7 @@ public class DiaryInventoryManager : MonoBehaviour
 
     private List<DoubleInventorySlot> luggageDoubleSlots = new List<DoubleInventorySlot>();
 
-    private List<int> luggageInventoryIds = StateManager.CurrentState.AvailableItemIds.ToList();
+    private List<int> luggageInventoryIds = StateManager.CurrentState?.AvailableItemIds?.ToList();
 
     private const string Luggage = "Luggage";
 
@@ -62,6 +62,8 @@ public class DiaryInventoryManager : MonoBehaviour
 
     private void OnEnable()
     {
+        luggageInventoryIds = StateManager.CurrentState.AvailableItemIds.ToList();
+
         Reset();
 
         var allDoubledItemIds = InventoryData.InventoryById.Where(i => i.Value.Volume == 2).Select(i => i.Key);

@@ -4,6 +4,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+//Currently used only for Pfaffenthal
 public class InventoryManager : MonoBehaviour
 {
     //Indexation
@@ -53,8 +55,9 @@ public class InventoryManager : MonoBehaviour
 
     protected bool considerMoneyChange = false;
 
-    private void OnDisable()
+    private void OnEnable()
     {
+        luggageInventoryIds = StateManager.CurrentState.AvailableItemIds.ToList();
         ReorganizeClean();
     }
 

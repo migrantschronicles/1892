@@ -317,6 +317,7 @@ public class BrusselsManager : MonoBehaviour
         AdolpheDialog2.SetActive(false);
         AdolpheDialog3.SetActive(false);
         AdolpheDialog4.SetActive(false);
+        CloseUp.SetActive(false);
 
         UnhideAll();
     }

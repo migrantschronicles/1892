@@ -232,9 +232,9 @@ public class BrusselsInventoryManager : MonoBehaviour
 
         if (considerMoneyChange)
         {
-            priceDelta = LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue && s.ItemOriginalLocation != Luggage)
+            priceDelta = BasketSlots.Concat(basketDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue && s.ItemOriginalLocation != Basket)
                     .Sum(s => InventoryData.InventoryById[s.ItemId.Value].Price) -
-                BasketSlots.Concat(basketDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue && s.ItemOriginalLocation != Basket)
+                LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue && s.ItemOriginalLocation != Luggage)
                     .Sum(s => InventoryData.InventoryById[s.ItemId.Value].Price);
 
             PriceDeltaText.GetComponent<Text>().text = priceDelta.ToString();

@@ -5215,7 +5215,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 338827168}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2000607763}
+        m_TargetAssemblyTypeName: BrusselsManager, Assembly-CSharp
+        m_MethodName: HideAll
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &342125306
 GameObject:
   m_ObjectHideFlags: 0
@@ -9849,7 +9861,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 587826643}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2000607763}
+        m_TargetAssemblyTypeName: BrusselsManager, Assembly-CSharp
+        m_MethodName: HideAll
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &590113066
 GameObject:
   m_ObjectHideFlags: 0
@@ -13287,8 +13311,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 110, y: -23}
-  m_SizeDelta: {x: 441.3539, y: 302.4774}
+  m_AnchoredPosition: {x: 110, y: -27.5547}
+  m_SizeDelta: {x: 441.3539, y: 311.5868}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &744684484
 MonoBehaviour:
@@ -13533,7 +13557,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 761443429}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2000607763}
+        m_TargetAssemblyTypeName: BrusselsManager, Assembly-CSharp
+        m_MethodName: HideAll
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2000607763}
+        m_TargetAssemblyTypeName: BrusselsManager, Assembly-CSharp
+        m_MethodName: OpenShop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &761443429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15434,7 +15482,7 @@ RectTransform:
   m_LocalScale: {x: 0.19999999, y: 0.19999999, z: 0.19999999}
   m_Children: []
   m_Father: {fileID: 2000607762}
-  m_RootOrder: 3
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -17776,7 +17824,7 @@ Transform:
   - {fileID: 1898721984}
   - {fileID: 108409747}
   m_Father: {fileID: 2000607762}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1038116186
 MonoBehaviour:
@@ -17919,6 +17967,7 @@ GameObject:
   - component: {fileID: 1039890741}
   - component: {fileID: 1039890740}
   - component: {fileID: 1039890739}
+  - component: {fileID: 1039890742}
   m_Layer: 5
   m_Name: GoToMainMenu
   m_TagString: Untagged
@@ -17990,8 +18039,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1407917280}
-        m_TargetAssemblyTypeName: DiaryOpener, Assembly-CSharp
+      - m_Target: {fileID: 1039890742}
+        m_TargetAssemblyTypeName: StartQuitManager, Assembly-CSharp
         m_MethodName: GoToMainMenu
         m_Mode: 1
         m_Arguments:
@@ -18040,6 +18089,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1039890737}
   m_CullTransparentMesh: 1
+--- !u!114 &1039890742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039890737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b5198dbf62805840b9077637c3a7204, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1042580551
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24185,7 +24246,7 @@ RectTransform:
   - {fileID: 1644907183}
   - {fileID: 761443427}
   m_Father: {fileID: 2000607762}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -25005,7 +25066,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1493113153}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2000607763}
+        m_TargetAssemblyTypeName: BrusselsManager, Assembly-CSharp
+        m_MethodName: OpenJeanInventoryTransfer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &1495929114
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26833,7 +26906,7 @@ Transform:
   - {fileID: 1290994810}
   - {fileID: 1856050355}
   m_Father: {fileID: 2000607762}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1593701590
 GameObject:
@@ -27975,7 +28048,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1644907184}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2000607763}
+        m_TargetAssemblyTypeName: BrusselsManager, Assembly-CSharp
+        m_MethodName: HideAll
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1652006598
 GameObject:
   m_ObjectHideFlags: 0
@@ -30045,7 +30130,7 @@ Transform:
   - {fileID: 2054326931}
   - {fileID: 362234220}
   m_Father: {fileID: 2000607762}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1709926024
 MonoBehaviour:
@@ -32164,7 +32249,7 @@ RectTransform:
   - {fileID: 460930520}
   - {fileID: 1371372806}
   m_Father: {fileID: 2000607762}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -34710,13 +34795,13 @@ RectTransform:
   - {fileID: 401914949}
   - {fileID: 1299032455}
   - {fileID: 2129271656}
-  - {fileID: 901869102}
   - {fileID: 1434014664}
   - {fileID: 1819818650}
   - {fileID: 2055127894}
   - {fileID: 1592959441}
   - {fileID: 1709926022}
   - {fileID: 1038116184}
+  - {fileID: 901869102}
   - {fileID: 1952711256}
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -34785,8 +34870,8 @@ MonoBehaviour:
   EndAdolpheButton: {fileID: 1330133924}
   NPCPanel: {fileID: 1434014661}
   Blur: {fileID: 1299032456}
-  Shop: {fileID: 0}
-  JeanInventoryTransfer: {fileID: 0}
+  Shop: {fileID: 1709926021}
+  JeanInventoryTransfer: {fileID: 1038116183}
 --- !u!1001 &2023854112
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35637,7 +35722,7 @@ RectTransform:
   - {fileID: 505649998}
   - {fileID: 1026186438}
   m_Father: {fileID: 2000607762}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

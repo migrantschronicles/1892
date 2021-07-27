@@ -74,6 +74,7 @@ public class BrusselsManager : MonoBehaviour
     public void OpenShop()
     {
         Shop.SetActive(true);
+        StartButton.SetActive(true);
         HideAll();
     }
 
@@ -87,6 +88,7 @@ public class BrusselsManager : MonoBehaviour
     {
         Shop.SetActive(false);
         JeanInventoryTransfer.SetActive(false);
+        StartButton.SetActive(false);
         UnhideAll();
     }
 
@@ -275,7 +277,7 @@ public class BrusselsManager : MonoBehaviour
     }
 
 
-    private void HideAll()
+    public void HideAll()
     {
         NPCPanel.SetActive(false);
     }

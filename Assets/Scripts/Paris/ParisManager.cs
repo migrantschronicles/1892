@@ -52,6 +52,21 @@ public class ParisManager : MonoBehaviour
     private static bool isInitialized;
 
     public GameObject ShopInventory;
+    public GameObject CholeraGuyInventory;
+    public GameObject MaupassantInventory;
+
+    public void DiscoverHavre()
+    {
+        LevelManager.StartLevel("GlobeScene");
+        GameManager.DiscoverLeg(CityData.Paris + CityData.Havre);
+    }
+
+    public void CloseInventories()
+    {
+        CloseShopInventory();
+        CloseCholeraGuyInventory();
+        CloseMaupassantInventory();
+    }
 
     public void OpenShopInventory()
     {
@@ -65,6 +80,34 @@ public class ParisManager : MonoBehaviour
         UnhideAll();
         StartButton.SetActive(false);
         ShopInventory.SetActive(false);
+    }
+
+    public void OpenCholeraGuyInventory()
+    {
+        HideAll();
+        StartButton.SetActive(true);
+        CholeraGuyInventory.SetActive(true);
+    }
+
+    public void CloseCholeraGuyInventory()
+    {
+        UnhideAll();
+        StartButton.SetActive(false);
+        CholeraGuyInventory.SetActive(false);
+    }
+
+    public void OpenMaupassantInventory()
+    {
+        HideAll();
+        StartButton.SetActive(true);
+        MaupassantInventory.SetActive(true);
+    }
+
+    public void CloseMaupassantInventory()
+    {
+        UnhideAll();
+        StartButton.SetActive(false);
+        MaupassantInventory.SetActive(false);
     }
 
     void Start()
@@ -140,7 +183,6 @@ public class ParisManager : MonoBehaviour
         MaupassantDialog4.SetActive(false);
         MaupassantDialog5.SetActive(false);
         InteractivesPanel.transform.Find("MaupassantButton").gameObject.SetActive(false);
-        UnhideAll();
 
         spokeToMaupassant = true;
     }
@@ -193,7 +235,6 @@ public class ParisManager : MonoBehaviour
     {
         CholeraDialog3.SetActive(false);
         InteractivesPanel.transform.Find("CholeraButton").gameObject.SetActive(false);
-        UnhideAll();
 
         spokeToCholera = true;
     }

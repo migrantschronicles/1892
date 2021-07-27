@@ -40,6 +40,8 @@ public partial class GameManager : MonoBehaviour
     public Text NewRoute;
     public static GameManager currentGameManager;
 
+    public GameObject EndGamePopup;
+
     public GameManager()
     {
         if(stateManager == null)
@@ -216,6 +218,11 @@ public partial class GameManager : MonoBehaviour
 
     private void TravelLeg(City origin, City destination, TransportationType type)
     {
+        if(destination.name == CityData.Havre || destination.name == CityData.Rotterdam)
+        {
+            EndGamePopup.SetActive(true);
+        }
+
         var legKey = origin?.name + destination?.name;
 
         if (origin != null && destination != null && LegData.CoordinatesByLegKey.ContainsKey(legKey))

@@ -108,8 +108,6 @@ public class BrusselsManager : MonoBehaviour
         AdolpheButton2.onClick.AddListener(TalkToAdolphe3);
         AdolpheButton3.onClick.AddListener(TalkToAdolphe4);
         EndAdolpheButton.onClick.AddListener(EndAdolpheDialog);
-
-        CloseDialogs();
     }
 
     private void GoToGlobe()

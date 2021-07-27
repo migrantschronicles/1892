@@ -15,7 +15,11 @@ public enum InventoryLocation
     OnHand,
     LuxembougShop,
     ParisShop,
-    Katrin
+    Katrin,
+    Maupassant,
+    CholeraGuy,
+    Brussels,
+    Jean
 }
 
 public static class InventoryData
@@ -42,6 +46,9 @@ public static class InventoryData
     public const string HorseOneKey = "horse1";
     public const string HorseTwoKey = "horse2";
     public const string LoliKey = "loli";
+    public const string BelAmiKey = "bel_ami";
+    public const string ChocolateKey = "chocolate_bar";
+    public const string PralineKey = "praline";
 
 
     public static IReadOnlyDictionary<int, InventoryModel> InventoryById = new ReadOnlyDictionary<int, InventoryModel>(
@@ -257,7 +264,7 @@ public static class InventoryData
                 Location = InventoryLocation.Katrin
             }
         },
-         {
+        {
             22,
             new InventoryModel
             {
@@ -265,6 +272,46 @@ public static class InventoryData
                 Price = 5,
                 Volume = 1,
                 Location = InventoryLocation.ParisShop
+            }
+        },
+        {
+            23,
+            new InventoryModel
+            {
+                Name = BelAmiKey,
+                Price = 1,
+                Volume = 1,
+                Location = InventoryLocation.Maupassant
+            }
+        },
+        {
+            24,
+            new InventoryModel
+            {
+                Name = ChocolateKey,
+                Price = 1,
+                Volume = 1,
+                Location = InventoryLocation.Brussels
+            }
+        },
+        {
+            25,
+            new InventoryModel
+            {
+                Name = FoodKey,
+                Price = 9,
+                Volume = 1,
+                Location = InventoryLocation.Brussels
+            }
+        },
+        {
+            26,
+            new InventoryModel
+            {
+                Name = PralineKey,
+                Price = 2,
+                Volume = 1,
+                Location = InventoryLocation.Jean
             }
         }
     });
@@ -355,11 +402,27 @@ public static class InventoryData
         },
         {
             21,
-            $"This medicine might help against cholera.  ({InventoryById[21].Price}\u20A3)"
+            $"This medicine might help against cholera. ({InventoryById[21].Price}\u20A3)"
         },
         {
             22,
-            $"This medicine might help against cholera.  ({InventoryById[22].Price}\u20A3)"
+            $"This medicine might help against cholera. ({InventoryById[22].Price}\u20A3)"
+        },
+        {
+            23,
+            $"A signed first edition of “Bel Ami” by Guy de Maupassant. ({InventoryById[23].Price}\u20A3)"
+        },
+        {
+            24,
+            $"A delicious bar of chocolate. ({InventoryById[24].Price}\u20A3)"
+        },
+        {
+            25,
+            $"Food. ({InventoryById[25].Price}\u20A3)"
+        },
+        {
+            26,
+            $"The first praline to ever exist. ({InventoryById[26].Price}\u20A3)"
         }
     });
 }

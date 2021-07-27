@@ -57,10 +57,6 @@ public class BrusselsManager : MonoBehaviour
     public Button AdolpheButton3; 
     public Button EndAdolpheButton;
 
-    public GameObject Mother;
-    public GameObject Boy;
-    public GameObject Girl;
-
     public GameObject NPCPanel;
 
     public GameObject Blur;
@@ -71,6 +67,34 @@ public class BrusselsManager : MonoBehaviour
     private static bool spokeToJean;
     private static bool spokeToAdolphe;
     private static bool isInitialized;
+
+    public GameObject Shop;
+    public GameObject JeanInventoryTransfer;
+
+    public void OpenShop()
+    {
+        Shop.SetActive(true);
+        HideAll();
+    }
+
+    public void OpenJeanInventoryTransfer()
+    {
+        JeanInventoryTransfer.SetActive(true);
+        HideAll();
+    }
+
+    public void CloseInventories()
+    {
+        Shop.SetActive(false);
+        JeanInventoryTransfer.SetActive(false);
+        UnhideAll();
+    }
+
+    public void DiscoverRotterdam()
+    {
+        LevelManager.StartLevel("GlobeScene");
+        GameManager.DiscoverLeg(CityData.Brussels + CityData.Rotterdam);
+    }
 
     void Start()
     {
@@ -253,17 +277,11 @@ public class BrusselsManager : MonoBehaviour
 
     private void HideAll()
     {
-        Mother.SetActive(false);
-        Boy.SetActive(false);
-        Girl.SetActive(false);
         NPCPanel.SetActive(false);
     }
 
     private void UnhideAll()
     {
-        Mother.SetActive(true);
-        Boy.SetActive(true);
-        Girl.SetActive(true);
         NPCPanel.SetActive(true);
     }
 

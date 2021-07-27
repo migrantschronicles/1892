@@ -40,6 +40,16 @@ public static class LegData
         },
         new Leg
         {
+            Origin = CityData.Brussels,
+            Destination = CityData.Rotterdam,
+            Transportation = new Transportation
+            {
+                Type = TransportationType.Foot
+            },
+            Distance = 500
+        },
+        new Leg
+        {
             Origin = CityData.Luxembourg,
             Destination = CityData.Antwerp,
             Transportation = new Transportation

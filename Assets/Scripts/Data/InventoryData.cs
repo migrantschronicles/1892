@@ -14,6 +14,7 @@ public enum InventoryLocation
     AtHome,
     OnHand,
     LuxembougShop,
+    ParisShop,
     Katrin
 }
 
@@ -96,16 +97,16 @@ public static class InventoryData
                 Location = InventoryLocation.AtHome
             }
         },
-        //{
-        //    6,
-        //    new InventoryModel
-        //    {
-        //        Name = FoodKey,
-        //        Price = 5,
-        //        Volume = 1,
-        //        Location = InventoryLocation.AtHome
-        //    }
-        //},
+        {
+            6,
+            new InventoryModel
+            {
+                Name = FoodKey,
+                Price = 9,
+                Volume = 1,
+                Location = InventoryLocation.ParisShop
+            }
+        },
         {
             7,
             new InventoryModel
@@ -255,6 +256,16 @@ public static class InventoryData
                 Volume = 1,
                 Location = InventoryLocation.Katrin
             }
+        },
+         {
+            22,
+            new InventoryModel
+            {
+                Name = CholeraMedicineKey,
+                Price = 5,
+                Volume = 1,
+                Location = InventoryLocation.ParisShop
+            }
         }
     });
 
@@ -282,10 +293,10 @@ public static class InventoryData
             5,
             $"Earrings: a gift from J. B. Beffort to his daugther. ({InventoryById[5].Price}\u20A3)"
         },
-        //{
-        //    6,
-        //    ""
-        //},
+        {
+            6,
+            $"Food. ({InventoryById[6].Price}\u20A3)"
+        },
         {
             7,
             $"Mattis' toy locomotive. He loves locomotives, although he has never seen one from the inside. ({InventoryById[7].Price}\u20A3)"
@@ -345,6 +356,10 @@ public static class InventoryData
         {
             21,
             $"This medicine might help against cholera.  ({InventoryById[21].Price}\u20A3)"
+        },
+        {
+            22,
+            $"This medicine might help against cholera.  ({InventoryById[22].Price}\u20A3)"
         }
     });
 }

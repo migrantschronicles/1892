@@ -3,6 +3,10 @@ using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour
 {
+    //for diary inventory
+    public bool IsSelected { get; set; }
+
+
     public bool IsEmpty { get; set; } = true;
     public int? ItemId { get; set; }
     public string Type { get; set; }
@@ -22,7 +26,7 @@ public class InventorySlot : MonoBehaviour
         {
             GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/empty");
         }
-        else if (Location == ItemOriginalLocation)
+        else if (Location == ItemOriginalLocation && !IsSelected)
         {
             GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/{IconKey}");
         }

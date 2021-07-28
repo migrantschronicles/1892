@@ -40,11 +40,7 @@ public class ParisManager : MonoBehaviour
     public Button CholeraButton4; // I'm sorry. I can't. you should go see a doctor.
     public Button EndCholeraButton; // X to end
 
-    public GameObject Mother;
-    public GameObject Boy;
-    public GameObject Girl;
-
-    public GameObject NPCPanel;
+    public GameObject InteractivesPanel;
 
     public GameObject Blur;
 
@@ -55,13 +51,73 @@ public class ParisManager : MonoBehaviour
     private static bool spokeToCholera;
     private static bool isInitialized;
 
+    public GameObject ShopInventory;
+    public GameObject CholeraGuyInventory;
+    public GameObject MaupassantInventory;
+
+    public void DiscoverHavre()
+    {
+        LevelManager.StartLevel("GlobeScene");
+        GameManager.DiscoverLeg(CityData.Paris + CityData.Havre);
+    }
+
+    public void CloseInventories()
+    {
+        CloseShopInventory();
+        CloseCholeraGuyInventory();
+        CloseMaupassantInventory();
+    }
+
+    public void OpenShopInventory()
+    {
+        HideAll();
+        StartButton.SetActive(true);
+        ShopInventory.SetActive(true);
+    }
+
+    public void CloseShopInventory()
+    {
+        UnhideAll();
+        StartButton.SetActive(false);
+        ShopInventory.SetActive(false);
+    }
+
+    public void OpenCholeraGuyInventory()
+    {
+        HideAll();
+        StartButton.SetActive(true);
+        CholeraGuyInventory.SetActive(true);
+    }
+
+    public void CloseCholeraGuyInventory()
+    {
+        UnhideAll();
+        StartButton.SetActive(false);
+        CholeraGuyInventory.SetActive(false);
+    }
+
+    public void OpenMaupassantInventory()
+    {
+        HideAll();
+        StartButton.SetActive(true);
+        MaupassantInventory.SetActive(true);
+    }
+
+    public void CloseMaupassantInventory()
+    {
+        UnhideAll();
+        StartButton.SetActive(false);
+        MaupassantInventory.SetActive(false);
+    }
+
     void Start()
     {
         if (isInitialized)
         {
             StartGame();
         }
-        NPCPanel.SetActive(false);
+
+        InteractivesPanel.SetActive(false);
         StartButton.SetActive(true);
         GlobeButton.onClick.AddListener(GoToGlobe);
 
@@ -85,8 +141,6 @@ public class ParisManager : MonoBehaviour
         CholeraButton3.onClick.AddListener(TalkToCholera3);
         CholeraButton4.onClick.AddListener(StopTalkingToCholera);
         EndCholeraButton.onClick.AddListener(EndCholeraDialog);
-
-        CloseDialogs();
     }
 
     private void GoToGlobe()
@@ -128,8 +182,7 @@ public class ParisManager : MonoBehaviour
     {
         MaupassantDialog4.SetActive(false);
         MaupassantDialog5.SetActive(false);
-        NPCPanel.transform.Find("MaupassantButton").gameObject.SetActive(false);
-        UnhideAll();
+        InteractivesPanel.transform.Find("MaupassantButton").gameObject.SetActive(false);
 
         spokeToMaupassant = true;
     }
@@ -143,7 +196,7 @@ public class ParisManager : MonoBehaviour
     private void EndMattisDialog()
     {
         MattisDialog.SetActive(false);
-        NPCPanel.transform.Find("MattisButton").gameObject.SetActive(false);
+        InteractivesPanel.transform.Find("MattisButton").gameObject.SetActive(false);
         UnhideAll();
 
         spokeToMattis = true;
@@ -181,55 +234,45 @@ public class ParisManager : MonoBehaviour
     private void EndCholeraDialog()
     {
         CholeraDialog3.SetActive(false);
-        NPCPanel.transform.Find("CholeraButton").gameObject.SetActive(false);
-        UnhideAll();
+        InteractivesPanel.transform.Find("CholeraButton").gameObject.SetActive(false);
 
         spokeToCholera = true;
     }
 
     private void HideAll()
     {
-        Mother.SetActive(false);
-        Boy.SetActive(false);
-        Girl.SetActive(false);
-        NPCPanel.SetActive(false);
+        InteractivesPanel.SetActive(false);
     }
 
     private void UnhideAll()
     {
-        Mother.SetActive(true);
-        Boy.SetActive(true);
-        Girl.SetActive(true);
-        NPCPanel.SetActive(true);
+        InteractivesPanel.SetActive(true);
     }
 
 
 
     public void StartGame()
     {
-        StateManager.CurrentState.FreezeTime = false;
         isInitialized = true;
 
         StartPopup.SetActive(false);
         StartButton.SetActive(false);
-        NPCPanel.SetActive(true);
+        InteractivesPanel.SetActive(true);
 
         if (spokeToMaupassant)
         {
-            NPCPanel.transform.Find("MaupassantButton").gameObject.SetActive(false);
+            InteractivesPanel.transform.Find("MaupassantButton").gameObject.SetActive(false);
         }
 
         if (spokeToMattis)
         {
-            NPCPanel.transform.Find("MattisButton").gameObject.SetActive(false);
+            InteractivesPanel.transform.Find("MattisButton").gameObject.SetActive(false);
         }
 
         if (spokeToCholera)
         {
-            NPCPanel.transform.Find("CholeraButton").gameObject.SetActive(false);
+            InteractivesPanel.transform.Find("CholeraButton").gameObject.SetActive(false);
         }
-
-        Blur.SetActive(false);
     }
 
     public void CloseDialogs()

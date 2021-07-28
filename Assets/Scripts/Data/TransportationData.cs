@@ -114,10 +114,7 @@ public static class TransportationData
                 new List<TransportationType>()
                 {
                     TransportationType.Foot,
-                    TransportationType.Train,
-                    TransportationType.StageCoach,
-                    TransportationType.TramRail,
-                    TransportationType.Cart
+                    TransportationType.Train
                 }
             },
             {
@@ -147,10 +144,7 @@ public static class TransportationData
                 new List<TransportationType>()
                 {
                     TransportationType.Foot,
-                    TransportationType.Train,
-                    TransportationType.StageCoach,
-                    TransportationType.TramRail,
-                    TransportationType.Cart
+                    TransportationType.Train
                 }
             },
             {
@@ -166,6 +160,28 @@ public static class TransportationData
             },
             {
                 CityData.Metz + CityData.Paris,
+                new List<TransportationType>()
+                {
+                    TransportationType.Foot,
+                    TransportationType.Train,
+                    TransportationType.StageCoach,
+                    TransportationType.TramRail,
+                    TransportationType.Cart
+                }
+            },
+            {
+                CityData.Paris + CityData.Havre,
+                new List<TransportationType>()
+                {
+                    TransportationType.Foot,
+                    TransportationType.Train,
+                    TransportationType.StageCoach,
+                    TransportationType.TramRail,
+                    TransportationType.Cart
+                }
+            },
+            {
+                CityData.Brussels + CityData.Rotterdam,
                 new List<TransportationType>()
                 {
                     TransportationType.Foot,

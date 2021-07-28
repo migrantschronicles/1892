@@ -94,7 +94,7 @@ public class NavigationMarker : INavigationMarker
 
         var distance = GetDistance(coordinates.First().x, coordinates.First().y, coordinates.Last().x, coordinates.Last().y);
         var duration = Math.Max((float)(distance / (TransportationData.TransportationSpeedByType[transportation] * 1000)), 1f);
-        duration = Math.Max(duration, 5);
+        duration = Math.Max(duration, 10);
 
         var marker = map.AddLineCustom(coordinates.ToArray(), TravelLineColor, TravelLineWidth, duration);
         marker.OnLineDrawingEnd += (e) => TravelCompleted?.Invoke();

@@ -4,6 +4,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+//Currently used only for Pfaffenthal
 public class InventoryManager : MonoBehaviour
 {
     //Indexation
@@ -53,8 +55,9 @@ public class InventoryManager : MonoBehaviour
 
     protected bool considerMoneyChange = false;
 
-    private void OnDisable()
+    private void OnEnable()
     {
+        luggageInventoryIds = StateManager.CurrentState.AvailableItemIds.ToList();
         ReorganizeClean();
     }
 
@@ -212,9 +215,9 @@ public class InventoryManager : MonoBehaviour
 
         if (considerMoneyChange)
         {
-            priceDelta = LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue && s.ItemOriginalLocation != Luggage)
+            priceDelta = BasketSlots.Concat(basketDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue && s.ItemOriginalLocation != Basket)
                     .Sum(s => InventoryData.InventoryById[s.ItemId.Value].Price) -
-                BasketSlots.Concat(basketDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue && s.ItemOriginalLocation != Basket)
+                LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue && s.ItemOriginalLocation != Luggage)
                     .Sum(s => InventoryData.InventoryById[s.ItemId.Value].Price);
 
             PriceDeltaText.GetComponent<Text>().text = priceDelta.ToString();
@@ -547,42 +550,6 @@ public class InventoryManager : MonoBehaviour
         StateManager.CurrentState.AvailableItemIds = LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value);
         luggageInventoryIds = LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value).ToList();
         basketInventoryIds = BasketSlots.Concat(basketDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value).ToList();
-
-        //foreach (var slot in LuggageSlots)
-        //{
-        //    if (!slot.IsEmpty)
-        //    {
-        //        slot.ItemOriginalLocation = slot.Location;
-        //        slot.Check();
-        //    }
-        //}
-
-        //foreach (var slot in luggageDoubleSlots)
-        //{
-        //    if (!slot.IsEmpty)
-        //    {
-        //        slot.ItemOriginalLocation = slot.Location;
-        //        slot.Check();
-        //    }
-        //}
-
-        //foreach (var slot in BasketSlots)
-        //{
-        //    if (!slot.IsEmpty)
-        //    {
-        //        slot.ItemOriginalLocation = slot.Location;
-        //        slot.Check();
-        //    }
-        //}
-
-        //foreach (var slot in basketDoubleSlots)
-        //{
-        //    if (!slot.IsEmpty)
-        //    {
-        //        slot.ItemOriginalLocation = slot.Location;
-        //        slot.Check();
-        //    }
-        //}
 
         ReorganizeClean();
         UpdateButtons();

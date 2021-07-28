@@ -15,5 +15,5 @@ public static class Constants
 
     public static int InitialLuggageNumber = 2;
 
-    public static IEnumerable<int> InitialItemIds = new List<int>();
+    public static IEnumerable<int> InitialItemIds = new List<int>() { };
 }

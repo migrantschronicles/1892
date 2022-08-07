@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ScreenshotHandler : MonoBehaviour
 {
-
+    // Also PDF Generator
     private IEnumerator Screenshot() 
     {
         yield return new WaitForEndOfFrame();

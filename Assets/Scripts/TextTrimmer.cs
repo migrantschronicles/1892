@@ -10,8 +10,12 @@ public class TextTrimmer : MonoBehaviour
     public GameObject NextButton;
     public GameObject PreviousButton;
 
+    public float timeForCharacters = 0.1f;
+
     private int count;
     private int index;
+    private string tempText;
+    private bool completedText = false;
 
     void Start()
     {
@@ -22,10 +26,22 @@ public class TextTrimmer : MonoBehaviour
 
         NextButton.GetComponent<Button>().onClick.AddListener(NextButtonClick);
         PreviousButton.GetComponent<Button>().onClick.AddListener(PreviousButtonClick);
+
+        StartCoroutine(AnimateText());
+    }
+
+    public void Update() 
+    {
+        if (Input.GetMouseButtonDown(0) && !completedText) 
+        {
+            CompleteText();
+        }
     }
 
     public void NextButtonClick()
     {
+        CompleteText();
+
         textParts[index].SetActive(false);
 
         if (++index == count - 1)
@@ -35,10 +51,14 @@ public class TextTrimmer : MonoBehaviour
 
         PreviousButton.SetActive(true);
         textParts[index].SetActive(true);
+
+        StartCoroutine(AnimateText());
     }
 
     public void PreviousButtonClick()
     {
+        CompleteText();
+
         textParts[index].SetActive(false);
 
         if (--index == 0)
@@ -48,5 +68,31 @@ public class TextTrimmer : MonoBehaviour
 
         NextButton.SetActive(true);
         textParts[index].SetActive(true);
+
+        StartCoroutine(AnimateText());
+    }
+
+    public IEnumerator AnimateText() 
+    {
+        completedText = false;
+        tempText = textParts[index].GetComponent<Text>().text;
+        textParts[index].GetComponent<Text>().text = "";
+
+        for (int i = 0; i < tempText.Length; i++) 
+        {
+            textParts[index].GetComponent<Text>().text += tempText[i];
+            yield return new WaitForSeconds(timeForCharacters);
+        }
+        completedText = true;
+    }
+
+    public void CompleteText() 
+    {
+        if (tempText != "" || tempText!=null)
+        {
+            textParts[index].GetComponent<Text>().text = tempText;
+            tempText = "";
+        }
+        completedText = true;
     }
 }

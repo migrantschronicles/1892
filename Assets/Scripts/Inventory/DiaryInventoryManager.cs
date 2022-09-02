@@ -264,6 +264,7 @@ public class DiaryInventoryManager : MonoBehaviour
     public GameObject DiaryPage;
     public GameObject HealthPage;
     public GameObject SettingPage;
+    public GameObject MapPage;
 
     public void DisplayInventoryPage()
     {
@@ -271,6 +272,7 @@ public class DiaryInventoryManager : MonoBehaviour
         DiaryPage.SetActive(false);
         HealthPage.SetActive(false);
         SettingPage.SetActive(false);
+        MapPage.SetActive(false);
     }
 
     public void DisplayDiaryPage()
@@ -279,6 +281,7 @@ public class DiaryInventoryManager : MonoBehaviour
         DiaryPage.SetActive(true);
         HealthPage.SetActive(false);
         SettingPage.SetActive(false);
+        MapPage.SetActive(false);
     }
 
     public void DisplayHealthPage()
@@ -287,6 +290,7 @@ public class DiaryInventoryManager : MonoBehaviour
         DiaryPage.SetActive(false);
         HealthPage.SetActive(true);
         SettingPage.SetActive(false);
+        MapPage.SetActive(false);
     }
 
     public void DisplaySettingPage()
@@ -295,7 +299,17 @@ public class DiaryInventoryManager : MonoBehaviour
         DiaryPage.SetActive(false);
         HealthPage.SetActive(false);
         SettingPage.SetActive(true);
-    }    
+        MapPage.SetActive(false);
+    }
+
+    public void DisplayMapPage()
+    {
+        InventoryPage.SetActive(false);
+        DiaryPage.SetActive(false);
+        HealthPage.SetActive(false);
+        SettingPage.SetActive(false);
+        MapPage.SetActive(true);
+    }
 
     #endregion
 }

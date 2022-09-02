@@ -42,6 +42,10 @@ public class TextTrimmer : MonoBehaviour
     {
         CompleteText();
 
+        this.gameObject.transform.localPosition = new Vector3(this.gameObject.transform.localPosition.x, Mathf.Lerp(this.gameObject.transform.localPosition.y, this.gameObject.transform.localPosition.y+100, Time.deltaTime *1), this.gameObject.transform.localPosition.z);
+
+        // NEED TO FIX THIS
+
         textParts[index].SetActive(false);
 
         if (++index == count - 1)

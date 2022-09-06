@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapZoom : MonoBehaviour
 {
@@ -15,11 +16,15 @@ public class MapZoom : MonoBehaviour
 
     private float zoomLevel = 1.0f;
     private Vector2 originalScale;
+    private RectTransform rectTransform;
+    private ScrollRect scrollRect;
 
     // Start is called before the first frame update
     void Start()
     {
         originalScale = transform.localScale;
+        rectTransform = GetComponent<RectTransform>();
+        scrollRect = GetComponentInParent<ScrollRect>();
     }
 
     // Update is called once per frame
@@ -30,7 +35,7 @@ public class MapZoom : MonoBehaviour
         float mouseScroll = Input.mouseScrollDelta.y;
         if (!Mathf.Approximately(mouseScroll, 0.0f))
         {
-            Zoom(mouseScroll, mouseZoomSpeed);
+            Zoom(mouseScroll, mouseZoomSpeed, Input.mousePosition);
         }
         else
         {
@@ -50,16 +55,54 @@ public class MapZoom : MonoBehaviour
                 float prevTouchDistance = Vector2.Distance(t0Prev, t1Prev);
                 float touchDistance = Vector2.Distance(t0.position, t1.position);
                 float deltaDistance = prevTouchDistance - touchDistance;
-                Zoom(-deltaDistance, touchZoomSpeed);
+                Vector2 zoomPoint = (t0.position + t1.position) / 2;
+                Zoom(-deltaDistance, touchZoomSpeed, zoomPoint);
             }
 #if UNITY_EDITOR
         }
 #endif
     }
 
-    void Zoom(float delta, float speed)
+    void Zoom(float delta, float speed, Vector2 zoomPoint)
     {
+        // Set the new zoom level.
         zoomLevel = Mathf.Clamp(zoomLevel + delta * speed, minZoom, maxZoom);
-        transform.localScale = originalScale * zoomLevel;
+        Vector3 newScale = originalScale * zoomLevel;
+
+        // Calculate the new pivot to scale around.
+        Vector2 size = rectTransform.rect.size;
+        size.Scale(rectTransform.localScale);
+        RectTransform parentRect = ((RectTransform)rectTransform.parent);
+        Vector2 parentSize = parentRect.rect.size;
+        parentSize.Scale(parentRect.localScale);
+        if(size.x > parentSize.x && size.y > parentSize.y)
+        {
+            Vector3 p1 = Camera.main.ScreenToWorldPoint(zoomPoint);
+            Vector3 p2 = rectTransform.InverseTransformPoint(p1);
+            Vector2 pivotP = rectTransform.pivot * rectTransform.rect.size;
+            Vector2 p3 = (Vector2)p2 + pivotP;
+            Vector2 newPivot = p3 / rectTransform.rect.size;
+            newPivot.x = Mathf.Clamp01(newPivot.x);
+            newPivot.y = Mathf.Clamp01(newPivot.y);
+            SetPivot(rectTransform, newPivot);
+        }
+        else
+        {
+            SetPivot(rectTransform, new Vector2(0.5f, 0.5f));
+        }
+
+        // Set the new scale
+        transform.localScale = newScale;
+    }
+
+    private void SetPivot(RectTransform rect, Vector2 pivot)
+    {
+        Vector3 deltaPosition = rect.pivot - pivot;
+        deltaPosition.Scale(rect.rect.size);
+        deltaPosition.Scale(rect.localScale);
+        deltaPosition = rect.rotation * deltaPosition;
+
+        rect.pivot = pivot;
+        rect.localPosition -= deltaPosition;
     }
 }

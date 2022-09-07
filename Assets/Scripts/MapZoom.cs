@@ -17,14 +17,12 @@ public class MapZoom : MonoBehaviour
     private float zoomLevel = 1.0f;
     private Vector2 originalScale;
     private RectTransform rectTransform;
-    private ScrollRect scrollRect;
 
     // Start is called before the first frame update
     void Start()
     {
         originalScale = transform.localScale;
         rectTransform = GetComponent<RectTransform>();
-        scrollRect = GetComponentInParent<ScrollRect>();
     }
 
     // Update is called once per frame
@@ -66,7 +64,13 @@ public class MapZoom : MonoBehaviour
     void Zoom(float delta, float speed, Vector2 zoomPoint)
     {
         // Set the new zoom level.
+        float oldZoomLevel = zoomLevel;
         zoomLevel = Mathf.Clamp(zoomLevel + delta * speed, minZoom, maxZoom);
+        if(Mathf.Approximately(zoomLevel, oldZoomLevel))
+        {
+            return;
+        }
+
         Vector3 newScale = originalScale * zoomLevel;
 
         // Calculate the new pivot to scale around.
@@ -75,34 +79,35 @@ public class MapZoom : MonoBehaviour
         RectTransform parentRect = ((RectTransform)rectTransform.parent);
         Vector2 parentSize = parentRect.rect.size;
         parentSize.Scale(parentRect.localScale);
-        if(size.x > parentSize.x && size.y > parentSize.y)
+        if (size.x > parentSize.x && size.y > parentSize.y)
         {
-            Vector3 p1 = Camera.main.ScreenToWorldPoint(zoomPoint);
-            Vector3 p2 = rectTransform.InverseTransformPoint(p1);
-            Vector2 pivotP = rectTransform.pivot * rectTransform.rect.size;
-            Vector2 p3 = (Vector2)p2 + pivotP;
-            Vector2 newPivot = p3 / rectTransform.rect.size;
-            newPivot.x = Mathf.Clamp01(newPivot.x);
-            newPivot.y = Mathf.Clamp01(newPivot.y);
-            SetPivot(rectTransform, newPivot);
+            if(RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, zoomPoint, null, out Vector2 p2))
+            {
+                Vector2 pivotP = rectTransform.pivot * rectTransform.rect.size;
+                Vector2 p3 = (Vector2)p2 + pivotP;
+                Vector2 newPivot = p3 / rectTransform.rect.size;
+                newPivot.x = Mathf.Clamp01(newPivot.x);
+                newPivot.y = Mathf.Clamp01(newPivot.y);
+                SetPivot(newPivot);
+            }
         }
         else
         {
-            SetPivot(rectTransform, new Vector2(0.5f, 0.5f));
+            SetPivot(new Vector2(0.5f, 0.5f));
         }
 
         // Set the new scale
         transform.localScale = newScale;
     }
 
-    private void SetPivot(RectTransform rect, Vector2 pivot)
+    private void SetPivot(Vector2 pivot)
     {
-        Vector3 deltaPosition = rect.pivot - pivot;
-        deltaPosition.Scale(rect.rect.size);
-        deltaPosition.Scale(rect.localScale);
-        deltaPosition = rect.rotation * deltaPosition;
+        Vector3 deltaPosition = rectTransform.pivot - pivot;
+        deltaPosition.Scale(rectTransform.rect.size);
+        deltaPosition.Scale(rectTransform.localScale);
+        deltaPosition = rectTransform.rotation * deltaPosition;
 
-        rect.pivot = pivot;
-        rect.localPosition -= deltaPosition;
+        rectTransform.pivot = pivot;
+        rectTransform.localPosition -= deltaPosition;
     }
 }

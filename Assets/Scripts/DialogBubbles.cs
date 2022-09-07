@@ -19,8 +19,9 @@ public class DialogBubbles : MonoBehaviour
 
     void Start()
     {
-        /*if (this.gameObject.transform.parent.tag == "Content")
-            this.gameObject.transform.parent.transform.localPosition = new Vector3(0, 0, 0);*/
+        if (this.gameObject.transform.parent.tag == "Content")
+            this.gameObject.transform.parent.transform.localPosition = new Vector3(gameObject.transform.parent.transform.localPosition.x, -100f, gameObject.transform.parent.transform.localPosition.z);
+
         count = textParts.Count;
 
         /*        PreviousButton.SetActive(false);

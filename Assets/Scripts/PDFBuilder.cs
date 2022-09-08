@@ -5,150 +5,181 @@ using System;
 using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using System.IO;
+using TMPro;
+using static UnityEditor.Progress;
+using UnityEngine.TextCore;
+using UnityEngine.UIElements;
 
-[System.Serializable]
-public class PerCharacterKerning
-{
-    /// Character
-    public string First = "";
-    /// Kerning, ex: 0.201
-    public float Second;
-
-    public PerCharacterKerning(string character, float kerning)
-    {
-        this.First = character;
-        this.Second = kerning;
-    }
-
-    public PerCharacterKerning(char character, float kerning)
-    {
-        this.First = "" + character;
-        this.Second = kerning;
-    }
-
-    public char GetChar()
-    {
-        return First[0];
-    }
-
-    public float GetKerningValue()
-    {
-        return Second;
-    }
-}
-
+/**
+ * Creates a texture and draws text into that texture.
+ */
 class TextToTextureRenderer
 {
-    private const int ASCII_START_OFFSET = 32;
+    private TMP_FontAsset font;
     private Texture2D fontTexture;
-    private int fontCountX;
-    private int fontCountY;
-    private float[] kerningValues;
     private bool supportSpecialCharacters;
     private Texture2D outputTexture;
+    private int spacingX = 2;
 
-    public TextToTextureRenderer(Texture2D fontTexture, int fontCountX, int fontCountY, PerCharacterKerning[] perCharacterKernings, bool supportSpecialCharacters,
-        int textureWidth, int textureHeight)
+    /**
+     * @param font The TextMeshPro-font
+     * @param supportSpecialCharacters True if special characters are recognized and handled, if escaped (e.g. "Hello\\nWorld").
+     *          Normal special characters are always handled (e.g. "Hello\nWorld").
+     * @param textureWidth The width of the texture to create.
+     * @param textureHeight The height of the texture to create.
+     */
+    public TextToTextureRenderer(TMP_FontAsset font, bool supportSpecialCharacters, int textureWidth, int textureHeight)
     {
-        this.fontTexture = fontTexture;
-        this.fontCountX = fontCountX;
-        this.fontCountY = fontCountY;
-        this.kerningValues = perCharacterKernings != null ? GetCharacterKerningValuesFromPerCharacterKernings(perCharacterKernings) : null;
+        this.font = font;
+        this.fontTexture = MakeReadable(font.atlasTexture);
         this.supportSpecialCharacters = supportSpecialCharacters;
         outputTexture = CreateTexture(Color.clear, textureWidth, textureHeight);
     }
 
-    public void DrawText(string text, int positionX, int positionY, float characterSize, float lineSpacing)
+    /**
+     * Creates a new texture and copies the content.
+     */
+    private Texture2D MakeReadable(Texture2D original)
     {
-        int fontGridCellWidth = (int)(fontTexture.width / fontCountX);
-        int fontGridCellHeight = (int)(fontTexture.height / fontCountY);
-        int fontItemWidth = (int)(fontGridCellWidth * characterSize);
-        int fontItemHeight = (int)(fontGridCellHeight * characterSize);
-        Vector2 charTexturePos;
-        Color[] charPixels;
-        float textPosX = positionX;
-        float textPosY = positionY;
-        float charKerning;
-        bool nextCharacterSpecial;
-        char letter;
+        RenderTexture rtex = RenderTexture.GetTemporary(
+            original.width,
+            original.height,
+            0,
+            RenderTextureFormat.Default,
+            RenderTextureReadWrite.Linear
+        );
+        Graphics.Blit(original, rtex);
+        RenderTexture prev = RenderTexture.active;
+        RenderTexture.active = rtex;
+        Texture2D readable = new Texture2D(original.width, original.height);
+        readable.ReadPixels(new Rect(0, 0, rtex.width, rtex.height), 0, 0);
+        readable.Apply();
+        RenderTexture.active = prev;
+        RenderTexture.ReleaseTemporary(rtex);
+        return readable;
+    }
 
-        for(int n = 0; n < text.Length; ++n)
+    /**
+     * Draws text onto the texture.
+     * @param text The text
+     * @param positionX The x position to draw at.
+     * @param positionY The y position to draw at.
+     * @param fontSize The font size
+     * @param lineSpacing A number equivalent to the multiple of the height of the letter 'A' to offset lines vertically (if there are newlines).
+     */
+    public void DrawText(string text, int positionX, int positionY, int fontSize, float lineSpacing)
+    {
+        // Get a reference character to compute scaling. Characters have to be scaled to the correct font size.
+        TMP_Character referenceCharacter = font.characterLookupTable['A'];
+        float scaleFactor = (float) fontSize / referenceCharacter.glyph.glyphRect.height;
+
+        int textPosX = positionX;
+        int textPosY = positionY;
+        for(int i = 0; i < text.Length; ++i)
         {
-            letter = text[n];
-            nextCharacterSpecial = false;
+            char letter = text[i];
+            bool nextCharacterSpecial = false;
+            // Handle special characters.
             if(letter == '\\' && supportSpecialCharacters)
             {
                 nextCharacterSpecial = true;
-                if(n + 1 < text.Length)
+                if (i + 1 < text.Length)
                 {
-                    ++n;
-                    letter = text[n];
-                    if(letter == 'n' || letter == 'r')
+                    ++i;
+                    letter = text[i];
+                    if (letter == 'n' || letter == 'r')
                     {
-                        textPosY -= fontItemHeight * lineSpacing;
+                        TMP_Character c = font.characterLookupTable['A'];
+                        textPosY -= (int) (c.glyph.glyphRect.height * scaleFactor * lineSpacing);
                         textPosX = positionX;
                     }
-                    else if(letter == 't')
+                    else if (letter == 't')
                     {
-                        textPosX += fontItemWidth * GetKerningValue(' ') * 4;
+                        TMP_Character c = font.characterLookupTable[' '];
+                        textPosX += c.glyph.glyphRect.width * 4;
                     }
-                    else if(letter == '\\')
+                    else if (letter == '\\')
                     {
                         nextCharacterSpecial = false;
                     }
                 }
             }
-
-            //if(!nextCharacterSpecial && font.HasCharacter(letter))
-            if(!nextCharacterSpecial)
+            else if (letter == '\n')
             {
-                charTexturePos = GetCharacterGridPosition(letter);
-                charTexturePos.x *= fontGridCellWidth;
-                charTexturePos.y *= fontGridCellHeight;
-                charPixels = fontTexture.GetPixels((int)charTexturePos.x, fontTexture.height - (int)charTexturePos.y - fontGridCellHeight, 
-                    fontGridCellWidth, fontGridCellHeight);
-                charPixels = ChangeDimensions(charPixels, fontGridCellWidth, fontGridCellHeight, fontItemWidth, fontItemHeight);
-
-                AddPixelsToTextureIfClear(charPixels, (int)textPosX, (int)textPosY, fontItemWidth, fontItemHeight);
-                charKerning = GetKerningValue(letter);
-                textPosX += (fontItemWidth * charKerning);
+                TMP_Character c = font.characterLookupTable['A'];
+                textPosY -= (int)(c.glyph.glyphRect.height * scaleFactor * lineSpacing);
+                textPosX = positionX;
+                nextCharacterSpecial = true;
             }
-            else if(!nextCharacterSpecial)
+            else if (letter == '\t')
             {
-                Debug.Log("Letter not found: " + letter);
+                TMP_Character c = font.characterLookupTable['A'];
+                textPosX += (int) (c.glyph.glyphRect.width * scaleFactor * 4);
+                nextCharacterSpecial = true;
+            }
+
+            if (!nextCharacterSpecial)
+            {
+                if(font.HasCharacter(letter))
+                {
+                    // Draw the character.
+                    TMP_Character character = font.characterLookupTable[letter];
+                    int characterWidth = (int)(character.glyph.glyphRect.width * scaleFactor);
+                    int characterHeight = (int)(character.glyph.glyphRect.height * scaleFactor);
+                    DrawCharacter(character, textPosX, textPosY, characterWidth, characterHeight);
+                    textPosX += characterWidth + spacingX;
+                }
+                else
+                {
+                    Debug.Log($"Letter not found {letter}");
+                }
             }
         }
     }
 
-    private void AddPixelsToTextureIfClear(Color[] newPixels, int positionX, int positionY, int width, int height)
+    /**
+     * Draws a character onto the texture.
+     */
+    private void DrawCharacter(TMP_Character character, int x, int y, int width, int height)
     {
-        int pixelCount = 0;
-        Color[] curPixels;
+        GlyphRect glyphRect = character.glyph.glyphRect;
+        Color[] colors = fontTexture.GetPixels(glyphRect.x, glyphRect.y, glyphRect.width, glyphRect.height);
+        colors = ChangeDimension(colors, glyphRect.width, glyphRect.height, width, height);
+        TryDrawPixels(colors, x, y, width, height);
+    }
 
-        if(positionX + width < outputTexture.width && positionY + height < outputTexture.height)
+    /**
+     * Draws colors onto the texture, but only to the texels that are not filled yet.
+     */
+    private void TryDrawPixels(Color[] newPixels, int x, int y, int width, int height)
+    {
+        if(x + width < outputTexture.width && y + height < outputTexture.height)
         {
-            curPixels = outputTexture.GetPixels(positionX, positionY, width, height);
-            for(int y = 0; y < height; ++y)
+            Color[] curPixels = outputTexture.GetPixels(x, y, width, height);
+            for(int curY = 0; curY < height; ++curY)
             {
-                for(int x = 0; x < width; ++x)
+                for(int curX = 0; curX < width; ++curX)
                 {
-                    pixelCount = x + (y * width);
-                    if (curPixels[pixelCount] != Color.clear)
+                    int index = curX + (curY * width);
+                    if (curPixels[index] != Color.clear)
                     {
-                        newPixels[pixelCount] = curPixels[pixelCount];
+                        newPixels[index] = curPixels[index];
                     }
                 }
             }
 
-            outputTexture.SetPixels(positionX, positionY, width, height, newPixels);
+            outputTexture.SetPixels(x, y, width, height, newPixels);
         }
         else
         {
-            Debug.Log("Letter falls outside bounds of texture: " + (positionX + width) + "/" + (positionY + height));
+            Debug.Log("Letter falls outside bounds of texture: " + (x + width) + "/" + (y + height));
         }
     }
 
-    private Color[] ChangeDimensions(Color[] originalColors, int originalWidth, int originalHeight, int newWidth, int newHeight)
+    /**
+     * Resize an array of colors to a new width / height.
+     */
+    private Color[] ChangeDimension(Color[] originalColors, int originalWidth, int originalHeight, int newWidth, int newHeight)
     {
         Color[] newColors;
         Texture2D originalTexture;
@@ -180,6 +211,9 @@ class TextToTextureRenderer
         return newColors;
     }
 
+    /**
+     * Apply all text writing and retrieve the final texture.
+     */
     public Texture2D Apply()
     {
         return outputTexture; 
@@ -198,48 +232,11 @@ class TextToTextureRenderer
         texture.SetPixels(colors);
         return texture;
     }
-
-    private Vector2 GetCharacterGridPosition(char c)
-    {
-        int codeOffset = c - ASCII_START_OFFSET;
-        return new Vector2(codeOffset % fontCountX, (int)codeOffset / fontCountX);
-    }
-
-    private float[] GetCharacterKerningValuesFromPerCharacterKernings(PerCharacterKerning[] perCharacterKernings)
-    {
-        float[] perCharKerning = new float[128 - ASCII_START_OFFSET];
-        int charCode;
-        foreach(PerCharacterKerning kerning in perCharacterKernings)
-        {
-            if(kerning.First != "")
-            {
-                charCode = (int)kerning.GetChar();
-                if(charCode >= 0 && charCode - ASCII_START_OFFSET < perCharKerning.Length)
-                {
-                    perCharKerning[charCode - ASCII_START_OFFSET] = kerning.GetKerningValue();
-                }
-            }
-        }
-        return perCharKerning;
-    }
-
-    private float GetKerningValue(char c)
-    {
-        if(kerningValues != null)
-        {
-            return kerningValues[((int) c) - ASCII_START_OFFSET];
-        }
-
-        return 0.201f;
-    }
 }
 
 public class PDFBuilderOptions
 {
-    public Texture2D fontTexture;
-    public int fontCountX;
-    public int fontCountY;
-    public PerCharacterKerning[] perCharacterKernings;
+    public TMP_FontAsset font;
 }
 
 public class PDFBuilder
@@ -268,9 +265,8 @@ public class PDFBuilder
         gfx.DrawImage(img, 0, 0, 250, 140);
 
         // Render all text into a texture.
-        TextToTextureRenderer textRenderer = new TextToTextureRenderer(options.fontTexture, options.fontCountX, options.fontCountY, options.perCharacterKernings,
-            true, 500, 800);
-        textRenderer.DrawText("Hello", 200, 300, 1.0f, 2.0f);
+        TextToTextureRenderer textRenderer = new TextToTextureRenderer(options.font, true, 500, 800);
+        textRenderer.DrawText("Hel\tlo\nWorld", 200, 300, 10, 2.0f);
         Texture2D textTexture = textRenderer.Apply();
         XImage textImage = XImage.FromStream(new MemoryStream(textTexture.EncodeToPNG()));
         gfx.DrawImage(textImage, 0, 0, page.Width, page.Height);

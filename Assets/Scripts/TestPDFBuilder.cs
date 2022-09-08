@@ -1,18 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TestPDFBuilder : MonoBehaviour
 {
-    public Texture2D fontTexture;
-    public int fontCountX;
-    public int fontCountY;
+    public TMP_FontAsset font;
 
     // Start is called before the first frame update
     void Start()
     {
         PDFBuilder builder = new PDFBuilder();
-        PDFBuilderOptions options = new PDFBuilderOptions { fontTexture = fontTexture, fontCountX = fontCountX, fontCountY = fontCountY };
+        PDFBuilderOptions options = new PDFBuilderOptions { font = font };
         builder.Generate(options);
     }
 

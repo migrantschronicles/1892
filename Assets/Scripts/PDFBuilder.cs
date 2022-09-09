@@ -9,6 +9,7 @@ using TMPro;
 using static UnityEditor.Progress;
 using UnityEngine.TextCore;
 using UnityEngine.UIElements;
+using static UnityEngine.UI.Image;
 
 /**
  * Creates a texture and draws text into that texture.
@@ -31,27 +32,29 @@ class TextToTextureRenderer
     public TextToTextureRenderer(TMP_FontAsset font, bool supportSpecialCharacters, int textureWidth, int textureHeight)
     {
         this.font = font;
-        this.fontTexture = MakeReadable(font.atlasTexture);
+        this.fontTexture = CopyTexture(font.atlasTexture);
         this.supportSpecialCharacters = supportSpecialCharacters;
         outputTexture = CreateTexture(Color.clear, textureWidth, textureHeight);
     }
 
-    /**
-     * Creates a new texture and copies the content.
-     */
-    private Texture2D MakeReadable(Texture2D original)
+    private Texture2D CopyTexture(Texture2D original)
+    {
+        return CopyTexture(original, original.width, original.height);
+    }
+
+    private Texture2D CopyTexture(Texture2D original, int newWidth, int newHeight)
     {
         RenderTexture rtex = RenderTexture.GetTemporary(
-            original.width,
-            original.height,
+            newWidth,
+            newHeight,
             0,
             RenderTextureFormat.Default,
             RenderTextureReadWrite.Linear
         );
-        Graphics.Blit(original, rtex);
         RenderTexture prev = RenderTexture.active;
         RenderTexture.active = rtex;
-        Texture2D readable = new Texture2D(original.width, original.height);
+        Graphics.Blit(original, rtex);
+        Texture2D readable = new Texture2D(newWidth, newHeight);
         readable.ReadPixels(new Rect(0, 0, rtex.width, rtex.height), 0, 0);
         readable.Apply();
         RenderTexture.active = prev;
@@ -183,9 +186,6 @@ class TextToTextureRenderer
     {
         Color[] newColors;
         Texture2D originalTexture;
-        int pixelCount;
-        float u;
-        float v;
 
         if(originalWidth == newWidth && originalHeight == newHeight)
         {
@@ -193,19 +193,13 @@ class TextToTextureRenderer
         }
         else
         {
-            newColors = new Color[newWidth * newHeight];
-            originalTexture = new Texture2D(originalWidth, originalHeight);
+            originalTexture = new Texture2D(originalWidth, originalHeight, TextureFormat.ARGB32, 0, true);
             originalTexture.SetPixels(originalColors);
-            for (int y = 0; y < newHeight; ++y)
-            {
-                for (int x = 0; x < newWidth; ++x)
-                {
-                    pixelCount = x + (y * newWidth);
-                    u = (float)x / newWidth;
-                    v = (float)y / newHeight;
-                    newColors[pixelCount] = originalTexture.GetPixelBilinear(u, v);
-                }
-            }
+            // Needs to be applied, since ScaleTexture (Graphics.Blit) works on GPU
+            originalTexture.Apply();
+            ///@todo DrawText should scale the whole fontTexture as a copy, since all characters need to be scaled for the same font size.
+            Texture2D scaledTexture = CopyTexture(originalTexture, newWidth, newHeight);
+            newColors = scaledTexture.GetPixels();
         }
 
         return newColors;

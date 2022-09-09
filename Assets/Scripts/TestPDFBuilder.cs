@@ -5,14 +5,11 @@ using UnityEngine;
 
 public class TestPDFBuilder : MonoBehaviour
 {
-    public TMP_FontAsset font;
-
     // Start is called before the first frame update
     void Start()
     {
         PDFBuilder builder = new PDFBuilder();
-        PDFBuilderOptions options = new PDFBuilderOptions { font = font };
-        builder.Generate(options);
+        builder.Generate();
     }
 
     // Update is called once per frame

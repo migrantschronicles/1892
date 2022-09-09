@@ -197,7 +197,6 @@ class TextToTextureRenderer
             originalTexture.SetPixels(originalColors);
             // Needs to be applied, since ScaleTexture (Graphics.Blit) works on GPU
             originalTexture.Apply();
-            ///@todo DrawText should scale the whole fontTexture as a copy, since all characters need to be scaled for the same font size.
             Texture2D scaledTexture = CopyTexture(originalTexture, newWidth, newHeight);
             newColors = scaledTexture.GetPixels();
         }
@@ -260,7 +259,7 @@ public class PDFBuilder
 
         // Render all text into a texture.
         TextToTextureRenderer textRenderer = new TextToTextureRenderer(options.font, true, 500, 800);
-        textRenderer.DrawText("Hel\tlo\nWorld", 200, 300, 10, 2.0f);
+        textRenderer.DrawText("Hel\tlo\nWorld", 200, 300, 40, 2.0f);
         Texture2D textTexture = textRenderer.Apply();
         XImage textImage = XImage.FromStream(new MemoryStream(textTexture.EncodeToPNG()));
         gfx.DrawImage(textImage, 0, 0, page.Width, page.Height);

@@ -8,7 +8,7 @@ public class MultiTouchScrollRect : ScrollRect
 {
     public override void OnBeginDrag(PointerEventData eventData)
     {
-        if(Input.touchCount == 1)
+        if(Input.touchCount <= 1)
         {
             base.OnBeginDrag(eventData);
         }
@@ -16,7 +16,7 @@ public class MultiTouchScrollRect : ScrollRect
 
     public override void OnDrag(PointerEventData eventData)
     {
-        if(Input.touchCount == 1)
+        if(Input.touchCount <= 1)
         {
             base.OnDrag(eventData);
         }

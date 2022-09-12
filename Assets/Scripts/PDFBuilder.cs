@@ -66,7 +66,11 @@ public class PDFBuilder
 
     private string GenerateFilePath()
     {
+#if DEBUG
+        return $"{OutputPath}/MigrantsChronicles.pdf";
+#else
         DateTime time = DateTime.Now;
         return $"{OutputPath}/MigrantsChronicles-{time.Year}-{time.Month}-{time.Day}-{time.Hour}-{time.Minute}.pdf";
+#endif
     }
 }

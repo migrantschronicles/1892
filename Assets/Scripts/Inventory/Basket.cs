@@ -26,7 +26,7 @@ public class Basket : MonoBehaviour
     private InventorySlot currentSelection;
 
     public delegate void OnSelectionChanged(InventorySlot newSelectedSlot);
-    public event OnSelectionChanged onSelectionChanged;
+    public OnSelectionChanged onSelectionChanged;
     public InventorySlot CurrentSelection
     {
         get => currentSelection;
@@ -52,11 +52,11 @@ public class Basket : MonoBehaviour
                     currentSelection.Check();
                 }
 
-                onSelectionChanged(value);
+                onSelectionChanged?.Invoke(value);
             }
             else
             {
-                onSelectionChanged(value);
+                onSelectionChanged?.Invoke(value);
             }
         }
     }
@@ -168,7 +168,7 @@ public class Basket : MonoBehaviour
             currentSelection = null;
         }
 
-        onSelectionChanged(null);
+        onSelectionChanged?.Invoke(null);
     }
 
     private bool TryPositionVerticallyInLuggage(int rowIdex, int itemId, string originalLocation)

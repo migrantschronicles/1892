@@ -47,6 +47,10 @@ public class ShopTransferManager : MonoBehaviour
 
     public GameObject PriceDeltaText;
 
+    public Image Wallet;
+    public Sprite OpenWalletImage;
+    private Sprite closedWalletImage;
+
     #endregion
 
     private int priceDelta = 0;
@@ -70,12 +74,22 @@ public class ShopTransferManager : MonoBehaviour
 
     private void OnEnable()
     {
+        UpdateClosedWalletImage();
         ReorganizeClean();
     }
 
     void Start()
     {
+        UpdateClosedWalletImage();
         ReorganizeClean();
+    }
+
+    private void UpdateClosedWalletImage()
+    {
+        if(closedWalletImage == null)
+        {
+            closedWalletImage = Wallet.sprite;
+        }
     }
 
     public void ReorganizeClean()
@@ -218,6 +232,7 @@ public class ShopTransferManager : MonoBehaviour
 
         basketDoubleSlots.Clear();
         luggageDoubleSlots.Clear();
+        Wallet.sprite = closedWalletImage;
     }
 
     private void UpdateButtons()
@@ -240,6 +255,9 @@ public class ShopTransferManager : MonoBehaviour
 
             PriceDeltaText.GetComponent<Text>().text = priceDelta.ToString();
             PriceDeltaText.SetActive(priceDelta != 0);
+
+            // Update wallet.
+            Wallet.sprite = priceDelta != 0 ? OpenWalletImage : closedWalletImage;
         }
     }
 

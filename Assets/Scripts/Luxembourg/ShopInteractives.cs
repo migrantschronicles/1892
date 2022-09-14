@@ -107,6 +107,8 @@ public class ShopInteractives : MonoBehaviour
         ticketButton.SetActive(false);
         backButton.SetActive(true);
         Blur.SetActive(true);
+        leftArrow.SetActive(true);
+        rightArrow.SetActive(true);
 
         shopFrame.SetActive(true);
     }
@@ -126,11 +128,11 @@ public class ShopInteractives : MonoBehaviour
     {
         if (!item.IsEmpty && item.Location == "Luggage")
         {
-            leftArrow.SetActive(true);
+            //leftArrow.SetActive(true);
         }
         else if (!item.IsEmpty && item.Location == "Shop")
         {
-            rightArrow.SetActive(true);
+            //rightArrow.SetActive(true);
         }
     }
 

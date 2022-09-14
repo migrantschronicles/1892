@@ -4,15 +4,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LuxembourgInventoryManager : MonoBehaviour
+public class ShopTransferManager : MonoBehaviour
 {
-    static LuxembourgInventoryManager()
-    {
-        basketInventoryIds = InventoryData.InventoryById.Where(i => i.Value.Location == InventoryLocation.LuxembougShop).Select(i => i.Key).ToList();
-        luggageInventoryIds = StateManager.CurrentState.AvailableItemIds.ToList();
-    }
-
-    public LuxembourgInventoryManager()
+    public ShopTransferManager()
     {
         basketColums = 4;
         basketRows = 3;
@@ -34,6 +28,8 @@ public class LuxembourgInventoryManager : MonoBehaviour
 
     #region UI Fields
 
+    public InventoryLocation inventoryLocation;
+
     public List<InventorySlot> BasketSlots = new List<InventorySlot>();
     public List<InventorySlot> LuggageSlots = new List<InventorySlot>();
 
@@ -50,6 +46,12 @@ public class LuxembourgInventoryManager : MonoBehaviour
     public GameObject BackButton;
 
     public GameObject PriceDeltaText;
+
+    public Image Wallet;
+    public Sprite OpenWalletImage;
+    private Sprite closedWalletImage;
+    public Color ActiveArrowColor = new Color(0.95f, 0.57f, 0.25f);
+    public Color DefaultArrowColor = Color.white;
 
     #endregion
 
@@ -74,18 +76,33 @@ public class LuxembourgInventoryManager : MonoBehaviour
 
     private void OnEnable()
     {
-        luggageInventoryIds = StateManager.CurrentState.AvailableItemIds.ToList();
+        UpdateClosedWalletImage();
         ReorganizeClean();
     }
 
     void Start()
     {
+        UpdateClosedWalletImage();
         ReorganizeClean();
+    }
+
+    private void UpdateClosedWalletImage()
+    {
+        if(closedWalletImage == null)
+        {
+            closedWalletImage = Wallet.sprite;
+        }
     }
 
     public void ReorganizeClean()
     {
         Reset();
+
+        ///@todo Enable once GameManager works again
+        //basketInventoryIds = InventoryData.InventoryById.Where(i => i.Value.Location == inventoryLocation).Select(i => i.Key).ToList();
+        //luggageInventoryIds = StateManager.CurrentState.AvailableItemIds.ToList();
+        basketInventoryIds = new List<int> { 1, 2, 3 };
+        luggageInventoryIds = new List<int> { 4, 5 };
 
         #region Init Basket
 
@@ -217,6 +234,7 @@ public class LuxembourgInventoryManager : MonoBehaviour
 
         basketDoubleSlots.Clear();
         luggageDoubleSlots.Clear();
+        Wallet.sprite = closedWalletImage;
     }
 
     private void UpdateButtons()
@@ -224,8 +242,8 @@ public class LuxembourgInventoryManager : MonoBehaviour
         var isBasketUpdated = BasketSlots.Concat(basketDoubleSlots).Any(i => i.Location != i.ItemOriginalLocation);
         var isLuggageUpdated = LuggageSlots.Concat(luggageDoubleSlots).Any(i => i.Location != i.ItemOriginalLocation);
 
-        LeftArrow.SetActive(isBasketUpdated);
-        RightArrow.SetActive(isLuggageUpdated);
+        LeftArrow.GetComponent<Image>().color = isBasketUpdated ? ActiveArrowColor : DefaultArrowColor;
+        RightArrow.GetComponent<Image>().color = isLuggageUpdated ? ActiveArrowColor : DefaultArrowColor;
         BackButton.SetActive(!isLuggageUpdated && !isBasketUpdated);
         SaveButton.SetActive(isLuggageUpdated || isBasketUpdated);
         CancelButton.SetActive(isLuggageUpdated || isBasketUpdated);
@@ -239,6 +257,9 @@ public class LuxembourgInventoryManager : MonoBehaviour
 
             PriceDeltaText.GetComponent<Text>().text = priceDelta.ToString();
             PriceDeltaText.SetActive(priceDelta != 0);
+
+            // Update wallet.
+            Wallet.sprite = priceDelta != 0 ? OpenWalletImage : closedWalletImage;
         }
     }
 
@@ -553,18 +574,23 @@ public class LuxembourgInventoryManager : MonoBehaviour
 
     public void SaveChanges()
     {
+        ///@todo Enable once GameManager works again
+        /**
         if (StateManager.CurrentState.AvailableMoney + priceDelta < 0)
         {
             return;
         }
+        */
 
         if (considerMoneyChange)
         {
-            StateManager.CurrentState.AvailableMoney += priceDelta;
+            ///@todo Enable once GameManager works again
+            //StateManager.CurrentState.AvailableMoney += priceDelta;
             priceDelta = 0;
         }
 
-        StateManager.CurrentState.AvailableItemIds = LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value);
+        ///@todo Enable once GameManager works again
+        //StateManager.CurrentState.AvailableItemIds = LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value);
         luggageInventoryIds = LuggageSlots.Concat(luggageDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value).ToList();
         basketInventoryIds = BasketSlots.Concat(basketDoubleSlots).Where(s => !s.IsEmpty && s.ItemId.HasValue).Select(s => s.ItemId.Value).ToList();
 

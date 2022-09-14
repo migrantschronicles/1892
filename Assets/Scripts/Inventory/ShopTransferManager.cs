@@ -50,6 +50,8 @@ public class ShopTransferManager : MonoBehaviour
     public Image Wallet;
     public Sprite OpenWalletImage;
     private Sprite closedWalletImage;
+    public Color ActiveArrowColor = new Color(0.95f, 0.57f, 0.25f);
+    public Color DefaultArrowColor = Color.white;
 
     #endregion
 
@@ -240,8 +242,8 @@ public class ShopTransferManager : MonoBehaviour
         var isBasketUpdated = BasketSlots.Concat(basketDoubleSlots).Any(i => i.Location != i.ItemOriginalLocation);
         var isLuggageUpdated = LuggageSlots.Concat(luggageDoubleSlots).Any(i => i.Location != i.ItemOriginalLocation);
 
-        LeftArrow.SetActive(isBasketUpdated);
-        RightArrow.SetActive(isLuggageUpdated);
+        LeftArrow.GetComponent<Image>().color = isBasketUpdated ? ActiveArrowColor : DefaultArrowColor;
+        RightArrow.GetComponent<Image>().color = isLuggageUpdated ? ActiveArrowColor : DefaultArrowColor;
         BackButton.SetActive(!isLuggageUpdated && !isBasketUpdated);
         SaveButton.SetActive(isLuggageUpdated || isBasketUpdated);
         CancelButton.SetActive(isLuggageUpdated || isBasketUpdated);

@@ -5,6 +5,7 @@ using UnityEngine;
 public class TransportationButtons : MonoBehaviour
 {
 
+    public bool capital = false;
     public bool available = false;
     private Animator anim;
 

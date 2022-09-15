@@ -32,8 +32,8 @@ public class MaupassantInventoryTransfer : MonoBehaviour
 
     #region UI Fields
 
-    public List<InventorySlot> BasketSlots = new List<InventorySlot>();
-    public List<InventorySlot> LuggageSlots = new List<InventorySlot>();
+    public List<OldInventorySlot> BasketSlots = new List<OldInventorySlot>();
+    public List<OldInventorySlot> LuggageSlots = new List<OldInventorySlot>();
 
     public DoubleInventorySlot VerticalDoubleSlotPrefab;
     public DoubleInventorySlot HorizontalDoubleSlotPrefab;
@@ -464,14 +464,14 @@ public class MaupassantInventoryTransfer : MonoBehaviour
         return updatedSlot;
     }
 
-    public InventorySlot TransferItem(InventorySlot item)
+    public OldInventorySlot TransferItem(OldInventorySlot item)
     {
         if (item.IsEmpty)
         {
             return null;
         }
 
-        InventorySlot updatedSlot = null;
+        OldInventorySlot updatedSlot = null;
 
         if (item.Location == Luggage)
         {
@@ -527,7 +527,7 @@ public class MaupassantInventoryTransfer : MonoBehaviour
         return updatedSlot;
     }
 
-    public void PickItem(InventorySlot item)
+    public void PickItem(OldInventorySlot item)
     {
         if (!item.IsEmpty)
         {

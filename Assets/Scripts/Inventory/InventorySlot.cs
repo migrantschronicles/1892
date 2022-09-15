@@ -1,51 +1,37 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour
 {
-    //for diary inventory
-    public bool IsSelected { get; set; }
+    public Item Item { get; private set; }
+    public int X { get; private set; }
+    public int Y { get; private set; }
+    public int Width { get; private set; }
+    public int Height { get; private set; }
+    public int Amount { get; private set; }
 
+    private Image image;
 
-    public bool IsEmpty { get; set; } = true;
-    public int? ItemId { get; set; }
-    public string Type { get; set; }
-    public int Value { get; set; }
-    public string Location { get; set; }
-    public string ItemOriginalLocation { get; set; }
-
-    //Resources/Inventory
-    //Resources/Inventory/Highlights
-    public string IconKey { get; set; }
-
-    public virtual void Check()
+    private void Awake()
     {
-        IsEmpty = !ItemId.HasValue;
-
-        if (IsEmpty)
-        {
-            GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/empty");
-        }
-        else if (Location == ItemOriginalLocation && !IsSelected)
-        {
-            GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/{IconKey}");
-        }
-        else
-        {
-            GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/Highlights/{IconKey}");
-        }         
+        image = GetComponent<Image>();
     }
 
-    public virtual void ResetItem() 
+    public void SetItem(Item item, int x, int y, int width, int height, int amount)
     {
-        IsEmpty = true;
-        ItemId = null;
-        Type = null;
-        Value = 0;
-        Location = null;
-        ItemOriginalLocation = null;
-        IconKey = "empty";
-        GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/empty");
-        gameObject.SetActive(true);
+        Item = item;
+        X = x;
+        Y = y;
+        Width = width;
+        Height = height;
+        Amount = amount;
+        image.sprite = item.sprite;
+    }
+
+    public bool IsAt(int x, int y)
+    {
+        return x >= X && y >= Y && x < X + Width && y < Y + Height;
     }
 }

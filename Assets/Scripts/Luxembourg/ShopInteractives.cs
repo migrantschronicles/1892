@@ -124,7 +124,7 @@ public class ShopInteractives : MonoBehaviour
         GotToChDialog1();
     }
 
-    public void InventoryItemClick(InventorySlot item)
+    public void InventoryItemClick(OldInventorySlot item)
     {
         if (!item.IsEmpty && item.Location == "Luggage")
         {

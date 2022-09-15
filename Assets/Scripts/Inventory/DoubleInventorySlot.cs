@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DoubleInventorySlot : InventorySlot
+public class DoubleInventorySlot : OldInventorySlot
 {
-    public InventorySlot FirstSlot { get; set; }
+    public OldInventorySlot FirstSlot { get; set; }
 
-    public InventorySlot SecondSlot { get; set; }
+    public OldInventorySlot SecondSlot { get; set; }
 
     public bool Isvertical;
 

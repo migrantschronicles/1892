@@ -10,7 +10,7 @@ public class DiaryInventoryManager : MonoBehaviour
 
     public Text SelectionDescription;
 
-    public List<InventorySlot> LuggageSlots = new List<InventorySlot>();
+    public List<OldInventorySlot> LuggageSlots = new List<OldInventorySlot>();
 
     public DoubleInventorySlot VerticalDoubleSlotPrefab;
     public DoubleInventorySlot HorizontalDoubleSlotPrefab;
@@ -26,8 +26,8 @@ public class DiaryInventoryManager : MonoBehaviour
 
     private const string Luggage = "Luggage";
 
-    private InventorySlot currentSelection;
-    public InventorySlot CurrentSelection
+    private OldInventorySlot currentSelection;
+    public OldInventorySlot CurrentSelection
     {
         get => currentSelection;
         set

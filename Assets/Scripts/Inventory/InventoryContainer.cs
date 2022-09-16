@@ -1,6 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
+public enum InventoryGhostChange
+{
+    /// There was no change.
+    None,
+    /// The amount changed.
+    Amount,
+    /// The whole item was added during ghost mode.
+    Item
+}
 
 public class InventoryContainer : MonoBehaviour
 {
@@ -13,7 +24,70 @@ public class InventoryContainer : MonoBehaviour
     private GameObject ItemSlotPrefab;
 
     private List<InventorySlot> inventorySlots = new List<InventorySlot> ();
+    private bool ghostMode = false;
 
+    /**
+     * Enables ghost mode.
+     * Items added in ghost mode are not broadcasted that it was added,
+     * so that i.e. the player inventory does not receive the information until ApplyGhostMode was called.
+     */
+    public void EnableGhostMode()
+    {
+        ghostMode = true;
+    }
+
+    /**
+     * Applies ghost mode.
+     * Info that items were added is broadcasted.
+     */
+    public void ApplyGhostMode()
+    {
+        foreach(InventorySlot slot in inventorySlots)
+        {
+            InventoryGhostChange change = slot.ApplyGhostMode();
+            if(change != InventoryGhostChange.None)
+            {
+                ///@todo Broadcast
+            }
+        }
+
+        ghostMode = false;
+    }
+
+    /**
+     * Cancels ghost mode.
+     * Items added in ghost mode are removed.
+     */
+    public void CancelGhostMode()
+    {
+        List<InventorySlot> slotsToRemove = new List<InventorySlot>();
+        foreach(InventorySlot slot in inventorySlots)
+        {
+            InventoryGhostChange change = slot.CancelGhostMode();
+            switch(change)
+            {
+                case InventoryGhostChange.Item:
+                {
+                    // Remove the slot again.
+                    slotsToRemove.Add(slot);
+                    break;
+                }
+            }
+        }
+
+        foreach(InventorySlot slot in slotsToRemove)
+        {
+            inventorySlots.Remove(slot);
+            DestroyInventorySlot(slot);
+        }
+
+        ghostMode = false;
+    }
+
+    /**
+     * Tries to add an item.
+     * Tries to add it to the stack if possible first, then adds a new slot.
+     */
     public bool TryAddItem(Item item)
     {
         if(item.IsStackable)
@@ -33,7 +107,7 @@ public class InventoryContainer : MonoBehaviour
         {
             if(slot.Item == item)
             {
-                if(slot.TryAddToStack())
+                if(slot.TryAddToStack(ghostMode))
                 {
                     return slot;
                 }
@@ -58,7 +132,7 @@ public class InventoryContainer : MonoBehaviour
                     if (item.Volume == 1)
                     {
                         // This is a single 1x1 item.
-                        inventorySlot = CreateInventorySlot(item, x, y, 1, 1, 1);
+                        inventorySlot = CreateInventorySlot(item, x, y, 1, 1);
                         inventorySlot.transform.SetParent(SlotsParent.transform.GetChild(y * Width + x), false);
                         placed = true;
                     }
@@ -105,7 +179,7 @@ public class InventoryContainer : MonoBehaviour
             if (rightSlot == null)
             {
                 // The item can be placed horizontally.
-                inventorySlot = CreateInventorySlot(item, x, y, 2, 1, 1);
+                inventorySlot = CreateInventorySlot(item, x, y, 2, 1);
                 inventorySlot.transform.SetParent(SlotsParent.transform.GetChild(y * Width + x), false);
             }
         }
@@ -123,7 +197,7 @@ public class InventoryContainer : MonoBehaviour
             if (upperSlot == null)
             {
                 // The item can be placed vertically.
-                inventorySlot = CreateInventorySlot(item, x, y, 1, 2, 1);
+                inventorySlot = CreateInventorySlot(item, x, y, 1, 2);
                 inventorySlot.transform.SetParent(SlotsParent.transform.GetChild(y * Width + x), false);
             }
         }
@@ -152,7 +226,7 @@ public class InventoryContainer : MonoBehaviour
         return unscaledWidth - rectTransform0.rect.width;
     }
 
-    private InventorySlot CreateInventorySlot(Item item, int x, int y, int width, int height, int amount)
+    private InventorySlot CreateInventorySlot(Item item, int x, int y, int width, int height)
     {
         GameObject inventorySlotObject = Instantiate(ItemSlotPrefab);
         InventorySlot inventorySlot = inventorySlotObject.GetComponent<InventorySlot>();
@@ -176,8 +250,13 @@ public class InventoryContainer : MonoBehaviour
             }
         }
 
-        inventorySlot.SetItem(item, x, y, width, height, amount);
+        inventorySlot.SetItem(item, x, y, width, height, ghostMode);
         return inventorySlot;
+    }
+
+    private void DestroyInventorySlot(InventorySlot slot)
+    {
+        Destroy(slot.gameObject);
     }
 
     private InventorySlot GetInventorySlotAt(int x, int y)

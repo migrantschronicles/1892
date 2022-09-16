@@ -34,4 +34,19 @@ public class InventoryTest : MonoBehaviour
     {
         TestItem(testInfiniteStackableItem);
     }
+
+    public void EnableGhostMode()
+    {
+        inventoryContainer.EnableGhostMode();
+    }
+
+    public void ApplyGhostMode()
+    {
+        inventoryContainer.ApplyGhostMode();
+    }
+
+    public void CancelGhostMode()
+    {
+        inventoryContainer.CancelGhostMode();
+    }
 }

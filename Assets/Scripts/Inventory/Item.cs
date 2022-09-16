@@ -8,6 +8,7 @@ public class Item : ScriptableObject
     public string Name;
     public string Description;
     public Sprite sprite;
+    public Sprite ghostSprite;
     public int Price;
     public int Volume = 1;
     public int MaxStackCount = 1;
@@ -17,6 +18,14 @@ public class Item : ScriptableObject
         get
         {
             return MaxStackCount != 1;
+        }
+    }
+
+    public Sprite GhostSprite
+    {
+        get
+        {
+            return ghostSprite != null ? ghostSprite : sprite;
         }
     }
 }

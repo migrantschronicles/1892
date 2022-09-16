@@ -37,7 +37,10 @@ public class Shop : MonoBehaviour
         ConditionallyStartTransfer();
         if(Luggage.TryAddItem(slot.Item))
         {
-            ///@todo remove from basket 1 amount
+            if(!Basket.TryRemoveItemAt(slot.X, slot.Y))
+            {
+                Debug.Log("Item added to luggage could not be removed from basket");
+            }
         }
     }
 
@@ -46,7 +49,10 @@ public class Shop : MonoBehaviour
         ConditionallyStartTransfer();
         if(Basket.TryAddItem(slot.Item))
         {
-            ///@todo remove from luggage.
+            if(!Luggage.TryRemoveItemAt(slot.X, slot.Y))
+            {
+                Debug.Log("Item added to basket could not be removed from luggage");
+            }
         }
     }
 

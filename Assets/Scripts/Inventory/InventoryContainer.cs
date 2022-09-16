@@ -14,6 +14,17 @@ public enum InventoryGhostChange
     Item
 }
 
+class RemovedInventorySlot
+{
+    public Item item;
+    public int x;
+    public int y;
+    public int width;
+    public int height;
+    public int amount;
+}
+
+
 public class InventoryContainer : MonoBehaviour
 {
     public static readonly int GridWidth = 4;
@@ -35,6 +46,8 @@ public class InventoryContainer : MonoBehaviour
     private Color EnabledLuggageButtonColor = Color.white;
 
     private List<InventorySlot> inventorySlots = new List<InventorySlot> ();
+    // Removed inventory slots during ghost mode.
+    private List<InventorySlot> removedInventorySlots = new List<InventorySlot>();
     private bool ghostMode = false;
     /// The number of luggage (number of 4x3 grids that can be filled).
     private int luggageCount = 1;
@@ -129,6 +142,16 @@ public class InventoryContainer : MonoBehaviour
      */
     public void ApplyGhostMode()
     {
+        // Actually remove the removed slots before the next step.
+        foreach(InventorySlot slot in removedInventorySlots)
+        {
+            ///@todo Broadcast
+            inventorySlots.Remove(slot);
+            DestroyInventorySlot(slot);
+        }
+        removedInventorySlots.Clear();
+
+        // Broadcast all changes
         foreach(InventorySlot slot in inventorySlots)
         {
             InventoryGhostChange change = slot.ApplyGhostMode();
@@ -147,6 +170,7 @@ public class InventoryContainer : MonoBehaviour
      */
     public void CancelGhostMode()
     {
+        // Remove all slots that were added during ghost mode.
         List<InventorySlot> slotsToRemove = new List<InventorySlot>();
         foreach(InventorySlot slot in inventorySlots)
         {
@@ -167,6 +191,13 @@ public class InventoryContainer : MonoBehaviour
             inventorySlots.Remove(slot);
             DestroyInventorySlot(slot);
         }
+
+        // Readd all slots that were removed during ghost mode.
+        foreach(InventorySlot removedSlot in removedInventorySlots)
+        {
+            TryAttachInventorySlot(removedSlot, removedSlot.X, removedSlot.Y);
+        }
+        removedInventorySlots.Clear();
 
         ghostMode = false;
     }
@@ -194,7 +225,8 @@ public class InventoryContainer : MonoBehaviour
     {
         foreach(InventorySlot slot in inventorySlots)
         {
-            if(slot.Item == item)
+            // Only add item to stack on slots that are not currently removed in ghost mode.
+            if(slot.Item == item && !removedInventorySlots.Contains(slot))
             {
                 if(slot.TryAddToStack(ghostMode))
                 {
@@ -228,7 +260,7 @@ public class InventoryContainer : MonoBehaviour
             for (int x = 0; x < Width; ++x)
             {
                 InventorySlot inventorySlot = GetInventorySlotAt(x, y);
-                // Check if the slot is empty.
+                // Check if the slot is empty (or removed during ghost mode).
                 if (inventorySlot == null)
                 {
                     bool placed = false;
@@ -310,6 +342,29 @@ public class InventoryContainer : MonoBehaviour
         return inventorySlot;
     }
 
+    public bool TryRemoveItemAt(int x, int y)
+    {
+        InventorySlot slot = GetInventorySlotAt(x, y);
+        if(slot == null)
+        {
+            return false;
+        }
+
+        if(slot.TryRemoveFromStack(ghostMode))
+        {
+            // The amount was decreased.
+            return true;
+        }
+
+        // The item is not stackable or its amount reached 0, so remove the slot.
+        // Keep a reference in ghost mode if the ghost mode is canceled.
+        removedInventorySlots.Add(slot);
+        slot.transform.SetParent(null, false);
+        slot.gameObject.SetActive(false);
+
+        return true;
+    }
+
     /**
      * @return The local size of one slot
      */
@@ -372,7 +427,7 @@ public class InventoryContainer : MonoBehaviour
     {
         foreach(InventorySlot slot in inventorySlots)
         {
-            if(slot.IsAt(x, y))
+            if(slot.IsAt(x, y) && !removedInventorySlots.Contains(slot))
             {
                 return slot;
             }

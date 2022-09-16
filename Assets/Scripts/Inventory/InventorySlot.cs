@@ -52,6 +52,27 @@ public class InventorySlot : MonoBehaviour
         return false;
     }
 
+    private bool TryRemoveAmount(bool ghost)
+    {
+        int currentAmount = ghost ? ghostAmount : Amount;
+        if(!Item.IsStackable || currentAmount <= 1)
+        {
+            return false;
+        }
+
+        if(ghost)
+        {
+            --ghostAmount;
+        }
+        else
+        {
+            --Amount;
+            ghostAmount = Amount;
+        }
+
+        return true;
+    }
+
     public void SetItem(Item item, int x, int y, int width, int height, bool ghost)
     {
         Item = item;
@@ -73,9 +94,20 @@ public class InventorySlot : MonoBehaviour
 
     public bool TryAddToStack(bool ghost)
     {
-        if(Item.IsStackable && (Item.MaxStackCount <= 0 || ghostAmount + 1 <= Item.MaxStackCount))
+        if(TryAddAmount(ghost))
         {
-            TryAddAmount(ghost);
+            amountText.color = ghost ? ghostTextColor : defaultTextColor;
+            UpdateAmountText();
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool TryRemoveFromStack(bool ghost)
+    {
+        if(TryRemoveAmount(ghost))
+        {
             amountText.color = ghost ? ghostTextColor : defaultTextColor;
             UpdateAmountText();
             return true;

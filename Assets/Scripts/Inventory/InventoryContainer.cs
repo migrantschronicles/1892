@@ -19,21 +19,7 @@ public class InventoryContainer : MonoBehaviour
     public static readonly int GridWidth = 4;
     public static readonly int GridHeight = 3;
 
-    public int Width
-    {
-        get
-        {
-            return GridWidth;
-        }
-    }
-
-    public int Height
-    {
-        get
-        {
-            return GridHeight * luggageCount;
-        }
-    }
+    public UnityEvent<InventorySlot> OnSlotClicked = new UnityEvent<InventorySlot> ();
 
     [SerializeField]
     private GameObject SlotsParent;
@@ -54,6 +40,22 @@ public class InventoryContainer : MonoBehaviour
     private int luggageCount = 1;
     private int currentLuggageIndex = 0;
 
+    public int Width
+    {
+        get
+        {
+            return GridWidth;
+        }
+    }
+
+    public int Height
+    {
+        get
+        {
+            return GridHeight * luggageCount;
+        }
+    }
+
     private bool CanScrollUp
     {
         get
@@ -70,10 +72,10 @@ public class InventoryContainer : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         // Reset the luggage colors.
-        SetLuggageCount(4);
+        SetLuggageCount(1);
     }
 
     public void SetLuggageCount(int newLuggageCount)
@@ -333,6 +335,10 @@ public class InventoryContainer : MonoBehaviour
     {
         GameObject inventorySlotObject = Instantiate(ItemSlotPrefab);
         InventorySlot inventorySlot = inventorySlotObject.GetComponent<InventorySlot>();
+        inventorySlot.OnClicked.AddListener((slot) => 
+        {
+            OnSlotClicked.Invoke(slot);
+        });
 
         // Sets the width and height, if the item is not 1x1. Assumes only 1x1, 2x1 or 1x2 is possible.
         if(width > 1 || height > 1)

@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour
 {
+    public UnityEvent<InventorySlot> OnClicked = new UnityEvent<InventorySlot>();
+
     [SerializeField]
     private Text amountText;
     [SerializeField]
@@ -121,5 +124,10 @@ public class InventorySlot : MonoBehaviour
         amountText.color = defaultTextColor;
 
         return change;
+    }
+
+    public void OnSlotClicked()
+    {
+        OnClicked.Invoke(this);
     }
 }

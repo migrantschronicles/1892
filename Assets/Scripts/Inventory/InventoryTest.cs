@@ -7,14 +7,31 @@ public class InventoryTest : MonoBehaviour
     public InventoryContainer inventoryContainer;
     public Item testItem;
     public Item testLargeItem;
+    public Item testStackableItem;
+    public Item testInfiniteStackableItem;
+
+    private void TestItem(Item item)
+    {
+        Debug.Log(inventoryContainer.TryAddItem(item));
+    }
 
     public void AddTestItem()
     {
-        Debug.Log(inventoryContainer.TryAddItem(testItem));
+        TestItem(testItem);
     }
 
     public void AddTestLargeItem()
     {
-        Debug.Log(inventoryContainer.TryAddItem(testLargeItem));
+        TestItem(testLargeItem);
+    }
+
+    public void AddTestStackableItem()
+    {
+        TestItem(testStackableItem);
+    }
+
+    public void AddTestInfiniteStackableItem()
+    {
+        TestItem(testInfiniteStackableItem);
     }
 }

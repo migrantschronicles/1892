@@ -16,7 +16,31 @@ public class InventoryContainer : MonoBehaviour
 
     public bool TryAddItem(Item item)
     {
+        if(item.IsStackable)
+        {
+            if(TryAddItemToStack(item) != null)
+            {
+                return true;
+            }
+        }
+
         return TryAddNewItem(item) != null;
+    }
+
+    private InventorySlot TryAddItemToStack(Item item)
+    {
+        foreach(InventorySlot slot in inventorySlots)
+        {
+            if(slot.Item == item)
+            {
+                if(slot.TryAddToStack())
+                {
+                    return slot;
+                }
+            }
+        }
+
+        return null;
     }
 
     private InventorySlot TryAddNewItem(Item item)

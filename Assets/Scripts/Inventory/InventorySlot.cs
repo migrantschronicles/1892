@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour
 {
+    [SerializeField]
+    private Text amountText;
+
     public Item Item { get; private set; }
     public int X { get; private set; }
     public int Y { get; private set; }
@@ -28,10 +31,29 @@ public class InventorySlot : MonoBehaviour
         Height = height;
         Amount = amount;
         image.sprite = item.sprite;
+        UpdateAmountText();
     }
 
     public bool IsAt(int x, int y)
     {
         return x >= X && y >= Y && x < X + Width && y < Y + Height;
+    }
+
+    public bool TryAddToStack()
+    {
+        if(Item.IsStackable && (Item.MaxStackCount <= 0 || Amount + 1 <= Item.MaxStackCount))
+        {
+            ++Amount;
+            UpdateAmountText();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void UpdateAmountText()
+    {
+        amountText.text = Amount.ToString();
+        amountText.gameObject.SetActive(Item.IsStackable); 
     }
 }

@@ -19,6 +19,8 @@ public class Shop : MonoBehaviour
     [SerializeField]
     private GameObject arrowRight;
     [SerializeField]
+    private Text moneyText;
+    [SerializeField]
     private Item[] ShopItems;
 
     private bool transferInProgress = false;
@@ -90,6 +92,7 @@ public class Shop : MonoBehaviour
         }
 
         UpdateArrows();
+        UpdateMoney();
     }
 
     private void UpdateArrows()
@@ -98,6 +101,23 @@ public class Shop : MonoBehaviour
         bool hasNegativeValues = transferChanges.Values.Any((value) => value < 0);
         arrowLeft.SetActive(hasNegativeValues);
         arrowRight.SetActive(hasPositiveValues);
+    }
+
+    private void UpdateMoney()
+    {
+        int price = CalculatePrice();
+        moneyText.text = price.ToString();
+        moneyText.gameObject.SetActive(price != 0);
+    }
+
+    private int CalculatePrice()
+    {
+        int price = 0;
+        foreach(var item in transferChanges)
+        {
+            price += item.Key.Price * item.Value;
+        }
+        return price;
     }
 
     private void ConditionallyStartTransfer()
@@ -122,6 +142,7 @@ public class Shop : MonoBehaviour
         CancelButton.gameObject.SetActive(false);
         transferChanges.Clear();
         UpdateArrows();
+        UpdateMoney();
         transferInProgress = false;
     }
 

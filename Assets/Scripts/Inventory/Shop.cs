@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,14 +15,23 @@ public class Shop : MonoBehaviour
     [SerializeField]
     private Button CancelButton;
     [SerializeField]
+    private GameObject arrowLeft;
+    [SerializeField]
+    private GameObject arrowRight;
+    [SerializeField]
     private Item[] ShopItems;
 
     private bool transferInProgress = false;
+    /// The changes during a transfer.
+    /// Positive values mean from basket to luggage, negative values mean from luggage to basket.
+    private Dictionary<Item, int> transferChanges = new Dictionary<Item, int>();
 
     private void Start()
     {
         Basket.OnSlotClicked.AddListener(OnBasketItemClicked);
         Luggage.OnSlotClicked.AddListener(OnLuggageItemClicked);
+        arrowLeft.SetActive(false);
+        arrowRight.SetActive(false);
 
         foreach(Item item in ShopItems)
         {
@@ -41,6 +51,8 @@ public class Shop : MonoBehaviour
             {
                 Debug.Log("Item added to luggage could not be removed from basket");
             }
+
+            LogTransferChange(slot.Item, 1);
         }
     }
 
@@ -53,7 +65,39 @@ public class Shop : MonoBehaviour
             {
                 Debug.Log("Item added to basket could not be removed from luggage");
             }
+
+            LogTransferChange(slot.Item, -1);
         }
+    }
+
+    private void LogTransferChange(Item item, int amount)
+    {
+        if(transferChanges.TryGetValue(item, out int value))
+        {
+            int newValue = value + amount;
+            if(newValue == 0)
+            {
+                transferChanges.Remove(item);
+            }
+            else
+            {
+                transferChanges[item] = newValue;
+            }
+        }
+        else
+        {
+            transferChanges.Add(item, amount);
+        }
+
+        UpdateArrows();
+    }
+
+    private void UpdateArrows()
+    {
+        bool hasPositiveValues = transferChanges.Values.Any((value) => value > 0);
+        bool hasNegativeValues = transferChanges.Values.Any((value) => value < 0);
+        arrowLeft.SetActive(hasNegativeValues);
+        arrowRight.SetActive(hasPositiveValues);
     }
 
     private void ConditionallyStartTransfer()
@@ -76,6 +120,8 @@ public class Shop : MonoBehaviour
         CancelButton.onClick.RemoveListener(CancelTransfer);
         AcceptButton.gameObject.SetActive(false);
         CancelButton.gameObject.SetActive(false);
+        transferChanges.Clear();
+        UpdateArrows();
         transferInProgress = false;
     }
 

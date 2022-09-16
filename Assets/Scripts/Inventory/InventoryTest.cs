@@ -10,6 +10,11 @@ public class InventoryTest : MonoBehaviour
     public Item testStackableItem;
     public Item testInfiniteStackableItem;
 
+    private void Start()
+    {
+        inventoryContainer.SetLuggageCount(3);
+    }
+
     private void TestItem(Item item)
     {
         Debug.Log(inventoryContainer.TryAddItem(item));

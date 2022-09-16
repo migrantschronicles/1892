@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public enum InventoryGhostChange
 {
@@ -15,16 +16,100 @@ public enum InventoryGhostChange
 
 public class InventoryContainer : MonoBehaviour
 {
-    public static readonly int Width = 4;
-    public static readonly int Height = 3;
+    public static readonly int GridWidth = 4;
+    public static readonly int GridHeight = 3;
+
+    public int Width
+    {
+        get
+        {
+            return GridWidth;
+        }
+    }
+
+    public int Height
+    {
+        get
+        {
+            return GridHeight * luggageCount;
+        }
+    }
 
     [SerializeField]
     private GameObject SlotsParent;
     [SerializeField]
     private GameObject ItemSlotPrefab;
+    [SerializeField]
+    private Button LuggageUpButton;
+    [SerializeField]
+    private Button LuggageDownButton;
+    [SerializeField]
+    private Color DefaultLuggageButtonColor = Color.white;
+    [SerializeField]
+    private Color EnabledLuggageButtonColor = Color.white;
 
     private List<InventorySlot> inventorySlots = new List<InventorySlot> ();
     private bool ghostMode = false;
+    /// The number of luggage (number of 4x3 grids that can be filled).
+    private int luggageCount = 1;
+    private int currentLuggageIndex = 0;
+
+    private bool CanScrollUp
+    {
+        get
+        {
+            return currentLuggageIndex < luggageCount - 1;
+        }
+    }
+
+    private bool CanScrollDown
+    {
+        get
+        {
+            return currentLuggageIndex > 0;
+        }
+    }
+
+    private void Start()
+    {
+        // Reset the luggage colors.
+        SetLuggageCount(4);
+    }
+
+    public void SetLuggageCount(int newLuggageCount)
+    {
+        Debug.Assert(newLuggageCount >= luggageCount);
+        luggageCount = newLuggageCount;
+        LuggageUpButton.gameObject.SetActive(luggageCount > 1);
+        LuggageDownButton.gameObject.SetActive(luggageCount > 1);
+        // Reset the luggage button colors.
+        SetCurrentLuggageIndex(currentLuggageIndex);
+    }
+
+    private void SetCurrentLuggageIndex(int value)
+    {
+        // Detach and hide all current inventory slots
+        foreach(InventorySlot slot in inventorySlots)
+        {
+            if(IsInLuggage(currentLuggageIndex, slot.Y))
+            {
+                slot.transform.SetParent(null, false);
+                slot.gameObject.SetActive(false);
+            }
+        }
+
+        currentLuggageIndex = value;
+        LuggageUpButton.targetGraphic.color = CanScrollUp ? EnabledLuggageButtonColor : DefaultLuggageButtonColor;
+        LuggageDownButton.targetGraphic.color = CanScrollDown ? EnabledLuggageButtonColor : DefaultLuggageButtonColor;
+        LuggageUpButton.enabled = CanScrollUp;
+        LuggageDownButton.enabled = CanScrollDown;
+
+        // Show all inventory slots of the new luggage
+        foreach(InventorySlot slot in inventorySlots)
+        {
+            TryAttachInventorySlot(slot, slot.X, slot.Y);
+        }
+    }
 
     /**
      * Enables ghost mode.
@@ -98,6 +183,8 @@ public class InventoryContainer : MonoBehaviour
             }
         }
 
+        ///@todo Broadcast
+
         return TryAddNewItem(item) != null;
     }
 
@@ -117,6 +204,21 @@ public class InventoryContainer : MonoBehaviour
         return null;
     }
 
+    private void TryAttachInventorySlot(InventorySlot slot, int x, int y)
+    {
+        if(IsInLuggage(currentLuggageIndex, y))
+        {
+            slot.gameObject.SetActive(true);
+            int adjustedY = y - currentLuggageIndex * GridHeight;
+            slot.transform.SetParent(SlotsParent.transform.GetChild(adjustedY * Width + x), false);
+        }
+        else
+        {
+            // The newly created slots are added to the world, so hide them until they are added when the user switches luggage.
+            slot.gameObject.SetActive(false);
+        }
+    }
+
     private InventorySlot TryAddNewItem(Item item)
     {
         for (int y = 0; y < Height; ++y)
@@ -133,7 +235,7 @@ public class InventoryContainer : MonoBehaviour
                     {
                         // This is a single 1x1 item.
                         inventorySlot = CreateInventorySlot(item, x, y, 1, 1);
-                        inventorySlot.transform.SetParent(SlotsParent.transform.GetChild(y * Width + x), false);
+                        TryAttachInventorySlot(inventorySlot, x, y);
                         placed = true;
                     }
                     else
@@ -180,7 +282,7 @@ public class InventoryContainer : MonoBehaviour
             {
                 // The item can be placed horizontally.
                 inventorySlot = CreateInventorySlot(item, x, y, 2, 1);
-                inventorySlot.transform.SetParent(SlotsParent.transform.GetChild(y * Width + x), false);
+                TryAttachInventorySlot(inventorySlot, x, y);
             }
         }
 
@@ -191,14 +293,15 @@ public class InventoryContainer : MonoBehaviour
     {
         InventorySlot inventorySlot = null;
         // Check if the slot on top of this one is empty.
-        if (y < Height - 1)
+        // If y is right on top of a luggage piece, it can't be placed.
+        if (y < Height - 1 && ((y + 1) % GridHeight) != 0)
         {
             InventorySlot upperSlot = GetInventorySlotAt(x, y + 1);
             if (upperSlot == null)
             {
                 // The item can be placed vertically.
                 inventorySlot = CreateInventorySlot(item, x, y, 1, 2);
-                inventorySlot.transform.SetParent(SlotsParent.transform.GetChild(y * Width + x), false);
+                TryAttachInventorySlot(inventorySlot, x, y);
             }
         }
 
@@ -270,5 +373,26 @@ public class InventoryContainer : MonoBehaviour
         }
 
         return null;
+    }
+
+    private bool IsInLuggage(int luggageIndex, int y)
+    {
+        return y >= luggageIndex * GridHeight && y < (luggageIndex + 1) * GridHeight;
+    }
+
+    public void OnLuggageUpClicked()
+    {
+        if(currentLuggageIndex < luggageCount - 1)
+        {
+            SetCurrentLuggageIndex(currentLuggageIndex + 1);
+        }
+    }
+
+    public void OnLuggageDownClicked()
+    {
+        if(currentLuggageIndex > 0)
+        {
+            SetCurrentLuggageIndex(currentLuggageIndex - 1);
+        }
     }
 }

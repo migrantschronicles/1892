@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,7 +42,7 @@ public class DialogBubble : MonoBehaviour
         }
         else
         {
-            SetRight();
+            //SetRight();
         }
 
         UpdateHeight();
@@ -95,5 +96,29 @@ public class DialogBubble : MonoBehaviour
         float padding = textTransform.offsetMin.x;
         float newHeight = text.preferredHeight + padding * 2;
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newHeight);
+    }
+
+    public void SetContent(string value, bool isLeft)
+    {
+        text.text = value;
+        this.isLeft = isLeft;
+
+        UpdateHeight();
+        if (isLeft)
+        {
+            SetLeft();
+        }
+        else
+        {
+            SetRight();
+        }
+    }
+
+    /**
+     * Does not update the height of the bubble.
+     */
+    public void SetText(string value)
+    {
+        text.text = value;
     }
 }

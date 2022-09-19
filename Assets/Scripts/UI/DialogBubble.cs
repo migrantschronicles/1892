@@ -4,21 +4,21 @@ using UnityEngine.UI;
 public class DialogBubble : MonoBehaviour
 {
     [SerializeField]
-    private Image Background;
+    private Image background;
     [SerializeField]
-    private Image Diamond;
+    private Image diamond;
     [SerializeField]
-    private Text Text;
+    private Text text;
     [SerializeField]
-    private bool IsLeft = false;
+    private bool isLeft = false;
     [SerializeField]
-    private Color PlayerBackgroundColor = new Color(0.2705882353f, 0.1725490196f, 0.1333333333f);
+    private Color playerBackgroundColor = new Color(0.2705882353f, 0.1725490196f, 0.1333333333f);
     [SerializeField]
-    private Color PlayerDiamondColor = new Color(0.3764705882f, 0.2627450980f, 0.1843137255f);
+    private Color playerDiamondColor = new Color(0.3764705882f, 0.2627450980f, 0.1843137255f);
     [SerializeField]
-    private Color NPCBackgroundColor = new Color(0.2666666667f, 0.2666666667f, 0.2666666667f);
+    private Color npcBackgroundColor = new Color(0.2666666667f, 0.2666666667f, 0.2666666667f);
     [SerializeField]
-    private Color NPCDiamondColor = new Color(0.3607843137f, 0.3607843137f, 0.3607843137f);
+    private Color npcDiamondColor = new Color(0.3607843137f, 0.3607843137f, 0.3607843137f);
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -35,7 +35,7 @@ public class DialogBubble : MonoBehaviour
 
         UnityEditor.EditorApplication.delayCall -= _OnValidate;
 
-        if (IsLeft)
+        if (isLeft)
         {
             SetLeft();
         }
@@ -51,49 +51,49 @@ public class DialogBubble : MonoBehaviour
     private void SetLeft()
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
-        RectTransform diamond = Diamond.GetComponent<RectTransform>();
-        RectTransform background = Background.GetComponent<RectTransform>();
+        RectTransform diamondTransform = diamond.GetComponent<RectTransform>();
+        RectTransform backgroundTransform = background.GetComponent<RectTransform>();
 
         rectTransform.anchorMin = new Vector2(0, 1);
         rectTransform.anchorMax = new Vector2(0, 1);
         rectTransform.pivot = new Vector2(0, 1);
-        rectTransform.anchoredPosition = new Vector2(diamond.sizeDelta.x / 2, rectTransform.anchoredPosition.y);
+        rectTransform.anchoredPosition = new Vector2(diamondTransform.sizeDelta.x / 2, rectTransform.anchoredPosition.y);
 
-        diamond.anchorMin = new Vector2(0, 0);
-        diamond.anchorMax = new Vector2(0, 0);
+        diamondTransform.anchorMin = new Vector2(0, 0);
+        diamondTransform.anchorMax = new Vector2(0, 0);
 
-        background.localScale = new Vector3(-1, 1, 1);
+        backgroundTransform.localScale = new Vector3(-1, 1, 1);
 
-        Background.color = NPCBackgroundColor;
-        Diamond.color = NPCDiamondColor;
+        background.color = npcBackgroundColor;
+        diamond.color = npcDiamondColor;
     }
 
     private void SetRight()
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
-        RectTransform diamond = Diamond.GetComponent<RectTransform>();
-        RectTransform background = Background.GetComponent<RectTransform>();
+        RectTransform diamondTransform = diamond.GetComponent<RectTransform>();
+        RectTransform backgroundTransform = background.GetComponent<RectTransform>();
 
         rectTransform.anchorMin = new Vector2(1, 1);
         rectTransform.anchorMax = new Vector2(1, 1);
         rectTransform.pivot = new Vector2(1, 1);
-        rectTransform.anchoredPosition = new Vector2(-diamond.sizeDelta.x / 2, rectTransform.anchoredPosition.y);
+        rectTransform.anchoredPosition = new Vector2(-diamondTransform.sizeDelta.x / 2, rectTransform.anchoredPosition.y);
 
-        diamond.anchorMin = new Vector2(1, 0);
-        diamond.anchorMax = new Vector2(1, 0);
+        diamondTransform.anchorMin = new Vector2(1, 0);
+        diamondTransform.anchorMax = new Vector2(1, 0);
 
-        background.localScale = new Vector3(1, 1, 1);
+        backgroundTransform.localScale = new Vector3(1, 1, 1);
 
-        Background.color = PlayerBackgroundColor;
-        Diamond.color = PlayerDiamondColor;
+        background.color = playerBackgroundColor;
+        diamond.color = playerDiamondColor;
     }
 
     private void UpdateHeight()
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
-        RectTransform textTransform = Text.GetComponent<RectTransform>();
+        RectTransform textTransform = text.GetComponent<RectTransform>();
         float padding = textTransform.offsetMin.x;
-        float newHeight = Text.preferredHeight + padding * 2;
+        float newHeight = text.preferredHeight + padding * 2;
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newHeight);
     }
 }

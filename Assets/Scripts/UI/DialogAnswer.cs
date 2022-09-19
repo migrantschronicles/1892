@@ -33,6 +33,14 @@ public class DialogAnswer : MonoBehaviour
     private Color selectedBackgroundColor = new Color(0.6f, 0.6509803922f, 0.4627450980f);
     [SerializeField]
     private Color selectedDiamondColor = new Color(0.6745098039f, 0.7137254902f, 0.5647058824f);
+    [SerializeField]
+    private Sprite talkingIcon;
+    [SerializeField]
+    private Sprite questIcon;
+    [SerializeField]
+    private Sprite travelIcon;
+    [SerializeField]
+    private Sprite itemsIcon;
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -50,6 +58,8 @@ public class DialogAnswer : MonoBehaviour
         UnityEditor.EditorApplication.delayCall -= _OnValidate;
 
         UpdateColors();
+        UpdatePosition();
+        UpdateIcon();
     }
 #endif
 
@@ -57,5 +67,29 @@ public class DialogAnswer : MonoBehaviour
     {
         background.color = isSelected ? selectedBackgroundColor : defaultBackgroundColor;
         diamond.color = isSelected ? selectedDiamondColor : defaultDiamondColor;
+    }
+
+    private void UpdatePosition()
+    {
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        RectTransform diamondTransform = diamond.GetComponent<RectTransform>();
+        rectTransform.anchorMin = new Vector2(1, 1);
+        rectTransform.anchorMax = new Vector2(1, 1);
+        rectTransform.pivot = new Vector2(1, 1);
+        rectTransform.anchoredPosition = new Vector2(-diamondTransform.sizeDelta.x / 2, rectTransform.anchoredPosition.y);
+    }
+
+    private void UpdateIcon()
+    {
+        Sprite sprite = null;
+        switch(answerType)
+        {
+            case AnswerType.Talking: sprite = talkingIcon; break;
+            case AnswerType.Quest: sprite = questIcon; break;
+            case AnswerType.Travel: sprite = travelIcon; break;
+            case AnswerType.Items: sprite = itemsIcon; break;
+        }
+
+        icon.sprite = sprite;
     }
 }

@@ -12,8 +12,6 @@ public class DialogBubble : MonoBehaviour
     [SerializeField]
     private bool IsLeft = false;
     [SerializeField]
-    private float AnchoredPositionX = 50;
-    [SerializeField]
     private Color PlayerBackgroundColor = new Color(0.2705882353f, 0.1725490196f, 0.1333333333f);
     [SerializeField]
     private Color PlayerDiamondColor = new Color(0.3764705882f, 0.2627450980f, 0.1843137255f);
@@ -53,16 +51,17 @@ public class DialogBubble : MonoBehaviour
     private void SetLeft()
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
+        RectTransform diamond = Diamond.GetComponent<RectTransform>();
+        RectTransform background = Background.GetComponent<RectTransform>();
+
         rectTransform.anchorMin = new Vector2(0, 1);
         rectTransform.anchorMax = new Vector2(0, 1);
         rectTransform.pivot = new Vector2(0, 1);
-        rectTransform.anchoredPosition = new Vector2(AnchoredPositionX, rectTransform.anchoredPosition.y);
+        rectTransform.anchoredPosition = new Vector2(diamond.sizeDelta.x / 2, rectTransform.anchoredPosition.y);
 
-        RectTransform diamond = Diamond.GetComponent<RectTransform>();
         diamond.anchorMin = new Vector2(0, 0);
         diamond.anchorMax = new Vector2(0, 0);
 
-        RectTransform background = Background.GetComponent<RectTransform>();
         background.localScale = new Vector3(-1, 1, 1);
 
         Background.color = NPCBackgroundColor;
@@ -72,16 +71,17 @@ public class DialogBubble : MonoBehaviour
     private void SetRight()
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
+        RectTransform diamond = Diamond.GetComponent<RectTransform>();
+        RectTransform background = Background.GetComponent<RectTransform>();
+
         rectTransform.anchorMin = new Vector2(1, 1);
         rectTransform.anchorMax = new Vector2(1, 1);
         rectTransform.pivot = new Vector2(1, 1);
-        rectTransform.anchoredPosition = new Vector2(-AnchoredPositionX, rectTransform.anchoredPosition.y);
+        rectTransform.anchoredPosition = new Vector2(-diamond.sizeDelta.x / 2, rectTransform.anchoredPosition.y);
 
-        RectTransform diamond = Diamond.GetComponent<RectTransform>();
         diamond.anchorMin = new Vector2(1, 0);
         diamond.anchorMax = new Vector2(1, 0);
 
-        RectTransform background = Background.GetComponent<RectTransform>();
         background.localScale = new Vector3(1, 1, 1);
 
         Background.color = PlayerBackgroundColor;

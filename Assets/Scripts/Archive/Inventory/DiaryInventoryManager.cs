@@ -251,6 +251,7 @@ public class DiaryInventoryManager : MonoBehaviour
         return false;
     }
 
+
     void Update()
     {
 

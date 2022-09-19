@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class NewGameManager : MonoBehaviour
 {
@@ -171,6 +172,7 @@ public class NewGameManager : MonoBehaviour
 
                 currentLocationGO.GetComponent<TransportationButtons>().DisableTransportationOptions();
                 // Load level
+                SceneManager.LoadScene(sceneName: "LoadingScene");
 
                 Debug.Log("Traveled to " + name + " by " + method);
                 

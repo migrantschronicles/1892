@@ -13,6 +13,14 @@ public class DialogBubble : MonoBehaviour
     private bool IsLeft = false;
     [SerializeField]
     private float AnchoredPositionX = 50;
+    [SerializeField]
+    private Color PlayerBackgroundColor = new Color(0.2705882353f, 0.1725490196f, 0.1333333333f);
+    [SerializeField]
+    private Color PlayerDiamondColor = new Color(0.3764705882f, 0.2627450980f, 0.1843137255f);
+    [SerializeField]
+    private Color NPCBackgroundColor = new Color(0.2666666667f, 0.2666666667f, 0.2666666667f);
+    [SerializeField]
+    private Color NPCDiamondColor = new Color(0.3607843137f, 0.3607843137f, 0.3607843137f);
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -26,6 +34,8 @@ public class DialogBubble : MonoBehaviour
         {
             return;
         }
+
+        UnityEditor.EditorApplication.delayCall -= _OnValidate;
 
         if (IsLeft)
         {
@@ -54,6 +64,9 @@ public class DialogBubble : MonoBehaviour
 
         RectTransform background = Background.GetComponent<RectTransform>();
         background.localScale = new Vector3(-1, 1, 1);
+
+        Background.color = NPCBackgroundColor;
+        Diamond.color = NPCDiamondColor;
     }
 
     private void SetRight()
@@ -70,6 +83,9 @@ public class DialogBubble : MonoBehaviour
 
         RectTransform background = Background.GetComponent<RectTransform>();
         background.localScale = new Vector3(1, 1, 1);
+
+        Background.color = PlayerBackgroundColor;
+        Diamond.color = PlayerDiamondColor;
     }
 
     private void UpdateHeight()

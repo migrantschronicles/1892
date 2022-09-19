@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class Route : MonoBehaviour
 {
-
     public GameObject attachedMarker;
     public Sprite untraveledRoute; // Untraveled, but discovered; grey
     public Sprite currentRoute; // Red

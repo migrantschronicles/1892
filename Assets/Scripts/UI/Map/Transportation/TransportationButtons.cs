@@ -7,7 +7,7 @@ public class TransportationButtons : MonoBehaviour
 
     public bool capital = false;
     public bool available = false;
-    private Animator anim;
+    public Animator anim;
 
     public List<GameObject> availableRoutes;
 
@@ -66,6 +66,8 @@ public class TransportationButtons : MonoBehaviour
 
     public void DisableTransportationOptions() 
     {
+        anim.SetBool("ButtonClicked", false);
         transportationMethodsGO.SetActive(false);
     }
+
 }

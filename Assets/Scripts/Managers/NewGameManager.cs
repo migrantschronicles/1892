@@ -54,6 +54,8 @@ public class NewGameManager : MonoBehaviour
 
     private void Initialize()
     {
+
+        // ^^^^^^^^^^^^^^^^^^^ Old Manager (for reference); to be deleted by Loai after GM is done ^^^^^^^^^^^^^^^^^^^^
         //map = WorldMapGlobe.instance;
 
         /*CityManager = new CityMarker(map);
@@ -71,29 +73,53 @@ public class NewGameManager : MonoBehaviour
         Subscribe();
         map.DrawCity(CityData.Pfaffenthal);
         Navigate();*/
+        // ^^^^^^^^^^^^^^^^^^^ Old Manager code until here ^^^^^^^^^^^^^^^^^^^^
 
+        // Assigning current (starting) location & making it's marker available according to its type
         foreach (GameObject location in allLocations)
         {
+            // Assigning current location
             if(location.gameObject.name == (currentLocation + " Marker")) 
             {
                 currentLocationGO = location;
                 currentLocationGO.GetComponent<Button>().interactable = true;
             }
+
+            // Assigning capital markers their art accordingly
+            if (location.gameObject.GetComponent<TransportationButtons>().capital) 
+            {
+                location.GetComponent<Image>().sprite = currentCityCapital;
+            }
         }
-        
-        isInitialized = true;
+        // Turning off all map routes/lines
+        foreach (GameObject location in allLocations)
+        {
+            foreach (GameObject line in location.GetComponent<TransportationButtons>().availableRoutes) 
+            {
+                Debug.Log(line.name + " is set off");
+                line.SetActive(false);
+            }
+        }
+            isInitialized = true;
     }
 
     public void UnlockLocation(string name) 
     {
         foreach(GameObject location in allLocations) 
         {
-            Debug.Log(name);
-            Debug.Log(location.gameObject.name);
             if (location.gameObject.name == (name + " Marker")) {
                 location.GetComponent<Button>().interactable = true;
                 Debug.Log("Unlocked new location: " + name);
             }
+        }
+    }
+
+    public void UnlockAllLocations() 
+    {
+        foreach (GameObject location in allLocations)
+        {
+            location.GetComponent<Button>().interactable = true;
+            Debug.Log("Unlocked new location: " + name);
         }
     }
 
@@ -111,8 +137,6 @@ public class NewGameManager : MonoBehaviour
             if(line.name == name) 
             {
 
-
-
                 // Initiate loading screen to move to new location
 
                 // Update Map UI
@@ -125,15 +149,22 @@ public class NewGameManager : MonoBehaviour
                     line2.SetActive(true);
                 }
 
-                line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
+                if(method == "Ship")
+                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().waterRoute;
+                else line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
                 // Add all routes to an array to be updated in the next city to be 'traveled'
-                currentLocationGO.GetComponent<Image>().sprite = traveledCityMarker;
+                if (!visitedLocations.Exists(o => o == currentLocationGO))
+                    visitedLocations.Add(currentLocationGO);
+                if(currentLocationGO.GetComponent<TransportationButtons>().capital)
+                    currentLocationGO.GetComponent<Image>().sprite = traveledCityCapital;
+                else currentLocationGO.GetComponent<Image>().sprite = traveledCityMarker;
 
                 line.SetActive(true);
 
                 // Set next location variables
                 currentLocation = name;
                 currentLocationGO = newLocation;
+                visitedLocations.Add(currentLocationGO);
                 if (newLocation.GetComponent<TransportationButtons>().capital)
                     newLocation.GetComponent<Image>().sprite = currentCityCapital;
                 else newLocation.GetComponent<Image>().sprite = currentCityMarker;

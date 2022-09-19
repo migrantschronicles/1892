@@ -15,7 +15,7 @@ public class MethodManager : MonoBehaviour
 
     public void GoToLocation(string name) 
     {
-        Debug.Log("GoTo initialized");
+        this.gameObject.transform.parent.parent.GetComponent<TransportationButtons>().anim.SetBool("ButtonClicked", false);
         gameManager.GetComponent<NewGameManager>().GoToLocation(name, this.gameObject.name);
     }
 }

@@ -19,8 +19,8 @@ public class ShopInteractives : MonoBehaviour
 
     public GameObject shopFrame;
 
-    public GameObject leftArrow;
-    public GameObject rightArrow;
+    //public GameObject leftArrow;
+    //public GameObject rightArrow;
 
     public GameObject Blur;
     public GameObject StartBlur;
@@ -89,8 +89,8 @@ public class ShopInteractives : MonoBehaviour
         Blur.SetActive(false);
 
         shopFrame.SetActive(false);
-        leftArrow.SetActive(false);
-        rightArrow.SetActive(false);
+        //leftArrow.SetActive(false);
+        //rightArrow.SetActive(false);
 
         AgentPopupInfo.SetActive(false);
 
@@ -107,8 +107,8 @@ public class ShopInteractives : MonoBehaviour
         ticketButton.SetActive(false);
         backButton.SetActive(true);
         Blur.SetActive(true);
-        leftArrow.SetActive(true);
-        rightArrow.SetActive(true);
+        //leftArrow.SetActive(true);
+        //rightArrow.SetActive(true);
 
         shopFrame.SetActive(true);
     }
@@ -124,7 +124,7 @@ public class ShopInteractives : MonoBehaviour
         GotToChDialog1();
     }
 
-    public void InventoryItemClick(InventorySlot item)
+    public void InventoryItemClick(OldInventorySlot item)
     {
         if (!item.IsEmpty && item.Location == "Luggage")
         {

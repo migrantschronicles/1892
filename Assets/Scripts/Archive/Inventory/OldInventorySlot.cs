@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventorySlot : MonoBehaviour
+public class OldInventorySlot : MonoBehaviour
 {
     //for diary inventory
     public bool IsSelected { get; set; }

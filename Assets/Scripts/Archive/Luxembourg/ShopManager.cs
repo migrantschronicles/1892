@@ -11,12 +11,12 @@ public static class ShopData
 
 public class ShopManager : MonoBehaviour
 {
-    public List<InventorySlot> shopSlots = new List<InventorySlot>(12);
-    public List<InventorySlot> luggageSlots = new List<InventorySlot>(12);
+    public List<OldInventorySlot> shopSlots = new List<OldInventorySlot>(12);
+    public List<OldInventorySlot> luggageSlots = new List<OldInventorySlot>(12);
 
     public int moneyChanges = 0;
-    public List<InventorySlot> shopAdditions;
-    public List<InventorySlot> luggageAdditions;
+    public List<OldInventorySlot> shopAdditions;
+    public List<OldInventorySlot> luggageAdditions;
 
     [Space(20)]
     public GameObject moneyChangesUI;
@@ -65,14 +65,14 @@ public class ShopManager : MonoBehaviour
         CheckStorage();
     }
 
-    public void PickItem(InventorySlot item) 
+    public void PickItem(OldInventorySlot item) 
     {
         if (!item.IsEmpty)
         {
             backButton.SetActive(false);
             moneyChangesUI.SetActive(true);
 
-            InventorySlot updatedSlot = TransferItem(item);
+            OldInventorySlot updatedSlot = TransferItem(item);
 
             if(updatedSlot == null)
             {
@@ -171,9 +171,9 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    public InventorySlot TransferItem(InventorySlot item) 
+    public OldInventorySlot TransferItem(OldInventorySlot item) 
     {
-        InventorySlot updatedSlot = null;
+        OldInventorySlot updatedSlot = null;
 
         if (item.Location == "Luggage") 
         {

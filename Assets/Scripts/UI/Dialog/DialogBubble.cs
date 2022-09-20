@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogBubble : GenericDialogBubble
+public class DialogBubble : MonoBehaviour, IDialogBubble
 {
     [SerializeField]
     private Image background;
@@ -117,7 +117,7 @@ public class DialogBubble : GenericDialogBubble
     /**
      * Does not update the height of the bubble.
      */
-    public override void SetText(string value)
+    public void SetText(string value)
     {
         text.text = value;
     }

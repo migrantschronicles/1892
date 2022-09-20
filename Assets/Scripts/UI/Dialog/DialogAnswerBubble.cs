@@ -11,7 +11,7 @@ public enum AnswerType
     Items
 }
 
-public class DialogAnswerBubble : GenericDialogBubble
+public class DialogAnswerBubble : MonoBehaviour, IDialogBubble
 {
     [SerializeField]
     private AnswerType answerType;
@@ -102,7 +102,7 @@ public class DialogAnswerBubble : GenericDialogBubble
         UpdateIcon();
     }
 
-    public override void SetText(string value)
+    public void SetText(string value)
     {
         text.text = value;
     }

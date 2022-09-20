@@ -27,7 +27,7 @@ public class DialogSystem : MonoBehaviour
     private DialogDecision currentDecision;
     private float currentY = 0;
     private List<DialogAnswerBubble> currentAnswers = new List<DialogAnswerBubble>();
-    private List<GenericDialogBubble> currentAnimators = new List<GenericDialogBubble>();
+    private List<DialogAnimator> currentAnimators = new List<DialogAnimator>();
 
     public float TimeForCharacters
     {
@@ -50,11 +50,11 @@ public class DialogSystem : MonoBehaviour
         {
             if(currentAnimators.Count != 0)
             {
-                while(currentAnimators.Count > 0)
+                foreach(DialogAnimator animator in currentAnimators)
                 {
-                    GenericDialogBubble animator = currentAnimators[0];
-                    animator.FinishTextAnimation();
+                    animator.Finish();
                 }
+                currentAnimators.Clear();
             }
             else if(currentItem != null)
             {
@@ -102,11 +102,11 @@ public class DialogSystem : MonoBehaviour
 
     private void Reset()
     {
-        while (currentAnimators.Count > 0)
+        foreach (DialogAnimator animator in currentAnimators)
         {
-            GenericDialogBubble animator = currentAnimators[0];
-            animator.FinishTextAnimation();
+            animator.Finish();
         }
+        currentAnimators.Clear();
 
         currentDialog = null;
         currentItem = null;
@@ -202,16 +202,17 @@ public class DialogSystem : MonoBehaviour
         }
     }
     
-    private void StartTextAnimation(GenericDialogBubble animator, string text)
+    private void StartTextAnimation(IDialogBubble bubble, string text)
     {
+        DialogAnimator animator = new DialogTextAnimator(this, bubble, text, timeForCharacters);
         currentAnimators.Add(animator);
-        animator.onFinished.AddListener(StopTextAnimation);
-        animator.StartTextAnimation(text);
+        animator.OnFinished += StopAnimation;
+        animator.Start();
     }
 
-    private void StopTextAnimation(GenericDialogBubble animator)
+    private void StopAnimation(DialogAnimator animator)
     {
-        animator.onFinished.RemoveListener(StopTextAnimation);
+        animator.OnFinished -= StopAnimation;
         currentAnimators.Remove(animator);
     }
 

@@ -210,6 +210,7 @@ public class DialogSystem : MonoBehaviour
         GameObject newLine = Instantiate(linePrefab, content.transform);
         currentBubble = newLine.GetComponent<DialogBubble>();
         currentBubble.SetContent(line);
+        AddConditions(line.SetConditions);
         OnContentAdded(newLine);
         StartTextAnimation(currentBubble, line.Text);
     }
@@ -273,8 +274,8 @@ public class DialogSystem : MonoBehaviour
         }
 
         // Add the conditions to the list.
-        SetCondition(currentDecision.SetCondition, currentDecision.IsGlobal);
-        SetCondition(bubble.Answer.SetCondition, bubble.Answer.IsGlobal);
+        AddConditions(currentDecision.SetConditions);
+        AddConditions(bubble.Answer.SetConditions);
 
         // Save the y position of the first answer.
         DialogAnswerBubble firstBubble = currentAnswers[0];
@@ -328,7 +329,7 @@ public class DialogSystem : MonoBehaviour
         }
     }
 
-    public void SetCondition(string condition, bool global = false)
+    public void AddCondition(string condition, bool global = false)
     {
         if(string.IsNullOrWhiteSpace(condition))
         {
@@ -348,6 +349,19 @@ public class DialogSystem : MonoBehaviour
             {
                 conditions.Add(condition);
             }
+        }
+    }
+
+    public void AddCondition(SetCondition condition)
+    {
+        AddCondition(condition.Condition, condition.IsGlobal);
+    }
+
+    public void AddConditions(IEnumerable<SetCondition> conditions)
+    {
+        foreach(SetCondition condition in conditions)
+        {
+            AddCondition(condition);
         }
     }
 

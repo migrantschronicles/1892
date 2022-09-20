@@ -6,6 +6,7 @@ public class DialogLine : DialogItem
 {
     public string Text;
     public bool IsLeft;
+    public SetCondition[] SetConditions;
 
     public DialogLine()
     {

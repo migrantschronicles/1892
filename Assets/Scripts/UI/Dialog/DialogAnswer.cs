@@ -7,9 +7,7 @@ public class DialogAnswer : DialogItem
     [Tooltip("The condition has to be met so that the answer option is displayed")]
     public DialogCondition Condition;
     [Tooltip("The condition that will be set if this option is chosen")]
-    public string SetCondition;
-    [Tooltip("Whether to set the condition globally or only for this level")]
-    public bool IsGlobal;
+    public SetCondition[] SetConditions;
     [Tooltip("The answer type")]
     public AnswerType AnswerType;
     [Tooltip("The text to display")]

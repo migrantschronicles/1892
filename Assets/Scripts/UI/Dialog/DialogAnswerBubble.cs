@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public enum AnswerType
@@ -13,6 +14,8 @@ public enum AnswerType
 
 public class DialogAnswerBubble : MonoBehaviour, IDialogBubble
 {
+    public UnityEvent<DialogAnswerBubble> OnSelected = new UnityEvent<DialogAnswerBubble> ();
+
     [SerializeField]
     private AnswerType answerType;
     [SerializeField]
@@ -23,6 +26,8 @@ public class DialogAnswerBubble : MonoBehaviour, IDialogBubble
     private Text text;
     [SerializeField]
     private Image icon;
+    [SerializeField]
+    private Button button;
     [SerializeField]
     private bool isSelected;
     [SerializeField]
@@ -41,6 +46,20 @@ public class DialogAnswerBubble : MonoBehaviour, IDialogBubble
     private Sprite travelIcon;
     [SerializeField]
     private Sprite itemsIcon;
+
+    public DialogAnswer Answer { get; private set; }
+
+    private void Start()
+    {
+        button.onClick.AddListener(OnClick);
+    }
+
+    private void OnClick()
+    {
+        isSelected = true;
+        UpdateColors();
+        OnSelected.Invoke(this);
+    }
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -93,10 +112,11 @@ public class DialogAnswerBubble : MonoBehaviour, IDialogBubble
         icon.sprite = sprite;
     }
 
-    public void SetContent(AnswerType type, string value)
+    public void SetContent(DialogAnswer answer)
     {
-        answerType = type;
-        text.text = value;
+        Answer = answer;
+        answerType = answer.AnswerType;
+        text.text = answer.Text;
         UpdateColors();
         UpdatePosition();
         UpdateIcon();
@@ -105,5 +125,10 @@ public class DialogAnswerBubble : MonoBehaviour, IDialogBubble
     public void SetText(string value)
     {
         text.text = value;
+    }
+
+    public void SetButtonEnabled(bool enabled = true)
+    {
+        button.enabled = enabled;
     }
 }

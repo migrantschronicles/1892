@@ -21,6 +21,8 @@ public class DialogBubble : MonoBehaviour, IDialogBubble
     [SerializeField]
     private Color npcDiamondColor = new Color(0.3607843137f, 0.3607843137f, 0.3607843137f);
 
+    public DialogLine Line { get; private set; }
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -98,10 +100,11 @@ public class DialogBubble : MonoBehaviour, IDialogBubble
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newHeight);
     }
 
-    public void SetContent(string value, bool isLeft)
+    public void SetContent(DialogLine line)
     {
-        text.text = value;
-        this.isLeft = isLeft;
+        Line = line;
+        text.text = line.Text;
+        this.isLeft = line.IsLeft;
 
         UpdateHeight();
         if (isLeft)

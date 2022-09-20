@@ -175,7 +175,7 @@ public class DialogSystem : MonoBehaviour
     {
         GameObject newLine = Instantiate(linePrefab, content.transform);
         currentBubble = newLine.GetComponent<DialogBubble>();
-        currentBubble.SetContent(line.Text, line.IsLeft);
+        currentBubble.SetContent(line);
         OnContentAdded(newLine);
         StartTextAnimation(currentBubble, line.Text);
     }
@@ -193,7 +193,8 @@ public class DialogSystem : MonoBehaviour
                 {
                     GameObject newAnswer = Instantiate(answerPrefab, content.transform);
                     DialogAnswerBubble dialogAnswer = newAnswer.GetComponent<DialogAnswerBubble>();
-                    dialogAnswer.SetContent(answer.AnswerType, answer.Text);
+                    dialogAnswer.SetContent(answer);
+                    dialogAnswer.OnSelected.AddListener(OnAnswerSelected);
                     OnContentAdded(newAnswer);
                     currentAnswers.Add(dialogAnswer);
                     StartTextAnimation(dialogAnswer, answer.Text);
@@ -202,6 +203,44 @@ public class DialogSystem : MonoBehaviour
         }
     }
     
+    private void OnAnswerSelected(DialogAnswerBubble bubble)
+    {
+        // Cleanup. Set all buttons disabled in case animators get added later on.
+        bubble.OnSelected.RemoveListener(OnAnswerSelected);
+        foreach (DialogAnswerBubble dialogAnswerBubble in currentAnswers)
+        {
+            dialogAnswerBubble.SetButtonEnabled(false);
+        }
+
+        // Add the conditions to the list.
+        SetCondition(currentDecision.SetCondition, currentDecision.IsGlobal);
+        SetCondition(bubble.Answer.SetCondition, bubble.Answer.IsGlobal);
+
+        // Save the y position of the first answer.
+        DialogAnswerBubble firstBubble = currentAnswers[0];
+        RectTransform firstTransform = firstBubble.GetComponent<RectTransform>();
+        float firstY = firstTransform.anchoredPosition.y;
+
+        // Destroy all answers except the chosen one.
+        foreach(DialogAnswerBubble dialogAnswerBubble in currentAnswers)
+        {
+            if(dialogAnswerBubble != bubble)
+            {
+                Destroy(dialogAnswerBubble.gameObject);
+            }
+        }
+        currentAnswers.Clear();
+        currentDecision = null;
+
+        // Set the y position to the first answer.
+        RectTransform bubbleTransform = bubble.GetComponent<RectTransform>();
+        bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, firstY);
+
+        // Set the scrollrect content size.
+        RectTransform contentTransform = content.GetComponent<RectTransform>();
+        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, -firstY + bubbleTransform.rect.height);
+    }
+
     private void StartTextAnimation(IDialogBubble bubble, string text)
     {
         DialogAnimator animator = new DialogTextAnimator(this, bubble, text, timeForCharacters);

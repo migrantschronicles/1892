@@ -277,12 +277,22 @@ public class DialogSystem : MonoBehaviour
 
     private void OnContentAdded(GameObject newContent)
     {
+        // Position the new content to the current y value.
         RectTransform rectTransform = newContent.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -currentY);
+        // Add the height of the new content to the current y value.
         currentY += rectTransform.rect.height;
+        // Set the size of the scroll rect to the new height (including the new content).
         RectTransform contentTransform = content.GetComponent<RectTransform>();
         contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY);
+        // Add the spacing to the current y value, so the next new content will be placed slightly below.
         currentY += spacing;
+
+        // Set the position of the scroll rect to scroll to the new content.
+        Canvas.ForceUpdateCanvases();
+        float newY = ((Vector2)transform.InverseTransformPoint(contentTransform.position) -
+            (Vector2)transform.InverseTransformPoint(newContent.transform.position)).y;
+        contentTransform.anchoredPosition = new Vector2(contentTransform.anchoredPosition.x, newY);
     }
 
     private void ProcessLine(DialogLine line)

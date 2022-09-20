@@ -79,6 +79,8 @@ public class DialogSystem : MonoBehaviour
     private GameObject linePrefab;
     [SerializeField]
     private GameObject answerPrefab;
+    [SerializeField]
+    private Button closeButton;
     [SerializeField, Tooltip("The vertical space between each bubble")]
     private float spacing = 30;
     [SerializeField, Tooltip("The time for each character in a text animation")]
@@ -104,6 +106,11 @@ public class DialogSystem : MonoBehaviour
         content = scrollView.content.gameObject;
     }
 
+    private void Start()
+    {
+        closeButton?.onClick.AddListener(OnClose);
+    }
+
     private void Update()
     {
         if(Input.GetMouseButtonDown(0))
@@ -124,6 +131,20 @@ public class DialogSystem : MonoBehaviour
         }
     }
 
+    private void Activate()
+    {
+        gameObject.SetActive(true);
+        closeButton?.gameObject.SetActive(true);
+    }
+
+    private void OnClose()
+    {
+        StopAllCoroutines();
+        currentAnimators.Clear();
+        ResetState();
+        ClearContent();
+    }
+
     /**
      * Starts a dialog.
      * Goes through each child of the parent and plays the first dialog that meets its conditions.
@@ -142,7 +163,8 @@ public class DialogSystem : MonoBehaviour
      */
     public void StartDialog(GameObject parent, bool additive)
     {
-        for(int i = 0; i < parent.transform.childCount; ++i)
+        Activate();
+        for (int i = 0; i < parent.transform.childCount; ++i)
         {
             Dialog dialog = parent.transform.GetChild(i).GetComponent<Dialog>();
             if(dialog.Condition.Test())
@@ -169,7 +191,7 @@ public class DialogSystem : MonoBehaviour
      */
     public void StartDialog(Dialog dialog, bool additive)
     {
-        gameObject.SetActive(true);
+        Activate();
         if (!additive)
         {
             ClearContent();

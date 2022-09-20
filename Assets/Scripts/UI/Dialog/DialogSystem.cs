@@ -135,13 +135,32 @@ public class DialogSystem : MonoBehaviour
             int nextIndex = currentItem.transform.GetSiblingIndex() + 1;
             if(nextIndex < currentItem.transform.parent.childCount)
             {
+                // Process the next sibling item.
                 currentItem = currentItem.transform.parent.GetChild(nextIndex).GetComponent<DialogItem>();
                 ProcessItem(currentItem);
             }
             else
             {
-                ///@todo 
-                return;
+                // Check if the current item has a selector as parent, in that case continue with the siblings of the selector.
+                // Do in a loop if the parent selector has no next item, but is itself a child of a selector.
+                DialogSelector parentSelector = currentItem.transform.parent.GetComponent<DialogSelector>();
+                bool processed = false;
+                while(parentSelector && !processed)
+                {
+                    int nextParentIndex = parentSelector.transform.GetSiblingIndex() + 1;
+                    if(nextParentIndex < parentSelector.transform.parent.childCount)
+                    {
+                        // Process the next sibling of the parent selector and jump out of the loop.
+                        currentItem = parentSelector.transform.parent.GetChild(nextParentIndex).GetComponent<DialogItem>();
+                        ProcessItem(currentItem);
+                        processed = true;
+                    }
+                    else
+                    {
+                        // The parent selector has no next items, so try the parent of the parent selector.
+                        parentSelector = parentSelector.transform.parent.GetComponent<DialogSelector>();
+                    }
+                }
             }
         }
     }
@@ -165,6 +184,12 @@ public class DialogSystem : MonoBehaviour
             case DialogItemType.Redirector:
             {
                 ProcessRedirector((DialogRedirector)item);
+                break;
+            }
+
+            case DialogItemType.Selector:
+            {
+                ProcessSelector((DialogSelector)item);
                 break;
             }
         }
@@ -217,6 +242,24 @@ public class DialogSystem : MonoBehaviour
         if(redirector.Target)
         {
             StartDialog(redirector.Target, redirector.Additive);
+        }
+    }
+
+    private void ProcessSelector(DialogSelector selector)
+    {
+        // Test if the selector applies.
+        if(selector.Condition.Test())
+        {
+            if(selector.transform.childCount > 0)
+            {
+                // The test was positive, so display all child elements of the selector.
+                EnterContainerItem(selector);
+            }
+            else
+            {
+                // The selector is empty, so go to the next element.
+                ProcessNextItem();
+            }
         }
     }
     

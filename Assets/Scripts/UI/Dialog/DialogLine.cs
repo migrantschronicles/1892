@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DialogLine : DialogItem
+public class DialogLine : DialogElement
 {
     public string Text;
     public bool IsLeft;
@@ -10,6 +10,6 @@ public class DialogLine : DialogItem
 
     public DialogLine()
     {
-        Type = DialogItemType.Line;
+        Type = DialogElementType.Line;
     }
 }

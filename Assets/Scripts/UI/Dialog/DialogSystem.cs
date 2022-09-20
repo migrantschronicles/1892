@@ -22,7 +22,7 @@ public class DialogSystem : MonoBehaviour
     private static List<string> globalConditions = new List<string>();
 
     private Dialog currentDialog;
-    private DialogItem currentItem;
+    private DialogElement currentElement;
     private DialogBubble currentBubble;
     private DialogDecision currentDecision;
     private float currentY = 0;
@@ -56,9 +56,9 @@ public class DialogSystem : MonoBehaviour
                 }
                 currentAnimators.Clear();
             }
-            else if(currentItem != null)
+            else if(currentElement != null)
             {
-                ProcessNextItem();
+                ProcessNextElement();
             }
         }
     }
@@ -97,7 +97,7 @@ public class DialogSystem : MonoBehaviour
 
         Reset();
         currentDialog = dialog;
-        EnterContainerItem(currentDialog);
+        EnterElementContainer(currentDialog);
     }
 
     private void Reset()
@@ -109,41 +109,41 @@ public class DialogSystem : MonoBehaviour
         currentAnimators.Clear();
 
         currentDialog = null;
-        currentItem = null;
+        currentElement = null;
         currentBubble = null;
         currentDecision = null;
         currentAnswers.Clear();
     }
 
-    private void EnterContainerItem(DialogItem parent)
+    private void EnterElementContainer(DialogElement parent)
     {
         if(parent.transform.childCount == 0)
         {
             // There are no childs to process
-            currentItem = null;
+            currentElement = null;
             return;
         }
 
-        currentItem = parent.transform.GetChild(0).GetComponent<DialogItem>();
-        ProcessItem(currentItem);
+        currentElement = parent.transform.GetChild(0).GetComponent<DialogElement>();
+        ProcessElement(currentElement);
     }
 
-    private void ProcessNextItem()
+    private void ProcessNextElement()
     {
-        if(currentItem)
+        if(currentElement)
         {
-            int nextIndex = currentItem.transform.GetSiblingIndex() + 1;
-            if(nextIndex < currentItem.transform.parent.childCount)
+            int nextIndex = currentElement.transform.GetSiblingIndex() + 1;
+            if(nextIndex < currentElement.transform.parent.childCount)
             {
-                // Process the next sibling item.
-                currentItem = currentItem.transform.parent.GetChild(nextIndex).GetComponent<DialogItem>();
-                ProcessItem(currentItem);
+                // Process the next sibling element.
+                currentElement = currentElement.transform.parent.GetChild(nextIndex).GetComponent<DialogElement>();
+                ProcessElement(currentElement);
             }
             else
             {
-                // Check if the current item has a selector as parent, in that case continue with the siblings of the selector.
-                // Do in a loop if the parent selector has no next item, but is itself a child of a selector.
-                DialogSelector parentSelector = currentItem.transform.parent.GetComponent<DialogSelector>();
+                // Check if the current element has a selector as parent, in that case continue with the siblings of the selector.
+                // Do in a loop if the parent selector has no next element, but is itself a child of a selector.
+                DialogSelector parentSelector = currentElement.transform.parent.GetComponent<DialogSelector>();
                 bool processed = false;
                 while(parentSelector && !processed)
                 {
@@ -151,13 +151,13 @@ public class DialogSystem : MonoBehaviour
                     if(nextParentIndex < parentSelector.transform.parent.childCount)
                     {
                         // Process the next sibling of the parent selector and jump out of the loop.
-                        currentItem = parentSelector.transform.parent.GetChild(nextParentIndex).GetComponent<DialogItem>();
-                        ProcessItem(currentItem);
+                        currentElement = parentSelector.transform.parent.GetChild(nextParentIndex).GetComponent<DialogElement>();
+                        ProcessElement(currentElement);
                         processed = true;
                     }
                     else
                     {
-                        // The parent selector has no next items, so try the parent of the parent selector.
+                        // The parent selector has no next elements, so try the parent of the parent selector.
                         parentSelector = parentSelector.transform.parent.GetComponent<DialogSelector>();
                     }
                 }
@@ -165,31 +165,31 @@ public class DialogSystem : MonoBehaviour
         }
     }
 
-    private void ProcessItem(DialogItem item)
+    private void ProcessElement(DialogElement element)
     {
-        switch(item.Type)
+        switch(element.Type)
         {
-            case DialogItemType.Line:
+            case DialogElementType.Line:
             {
-                ProcessLine((DialogLine)item);
+                ProcessLine((DialogLine)element);
                 break;
             }
 
-            case DialogItemType.Decision:
+            case DialogElementType.Decision:
             {
-                ProcessDecision((DialogDecision)item);
+                ProcessDecision((DialogDecision)element);
                 break;
             }
 
-            case DialogItemType.Redirector:
+            case DialogElementType.Redirector:
             {
-                ProcessRedirector((DialogRedirector)item);
+                ProcessRedirector((DialogRedirector)element);
                 break;
             }
 
-            case DialogItemType.Selector:
+            case DialogElementType.Selector:
             {
-                ProcessSelector((DialogSelector)item);
+                ProcessSelector((DialogSelector)element);
                 break;
             }
         }
@@ -254,12 +254,12 @@ public class DialogSystem : MonoBehaviour
             if(selector.transform.childCount > 0)
             {
                 // The test was positive, so display all child elements of the selector.
-                EnterContainerItem(selector);
+                EnterElementContainer(selector);
             }
             else
             {
                 // The selector is empty, so go to the next element.
-                ProcessNextItem();
+                ProcessNextElement();
             }
         }
     }
@@ -304,7 +304,7 @@ public class DialogSystem : MonoBehaviour
         currentY += spacing;
 
         // Display the next dialog after the answer (the childs of the answer).
-        EnterContainerItem(bubble.Answer);
+        EnterElementContainer(bubble.Answer);
     }
 
     private void StartTextAnimation(IDialogBubble bubble, string text)

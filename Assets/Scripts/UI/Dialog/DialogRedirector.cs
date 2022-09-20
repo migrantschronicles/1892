@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DialogRedirector : DialogItem
+public class DialogRedirector : DialogElement
 {
     public Dialog Target;
     public bool Additive = true;
 
     public DialogRedirector()
     {
-        Type = DialogItemType.Redirector;
+        Type = DialogElementType.Redirector;
     }
 }

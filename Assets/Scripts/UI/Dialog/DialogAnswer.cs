@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DialogAnswer : DialogItem
+public class DialogAnswer : DialogElement
 {
     [Tooltip("The condition has to be met so that the answer option is displayed")]
     public DialogCondition Condition;
@@ -15,6 +15,6 @@ public class DialogAnswer : DialogItem
 
     public DialogAnswer()
     {
-        Type = DialogItemType.Answer;
+        Type = DialogElementType.Answer;
     }
 }

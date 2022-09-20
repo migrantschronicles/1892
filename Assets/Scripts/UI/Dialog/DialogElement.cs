@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum DialogItemType
+public enum DialogElementType
 {
     Line,
     Decision,
@@ -12,7 +12,7 @@ public enum DialogItemType
     Redirector,
 }
 
-public class DialogItem : MonoBehaviour
+public class DialogElement : MonoBehaviour
 {
-    public DialogItemType Type { get; protected set; }
+    public DialogElementType Type { get; protected set; }
 }

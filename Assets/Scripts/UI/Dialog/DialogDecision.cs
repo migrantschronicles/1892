@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DialogDecision : DialogItem
+public class DialogDecision : DialogElement
 {
     public SetCondition[] SetConditions;
 
     public DialogDecision()
     {
-        Type = DialogItemType.Decision;
+        Type = DialogElementType.Decision;
     }
 }

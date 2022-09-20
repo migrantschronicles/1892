@@ -24,8 +24,18 @@ public class DialogSystem : MonoBehaviour
     private Dialog currentDialog;
     private DialogItem currentItem;
     private DialogBubble currentBubble;
+    private DialogDecision currentDecision;
     private float currentY = 0;
-    private Coroutine textAnimationRoutine;
+    private List<DialogAnswerBubble> currentAnswers = new List<DialogAnswerBubble>();
+    private List<GenericDialogBubble> currentAnimators = new List<GenericDialogBubble>();
+
+    public float TimeForCharacters
+    {
+        get
+        {
+            return timeForCharacters;
+        }
+    }
 
     private void Awake()
     {
@@ -38,9 +48,13 @@ public class DialogSystem : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
-            if(textAnimationRoutine != null)
+            if(currentAnimators.Count != 0)
             {
-                FinishTextAnimation();
+                while(currentAnimators.Count > 0)
+                {
+                    GenericDialogBubble animator = currentAnimators[0];
+                    animator.FinishTextAnimation();
+                }
             }
             else if(currentItem != null)
             {
@@ -88,15 +102,17 @@ public class DialogSystem : MonoBehaviour
 
     private void Reset()
     {
-        if(textAnimationRoutine != null)
+        while (currentAnimators.Count > 0)
         {
-            StopCoroutine(textAnimationRoutine);
-            textAnimationRoutine = null;
+            GenericDialogBubble animator = currentAnimators[0];
+            animator.FinishTextAnimation();
         }
 
         currentDialog = null;
         currentItem = null;
         currentBubble = null;
+        currentDecision = null;
+        currentAnswers.Clear();
     }
 
     private void ProcessNextItem()
@@ -136,7 +152,23 @@ public class DialogSystem : MonoBehaviour
                 ProcessLine((DialogLine)item);
                 break;
             }
+
+            case DialogItemType.Decision:
+            {
+                ProcessDecision((DialogDecision)item);
+                break;
+            }
         }
+    }
+
+    private void OnContentAdded(GameObject newContent)
+    {
+        RectTransform rectTransform = newContent.GetComponent<RectTransform>();
+        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -currentY);
+        currentY += rectTransform.rect.height;
+        RectTransform contentTransform = content.GetComponent<RectTransform>();
+        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY);
+        currentY += spacing;
     }
 
     private void ProcessLine(DialogLine line)
@@ -144,35 +176,43 @@ public class DialogSystem : MonoBehaviour
         GameObject newLine = Instantiate(linePrefab, content.transform);
         currentBubble = newLine.GetComponent<DialogBubble>();
         currentBubble.SetContent(line.Text, line.IsLeft);
-        RectTransform rectTransform = newLine.GetComponent<RectTransform>();
-        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -currentY);
-        currentY += rectTransform.rect.height;
-        RectTransform contentTransform = content.GetComponent<RectTransform>();
-        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY);
-        currentY += spacing;
-        textAnimationRoutine = StartCoroutine(AnimateCurrentLine(line.Text));
+        OnContentAdded(newLine);
+        StartTextAnimation(currentBubble, line.Text);
     }
 
-    private IEnumerator AnimateCurrentLine(string value)
+    private void ProcessDecision(DialogDecision decision)
     {
-        for(int i = 1; i <= value.Length; ++i)
-        {
-            currentBubble.SetText(value.Substring(0, i));
-            yield return new WaitForSeconds(timeForCharacters);
-        }
+        currentDecision = decision;
 
-        textAnimationRoutine = null;
+        for(int i = 0; i < currentDecision.transform.childCount; ++i)
+        {
+            DialogAnswer answer = currentDecision.transform.GetChild(i).GetComponent<DialogAnswer>();
+            if(answer)
+            {
+                if(answer.Condition.Test())
+                {
+                    GameObject newAnswer = Instantiate(answerPrefab, content.transform);
+                    DialogAnswerBubble dialogAnswer = newAnswer.GetComponent<DialogAnswerBubble>();
+                    dialogAnswer.SetContent(answer.AnswerType, answer.Text);
+                    OnContentAdded(newAnswer);
+                    currentAnswers.Add(dialogAnswer);
+                    StartTextAnimation(dialogAnswer, answer.Text);
+                }
+            }
+        }
+    }
+    
+    private void StartTextAnimation(GenericDialogBubble animator, string text)
+    {
+        currentAnimators.Add(animator);
+        animator.onFinished.AddListener(StopTextAnimation);
+        animator.StartTextAnimation(text);
     }
 
-    private void FinishTextAnimation()
-    { 
-        if(textAnimationRoutine != null)
-        {
-            StopCoroutine(textAnimationRoutine);
-            textAnimationRoutine = null;
-            DialogLine line = (DialogLine)currentItem;
-            currentBubble.SetText(line.Text);
-        }
+    private void StopTextAnimation(GenericDialogBubble animator)
+    {
+        animator.onFinished.RemoveListener(StopTextAnimation);
+        currentAnimators.Remove(animator);
     }
 
     private void ClearContent()

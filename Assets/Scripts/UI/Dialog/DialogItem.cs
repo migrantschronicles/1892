@@ -13,5 +13,5 @@ public enum DialogItemType
 
 public class DialogItem : MonoBehaviour
 {
-    public DialogItemType Type;
+    public DialogItemType Type { get; protected set; }
 }

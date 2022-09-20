@@ -115,6 +115,7 @@ public class DialogSystem : MonoBehaviour
                     animator.Finish();
                 }
                 currentAnimators.Clear();
+                OnCurrentAnimatorsChanged();
             }
             else if(currentElement != null)
             {
@@ -319,6 +320,7 @@ public class DialogSystem : MonoBehaviour
                     GameObject newAnswer = Instantiate(answerPrefab, content.transform);
                     DialogAnswerBubble dialogAnswer = newAnswer.GetComponent<DialogAnswerBubble>();
                     dialogAnswer.SetContent(answer);
+                    dialogAnswer.SetButtonEnabled(false);
                     dialogAnswer.OnSelected.AddListener(OnAnswerSelected);
                     OnContentAdded(newAnswer);
                     currentAnswers.Add(dialogAnswer);
@@ -401,14 +403,27 @@ public class DialogSystem : MonoBehaviour
     {
         DialogAnimator animator = new DialogTextAnimator(this, bubble, text, timeForCharacters);
         currentAnimators.Add(animator);
-        animator.OnFinished += StopAnimation;
+        animator.OnFinished += OnAnimationFinished;
         animator.Start();
     }
 
-    private void StopAnimation(DialogAnimator animator)
+    private void OnAnimationFinished(DialogAnimator animator)
     {
-        animator.OnFinished -= StopAnimation;
+        animator.OnFinished -= OnAnimationFinished;
         currentAnimators.Remove(animator);
+        OnCurrentAnimatorsChanged();
+    }
+
+    private void OnCurrentAnimatorsChanged()
+    {
+        if (currentDecision != null && currentAnimators.Count == 0)
+        {
+            // Enable the buttons from the decision.
+            foreach (DialogAnswerBubble dialogAnswerBubble in currentAnswers)
+            {
+                dialogAnswerBubble.SetButtonEnabled(true);
+            }
+        }
     }
 
     private void ClearContent()

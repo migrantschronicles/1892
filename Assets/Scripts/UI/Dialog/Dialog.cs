@@ -62,13 +62,12 @@ public class DialogCondition
     }
 }
 
-public class Dialog : MonoBehaviour
+public class Dialog : DialogItem
 {
-    [SerializeField]
-    private DialogCondition condition;
+    public DialogCondition Condition;
 
-    public bool TestCondition()
+    public Dialog()
     {
-        return condition.Test();
+        Type = DialogItemType.Dialog;
     }
 }

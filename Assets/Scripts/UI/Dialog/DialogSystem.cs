@@ -73,7 +73,7 @@ public class DialogSystem : MonoBehaviour
         for(int i = 0; i < parent.transform.childCount; ++i)
         {
             Dialog dialog = parent.transform.GetChild(i).GetComponent<Dialog>();
-            if(dialog.TestCondition())
+            if(dialog.Condition.Test())
             {
                 StartDialog(dialog, additive);
                 return;
@@ -97,7 +97,7 @@ public class DialogSystem : MonoBehaviour
 
         Reset();
         currentDialog = dialog;
-        ProcessNextItem();
+        EnterContainerItem(currentDialog);
     }
 
     private void Reset()
@@ -115,6 +115,19 @@ public class DialogSystem : MonoBehaviour
         currentAnswers.Clear();
     }
 
+    private void EnterContainerItem(DialogItem parent)
+    {
+        if(parent.transform.childCount == 0)
+        {
+            // There are no childs to process
+            currentItem = null;
+            return;
+        }
+
+        currentItem = parent.transform.GetChild(0).GetComponent<DialogItem>();
+        ProcessItem(currentItem);
+    }
+
     private void ProcessNextItem()
     {
         if(currentItem)
@@ -123,6 +136,7 @@ public class DialogSystem : MonoBehaviour
             if(nextIndex < currentItem.transform.parent.childCount)
             {
                 currentItem = currentItem.transform.parent.GetChild(nextIndex).GetComponent<DialogItem>();
+                ProcessItem(currentItem);
             }
             else
             {
@@ -130,17 +144,6 @@ public class DialogSystem : MonoBehaviour
                 return;
             }
         }
-        else
-        {
-            if(currentDialog.transform.childCount == 0)
-            {
-                return;
-            }
-
-            currentItem = currentDialog.transform.GetChild(0).GetComponent<DialogItem>();
-        }
-
-        ProcessItem(currentItem);
     }
 
     private void ProcessItem(DialogItem item)
@@ -219,7 +222,7 @@ public class DialogSystem : MonoBehaviour
         // Save the y position of the first answer.
         DialogAnswerBubble firstBubble = currentAnswers[0];
         RectTransform firstTransform = firstBubble.GetComponent<RectTransform>();
-        float firstY = firstTransform.anchoredPosition.y;
+        currentY = -firstTransform.anchoredPosition.y;
 
         // Destroy all answers except the chosen one.
         foreach(DialogAnswerBubble dialogAnswerBubble in currentAnswers)
@@ -234,11 +237,16 @@ public class DialogSystem : MonoBehaviour
 
         // Set the y position to the first answer.
         RectTransform bubbleTransform = bubble.GetComponent<RectTransform>();
-        bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, firstY);
+        bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, -currentY);
+        currentY += bubbleTransform.rect.height;
 
         // Set the scrollrect content size.
         RectTransform contentTransform = content.GetComponent<RectTransform>();
-        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, -firstY + bubbleTransform.rect.height);
+        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY);
+        currentY += spacing;
+
+        // Display the next dialog after the answer (the childs of the answer).
+        EnterContainerItem(bubble.Answer);
     }
 
     private void StartTextAnimation(IDialogBubble bubble, string text)

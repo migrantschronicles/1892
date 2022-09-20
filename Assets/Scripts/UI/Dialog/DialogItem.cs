@@ -7,8 +7,9 @@ public enum DialogItemType
     Line,
     Decision,
     Answer,
+    Dialog,
     Selector,
-    Redirector
+    Redirector,
 }
 
 public class DialogItem : MonoBehaviour

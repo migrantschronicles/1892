@@ -161,6 +161,12 @@ public class DialogSystem : MonoBehaviour
                 ProcessDecision((DialogDecision)item);
                 break;
             }
+
+            case DialogItemType.Redirector:
+            {
+                ProcessRedirector((DialogRedirector)item);
+                break;
+            }
         }
     }
 
@@ -203,6 +209,14 @@ public class DialogSystem : MonoBehaviour
                     StartTextAnimation(dialogAnswer, answer.Text);
                 }
             }
+        }
+    }
+
+    private void ProcessRedirector(DialogRedirector redirector)
+    {
+        if(redirector.Target)
+        {
+            StartDialog(redirector.Target, redirector.Additive);
         }
     }
     

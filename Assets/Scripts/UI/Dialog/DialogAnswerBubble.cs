@@ -47,7 +47,7 @@ public class DialogAnswerBubble : MonoBehaviour, IDialogBubble
     [SerializeField]
     private Sprite itemsIcon;
 
-    public DialogAnswer Answer { get; private set; }
+    public DialogDecisionOption Answer { get; private set; }
 
     private void Start()
     {
@@ -112,7 +112,7 @@ public class DialogAnswerBubble : MonoBehaviour, IDialogBubble
         icon.sprite = sprite;
     }
 
-    public void SetContent(DialogAnswer answer)
+    public void SetContent(DialogDecisionOption answer)
     {
         Answer = answer;
         answerType = answer.AnswerType;

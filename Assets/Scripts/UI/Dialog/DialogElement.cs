@@ -6,7 +6,7 @@ public enum DialogElementType
 {
     Line,
     Decision,
-    Answer,
+    DecisionOption,
     Dialog,
     Selector,
     Redirector,

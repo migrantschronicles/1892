@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DialogAnswer : DialogElement
+public class DialogDecisionOption : DialogElement
 {
     [Tooltip("The condition has to be met so that the answer option is displayed")]
     public DialogCondition Condition;
@@ -13,8 +13,8 @@ public class DialogAnswer : DialogElement
     [Tooltip("The text to display")]
     public string Text;
 
-    public DialogAnswer()
+    public DialogDecisionOption()
     {
-        Type = DialogElementType.Answer;
+        Type = DialogElementType.DecisionOption;
     }
 }

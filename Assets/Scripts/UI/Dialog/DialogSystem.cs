@@ -301,7 +301,7 @@ public class DialogSystem : MonoBehaviour
             return true;
         }
 
-        if(condition.Contains(condition))
+        if(conditions.Contains(condition))
         {
             return true;
         }

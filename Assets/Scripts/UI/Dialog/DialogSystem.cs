@@ -85,6 +85,8 @@ public class DialogSystem : MonoBehaviour
     private float spacing = 30;
     [SerializeField, Tooltip("The time for each character in a text animation")]
     private float timeForCharacters = 0.1f;
+    [SerializeField, Tooltip("The dialog that should be played when the level starts")]
+    private Dialog startDialog;
 
     private GameObject content;
     private List<string> conditions = new List<string>();
@@ -109,6 +111,10 @@ public class DialogSystem : MonoBehaviour
     private void Start()
     {
         closeButton?.onClick.AddListener(OnClose);
+        if(startDialog)
+        {
+            StartDialog(startDialog);
+        }
     }
 
     private void Update()

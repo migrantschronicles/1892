@@ -85,6 +85,8 @@ public class DialogSystem : MonoBehaviour
     private float spacing = 30;
     [SerializeField, Tooltip("The time for each character in a text animation")]
     private float timeForCharacters = 0.1f;
+    [SerializeField, Tooltip("The dialog that should be played when the level starts")]
+    private Dialog startDialog;
 
     private GameObject content;
     private List<string> conditions = new List<string>();
@@ -109,6 +111,10 @@ public class DialogSystem : MonoBehaviour
     private void Start()
     {
         closeButton?.onClick.AddListener(OnClose);
+        if(startDialog)
+        {
+            StartDialog(startDialog);
+        }
     }
 
     private void Update()
@@ -325,7 +331,7 @@ public class DialogSystem : MonoBehaviour
         currentBubble.SetContent(line);
         AddConditions(line.SetConditions);
         OnContentAdded(newLine);
-        StartTextAnimation(currentBubble, line.Text);
+        StartTextAnimation(currentBubble, LocalizationManager.Instance.GetLocalizedString(line.Text));
     }
 
     private void ProcessDecision(DialogDecision decision)
@@ -346,7 +352,7 @@ public class DialogSystem : MonoBehaviour
                     dialogAnswer.OnSelected.AddListener(OnAnswerSelected);
                     OnContentAdded(newAnswer);
                     currentAnswers.Add(dialogAnswer);
-                    StartTextAnimation(dialogAnswer, answer.Text);
+                    StartTextAnimation(dialogAnswer, LocalizationManager.Instance.GetLocalizedString(answer.Text));
                 }
             }
         }

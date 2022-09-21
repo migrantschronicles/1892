@@ -103,7 +103,8 @@ public class DialogBubble : MonoBehaviour, IDialogBubble
     public void SetContent(DialogLine line)
     {
         Line = line;
-        text.text = line.Text;
+        // No need to add callback when the language changed, since the language can't change during a dialog.
+        text.text = line.Text.GetLocalizedString();
         this.isLeft = line.IsLeft;
 
         UpdateHeight();

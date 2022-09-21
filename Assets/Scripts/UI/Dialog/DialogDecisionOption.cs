@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
 
 public class DialogDecisionOption : DialogElement
 {
@@ -11,7 +12,7 @@ public class DialogDecisionOption : DialogElement
     [Tooltip("The answer type")]
     public AnswerType AnswerType;
     [Tooltip("The text to display")]
-    public string Text;
+    public LocalizedString Text;
 
     public DialogDecisionOption()
     {

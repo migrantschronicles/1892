@@ -1,51 +1,165 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour
 {
-    //for diary inventory
-    public bool IsSelected { get; set; }
+    public UnityEvent<InventorySlot> OnClicked = new UnityEvent<InventorySlot>();
 
+    [SerializeField]
+    private Text amountText;
+    [SerializeField]
+    private Color defaultTextColor;
+    [SerializeField]
+    private Color ghostTextColor;
 
-    public bool IsEmpty { get; set; } = true;
-    public int? ItemId { get; set; }
-    public string Type { get; set; }
-    public int Value { get; set; }
-    public string Location { get; set; }
-    public string ItemOriginalLocation { get; set; }
+    public Item Item { get; private set; }
+    public int X { get; private set; }
+    public int Y { get; private set; }
+    public int Width { get; private set; }
+    public int Height { get; private set; }
+    public int Amount { get; private set; }
 
-    //Resources/Inventory
-    //Resources/Inventory/Highlights
-    public string IconKey { get; set; }
+    private Image image;
+    /// Value is updated to Amount if not ghost. If ghost, value represents the Amount + added during ghost, Amount still represents amount in inventory.
+    private int ghostAmount = 0;
 
-    public virtual void Check()
+    private void Awake()
     {
-        IsEmpty = !ItemId.HasValue;
+        image = GetComponent<Image>();
+    }
 
-        if (IsEmpty)
+    private bool TryAddAmount(bool ghost)
+    {
+        int currentAmount = ghost ? ghostAmount : Amount;
+        if(currentAmount == 0 || (Item.IsStackable && (Item.MaxStackCount <= 0 || currentAmount + 1 <= Item.MaxStackCount)))
         {
-            GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/empty");
+            if(ghost)
+            {
+                ++ghostAmount;
+            }
+            else
+            {
+                ++Amount;
+                ghostAmount = Amount;
+            }
+
+            return true;
         }
-        else if (Location == ItemOriginalLocation && !IsSelected)
+
+        return false;
+    }
+
+    private bool TryRemoveAmount(bool ghost)
+    {
+        int currentAmount = ghost ? ghostAmount : Amount;
+        if(!Item.IsStackable || currentAmount <= 1)
         {
-            GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/{IconKey}");
+            return false;
+        }
+
+        if(ghost)
+        {
+            --ghostAmount;
         }
         else
         {
-            GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/Highlights/{IconKey}");
-        }         
+            --Amount;
+            ghostAmount = Amount;
+        }
+
+        return true;
     }
 
-    public virtual void ResetItem() 
+    public void SetItem(Item item, int x, int y, int width, int height, bool ghost)
     {
-        IsEmpty = true;
-        ItemId = null;
-        Type = null;
-        Value = 0;
-        Location = null;
-        ItemOriginalLocation = null;
-        IconKey = "empty";
-        GetComponent<Image>().sprite = Resources.Load<Sprite>($"Inventory/empty");
-        gameObject.SetActive(true);
+        Item = item;
+        X = x;
+        Y = y;
+        Width = width;
+        Height = height;
+        image.sprite = ghost ? item.GhostSprite : item.sprite;
+        TryAddAmount(ghost);
+        amountText.color = ghost ? ghostTextColor : defaultTextColor;
+
+        UpdateAmountText();
+    }
+
+    public bool IsAt(int x, int y)
+    {
+        return x >= X && y >= Y && x < X + Width && y < Y + Height;
+    }
+
+    public bool TryAddToStack(bool ghost)
+    {
+        if(TryAddAmount(ghost))
+        {
+            amountText.color = ghost ? ghostTextColor : defaultTextColor;
+            UpdateAmountText();
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool TryRemoveFromStack(bool ghost)
+    {
+        if(TryRemoveAmount(ghost))
+        {
+            amountText.color = ghost ? ghostTextColor : defaultTextColor;
+            UpdateAmountText();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void UpdateAmountText()
+    {
+        amountText.text = ghostAmount.ToString();
+        amountText.gameObject.SetActive(Item.IsStackable); 
+    }
+
+    public InventoryGhostChange ApplyGhostMode()
+    {
+        InventoryGhostChange change = InventoryGhostChange.None;
+        if(Amount == 0)
+        {
+            change = InventoryGhostChange.Item;
+        }
+        else if(Amount != ghostAmount)
+        {
+            change = InventoryGhostChange.Amount;
+        }
+
+        Amount = ghostAmount;
+        UpdateAmountText();
+        amountText.color = defaultTextColor;
+        image.sprite = Item.sprite;
+
+        return change;
+    }
+
+    public InventoryGhostChange CancelGhostMode()
+    {
+        InventoryGhostChange change = InventoryGhostChange.None;
+        if(Amount == 0)
+        {
+            change = InventoryGhostChange.Item;
+        }
+
+        // Reset the displayed amount.
+        ghostAmount = Amount;
+        UpdateAmountText();
+        amountText.color = defaultTextColor;
+
+        return change;
+    }
+
+    public void OnSlotClicked()
+    {
+        OnClicked.Invoke(this);
     }
 }

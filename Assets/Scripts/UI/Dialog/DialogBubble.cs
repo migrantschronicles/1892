@@ -44,7 +44,7 @@ public class DialogBubble : MonoBehaviour, IDialogBubble
         }
         else
         {
-            //SetRight();
+            SetRight();
         }
 
         UpdateHeight();

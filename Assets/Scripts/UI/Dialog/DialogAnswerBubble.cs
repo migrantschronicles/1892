@@ -117,7 +117,7 @@ public class DialogAnswerBubble : MonoBehaviour, IDialogBubble
         Answer = answer;
         answerType = answer.AnswerType;
         // No need to add callback when the language changed, since the language can't change during a dialog.
-        text.text = answer.Text.GetLocalizedString();
+        text.text = LocalizationManager.Instance.GetLocalizedString(answer.Text);
         UpdateColors();
         UpdatePosition();
         UpdateIcon();

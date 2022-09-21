@@ -325,7 +325,7 @@ public class DialogSystem : MonoBehaviour
         currentBubble.SetContent(line);
         AddConditions(line.SetConditions);
         OnContentAdded(newLine);
-        StartTextAnimation(currentBubble, line.Text.GetLocalizedString());
+        StartTextAnimation(currentBubble, LocalizationManager.Instance.GetLocalizedString(line.Text));
     }
 
     private void ProcessDecision(DialogDecision decision)
@@ -346,7 +346,7 @@ public class DialogSystem : MonoBehaviour
                     dialogAnswer.OnSelected.AddListener(OnAnswerSelected);
                     OnContentAdded(newAnswer);
                     currentAnswers.Add(dialogAnswer);
-                    StartTextAnimation(dialogAnswer, answer.Text.GetLocalizedString());
+                    StartTextAnimation(dialogAnswer, LocalizationManager.Instance.GetLocalizedString(answer.Text));
                 }
             }
         }

@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
 
 [CreateAssetMenu(fileName = "NewItem", menuName = "ScriptableObjects/Item", order = 1)]
 public class Item : ScriptableObject
 {
     [Tooltip("The name of the item")]
-    public string Name;
+    public LocalizedString Name;
     [Tooltip("The description of the item")]
-    public string Description;
+    public LocalizedString Description;
     [Tooltip("The normal sprite used in the inventory")]
     public Sprite sprite;
     [Tooltip("The sprite that should be used when it has outlines (transfered in the shop and waiting that the player accepts or rejects)")]

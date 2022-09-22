@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Rendering.FilterWindow;
 
 /**
  * The dialog system that controls the dialogs in one level. 
@@ -34,6 +35,9 @@ using UnityEngine.UI;
  * It does not go through all dialogs sequentially after one dialog finishes, only the first dialog that meets its condition is played.
  * If you have other child game objects in the button, you can add an empty game object to the button and use that as a parent to the dialogs.
  * If you call DialogSystem.StartDialog with a single dialog object, it will not check if it meets the conditions, but rather play it without checking.
+ * You can have callbacks, when the dialog is finished (OnFinished). This is called when the last line of a dialog is played or the dialog was left
+ * because of a redirector. This can be used to hide the dialog button after a dialog is finished, if you don't want the user
+ * to be able to speak to that person again after finishing the dialog.
  * 
  * DIALOG LINE
  * A dialog line represents one dialog bubble.
@@ -197,6 +201,11 @@ public class DialogSystem : MonoBehaviour
      */
     public void StartDialog(Dialog dialog, bool additive)
     {
+        if(currentDialog)
+        {
+            OnDialogFinished();
+        }
+
         Activate();
         if (!additive)
         {
@@ -207,6 +216,15 @@ public class DialogSystem : MonoBehaviour
         ResetState();
         currentDialog = dialog;
         EnterElementContainer(currentDialog);
+    }
+
+    private void OnDialogFinished()
+    {
+        if(currentDialog)
+        {
+            currentDialog.OnFinished.Invoke();
+            currentDialog = null;
+        }
     }
 
     private void ResetState()
@@ -224,11 +242,44 @@ public class DialogSystem : MonoBehaviour
         currentAnswers.Clear();
     }
 
+    private bool IsLastLine(DialogLine line)
+    {
+        DialogElement parent = line.transform.parent.GetComponent<DialogElement>();
+        DialogElement current = line;
+        while (parent)
+        {
+            for (int i = current.transform.GetSiblingIndex() + 1; i < parent.transform.childCount; ++i)
+            {
+                DialogElement e = parent.transform.GetChild(i).GetComponent<DialogElement>();
+                switch(e.Type)
+                {
+                    case DialogElementType.Line:
+                    case DialogElementType.Decision:
+                    case DialogElementType.Selector:
+                    case DialogElementType.Redirector:
+                        return false;
+                }
+            }
+
+            if (parent.Type == DialogElementType.Dialog)
+            {
+                // Don't trace further.
+                break;
+            }
+
+            current = parent;
+            parent = parent.transform.parent.GetComponent<DialogElement>();
+        }
+
+        return true;
+    }
+
     private void EnterElementContainer(DialogElement parent)
     {
         if(parent.transform.childCount == 0)
         {
             // There are no childs to process
+            OnDialogFinished();
             currentElement = null;
             return;
         }
@@ -332,6 +383,11 @@ public class DialogSystem : MonoBehaviour
         AddConditions(line.SetConditions);
         OnContentAdded(newLine);
         StartTextAnimation(currentBubble, LocalizationManager.Instance.GetLocalizedString(line.Text));
+
+        if(IsLastLine(line))
+        {
+            OnDialogFinished();
+        }
     }
 
     private void ProcessDecision(DialogDecision decision)
@@ -424,7 +480,14 @@ public class DialogSystem : MonoBehaviour
         currentY += spacing;
 
         // Display the next dialog after the answer (the childs of the answer).
-        EnterElementContainer(bubble.Answer);
+        if(bubble.Answer.transform.childCount > 0)
+        {
+            EnterElementContainer(bubble.Answer);
+        }
+        else
+        {
+            OnDialogFinished();
+        }
     }
 
     private void StartTextAnimation(IDialogBubble bubble, string text)

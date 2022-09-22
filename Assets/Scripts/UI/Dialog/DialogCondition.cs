@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum ConditionType
@@ -59,6 +60,14 @@ public class DialogCondition
         }
 
         return true;
+    }
+
+    /**
+     * @returns A list of all non-empty conditions that the condition depends on.
+     */
+    public IEnumerable<string> GetAllConditions()
+    {
+        return Children.Select(value => value.Condition).Where(condition => !string.IsNullOrWhiteSpace(condition));
     }
 }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,12 @@ using static UnityEditor.Rendering.FilterWindow;
  * This is for simplicity and not having to write a custom editor, since structuring them as ScriptableObjects only would be messy with more complex dialogs.
  * Generally it does not matter where the prefabs (dialog data) reside, but to be consistent it should be as childs from the button that triggers the dialog.
  * E.g. A person "Katrin" has a button to start a dialog, so all dialog data (prefabs) should be a child of that button.
+ * 
+ * DIALOG BUTTON
+ * This is a prefab you can drag into the world which can trigger a dialog.
+ * The dialog data for this specific person should be a child of this button.
+ * You can set a condition and the dialog button will only be enabled if the conditions are met.
+ * You can use this e.g. to hide a dialog button after you have talked to a person, so you can't talk to him again.
  * 
  * CONDITIONS
  * A condition is a string (could be any string you choose).
@@ -36,8 +43,8 @@ using static UnityEditor.Rendering.FilterWindow;
  * If you have other child game objects in the button, you can add an empty game object to the button and use that as a parent to the dialogs.
  * If you call DialogSystem.StartDialog with a single dialog object, it will not check if it meets the conditions, but rather play it without checking.
  * You can have callbacks, when the dialog is finished (OnFinished). This is called when the last line of a dialog is played or the dialog was left
- * because of a redirector. This can be used to hide the dialog button after a dialog is finished, if you don't want the user
- * to be able to speak to that person again after finishing the dialog.
+ * because of a redirector.
+ * Also you can set conditions if a dialog is finished.
  * 
  * DIALOG LINE
  * A dialog line represents one dialog bubble.
@@ -77,6 +84,8 @@ using static UnityEditor.Rendering.FilterWindow;
  */
 public class DialogSystem : MonoBehaviour
 {
+    public delegate void OnConditionsChanged();
+
     public static DialogSystem Instance { get; private set; }
 
     [SerializeField]
@@ -104,6 +113,7 @@ public class DialogSystem : MonoBehaviour
     private float currentY = 0;
     private List<DialogAnswerBubble> currentAnswers = new List<DialogAnswerBubble>();
     private List<DialogAnimator> currentAnimators = new List<DialogAnimator>();
+    private Dictionary<string, OnConditionsChanged> onConditionsChangedListeners = new Dictionary<string, OnConditionsChanged>();
 
     private void Awake()
     {
@@ -223,6 +233,7 @@ public class DialogSystem : MonoBehaviour
         if(currentDialog)
         {
             currentDialog.OnFinished.Invoke();
+            AddConditions(currentDialog.SetOnFinishedConditions);
             currentDialog = null;
         }
     }
@@ -525,6 +536,26 @@ public class DialogSystem : MonoBehaviour
         }
     }
 
+    public void AddOnConditionsChanged(IEnumerable<string> conditions, OnConditionsChanged onConditionsChanged)
+    {
+        foreach(string condition in conditions)
+        {
+            AddOnConditionChanged(condition, onConditionsChanged);
+        }
+    }
+
+    public void AddOnConditionChanged(string condition, OnConditionsChanged onConditionsChanged)
+    {
+        if(onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChanged changedEvent))
+        {
+            onConditionsChangedListeners[condition] = changedEvent + onConditionsChanged;
+        }
+        else
+        {
+            onConditionsChangedListeners.Add(condition, onConditionsChanged);
+        }
+    }
+
     /**
      * Adds a condition to the list.
      * @param global True if it should be added to the global list, false for the local one.
@@ -536,11 +567,13 @@ public class DialogSystem : MonoBehaviour
             return;
         }
 
+        bool successful = false;
         if(global)
         {
             if(!globalConditions.Contains(condition))
             {
                 globalConditions.Add(condition);
+                successful = true;
             }
         }
         else
@@ -548,6 +581,15 @@ public class DialogSystem : MonoBehaviour
             if(!conditions.Contains(condition))
             {
                 conditions.Add(condition);
+                successful = true;
+            }
+        }
+
+        if(successful)
+        {
+            if(onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChanged onConditionsChanged))
+            {
+                onConditionsChanged.Invoke();
             }
         }
     }

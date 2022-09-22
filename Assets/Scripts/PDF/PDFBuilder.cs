@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.IO;
+using System;
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
 using PdfSharp.Pdf;
 using sharpPDF;

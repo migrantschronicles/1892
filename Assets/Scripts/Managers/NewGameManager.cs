@@ -10,7 +10,9 @@ public class NewGameManager : MonoBehaviour
     public string currentLocation;
     public GameObject currentLocationGO;
     public List<GameObject> allLocations;
+    public List<string> allLocationsStr;
     public List<GameObject> visitedLocations;
+    public List<string> visitedLocationsStr;
 
     private static bool isInitialized = false;
     private static GameObject instance;
@@ -79,6 +81,11 @@ public class NewGameManager : MonoBehaviour
         // Assigning current (starting) location & making it's marker available according to its type
         foreach (GameObject location in allLocations)
         {
+            Debug.Log(location.transform.name.Split(' ')[0]);
+            Debug.Log(allLocationsStr);
+            Debug.Log(location);
+            allLocationsStr.Add(location.transform.name.Split(' ')[0]);
+
             // Assigning current location
             if(location.gameObject.name == (currentLocation + " Marker")) 
             {
@@ -102,6 +109,44 @@ public class NewGameManager : MonoBehaviour
             }
         }
             isInitialized = true;
+    }
+
+    private void InitAfterLoad() 
+    {
+        visitedLocations.Clear();
+        allLocations.Clear();
+
+        GameObject allLocationsGO = GameObject.FindGameObjectWithTag("Locations");
+        Debug.Log(allLocationsGO);
+        if (allLocationsGO) // If Diary exists
+        {
+            foreach (Transform location in allLocationsGO.transform)
+            {
+                allLocations.Add(location.gameObject);
+                if (location.gameObject.name == currentLocation + " Marker")
+                    currentLocationGO = location.gameObject;
+            }
+
+            foreach (string visitedLocation in visitedLocationsStr)
+            {
+                foreach (GameObject location in allLocations)
+                {
+                    if (location.gameObject.name == visitedLocation + " Marker")
+                    {
+                        visitedLocations.Add(location);
+                    }
+                }
+            }
+
+            // Still need to update the UI; Markers, Routes, Capitals UI depending on visited/unvisited/current.
+        }
+        else Debug.Log("Diary doesn't exist in this scene");
+    }
+
+    public void OnLevelWasLoaded() 
+    {
+        if (isInitialized)
+            InitAfterLoad();
     }
 
     public void UnlockLocation(string name) 
@@ -155,7 +200,10 @@ public class NewGameManager : MonoBehaviour
                 else line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
                 // Add all routes to an array to be updated in the next city to be 'traveled'
                 if (!visitedLocations.Exists(o => o == currentLocationGO))
+                {
                     visitedLocations.Add(currentLocationGO);
+                    visitedLocationsStr.Add(currentLocationGO.gameObject.name.Split(' ')[0]);
+                }
                 if(currentLocationGO.GetComponent<TransportationButtons>().capital)
                     currentLocationGO.GetComponent<Image>().sprite = traveledCityCapital;
                 else currentLocationGO.GetComponent<Image>().sprite = traveledCityMarker;
@@ -166,6 +214,7 @@ public class NewGameManager : MonoBehaviour
                 currentLocation = name;
                 currentLocationGO = newLocation;
                 visitedLocations.Add(currentLocationGO);
+                visitedLocationsStr.Add(currentLocationGO.gameObject.name.Split(' ')[0]);
                 if (newLocation.GetComponent<TransportationButtons>().capital)
                     newLocation.GetComponent<Image>().sprite = currentCityCapital;
                 else newLocation.GetComponent<Image>().sprite = currentCityMarker;

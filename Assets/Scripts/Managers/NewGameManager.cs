@@ -81,6 +81,8 @@ public class NewGameManager : MonoBehaviour
         // Assigning current (starting) location & making it's marker available according to its type
         foreach (GameObject location in allLocations)
         {
+
+            // Initializing string data collection (Locations, visited locations)
             Debug.Log(location.transform.name.Split(' ')[0]);
             Debug.Log(allLocationsStr);
             Debug.Log(location);
@@ -108,7 +110,11 @@ public class NewGameManager : MonoBehaviour
                 line.SetActive(false);
             }
         }
-            isInitialized = true;
+
+        // Assigning current location to map UI label
+        GameObject.FindGameObjectWithTag("CurrentLocation").GetComponent<Text>().text = currentLocation;
+
+        isInitialized = true;
     }
 
     private void InitAfterLoad() 
@@ -120,6 +126,8 @@ public class NewGameManager : MonoBehaviour
         Debug.Log(allLocationsGO);
         if (allLocationsGO) // If Diary exists
         {
+
+
             foreach (Transform location in allLocationsGO.transform)
             {
                 allLocations.Add(location.gameObject);
@@ -127,6 +135,17 @@ public class NewGameManager : MonoBehaviour
                     currentLocationGO = location.gameObject;
             }
 
+            // Turning off all map routes/lines
+            foreach (GameObject location in allLocations)
+            {
+                foreach (GameObject line in location.GetComponent<TransportationButtons>().availableRoutes)
+                {
+                    Debug.Log(line.name + " is set off");
+                    line.SetActive(false);
+                }
+            }
+
+            // Re-callibrating vistedLocarions List
             foreach (string visitedLocation in visitedLocationsStr)
             {
                 foreach (GameObject location in allLocations)
@@ -134,11 +153,36 @@ public class NewGameManager : MonoBehaviour
                     if (location.gameObject.name == visitedLocation + " Marker")
                     {
                         visitedLocations.Add(location);
+                        location.GetComponent<Button>().interactable=true;
                     }
                 }
             }
 
+            // Update routes UI for traveled and current routes
+            for(int i=0;i<visitedLocations.Count-1;i++)
+            {
+                foreach(GameObject line in visitedLocations[i].GetComponent<TransportationButtons>().availableRoutes) 
+                {
+                    line.SetActive(true);
+                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().untraveledRoute;
+                    Debug.Log(line.gameObject.name);
+                    if (line.gameObject.name == visitedLocations[i + 1].gameObject.name || line.gameObject.name == currentLocation) 
+                    {
+                        if (i == visitedLocations.Count - 2)
+                            line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
+                        else line.GetComponent<Image>().sprite = line.GetComponent<Route>().traveledRoute;
+                    }
+                }
+            }
+
+            // Assigning current location to map UI label
+            GameObject.FindGameObjectWithTag("CurrentLocation").GetComponent<Text>().text = currentLocation;
+
+            
+
             // Still need to update the UI; Markers, Routes, Capitals UI depending on visited/unvisited/current.
+
+            
         }
         else Debug.Log("Diary doesn't exist in this scene");
     }
@@ -195,9 +239,10 @@ public class NewGameManager : MonoBehaviour
                     line2.SetActive(true);
                 }
 
-                if(method == "Ship")
-                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().waterRoute;
-                else line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
+                //if(method == "Ship")
+                //    line.GetComponent<Image>().sprite = line.GetComponent<Route>().waterRoute;
+                //else 
+                line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
                 // Add all routes to an array to be updated in the next city to be 'traveled'
                 if (!visitedLocations.Exists(o => o == currentLocationGO))
                 {

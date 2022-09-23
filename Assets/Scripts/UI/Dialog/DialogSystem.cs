@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static UnityEditor.Rendering.FilterWindow;
 
@@ -82,7 +83,7 @@ using static UnityEditor.Rendering.FilterWindow;
  * Note that after a redirector, no element of the original dialog is played, so it should be the last element of its level in the hierarchy
  * and is the last element of a dialog that is played (if the redirector is played).
  */
-public class DialogSystem : MonoBehaviour
+public class DialogSystem : MonoBehaviour, IPointerClickHandler
 {
     public delegate void OnConditionsChanged();
 
@@ -128,26 +129,6 @@ public class DialogSystem : MonoBehaviour
         if(startDialog)
         {
             StartDialog(startDialog);
-        }
-    }
-
-    private void Update()
-    {
-        if(Input.GetMouseButtonDown(0))
-        {
-            if(currentAnimators.Count != 0)
-            {
-                foreach(DialogAnimator animator in currentAnimators)
-                {
-                    animator.Finish();
-                }
-                currentAnimators.Clear();
-                OnCurrentAnimatorsChanged();
-            }
-            else if(currentElement != null)
-            {
-                ProcessNextElement();
-            }
         }
     }
 
@@ -630,5 +611,22 @@ public class DialogSystem : MonoBehaviour
         }
 
         return globalConditions.Contains(condition);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (currentAnimators.Count != 0)
+        {
+            foreach (DialogAnimator animator in currentAnimators)
+            {
+                animator.Finish();
+            }
+            currentAnimators.Clear();
+            OnCurrentAnimatorsChanged();
+        }
+        else if (currentElement != null)
+        {
+            ProcessNextElement();
+        }
     }
 }

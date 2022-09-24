@@ -135,9 +135,17 @@ public class NewGameManager : MonoBehaviour
                     currentLocationGO = location.gameObject;
             }
 
-            // Turning off all map routes/lines
+            
             foreach (GameObject location in allLocations)
             {
+
+                // Setting capitals UI accordingly.
+                if (location.GetComponent<TransportationButtons>().capital) 
+                {
+                    location.GetComponent<Image>().sprite = currentCityCapital;
+                }
+
+                // Turning off all map routes/lines
                 foreach (GameObject line in location.GetComponent<TransportationButtons>().availableRoutes)
                 {
                     Debug.Log(line.name + " is set off");
@@ -158,9 +166,19 @@ public class NewGameManager : MonoBehaviour
                 }
             }
 
-            // Update routes UI for traveled and current routes
+            // Updating Map UI
             for(int i=0;i<visitedLocations.Count-1;i++)
             {
+                // Updating Map Markers UI
+                if(visitedLocations[i] == currentLocationGO && visitedLocations[i].GetComponent<TransportationButtons>().capital)
+                    visitedLocations[i].GetComponent<Image>().sprite = currentCityCapital;
+                else if(visitedLocations[i] == currentLocationGO && !visitedLocations[i].GetComponent<TransportationButtons>().capital)
+                    visitedLocations[i].GetComponent<Image>().sprite = currentCityMarker;
+                else if(visitedLocations[i].GetComponent<TransportationButtons>().capital)
+                    visitedLocations[i].GetComponent<Image>().sprite = traveledCityCapital;
+                else visitedLocations[i].GetComponent<Image>().sprite = traveledCityMarker;
+
+                // Updating Routes UI
                 foreach(GameObject line in visitedLocations[i].GetComponent<TransportationButtons>().availableRoutes) 
                 {
                     line.SetActive(true);

@@ -46,6 +46,21 @@ public class MapZoom : MonoBehaviour
         }
     }
 
+    public float MinZoomLevel
+    {
+        get
+        {
+            return minZoom;
+        }
+    }
+    public float MaxZoomLevel
+    {
+        get
+        {
+            return maxZoom;
+        }
+    }
+
     private bool IsInitialZoomInProgress
     {
         get
@@ -135,7 +150,8 @@ public class MapZoom : MonoBehaviour
         }
     }
 
-    private static float RemapValue(float value, float from1, float to1, float from2, float to2)
+    ///@todo Should be extension or static utility function
+    public static float RemapValue(float value, float from1, float to1, float from2, float to2)
     {
         return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
     }

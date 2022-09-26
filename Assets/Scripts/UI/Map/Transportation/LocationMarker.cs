@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum LocationMarkerScaling
+{
+    Default,
+    Clamp,
+    Map
+}
+
 public class LocationMarker : MonoBehaviour
 {
     [SerializeField]
@@ -17,6 +24,19 @@ public class LocationMarker : MonoBehaviour
     private bool isUnlocked = false;
     [SerializeField, Tooltip("The zoom level at which it is considered that the markers have the default scale")]
     private float defaultZoomLevel = 1.0f;
+    [SerializeField, Tooltip("The scaling type for the markers: \n" + 
+        "Default: Markers keep the same screen percentage. ClampMin/-Max and MapMin/-Max is ignored.\n" +
+        "Clamp: The zoom level is clamped at the bounds specified by ClampMin/-Max. Useful to not let the markers scale too much.\n" +
+        "Map: The zoom level value is remapped to a new range specified by MapMin/-Max. If you not want to let the markers scale to much, but scale always.")]
+    private LocationMarkerScaling scaling;
+    [SerializeField]
+    private float clampMin = 0.5f;
+    [SerializeField]
+    private float clampMax = 2.0f;
+    [SerializeField]
+    private float mapMin = 0.5f;
+    [SerializeField]
+    private float mapMax = 2.0f;
 
     private MapZoom mapZoom;
     private Vector3 initialTransportationMethodsScale;
@@ -42,7 +62,16 @@ public class LocationMarker : MonoBehaviour
 
     private void OnZoomChanged(float zoomLevel)
     {
-        float value = zoomLevel / defaultZoomLevel;
+        float value = 0.0f;
+        switch(scaling)
+        {
+            case LocationMarkerScaling.Default: value = zoomLevel / defaultZoomLevel; break;
+            case LocationMarkerScaling.Clamp: value = Mathf.Clamp(zoomLevel, clampMin, clampMax) / defaultZoomLevel; break;
+            case LocationMarkerScaling.Map:
+                value = MapZoom.RemapValue(zoomLevel, mapZoom.MinZoomLevel, mapZoom.MaxZoomLevel, mapMin, mapMax) / defaultZoomLevel;
+                break;
+        }
+
         markerImage.transform.localScale = initialMarkerImageScale / value;
         transportationMethodsGO.transform.localScale = initialTransportationMethodsScale / value;
     }

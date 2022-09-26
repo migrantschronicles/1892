@@ -98,7 +98,7 @@ public class NewGameManager : MonoBehaviour
             if(location.gameObject.name == (currentLocation + " Marker")) 
             {
                 currentLocationGO = location;
-                currentLocationGO.GetComponent<Button>().interactable = true;
+                currentLocationGO.GetComponent<LocationMarker>().SetUnlocked();
             }
 
             // Assigning capital markers their art accordingly
@@ -159,7 +159,7 @@ public class NewGameManager : MonoBehaviour
                     if (location.gameObject.name == visitedLocation + " Marker")
                     {
                         visitedLocations.Add(location);
-                        location.GetComponent<Button>().interactable=true;
+                        location.GetComponent<LocationMarker>().SetUnlocked();
                     }
                 }
             }
@@ -204,7 +204,7 @@ public class NewGameManager : MonoBehaviour
         foreach(GameObject location in allLocations) 
         {
             if (location.gameObject.name == (name + " Marker")) {
-                location.GetComponent<Button>().interactable = true;
+                location.GetComponent<LocationMarker>().SetUnlocked();
                 Debug.Log("Unlocked new location: " + name);
             }
         }
@@ -214,7 +214,7 @@ public class NewGameManager : MonoBehaviour
     {
         foreach (GameObject location in allLocations)
         {
-            location.GetComponent<Button>().interactable = true;
+            location.GetComponent<LocationMarker>().SetUnlocked();
             Debug.Log("Unlocked new location: " + name);
         }
     }

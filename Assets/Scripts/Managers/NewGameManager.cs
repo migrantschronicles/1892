@@ -31,15 +31,18 @@ public class NewGameManager : MonoBehaviour
     public Sprite currentCityCapital;
     public Sprite untraveledCityCapital;
 
-    
+    public static NewGameManager Instance
+    {
+        get
+        {
+            return instance?.GetComponent<NewGameManager>();
+        }
+    }
 
     void Awake()
     {
         DontDestroyOnLoad(this);
-    }
 
-    void Start()
-    {
         if (instance == null)
         {
             instance = gameObject;
@@ -48,7 +51,10 @@ public class NewGameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
 
+    void Start()
+    {
         if (!isInitialized)
         {
             Initialize();

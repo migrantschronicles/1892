@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class InventoryTest : MonoBehaviour
 {
-    public InventoryContainer inventoryContainer;
+    public ScrollableInventoryManager inventoryContainer;
     public Item testItem;
     public Item testLargeItem;
     public Item testStackableItem;
@@ -12,7 +12,7 @@ public class InventoryTest : MonoBehaviour
 
     private void Start()
     {
-        inventoryContainer.SetLuggageCount(3);
+        inventoryContainer.SetBagCount(3);
     }
 
     private void TestItem(Item item)

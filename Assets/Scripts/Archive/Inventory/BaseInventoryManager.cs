@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 
 //Currently used only for Pfaffenthal
-public class InventoryManager : MonoBehaviour
+public class OldInventoryManager : MonoBehaviour
 {
     //Indexation
     //...

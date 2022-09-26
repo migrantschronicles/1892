@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PfaffenthalInventoryManager : InventoryManager
+public class PfaffenthalInventoryManager : OldInventoryManager
 {
     static PfaffenthalInventoryManager()
     {

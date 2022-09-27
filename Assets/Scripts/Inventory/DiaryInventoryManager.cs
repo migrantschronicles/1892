@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.UI;
 
 public class DiaryInventoryManager : InventoryManager
 {
@@ -10,10 +12,10 @@ public class DiaryInventoryManager : InventoryManager
     private DiaryInventoryContainer bag1;
     [SerializeField]
     private DiaryInventoryContainer bag2;
+    [SerializeField]
+    private Text descriptionText;
 
-    public DiaryInventoryManager()
-    {
-    }
+    private InventorySlot selectedSlot = null;
 
     protected override void Start()
     {
@@ -46,5 +48,21 @@ public class DiaryInventoryManager : InventoryManager
         InventoryContainer container = GetContainer(bagIndex);
         container.AttachSlot(slot, slot.X, slot.Y);
         return true;
+    }
+
+    protected override void OnSlotClicked(InventorySlot slot)
+    {
+        if(selectedSlot)
+        {
+            selectedSlot.CancelGhostMode();
+            selectedSlot = null;
+        }
+
+        base.OnSlotClicked(slot);
+        string description = LocalizationManager.Instance.GetLocalizedString(slot.Item.Description, slot.Item.Price);
+        descriptionText.text = description;
+
+        selectedSlot = slot;
+        selectedSlot.EnableGhostMode();
     }
 }

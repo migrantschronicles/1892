@@ -131,6 +131,12 @@ public class InventorySlot : MonoBehaviour
         amountText.gameObject.SetActive(Item.IsStackable); 
     }
 
+    public void EnableGhostMode()
+    {
+        image.sprite = Item.GhostSprite;
+        amountText.color = ghostTextColor;
+    }
+
     public InventoryGhostChange ApplyGhostMode()
     {
         InventoryGhostChange change = InventoryGhostChange.None;
@@ -163,6 +169,7 @@ public class InventorySlot : MonoBehaviour
         ghostAmount = Amount;
         UpdateAmountText();
         amountText.color = defaultTextColor;
+        image.sprite = Item.sprite;
 
         return change;
     }

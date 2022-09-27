@@ -401,7 +401,7 @@ public abstract class InventoryManager : MonoBehaviour
 
     protected abstract InventoryContainer GetContainer(int bagIndex);
 
-    protected void OnSlotClicked(InventorySlot slot)
+    protected virtual void OnSlotClicked(InventorySlot slot)
     {
         onSlotClicked.Invoke(slot);
     }

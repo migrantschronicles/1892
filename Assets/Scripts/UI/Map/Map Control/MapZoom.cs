@@ -35,7 +35,8 @@ public class MapZoom : MonoBehaviour
     private float zoomLevel = 1.0f;
     private Vector2 originalScale;
     private RectTransform rectTransform;
-    private float initialZoomCurrentTime = -1.0f;
+    private float autoZoomCurrentTime = -1.0f;
+    private float autoZoomStart = 1.0f;
 
     public delegate void OnMapZoomChangedEvent(float zoomLevel);
     public event OnMapZoomChangedEvent onMapZoomChangedEvent;
@@ -63,11 +64,11 @@ public class MapZoom : MonoBehaviour
         }
     }
 
-    private bool IsInitialZoomInProgress
+    private bool IsAutoZoomInProgress
     {
         get
         {
-            return initialZoomCurrentTime >= 0.0f;
+            return autoZoomCurrentTime >= 0.0f;
         }
     }
 
@@ -79,20 +80,21 @@ public class MapZoom : MonoBehaviour
         initialZoomTarget = Mathf.Clamp(initialZoomTarget, minZoom, maxZoom);
         initialZoomMaxDelta /= initialZoomDuration;
         SetZoom(Mathf.Clamp(initialZoom, minZoom, maxZoom), rectTransform.TransformPoint(rectTransform.rect.center));
+        centerButton.onClick.AddListener(OnCenterMap);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(IsInitialZoomInProgress)
+        if(IsAutoZoomInProgress)
         {
-            initialZoomCurrentTime += Time.deltaTime;
+            autoZoomCurrentTime += Time.deltaTime;
             Vector2 zoomPoint = (Vector2) NewGameManager.Instance.currentLocationGO.transform.position;
-            if (initialZoomCurrentTime < initialZoomDuration)
+            if (autoZoomCurrentTime < initialZoomDuration)
             {
-                float alpha = initialZoomCurrentTime / initialZoomDuration;
+                float alpha = autoZoomCurrentTime / initialZoomDuration;
                 float currentValue = initialZoomCurve.Evaluate(alpha);
-                float currentZoom = RemapValue(currentValue, 0, 1, initialZoomStart, initialZoomTarget);
+                float currentZoom = RemapValue(currentValue, 0, 1, autoZoomStart, initialZoomTarget);
                 SetZoom(currentZoom, zoomPoint);
 
                 // Move the map a bit so the current location gets into the center
@@ -113,7 +115,7 @@ public class MapZoom : MonoBehaviour
             else
             {
                 SetZoom(initialZoomTarget, zoomPoint);
-                initialZoomCurrentTime = -1.0f;
+                autoZoomCurrentTime = -1.0f;
             }
         }
         else
@@ -221,6 +223,13 @@ public class MapZoom : MonoBehaviour
 
     public void ResetInitialZoom()
     {
-        initialZoomCurrentTime = 0.0f;
+        autoZoomCurrentTime = 0.0f;
+        autoZoomStart = initialZoomStart;
+    }
+
+    private void OnCenterMap()
+    {
+        autoZoomCurrentTime = 0.0f;
+        autoZoomStart = zoomLevel;
     }
 }

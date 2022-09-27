@@ -37,13 +37,10 @@ public class Shop : MonoBehaviour
         arrowLeft.SetActive(false);
         arrowRight.SetActive(false);
 
-        foreach(Item item in ShopItems)
-        {
-            if(item != null)
-            {
-                Basket.TryAddItem(item);
-            }
-        }
+        Basket.ResetItems(ShopItems);
+        Luggage.ResetItems(NewGameManager.Instance.inventory.Items);
+
+        Luggage.onItemAmountChanged += OnLuggageItemAmountChanged;
     }
 
     private void OnBasketItemClicked(InventorySlot slot)
@@ -160,5 +157,10 @@ public class Shop : MonoBehaviour
         Basket.CancelGhostMode();
         Luggage.CancelGhostMode();
         StopTransfer();
+    }
+
+    private void OnLuggageItemAmountChanged(Item item, int changedAmount)
+    {
+        NewGameManager.Instance.inventory.OnItemAmountChanged(item, changedAmount);
     }
 }

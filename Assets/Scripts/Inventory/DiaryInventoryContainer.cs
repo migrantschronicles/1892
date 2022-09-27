@@ -1,27 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class DiaryInventoryContainer : InventoryManager
+public class DiaryInventoryContainer : InventoryContainer
 {
     [SerializeField]
-    private InventoryContainer bag0;
+    private Image backgroundImage;
     [SerializeField]
-    private InventoryContainer bag1;
-    [SerializeField]
-    private InventoryContainer bag2;
+    private Image lockedImage;
 
-    public DiaryInventoryContainer()
+    public void SetUnlocked(bool unlocked)
     {
-    }
-
-    protected override InventoryContainer GetContainer(int bagIndex)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    protected override bool TryAttachSlotToContainer(InventorySlot slot)
-    {
-        throw new System.NotImplementedException();
+        backgroundImage.enabled = unlocked;
+        SlotsParent.SetActive(unlocked);
+        lockedImage.gameObject.SetActive(!unlocked);
     }
 }

@@ -31,6 +31,9 @@ public class NewGameManager : MonoBehaviour
     public Sprite currentCityCapital;
     public Sprite untraveledCityCapital;
 
+    // Inventory
+    public PlayerInventory inventory = new PlayerInventory();
+
     public static NewGameManager Instance
     {
         get
@@ -46,6 +49,7 @@ public class NewGameManager : MonoBehaviour
         if (instance == null)
         {
             instance = gameObject;
+            inventory.Initialize();
         }
         else
         {
@@ -63,7 +67,6 @@ public class NewGameManager : MonoBehaviour
 
     private void Initialize()
     {
-
         // ^^^^^^^^^^^^^^^^^^^ Old Manager (for reference); to be deleted by Loai after GM is done ^^^^^^^^^^^^^^^^^^^^
         //map = WorldMapGlobe.instance;
 

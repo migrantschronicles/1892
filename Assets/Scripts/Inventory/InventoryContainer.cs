@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class InventoryContainer : MonoBehaviour
 {
     [SerializeField]
-    private GameObject SlotsParent;
+    protected GameObject SlotsParent;
 
 
 

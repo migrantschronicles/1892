@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using static UnityEditor.Progress;
 
 public enum InventoryGhostChange
 {
@@ -28,6 +30,10 @@ public abstract class InventoryManager : MonoBehaviour
     // Removed inventory slots during ghost mode.
     private List<InventorySlot> removedSlots = new List<InventorySlot>();
     private bool ghostMode = false;
+    private bool blockBroadcast = false;
+
+    public delegate void OnItemAmountChangedEvent(Item item, int amount);
+    public event OnItemAmountChangedEvent onItemAmountChanged;
 
     public int Width { get { return GridWidth; } }
     public int Height { get { return GridHeight * bagCount; } }
@@ -65,7 +71,7 @@ public abstract class InventoryManager : MonoBehaviour
         // Actually remove the removed slots before the next step.
         foreach (InventorySlot slot in removedSlots)
         {
-            ///@todo Broadcast
+            OnItemAmountChanged(slot.Item, slot.ChangedAmount);
             slots.Remove(slot);
             DestroySlot(slot);
         }
@@ -74,10 +80,11 @@ public abstract class InventoryManager : MonoBehaviour
         // Broadcast all changes
         foreach (InventorySlot slot in slots)
         {
+            int changedAmount = slot.ChangedAmount;
             InventoryGhostChange change = slot.ApplyGhostMode();
             if (change != InventoryGhostChange.None)
             {
-                ///@todo Broadcast
+                OnItemAmountChanged(slot.Item, changedAmount);
             }
         }
 
@@ -122,6 +129,14 @@ public abstract class InventoryManager : MonoBehaviour
         ghostMode = false;
     }
 
+    private void OnItemAmountChanged(Item item, int changedAmount)
+    {
+        if(!blockBroadcast && onItemAmountChanged != null)
+        {
+            onItemAmountChanged.Invoke(item, changedAmount);
+        }
+    }
+
     /**
      * Tries to add an item.
      * Tries to add it to the stack if possible first, then adds a new slot.
@@ -132,13 +147,18 @@ public abstract class InventoryManager : MonoBehaviour
         {
             if (TryAddItemToStack(item) != null)
             {
+                OnItemAmountChanged(item, 1);
                 return true;
             }
         }
 
-        ///@todo Broadcast
+        if(TryAddNewItem(item) != null)
+        {
+            OnItemAmountChanged(item, 1);
+            return true;
+        }
 
-        return TryAddNewItem(item) != null;
+        return false;
     }
 
     private InventorySlot TryAddItemToStack(Item item)
@@ -256,6 +276,7 @@ public abstract class InventoryManager : MonoBehaviour
         if (slot.TryRemoveFromStack(ghostMode))
         {
             // The amount was decreased.
+            OnItemAmountChanged(slot.Item, -1);
             return true;
         }
 
@@ -264,8 +285,65 @@ public abstract class InventoryManager : MonoBehaviour
         removedSlots.Add(slot);
         slot.transform.SetParent(null, false);
         slot.gameObject.SetActive(false);
+        OnItemAmountChanged(slot.Item, -1);
 
         return true;
+    }
+
+    public void ResetItems(IEnumerable<KeyValuePair<Item, int>> items)
+    {
+        blockBroadcast = true;
+
+        foreach (InventorySlot slot in slots)
+        {
+            DestroySlot(slot);
+        }
+        slots.Clear();
+
+        foreach (KeyValuePair<Item, int> item in items.Where(item => item.Key.Volume > 1))
+        {
+            // First add all items that are larger than 1 slot.
+            for(int i = 0; i < item.Value; i++)
+            {
+                TryAddItem(item.Key);
+            }
+        }
+
+        foreach (KeyValuePair<Item, int> item in items.Where(item => item.Key.Volume == 1))
+        {
+            // Now add all items that occupy only one slot.
+            for (int i = 0; i < item.Value; i++)
+            {
+                TryAddItem(item.Key);
+            }
+        }
+
+        blockBroadcast = false;
+    }
+
+    public void ResetItems(IEnumerable<Item> items)
+    {
+        blockBroadcast = true;
+
+        foreach(InventorySlot slot in slots)
+        {
+            DestroySlot(slot);
+        }
+        slots.Clear();
+
+        foreach(Item item in items.Where(item => item.Volume > 1))
+        {
+            // First add all items that are larger than 1 slot.
+            TryAddItem(item);
+        }
+
+        foreach(Item item in items.Where(item => item.Volume == 1))
+        {
+            // Now add all items that occupy only one slot.
+            TryAddItem(item);
+        }
+
+        blockBroadcast = false;
     }
 
     protected void TryAttachSlot(InventorySlot slot)

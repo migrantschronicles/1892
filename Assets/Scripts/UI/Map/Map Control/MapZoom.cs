@@ -36,7 +36,7 @@ public class MapZoom : MonoBehaviour
     private float initialZoomCurrentTime = -1.0f;
 
     public delegate void OnMapZoomChangedEvent(float zoomLevel);
-    public OnMapZoomChangedEvent onMapZoomChangedEvent;
+    public event OnMapZoomChangedEvent onMapZoomChangedEvent;
 
     public float ZoomLevel
     {
@@ -200,7 +200,10 @@ public class MapZoom : MonoBehaviour
         transform.localScale = newScale;
 
         // Broadcast
-        onMapZoomChangedEvent.Invoke(zoomLevel);
+        if(onMapZoomChangedEvent != null)
+        {
+            onMapZoomChangedEvent.Invoke(zoomLevel);
+        }
     }
 
     private void SetPivot(Vector2 pivot)

@@ -26,6 +26,14 @@ public class InventorySlot : MonoBehaviour
     /// Value is updated to Amount if not ghost. If ghost, value represents the Amount + added during ghost, Amount still represents amount in inventory.
     private int ghostAmount = 0;
 
+    public int ChangedAmount
+    {
+        get
+        {
+            return ghostAmount - Amount;
+        }
+    }
+
     private void Awake()
     {
         image = GetComponent<Image>();
@@ -55,10 +63,6 @@ public class InventorySlot : MonoBehaviour
     private bool TryRemoveAmount(bool ghost)
     {
         int currentAmount = ghost ? ghostAmount : Amount;
-        if(!Item.IsStackable || currentAmount <= 1)
-        {
-            return false;
-        }
 
         if(ghost)
         {
@@ -68,6 +72,11 @@ public class InventorySlot : MonoBehaviour
         {
             --Amount;
             ghostAmount = Amount;
+        }
+
+        if (!Item.IsStackable || currentAmount <= 1)
+        {
+            return false;
         }
 
         return true;
@@ -122,6 +131,12 @@ public class InventorySlot : MonoBehaviour
         amountText.gameObject.SetActive(Item.IsStackable); 
     }
 
+    public void EnableGhostMode()
+    {
+        image.sprite = Item.GhostSprite;
+        amountText.color = ghostTextColor;
+    }
+
     public InventoryGhostChange ApplyGhostMode()
     {
         InventoryGhostChange change = InventoryGhostChange.None;
@@ -154,6 +169,7 @@ public class InventorySlot : MonoBehaviour
         ghostAmount = Amount;
         UpdateAmountText();
         amountText.color = defaultTextColor;
+        image.sprite = Item.sprite;
 
         return change;
     }

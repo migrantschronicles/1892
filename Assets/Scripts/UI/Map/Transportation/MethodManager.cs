@@ -15,7 +15,7 @@ public class MethodManager : MonoBehaviour
 
     public void GoToLocation(string name) 
     {
-        this.gameObject.transform.parent.parent.GetComponent<TransportationButtons>().anim.SetBool("ButtonClicked", false);
+        GetComponentInParent<TransportationButtons>().anim.SetBool("ButtonClicked", false);
         gameManager.GetComponent<NewGameManager>().GoToLocation(name, this.gameObject.name);
     }
 }

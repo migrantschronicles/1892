@@ -31,24 +31,34 @@ public class NewGameManager : MonoBehaviour
     public Sprite currentCityCapital;
     public Sprite untraveledCityCapital;
 
-    
+    // Inventory
+    public PlayerInventory inventory = new PlayerInventory();
+
+    public static NewGameManager Instance
+    {
+        get
+        {
+            return instance?.GetComponent<NewGameManager>();
+        }
+    }
 
     void Awake()
     {
         DontDestroyOnLoad(this);
-    }
 
-    void Start()
-    {
         if (instance == null)
         {
             instance = gameObject;
+            inventory.Initialize();
         }
         else
         {
             Destroy(gameObject);
         }
+    }
 
+    void Start()
+    {
         if (!isInitialized)
         {
             Initialize();
@@ -57,7 +67,6 @@ public class NewGameManager : MonoBehaviour
 
     private void Initialize()
     {
-
         // ^^^^^^^^^^^^^^^^^^^ Old Manager (for reference); to be deleted by Loai after GM is done ^^^^^^^^^^^^^^^^^^^^
         //map = WorldMapGlobe.instance;
 
@@ -92,7 +101,7 @@ public class NewGameManager : MonoBehaviour
             if(location.gameObject.name == (currentLocation + " Marker")) 
             {
                 currentLocationGO = location;
-                currentLocationGO.GetComponent<Button>().interactable = true;
+                currentLocationGO.GetComponent<LocationMarker>().SetUnlocked();
             }
 
             // Assigning capital markers their art accordingly
@@ -161,7 +170,7 @@ public class NewGameManager : MonoBehaviour
                     if (location.gameObject.name == visitedLocation + " Marker")
                     {
                         visitedLocations.Add(location);
-                        location.GetComponent<Button>().interactable=true;
+                        location.GetComponent<LocationMarker>().SetUnlocked();
                     }
                 }
             }
@@ -216,7 +225,7 @@ public class NewGameManager : MonoBehaviour
         foreach(GameObject location in allLocations) 
         {
             if (location.gameObject.name == (name + " Marker")) {
-                location.GetComponent<Button>().interactable = true;
+                location.GetComponent<LocationMarker>().SetUnlocked();
                 Debug.Log("Unlocked new location: " + name);
             }
         }
@@ -226,7 +235,7 @@ public class NewGameManager : MonoBehaviour
     {
         foreach (GameObject location in allLocations)
         {
-            location.GetComponent<Button>().interactable = true;
+            location.GetComponent<LocationMarker>().SetUnlocked();
             Debug.Log("Unlocked new location: " + name);
         }
     }

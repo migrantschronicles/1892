@@ -32,6 +32,16 @@ public class LocalizationManager
         return localizedString.GetLocalizedString();
     }
 
+    public string GetLocalizedString(LocalizedString localizedString, params object[] args)
+    {
+        return localizedString.GetLocalizedString(args);
+    }
+
+    public string GetLocalizedString(LocalizedString localizedString, IList<object> args)
+    {
+        return localizedString.GetLocalizedString(args);
+    }
+
     public bool ChangeLanguage(Language language)
     {
         string languageCode = "";

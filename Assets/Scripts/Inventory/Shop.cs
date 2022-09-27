@@ -7,9 +7,9 @@ using UnityEngine.UI;
 public class Shop : MonoBehaviour
 {
     [SerializeField]
-    private InventoryContainer Basket;
+    private ScrollableInventoryManager Basket;
     [SerializeField]
-    private InventoryContainer Luggage;
+    private ScrollableInventoryManager Luggage;
     [SerializeField]
     private Button AcceptButton;
     [SerializeField]
@@ -32,18 +32,15 @@ public class Shop : MonoBehaviour
 
     private void Start()
     {
-        Basket.OnSlotClicked.AddListener(OnBasketItemClicked);
-        Luggage.OnSlotClicked.AddListener(OnLuggageItemClicked);
+        Basket.onSlotClicked.AddListener(OnBasketItemClicked);
+        Luggage.onSlotClicked.AddListener(OnLuggageItemClicked);
         arrowLeft.SetActive(false);
         arrowRight.SetActive(false);
 
-        foreach(Item item in ShopItems)
-        {
-            if(item != null)
-            {
-                Basket.TryAddItem(item);
-            }
-        }
+        Basket.ResetItems(ShopItems);
+        Luggage.ResetItems(NewGameManager.Instance.inventory.Items);
+
+        Luggage.onItemAmountChanged += OnLuggageItemAmountChanged;
     }
 
     private void OnBasketItemClicked(InventorySlot slot)
@@ -160,5 +157,10 @@ public class Shop : MonoBehaviour
         Basket.CancelGhostMode();
         Luggage.CancelGhostMode();
         StopTransfer();
+    }
+
+    private void OnLuggageItemAmountChanged(Item item, int changedAmount)
+    {
+        NewGameManager.Instance.inventory.OnItemAmountChanged(item, changedAmount);
     }
 }

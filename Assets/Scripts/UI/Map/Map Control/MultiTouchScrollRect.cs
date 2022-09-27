@@ -26,4 +26,9 @@ public class MultiTouchScrollRect : ScrollRect
     {
         base.OnEndDrag(eventData);
     }
+
+    public override void OnScroll(PointerEventData data)
+    {
+        // Do nothing
+    }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DiaryInventoryManager : MonoBehaviour
+public class OldDiaryInventoryManager : MonoBehaviour
 {
     #region Inventory Management
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,6 +38,8 @@ public class MapZoom : MonoBehaviour
     private RectTransform rectTransform;
     private float autoZoomCurrentTime = -1.0f;
     private float autoZoomStart = 1.0f;
+    private Vector2 autoZoomNormalizedStartPosition;
+    private ScrollRect scrollRect;
 
     public delegate void OnMapZoomChangedEvent(float zoomLevel);
     public event OnMapZoomChangedEvent onMapZoomChangedEvent;
@@ -75,6 +78,7 @@ public class MapZoom : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        scrollRect = GetComponentInParent<ScrollRect>();
         originalScale = transform.localScale;
         rectTransform = GetComponent<RectTransform>();
         initialZoomTarget = Mathf.Clamp(initialZoomTarget, minZoom, maxZoom);
@@ -86,6 +90,22 @@ public class MapZoom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(IsAutoZoomInProgress)
+        {
+            autoZoomCurrentTime += Time.deltaTime;
+            GameObject targetMarker = NewGameManager.Instance.currentLocationGO;
+            Vector2 targetMarkerPosition = targetMarker.GetComponent<RectTransform>().anchoredPosition;
+            if(autoZoomCurrentTime < initialZoomDuration)
+            {
+                float alpha = autoZoomCurrentTime / initialZoomDuration;
+                float currentValue = initialZoomCurve.Evaluate(alpha);
+
+                Vector2 currentCenter = Vector2.Lerp(autoZoomNormalizedStartPosition, targetMarkerPosition, currentValue);
+                SetCenter(currentCenter);
+            }
+        }
+
+        /*
         if(IsAutoZoomInProgress)
         {
             autoZoomCurrentTime += Time.deltaTime;
@@ -152,6 +172,7 @@ public class MapZoom : MonoBehaviour
             }
 #endif
         }
+        */
     }
 
     ///@todo Should be extension or static utility function
@@ -231,5 +252,37 @@ public class MapZoom : MonoBehaviour
     {
         autoZoomCurrentTime = 0.0f;
         autoZoomStart = zoomLevel;
+        autoZoomNormalizedStartPosition = GetCenter();
+    }
+
+    /**
+     * Sets the center to this position.
+     * This could be a location marker.
+     * If sizes haven't changed the map content is 1744/1319.
+     * This is the position from the center of that content, i.e. range from -872/-659.5 to 872/659.5
+     */
+    private void SetCenter(Vector2 normalizedPosition)
+    {
+        // The viewport size, in the map content size transform
+        Vector2 normalizedViewportSize = transform.parent.GetComponent<RectTransform>().rect.size / rectTransform.localScale;
+        // The size minus how much the viewport can go.
+        Vector2 boundedSize = rectTransform.rect.size - normalizedViewportSize;
+        // Set the normalized position
+        scrollRect.normalizedPosition = normalizedPosition / boundedSize + new Vector2(0.5f, 0.5f);
+    }
+
+    private void SetCenterToMarker(GameObject marker)
+    {
+        SetCenter(marker.GetComponent<RectTransform>().anchoredPosition);
+    }
+
+    private Vector2 GetCenter()
+    {
+        // The viewport size, in the map content size transform
+        Vector2 normalizedViewportSize = transform.parent.GetComponent<RectTransform>().rect.size / rectTransform.localScale;
+        // The size minus how much the viewport can go.
+        Vector2 boundedSize = rectTransform.rect.size - normalizedViewportSize;
+
+        return (scrollRect.normalizedPosition - new Vector2(0.5f, 0.5f)) * boundedSize;
     }
 }

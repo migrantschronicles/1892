@@ -29,6 +29,8 @@ public class MapZoom : MonoBehaviour
     private float initialZoomMaxDelta = 100.0f;
     [SerializeField, Tooltip("At which distance to the current location marker the maximum position the map can move is decreased")]
     private float initialZoomMoveThreshold = 100.0f;
+    [SerializeField]
+    private Button centerButton;
 
     private float zoomLevel = 1.0f;
     private Vector2 originalScale;

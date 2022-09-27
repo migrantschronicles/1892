@@ -95,47 +95,21 @@ public class MapZoom : MonoBehaviour
             autoZoomCurrentTime += Time.deltaTime;
             GameObject targetMarker = NewGameManager.Instance.currentLocationGO;
             Vector2 targetMarkerPosition = targetMarker.GetComponent<RectTransform>().anchoredPosition;
-            if(autoZoomCurrentTime < initialZoomDuration)
-            {
-                float alpha = autoZoomCurrentTime / initialZoomDuration;
-                float currentValue = initialZoomCurve.Evaluate(alpha);
-
-                Vector2 currentCenter = Vector2.Lerp(autoZoomNormalizedStartPosition, targetMarkerPosition, currentValue);
-                SetCenter(currentCenter);
-            }
-        }
-
-        /*
-        if(IsAutoZoomInProgress)
-        {
-            autoZoomCurrentTime += Time.deltaTime;
-            Vector2 zoomPoint = (Vector2) NewGameManager.Instance.currentLocationGO.transform.position;
             if (autoZoomCurrentTime < initialZoomDuration)
             {
                 float alpha = autoZoomCurrentTime / initialZoomDuration;
                 float currentValue = initialZoomCurve.Evaluate(alpha);
-                float currentZoom = RemapValue(currentValue, 0, 1, autoZoomStart, initialZoomTarget);
-                SetZoom(currentZoom, zoomPoint);
 
-                // Move the map a bit so the current location gets into the center
-                Vector2 currentPosition = (Vector2)NewGameManager.Instance.currentLocationGO.transform.position;
-                RectTransform parentTransform = transform.parent.GetComponent<RectTransform>();
-                Vector2 targetPosition = parentTransform.TransformPoint(parentTransform.rect.center);
-                Debug.Log($"{currentPosition} || {targetPosition}");
-                float maxDelta = initialZoomMaxDelta * Time.deltaTime;
-                Vector2 newPosition = new Vector2(
-                    Mathf.MoveTowards(currentPosition.x, targetPosition.x, 
-                        maxDelta * Mathf.Clamp01(Mathf.Abs(targetPosition.x - currentPosition.x) / initialZoomMoveThreshold)),
-                    Mathf.MoveTowards(currentPosition.y, targetPosition.y, 
-                        maxDelta * Mathf.Clamp01(Mathf.Abs(targetPosition.y - currentPosition.y) / initialZoomMoveThreshold))
-                );
-                Vector2 deltaPosition = newPosition - currentPosition;
-                rectTransform.anchoredPosition = rectTransform.anchoredPosition + deltaPosition;
+                float currentZoom = RemapValue(currentValue, 0, 1, autoZoomStart, initialZoomTarget);
+                SetZoomAtCenter(currentZoom);
+
+                Vector2 currentCenter = Vector2.Lerp(autoZoomNormalizedStartPosition, targetMarkerPosition, currentValue);
+                SetCenter(currentCenter);
             }
             else
             {
-                SetZoom(initialZoomTarget, zoomPoint);
                 autoZoomCurrentTime = -1.0f;
+                SetCenterToMarker(targetMarker);
             }
         }
         else
@@ -172,7 +146,6 @@ public class MapZoom : MonoBehaviour
             }
 #endif
         }
-        */
     }
 
     ///@todo Should be extension or static utility function
@@ -253,6 +226,30 @@ public class MapZoom : MonoBehaviour
         autoZoomCurrentTime = 0.0f;
         autoZoomStart = zoomLevel;
         autoZoomNormalizedStartPosition = GetCenter();
+    }
+
+    private void SetZoomAtCenter(float newZoomLevel)
+    {
+        if (Mathf.Approximately(newZoomLevel, zoomLevel))
+        {
+            return;
+        }
+
+        zoomLevel = newZoomLevel;
+        Vector3 newScale = originalScale * zoomLevel;
+
+        Vector2 centerPosition = GetCenter();
+        Vector2 normalizedCenterPosition = centerPosition / rectTransform.rect.size;
+        SetPivot(normalizedCenterPosition + new Vector2(0.5f, 0.5f));
+
+        // Set the new scale
+        transform.localScale = newScale;
+
+        // Broadcast
+        if (onMapZoomChangedEvent != null)
+        {
+            onMapZoomChangedEvent.Invoke(zoomLevel);
+        }
     }
 
     /**

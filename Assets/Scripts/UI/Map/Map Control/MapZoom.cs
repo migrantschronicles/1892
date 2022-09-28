@@ -26,10 +26,6 @@ public class MapZoom : MonoBehaviour
     private AnimationCurve initialZoomCurve;
     [SerializeField]
     private float initialZoomDuration = 3.0f;
-    [SerializeField, Tooltip("The maximum position the map can move in 1 second towards the current location marker.")]
-    private float initialZoomMaxDelta = 100.0f;
-    [SerializeField, Tooltip("At which distance to the current location marker the maximum position the map can move is decreased")]
-    private float initialZoomMoveThreshold = 100.0f;
     [SerializeField]
     private Button centerButton;
 
@@ -82,7 +78,6 @@ public class MapZoom : MonoBehaviour
         originalScale = transform.localScale;
         rectTransform = GetComponent<RectTransform>();
         initialZoomTarget = Mathf.Clamp(initialZoomTarget, minZoom, maxZoom);
-        initialZoomMaxDelta /= initialZoomDuration;
         SetZoom(Mathf.Clamp(initialZoom, minZoom, maxZoom), rectTransform.TransformPoint(rectTransform.rect.center));
         centerButton.onClick.AddListener(OnCenterMap);
     }

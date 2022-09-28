@@ -49,7 +49,7 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private string defaultScene;
 
-    private Scene[] scenes;
+    private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
     private Shop currentShop;
 
@@ -60,7 +60,15 @@ public class LevelInstance : MonoBehaviour
             Debug.LogError("Default scene is empty in level instance");
         }
 
-        scenes = sceneParent.GetComponentsInChildren<Scene>();
+        for(int i = 0; i < sceneParent.transform.childCount; ++i)
+        {
+            Scene scene = sceneParent.transform.GetChild(i).GetComponent<Scene>();
+            if(scene != null)
+            {
+                scenes.Add(scene);
+            }
+        }
+
         backButton.onClick.AddListener(OnBack);
 
         foreach(Scene scene in scenes)
@@ -78,6 +86,7 @@ public class LevelInstance : MonoBehaviour
         }
         else
         {
+            backButton.gameObject.SetActive(false);
             dialogSystem.gameObject.SetActive(false);
         }
     }
@@ -122,7 +131,7 @@ public class LevelInstance : MonoBehaviour
         Scene scene = GetScene(sceneName);
         if(scene == null)
         {
-            scene = scenes.Length > 0 ? scenes[0] : null;
+            scene = scenes.Count > 0 ? scenes[0] : null;
             if(scene == null)
             {
                 return;

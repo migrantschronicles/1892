@@ -80,6 +80,7 @@ public class MapZoom : MonoBehaviour
         initialZoomTarget = Mathf.Clamp(initialZoomTarget, minZoom, maxZoom);
         SetZoom(Mathf.Clamp(initialZoom, minZoom, maxZoom), rectTransform.TransformPoint(rectTransform.rect.center));
         centerButton.onClick.AddListener(OnCenterMap);
+        ResetInitialZoom();
     }
 
     // Update is called once per frame
@@ -88,23 +89,26 @@ public class MapZoom : MonoBehaviour
         if(IsAutoZoomInProgress)
         {
             autoZoomCurrentTime += Time.deltaTime;
-            GameObject targetMarker = NewGameManager.Instance.currentLocationGO;
-            Vector2 targetMarkerPosition = targetMarker.GetComponent<RectTransform>().anchoredPosition;
-            if (autoZoomCurrentTime < initialZoomDuration)
+            if(NewGameManager.Instance && NewGameManager.Instance.currentLocationGO)
             {
-                float alpha = autoZoomCurrentTime / initialZoomDuration;
-                float currentValue = initialZoomCurve.Evaluate(alpha);
+                GameObject targetMarker = NewGameManager.Instance.currentLocationGO;
+                Vector2 targetMarkerPosition = targetMarker.GetComponent<RectTransform>().anchoredPosition;
+                if (autoZoomCurrentTime < initialZoomDuration)
+                {
+                    float alpha = autoZoomCurrentTime / initialZoomDuration;
+                    float currentValue = initialZoomCurve.Evaluate(alpha);
 
-                float currentZoom = RemapValue(currentValue, 0, 1, autoZoomStart, initialZoomTarget);
-                SetZoomAtCenter(currentZoom);
+                    float currentZoom = RemapValue(currentValue, 0, 1, autoZoomStart, initialZoomTarget);
+                    SetZoomAtCenter(currentZoom);
 
-                Vector2 currentCenter = Vector2.Lerp(autoZoomNormalizedStartPosition, targetMarkerPosition, currentValue);
-                SetCenter(currentCenter);
-            }
-            else
-            {
-                autoZoomCurrentTime = -1.0f;
-                SetCenterToMarker(targetMarker);
+                    Vector2 currentCenter = Vector2.Lerp(autoZoomNormalizedStartPosition, targetMarkerPosition, currentValue);
+                    SetCenter(currentCenter);
+                }
+                else
+                {
+                    autoZoomCurrentTime = -1.0f;
+                    SetCenterToMarker(targetMarker);
+                }
             }
         }
         else

@@ -6,6 +6,10 @@ public class DialogButton : MonoBehaviour
 {
     [SerializeField, Tooltip("The condition under which this dialog button is active")]
     private DialogCondition condition;
+    [SerializeField, Tooltip("The scene to open for this dialog")]
+    private string sceneName;
+
+    public string SceneName { get { return sceneName; } }
 
     private void Start()
     {

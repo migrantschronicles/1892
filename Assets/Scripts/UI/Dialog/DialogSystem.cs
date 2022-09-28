@@ -116,6 +116,8 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private List<DialogAnimator> currentAnimators = new List<DialogAnimator>();
     private Dictionary<string, OnConditionsChanged> onConditionsChangedListeners = new Dictionary<string, OnConditionsChanged>();
 
+    public Dialog StartDialogObject { get { return startDialog; } }
+
     private void Awake()
     {
         Instance = this;

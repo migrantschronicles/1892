@@ -99,8 +99,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private float spacing = 30;
     [SerializeField, Tooltip("The time for each character in a text animation")]
     private float timeForCharacters = 0.1f;
-    [SerializeField, Tooltip("The dialog that should be played when the level starts")]
-    private Dialog startDialog;
 
     private GameObject content;
     private List<string> conditions = new List<string>();
@@ -116,8 +114,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private List<DialogAnimator> currentAnimators = new List<DialogAnimator>();
     private Dictionary<string, OnConditionsChanged> onConditionsChangedListeners = new Dictionary<string, OnConditionsChanged>();
 
-    public Dialog StartDialogObject { get { return startDialog; } }
-
     private void Awake()
     {
         Instance = this;
@@ -128,10 +124,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private void Start()
     {
         closeButton?.onClick.AddListener(OnClose);
-        if(startDialog)
-        {
-            StartDialog(startDialog);
-        }
     }
 
     private void Activate()

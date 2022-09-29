@@ -2,6 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum DiaryPageType
+{
+    Inventory,
+    Health,
+    Diary,
+    Map,
+    Settings
+}
+
 public class Diary : MonoBehaviour
 {
     [SerializeField]
@@ -14,6 +23,8 @@ public class Diary : MonoBehaviour
     private GameObject mapPage;
     [SerializeField]
     private GameObject settingsPage;
+    [SerializeField]
+    private MapZoom mapZoom;
 
     public void OpenInventoryPage()
     {
@@ -45,6 +56,18 @@ public class Diary : MonoBehaviour
         mapPage.SetActive(true);
     }
 
+    public void OpenPage(DiaryPageType page)
+    {
+        switch(page)
+        {
+            case DiaryPageType.Inventory: OpenInventoryPage(); break;
+            case DiaryPageType.Health: OpenHealthPage(); break;
+            case DiaryPageType.Map: OpenMapPage(); break;
+            case DiaryPageType.Diary: OpenDiaryPage(); break;
+            case DiaryPageType.Settings: OpenSettingsPage(); break;
+        }
+    }
+
     private void CloseAll()
     {
         inventoryPage.SetActive(false);
@@ -52,5 +75,15 @@ public class Diary : MonoBehaviour
         mapPage.SetActive(false);
         settingsPage.SetActive(false);
         diaryPage.SetActive(false);
+    }
+
+    public void SetVisible(bool visible, DiaryPageType page = DiaryPageType.Inventory)
+    {
+        gameObject.SetActive(visible);
+        if(visible)
+        {
+            mapZoom.ResetInitialZoom();
+            OpenPage(page);
+        }
     }
 }

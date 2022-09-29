@@ -57,7 +57,11 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject blur;
     [SerializeField]
+    private Interface ui;
+    [SerializeField]
     private string defaultScene;
+    [SerializeField]
+    private DiaryEntry diaryEntry;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -92,15 +96,19 @@ public class LevelInstance : MonoBehaviour
 
         OpenScene(defaultScene);
 
-        if(dialogSystem.StartDialogObject != null)
+        dialogSystem.gameObject.SetActive(false);
+        if (diaryEntry)
         {
-            OnDialogStarted();
-            dialogSystem.gameObject.SetActive(true);
+            ///@todo Uncomment when new game manager is implemented in every map.
+            NewGameManager.Instance.AddDiaryEntry(diaryEntry);
+            backButton.gameObject.SetActive(true);
+            ui.SetUIElementsVisible(false);
+            ui.SetDiaryVisible(true, DiaryPageType.Diary);
         }
         else
         {
             backButton.gameObject.SetActive(false);
-            dialogSystem.gameObject.SetActive(false);
+            ui.SetUIElementsVisible(true);
         }
     }
 
@@ -108,6 +116,8 @@ public class LevelInstance : MonoBehaviour
     {
         dialogSystem.gameObject.SetActive(false);
         backButton.gameObject.SetActive(false);
+        ui.SetUIElementsVisible(true);
+        ui.SetDiaryVisible(false);
         DisableBlur();
         
         if(currentShop)
@@ -204,6 +214,7 @@ public class LevelInstance : MonoBehaviour
     {
         dialogSystem.gameObject.SetActive(true);
         backButton.gameObject.SetActive(true);
+        ui.SetUIElementsVisible(false);
 
         if(currentScene)
         {
@@ -255,6 +266,7 @@ public class LevelInstance : MonoBehaviour
         currentShop = shop;
         currentShop.gameObject.SetActive(true);
         backButton.gameObject.SetActive(true);
+        ui.SetUIElementsVisible(false);
 
         if(currentScene)
         {
@@ -281,5 +293,13 @@ public class LevelInstance : MonoBehaviour
     {
         blur.transform.SetParent(transform);
         blur.SetActive(false);
+    }
+
+    public void OpenDiary()
+    {
+        SetBlurAfterGameObject(sceneParent);
+        ui.SetUIElementsVisible(false);
+        ui.SetDiaryVisible(true);
+        backButton.gameObject.SetActive(true);
     }
 }

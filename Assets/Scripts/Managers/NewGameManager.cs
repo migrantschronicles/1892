@@ -314,6 +314,9 @@ public class NewGameManager : MonoBehaviour
     public void AddDiaryEntry(DiaryEntry entry)
     {
         diaryEntries.Add(entry);
-        onDiaryEntryAdded.Invoke(entry);
+        if(onDiaryEntryAdded != null)
+        {
+            onDiaryEntryAdded.Invoke(entry);
+        }
     }
 }

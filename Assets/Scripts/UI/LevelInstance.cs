@@ -25,10 +25,15 @@ using UnityEngine.UI;
  * ADD A DIALOG BUTTON
  * If you add a dialog button, you can set the scene name the dialog should start in in the DialogButton script.
  * This tells the level instance to open that scene if the dialog button is pressed.
- * If the field stays empty, the main scene is used.
+ * If the field stays empty, the current scene is used.
  * In the Button::OnClick, you should add one callback: 
  * It should call LevelInstance.StartDialog with the dialog button as a parameter.
  * This automatically takes care of showing / hiding everything and the dialog starts.
+ * It also adds a blur to the background.
+ * If you want to have characters on the left and right during a dialog, create a new scene (after the scene your dialog is in),
+ * and add the characters to it (basically everything you want above the blur).
+ * Then go to the dialog button and set the AdditiveSceneName to the name of the new scene.
+ * This is the scene that will be displayed on top of the blur.
  * 
  * ADD A SHOP
  * If you have a shop on a scene, you can add the prefab Shop to the scene it appears on.
@@ -47,11 +52,14 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private DialogSystem dialogSystem;
     [SerializeField]
+    private GameObject blur;
+    [SerializeField]
     private string defaultScene;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
     private Shop currentShop;
+    private Scene currentAdditiveScene = null;
 
     private void Start()
     {
@@ -70,6 +78,7 @@ public class LevelInstance : MonoBehaviour
         }
 
         backButton.onClick.AddListener(OnBack);
+        blur.SetActive(false);
 
         foreach(Scene scene in scenes)
         {
@@ -95,11 +104,19 @@ public class LevelInstance : MonoBehaviour
     {
         dialogSystem.gameObject.SetActive(false);
         backButton.gameObject.SetActive(false);
+        DisableBlur();
         
         if(currentShop)
         {
             currentShop.gameObject.SetActive(false);
             currentShop = null;
+        }
+
+        if(currentAdditiveScene)
+        {
+            currentAdditiveScene.OnActiveStatusChanged(false);
+            currentAdditiveScene.gameObject.SetActive(false);
+            currentAdditiveScene = null;
         }
 
         if(currentScene.SceneName != defaultScene)
@@ -131,6 +148,7 @@ public class LevelInstance : MonoBehaviour
         Scene scene = GetScene(sceneName);
         if(scene == null)
         {
+            Debug.LogError($"Scene \"{sceneName}\" could not be found");
             scene = scenes.Count > 0 ? scenes[0] : null;
             if(scene == null)
             {
@@ -149,6 +167,26 @@ public class LevelInstance : MonoBehaviour
         currentScene.OnActiveStatusChanged(true);
     }
 
+    public void OpenSceneAdditive(string sceneName)
+    {
+        Scene scene = GetScene(sceneName);
+        if(scene == null)
+        {
+            Debug.LogError($"Scene \"{sceneName}\" could not be found");
+            return;
+        }
+
+        if(currentAdditiveScene)
+        {
+            currentAdditiveScene.OnActiveStatusChanged(false);
+            currentAdditiveScene.gameObject.SetActive(false);
+        }
+
+        currentAdditiveScene = scene;
+        currentAdditiveScene.gameObject.SetActive(true);
+        currentAdditiveScene.OnActiveStatusChanged(true);
+    }
+
     private void OnDialogStarted()
     {
         dialogSystem.gameObject.SetActive(true);
@@ -157,6 +195,7 @@ public class LevelInstance : MonoBehaviour
         if(currentScene)
         {
             currentScene.SetInteractablesVisible(false);
+            SetBlurAfterGameObject(currentScene.gameObject);
         }
     }
 
@@ -180,6 +219,11 @@ public class LevelInstance : MonoBehaviour
         }
 
         StartDialog(button.gameObject);
+
+        if(!string.IsNullOrWhiteSpace(button.AdditiveSceneName))
+        {
+            OpenSceneAdditive(button.AdditiveSceneName);
+        }
     }
 
     public void OpenShop(Shop shop)
@@ -196,6 +240,27 @@ public class LevelInstance : MonoBehaviour
         if(currentScene)
         {
             currentScene.SetInteractablesVisible(false);
+            SetBlurInFrontOfGameObject(shop.gameObject);
         }
+    }
+
+    private void SetBlurAfterGameObject(GameObject previous)
+    {
+        blur.transform.SetParent(previous.transform.parent, false);
+        blur.transform.SetSiblingIndex(previous.transform.GetSiblingIndex() + 1);
+        blur.SetActive(true);
+    }
+
+    private void SetBlurInFrontOfGameObject(GameObject next)
+    {
+        blur.transform.SetParent(next.transform.parent, false);
+        blur.transform.SetSiblingIndex(next.transform.GetSiblingIndex());
+        blur.SetActive(true);
+    }
+
+    private void DisableBlur()
+    {
+        blur.transform.SetParent(transform);
+        blur.SetActive(false);
     }
 }

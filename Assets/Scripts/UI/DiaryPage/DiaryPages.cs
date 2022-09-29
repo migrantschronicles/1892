@@ -21,6 +21,10 @@ public class DiaryPages : MonoBehaviour
     private bool allowNewEntriesOnSameDoublePage = true;
     [SerializeField]
     private DiaryPagePrefabs prefabs;
+    [SerializeField]
+    private Button prevPageButton;
+    [SerializeField]
+    private Button nextPageButton;
 
     private List<GameObject> pages = new List<GameObject>();
     private int currentDoublePageIndex = -1;
@@ -36,25 +40,35 @@ public class DiaryPages : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        prevPageButton.onClick.AddListener(OpenPrevDoublePage);
+        nextPageButton.onClick.AddListener(OpenNextDoublePage);
+    }
+
     public void AddEntry(DiaryEntry entry)
     {
-        bool rightPage = allowNewEntriesOnSameDoublePage && !entry.startOnNewDoublePage && pages.Count % 2 != 0;
-        GameObject parent = rightPage ? contentRight : contentLeft;
-        if(!rightPage && pages.Count % 2 != 0)
+        // Add an empty page if the previous entry ended left, but the new one should also start left.
+        bool isRight = allowNewEntriesOnSameDoublePage && !entry.startOnNewDoublePage && pages.Count % 2 != 0;
+        if(!isRight && pages.Count % 2 != 0)
         {
             pages.Add(null);
         }
 
-        GameObject newPage = Instantiate(prefabs.firstPage, parent.transform);
-        FirstPage firstPage = newPage.GetComponent<FirstPage>();
-        string text = LocalizationManager.Instance.GetLocalizedString(entry.text);
-        text = firstPage.SetText(text);
-        firstPage.SetDate(Time.time.ToString());
-        newPage.SetActive(false);
+        int firstPageIndex = pages.Count;
 
-        int doublePageIndex = pages.Count / 2;
-        pages.Add(newPage);
-        OpenDoublePage(doublePageIndex);
+        foreach(DiaryPageData data in entry.pages)
+        {
+            bool newPageIsLeft = pages.Count % 2 == 0;
+            GameObject parent = newPageIsLeft ? contentLeft : contentRight;
+            GameObject newPage = Instantiate(data.prefab, parent.transform);
+            IDiaryPage diaryPage = newPage.GetComponent<IDiaryPage>();
+            diaryPage.SetData(data);
+            newPage.SetActive(false);
+            pages.Add(newPage);
+        }
+
+        OpenDoublePage(GetDoublePageIndexFromPageIndex(firstPageIndex));
     }
 
     public void OpenDoublePage(int index)
@@ -89,5 +103,26 @@ public class DiaryPages : MonoBehaviour
     private bool IsDoublePageIndexValid(int index)
     {
         return index >= 0 && index < DoublePageCount;
+    }
+
+    private int GetDoublePageIndexFromPageIndex(int index)
+    {
+        return index / 2;
+    }
+
+    public void OpenPrevDoublePage()
+    {
+        if(currentDoublePageIndex > 0)
+        {
+            OpenDoublePage(currentDoublePageIndex - 1);
+        }
+    }
+
+    public void OpenNextDoublePage()
+    {
+        if(currentDoublePageIndex < DoublePageCount - 1)
+        {
+            OpenDoublePage(currentDoublePageIndex + 1);
+        }
     }
 }

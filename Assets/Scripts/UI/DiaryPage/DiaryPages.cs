@@ -5,12 +5,27 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
-[System.Serializable]
-public class DiaryPagePrefabs
-{
-    public GameObject firstPage;
-}
-
+/**
+ * Takes care of adding the diary pages.
+ * The game manager has a list of diary entries that the user has written.
+ * Each entry can span over multiple pages.
+ * This DiaryPages has allowNewEntriesOnSameDoublePage, which states whether new entries have to begin on a new double page (so always left),
+ * even if that means that there may be one page empty (if the previous entry ends on the left page). This is a global switch to enforce this behavior.
+ * Each diary entry can decide for its own if it wants to be on a new page or if it can be on the same double page, but the DiaryPages can disallow it.
+ * (Maybe there are main diary entries which should be on a new double page, and smaller follow up entries which do not need to be on its own double page).
+ * 
+ * DIARY ENTRY
+ * To create a new diary entry, go to Assets/DiaryEntries and right click: Create > Scriptable Objects > DiaryEntry.
+ * In an entry, you can set whether this entry wants to be on a new double page.
+ * Then you can add pages (each entry can consist of multiple pages).
+ * For each page, you need to select which page prefab you want to use (which layout of the page).
+ * The prefabs are in Prefabs/DiaryEntries (but don't use DiaryPage).
+ * You have multiple layouts for an option:
+ *  - FirstPage: Has a date on the top right, and text on the rest of the page, useful for the first page of each diary entry.
+ *  - ImageTopPage: Has an image on the top of the page, and then text below it.
+ *  - FullImagePage: Has an image on the whole page.
+ *  Then you can set the text and / or the image, depending on the layout of the page.
+ */
 public class DiaryPages : MonoBehaviour
 {
     [SerializeField]
@@ -19,8 +34,6 @@ public class DiaryPages : MonoBehaviour
     private GameObject contentRight;
     [SerializeField, Tooltip("True if new entries are allowed on the same double page, if the previous entry only requires the left page.")]
     private bool allowNewEntriesOnSameDoublePage = true;
-    [SerializeField]
-    private DiaryPagePrefabs prefabs;
     [SerializeField]
     private Button prevPageButton;
     [SerializeField]

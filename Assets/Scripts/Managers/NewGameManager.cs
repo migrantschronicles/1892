@@ -34,6 +34,14 @@ public class NewGameManager : MonoBehaviour
     // Inventory
     public PlayerInventory inventory = new PlayerInventory();
 
+    // Diary entries
+    private List<DiaryEntry> diaryEntries = new List<DiaryEntry>();
+
+    public IEnumerable<DiaryEntry> DiaryEntries { get { return diaryEntries; } }
+
+    public delegate void OnDiaryEntryAdded(DiaryEntry entry);
+    public event OnDiaryEntryAdded onDiaryEntryAdded;
+
     public static NewGameManager Instance
     {
         get
@@ -303,6 +311,9 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
-
-
+    public void AddDiaryEntry(DiaryEntry entry)
+    {
+        diaryEntries.Add(entry);
+        onDiaryEntryAdded.Invoke(entry);
+    }
 }

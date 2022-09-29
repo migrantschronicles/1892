@@ -57,6 +57,12 @@ public class DiaryPages : MonoBehaviour
     {
         prevPageButton.onClick.AddListener(OpenPrevDoublePage);
         nextPageButton.onClick.AddListener(OpenNextDoublePage);
+
+        foreach(DiaryEntry entry in NewGameManager.Instance.DiaryEntries)
+        {
+            AddEntry(entry);
+        }
+        NewGameManager.Instance.onDiaryEntryAdded += AddEntry;
     }
 
     public void AddEntry(DiaryEntry entry)

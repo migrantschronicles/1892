@@ -9,6 +9,9 @@ public class DiaryPageData
     public GameObject prefab;
     public LocalizedString text;
     public Sprite image;
+
+    // Not set in the inspector, but in DiaryPages. Can be used from DiaryPage to set the date.
+    public string Date { get; set; }
 }
 
 [CreateAssetMenu(fileName = "NewDiaryEntry", menuName = "ScriptableObjects/DiaryEntry", order = 1)]

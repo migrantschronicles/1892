@@ -56,9 +56,12 @@ public class DiaryPages : MonoBehaviour
         }
 
         int firstPageIndex = pages.Count;
+        ///@todo Change this to the real date. Localize this?
+        string date = Time.time.ToString();
 
         foreach(DiaryPageData data in entry.pages)
         {
+            data.Date = date;
             bool newPageIsLeft = pages.Count % 2 == 0;
             GameObject parent = newPageIsLeft ? contentLeft : contentRight;
             GameObject newPage = Instantiate(data.prefab, parent.transform);

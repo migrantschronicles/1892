@@ -14,5 +14,6 @@ public class FirstPage : MonoBehaviour, IDiaryPage
     {
         text.text = LocalizationManager.Instance.GetLocalizedString(data.text);
         data.text.StringChanged += value => text.text = value;
+        dateText.text = data.Date;
     }
 }

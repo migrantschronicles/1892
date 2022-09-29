@@ -34,6 +34,9 @@ using UnityEngine.UI;
  * and add the characters to it (basically everything you want above the blur).
  * Then go to the dialog button and set the AdditiveSceneName to the name of the new scene.
  * This is the scene that will be displayed on top of the blur.
+ * If you want e.g. the characters that are involved in the dialog to disappear, you can add them to the DialogButton::HideObjects.
+ * The objects in this list are hidden when the dialog starts and shown again when the dialog stops, so you can
+ * hide characters that are in the additive scene anyway.
  * 
  * ADD A SHOP
  * If you have a shop on a scene, you can add the prefab Shop to the scene it appears on.
@@ -60,6 +63,7 @@ public class LevelInstance : MonoBehaviour
     private Scene currentScene;
     private Shop currentShop;
     private Scene currentAdditiveScene = null;
+    private IEnumerable<GameObject> currentHiddenObjects;
 
     private void Start()
     {
@@ -127,6 +131,15 @@ public class LevelInstance : MonoBehaviour
         if(currentScene)
         {
             currentScene.SetInteractablesVisible(true);
+        }
+
+        if(currentHiddenObjects != null)
+        {
+            foreach(GameObject go in currentHiddenObjects)
+            {
+                go.SetActive(true);
+            }
+            currentHiddenObjects = null;
         }
     }
 
@@ -216,6 +229,12 @@ public class LevelInstance : MonoBehaviour
         if(!string.IsNullOrWhiteSpace(button.SceneName))
         {
             OpenScene(button.SceneName);
+        }
+
+        currentHiddenObjects = button.HideObjects;
+        foreach(GameObject go in currentHiddenObjects)
+        {
+            go.SetActive(false);
         }
 
         StartDialog(button.gameObject);

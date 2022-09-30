@@ -15,7 +15,6 @@ public class NewGameManager : MonoBehaviour
     public List<string> visitedLocationsStr;
 
     private static bool isInitialized = false;
-    private static GameObject instance;
 
     // Game Stats
     public float time;
@@ -42,21 +41,15 @@ public class NewGameManager : MonoBehaviour
     public delegate void OnDiaryEntryAdded(DiaryEntry entry);
     public event OnDiaryEntryAdded onDiaryEntryAdded;
 
-    public static NewGameManager Instance
-    {
-        get
-        {
-            return instance?.GetComponent<NewGameManager>();
-        }
-    }
+    public static NewGameManager Instance { get; private set; }
 
     void Awake()
     {
         DontDestroyOnLoad(this);
 
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = gameObject;
+            Instance = this;
             inventory.Initialize();
         }
         else

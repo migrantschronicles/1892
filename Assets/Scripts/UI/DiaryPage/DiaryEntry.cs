@@ -8,6 +8,7 @@ public class DiaryPageData
 {
     public GameObject prefab;
     public LocalizedString text;
+    public LocalizedString text2;
     public Sprite image;
 
     // Not set in the inspector, but in DiaryPages. Can be used from DiaryPage to set the date.

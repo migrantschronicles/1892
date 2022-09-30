@@ -65,6 +65,14 @@ public class DiaryPages : MonoBehaviour
         NewGameManager.Instance.onDiaryEntryAdded += AddEntry;
     }
 
+    private void OnDestroy()
+    {
+        if(NewGameManager.Instance)
+        {
+            NewGameManager.Instance.onDiaryEntryAdded -= AddEntry;
+        }
+    }
+
     public void AddEntry(DiaryEntry entry)
     {
         // Add an empty page if the previous entry ended left, but the new one should also start left.

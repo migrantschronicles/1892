@@ -10,7 +10,7 @@ public class FirstPage : MonoBehaviour, IDiaryPage
     [SerializeField]
     private Text text;
 
-    public void SetData(DiaryPageData data)
+    public virtual void SetData(DiaryPageData data)
     {
         text.text = LocalizationManager.Instance.GetLocalizedString(data.text);
         data.text.StringChanged += value => text.text = value;

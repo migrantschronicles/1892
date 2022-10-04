@@ -113,7 +113,7 @@ public class LevelInstance : MonoBehaviour
         if (diaryEntry)
         {
             ///@todo Uncomment when new game manager is implemented in every map.
-            //NewGameManager.Instance.AddDiaryEntry(diaryEntry);
+            NewGameManager.Instance.AddDiaryEntry(diaryEntry);
             backButton.gameObject.SetActive(true);
             ui.SetUIElementsVisible(false);
             ui.SetDiaryVisible(true, DiaryPageType.Diary);

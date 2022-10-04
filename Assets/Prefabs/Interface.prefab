@@ -849,6 +849,7 @@ GameObject:
   - component: {fileID: 8993063790044699350}
   - component: {fileID: 8993063790044699351}
   - component: {fileID: 8993063790044699368}
+  - component: {fileID: 3367648677414271956}
   m_Layer: 5
   m_Name: Interface
   m_TagString: Interface
@@ -958,6 +959,22 @@ MonoBehaviour:
   AmPmText: {fileID: 8993063791506465780}
   MoneyText: {fileID: 8993063789470366297}
   FoodText: {fileID: 8993063789519645791}
+--- !u!114 &3367648677414271956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8993063790044699369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3ddac7c7f07aca468d600c89f6ed8e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  locationInfo: {fileID: 8993063790853400733}
+  clockButton: {fileID: 8993063790452526935}
+  diaryButton: {fileID: 8993063790415768346}
+  diary: {fileID: 4982158966751540885}
 --- !u!1 &8993063790079616090
 GameObject:
   m_ObjectHideFlags: 0
@@ -1289,7 +1306,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8993063790032449390}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: DiaryOpener, Assembly-CSharp
         m_MethodName: ChangeState
         m_Mode: 1
@@ -2351,14 +2368,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    - target: {fileID: 1660024174, guid: d8f86c1720fe2b749a1c0b2bfb49ca31, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -1060
-      objectReference: {fileID: 0}
-    - target: {fileID: 1660024174, guid: d8f86c1720fe2b749a1c0b2bfb49ca31, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -839.4048
-      objectReference: {fileID: 0}
     - target: {fileID: 1661133183, guid: d8f86c1720fe2b749a1c0b2bfb49ca31, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -2591,14 +2600,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1724347344900064431, guid: d8f86c1720fe2b749a1c0b2bfb49ca31, type: 3}
   m_PrefabInstance: {fileID: 7720255084875475919}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8993063790032449390 stripped
+--- !u!114 &4982158966751540885 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1724347344900064417, guid: d8f86c1720fe2b749a1c0b2bfb49ca31, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3316888170169589082, guid: d8f86c1720fe2b749a1c0b2bfb49ca31, type: 3}
   m_PrefabInstance: {fileID: 7720255084875475919}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8993063790032449377}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8838e4f662918604290b5a9b7c51a76e, type: 3}
+  m_Script: {fileID: 11500000, guid: 153a3f4f7a3f44f44aca14d1837f7f61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

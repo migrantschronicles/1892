@@ -21,6 +21,7 @@ public class NewGameManager : MonoBehaviour
     public float time;
     public int food;
     public int money;
+    public string date;
 
     // UI 
     public Sprite traveledCityMarker;
@@ -123,6 +124,17 @@ public class NewGameManager : MonoBehaviour
         // Assigning current location to map UI label
         GameObject.FindGameObjectWithTag("CurrentLocation").GetComponent<Text>().text = currentLocation;
 
+        // Assigning Interface Values
+        if (GameObject.FindGameObjectWithTag("Interface"))
+        {
+            GameObject.FindGameObjectWithTag("InterfaceDateText").GetComponent<Text>().text = date;
+            GameObject.FindGameObjectWithTag("InterfaceMoneyText").GetComponent<Text>().text = money.ToString();
+            GameObject.FindGameObjectWithTag("InterfaceFoodText").GetComponent<Text>().text = food.ToString();
+            GameObject.FindGameObjectWithTag("InterfaceLocationText").GetComponent<Text>().text = currentLocation;
+        }
+        else Debug.Log("Missing Interface Prefab");
+
+
         isInitialized = true;
     }
 
@@ -212,6 +224,16 @@ public class NewGameManager : MonoBehaviour
             
         }
         else Debug.Log("Diary doesn't exist in this scene");
+
+        // Assigning Interface Values
+        if (GameObject.FindGameObjectWithTag("Interface"))
+        {
+            GameObject.FindGameObjectWithTag("InterfaceDateText").GetComponent<Text>().text = date;
+            GameObject.FindGameObjectWithTag("InterfaceMoneyText").GetComponent<Text>().text = money.ToString();
+            GameObject.FindGameObjectWithTag("InterfaceFoodText").GetComponent<Text>().text = food.ToString();
+            GameObject.FindGameObjectWithTag("InterfaceLocationText").GetComponent<Text>().text = currentLocation;
+        }
+        else Debug.Log("Missing Interface Prefab");
     }
 
     public void OnLevelWasLoaded() 
@@ -240,64 +262,69 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
-    public void GoToLocation(string name, string method) 
+    public void GoToLocation(string name, string method, float timeNeeded, int moneyNeeded, int foodNeeded) 
     {
-        Debug.Log("Starting to head down to " + name + " by " + method);
-        GameObject newLocation = null;
-        foreach(GameObject location in allLocations) 
-        {
-            if (location.name == (name + " Marker"))
-                newLocation = location;
-        }
-        foreach(GameObject line in currentLocationGO.GetComponent<TransportationButtons>().availableRoutes) 
-        {
-            if(line.name == name) 
+        if(money >= moneyNeeded && food >= foodNeeded) {
+
+            // Consuming money and food accordingly
+            food -= foodNeeded;
+            money -= moneyNeeded;
+            time += timeNeeded;
+
+            Debug.Log("Starting to head down to " + name + " by " + method);
+            GameObject newLocation = null;
+            foreach(GameObject location in allLocations) 
             {
-
-                // Initiate loading screen to move to new location
-
-                // Update Map UI
-                foreach (GameObject line2 in currentLocationGO.GetComponent<TransportationButtons>().availableRoutes) 
+                if (location.name == (name + " Marker"))
+                    newLocation = location;
+            }
+            foreach (GameObject line in currentLocationGO.GetComponent<TransportationButtons>().availableRoutes)
+            {
+                if (line.name == name)
                 {
-                    if (line2.GetComponent<Route>().attachedMarker.GetComponent<TransportationButtons>().capital)
-                        line2.GetComponent<Route>().attachedMarker.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityCapital;
-                    else line2.GetComponent<Route>().attachedMarker.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityMarker;
-                    line2.GetComponent<Image>().sprite = line2.GetComponent<Route>().untraveledRoute;
-                    line2.SetActive(true);
-                }
 
-                //if(method == "Ship")
-                //    line.GetComponent<Image>().sprite = line.GetComponent<Route>().waterRoute;
-                //else 
-                line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
-                // Add all routes to an array to be updated in the next city to be 'traveled'
-                if (!visitedLocations.Exists(o => o == currentLocationGO))
-                {
+
+                    // Update Map UI
+                    foreach (GameObject line2 in currentLocationGO.GetComponent<TransportationButtons>().availableRoutes)
+                    {
+                        if (line2.GetComponent<Route>().attachedMarker.GetComponent<TransportationButtons>().capital)
+                            line2.GetComponent<Route>().attachedMarker.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityCapital;
+                        else line2.GetComponent<Route>().attachedMarker.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityMarker;
+                        line2.GetComponent<Image>().sprite = line2.GetComponent<Route>().untraveledRoute;
+                        line2.SetActive(true);
+                    }
+
+
+                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
+                    // Add all routes to an array to be updated in the next city to be 'traveled'
+                    if (!visitedLocations.Exists(o => o == currentLocationGO))
+                    {
+                        visitedLocations.Add(currentLocationGO);
+                        visitedLocationsStr.Add(currentLocationGO.gameObject.name.Split(' ')[0]);
+                    }
+                    if (currentLocationGO.GetComponent<TransportationButtons>().capital)
+                        currentLocationGO.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityCapital;
+                    else currentLocationGO.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityMarker;
+
+                    line.SetActive(true);
+
+                    // Set next location variables
+                    currentLocation = name;
+                    currentLocationGO = newLocation;
                     visitedLocations.Add(currentLocationGO);
                     visitedLocationsStr.Add(currentLocationGO.gameObject.name.Split(' ')[0]);
+                    if (newLocation.GetComponent<TransportationButtons>().capital)
+                        newLocation.transform.GetChild(2).GetComponent<Image>().sprite = currentCityCapital;
+                    else newLocation.transform.GetChild(2).GetComponent<Image>().sprite = currentCityMarker;
+
+                    currentLocationGO.GetComponent<TransportationButtons>().DisableTransportationOptions();
+                    // Load level
+                    SceneManager.LoadScene(sceneName: "LoadingScene");
+
+                    Debug.Log("Traveled to " + name + " by " + method);
+
+
                 }
-                if(currentLocationGO.GetComponent<TransportationButtons>().capital)
-                    currentLocationGO.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityCapital;
-                else currentLocationGO.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityMarker;
-
-                line.SetActive(true);
-
-                // Set next location variables
-                currentLocation = name;
-                currentLocationGO = newLocation;
-                visitedLocations.Add(currentLocationGO);
-                visitedLocationsStr.Add(currentLocationGO.gameObject.name.Split(' ')[0]);
-                if (newLocation.GetComponent<TransportationButtons>().capital)
-                    newLocation.transform.GetChild(2).GetComponent<Image>().sprite = currentCityCapital;
-                else newLocation.transform.GetChild(2).GetComponent<Image>().sprite = currentCityMarker;
-
-                currentLocationGO.GetComponent<TransportationButtons>().DisableTransportationOptions();
-                // Load level
-                SceneManager.LoadScene(sceneName: "LoadingScene");
-
-                Debug.Log("Traveled to " + name + " by " + method);
-                
-
             }
             
         }

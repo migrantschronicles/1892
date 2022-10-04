@@ -12,7 +12,6 @@ public class NewGameManager : MonoBehaviour
     public List<string> visitedLocationsStr;
 
     private static bool isInitialized = false;
-    private static GameObject instance;
 
     // Game Stats
     public float time;
@@ -31,6 +30,14 @@ public class NewGameManager : MonoBehaviour
     // Inventory
     public PlayerInventory inventory = new PlayerInventory();
 
+    // Diary entries
+    private List<DiaryEntry> diaryEntries = new List<DiaryEntry>();
+
+    public IEnumerable<DiaryEntry> DiaryEntries { get { return diaryEntries; } }
+
+    public delegate void OnDiaryEntryAdded(DiaryEntry entry);
+    public event OnDiaryEntryAdded onDiaryEntryAdded;
+
     public LocationMarker CurrentLocationObject
     {
         get
@@ -39,21 +46,15 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
-    public static NewGameManager Instance
-    {
-        get
-        {
-            return instance?.GetComponent<NewGameManager>();
-        }
-    }
+    public static NewGameManager Instance { get; private set; }
 
     void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
             // Detach the child game object.
             transform.SetParent(null, false);
-            instance = gameObject;
+            Instance = this;
             DontDestroyOnLoad(this);
             inventory.Initialize();
         }
@@ -237,5 +238,14 @@ public class NewGameManager : MonoBehaviour
 
         // Load level
         SceneManager.LoadScene(sceneName: "LoadingScene");
+    }
+
+    public void AddDiaryEntry(DiaryEntry entry)
+    {
+        diaryEntries.Add(entry);
+        if(onDiaryEntryAdded != null)
+        {
+            onDiaryEntryAdded.Invoke(entry);
+        }
     }
 }

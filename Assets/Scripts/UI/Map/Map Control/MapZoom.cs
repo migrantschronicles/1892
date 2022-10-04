@@ -25,6 +25,8 @@ public class MapZoom : MonoBehaviour
     [SerializeField]
     private AnimationCurve initialZoomCurve;
     [SerializeField]
+    private AnimationCurve autoZoomLocationCurve;
+    [SerializeField]
     private float initialZoomDuration = 3.0f;
     [SerializeField]
     private Button centerButton;
@@ -96,12 +98,12 @@ public class MapZoom : MonoBehaviour
                 if (autoZoomCurrentTime < initialZoomDuration)
                 {
                     float alpha = autoZoomCurrentTime / initialZoomDuration;
-                    float currentValue = initialZoomCurve.Evaluate(alpha);
-
-                    float currentZoom = RemapValue(currentValue, 0, 1, autoZoomStart, initialZoomTarget);
+                    float currentZoomValue = initialZoomCurve.Evaluate(alpha);
+                    float currentZoom = RemapValue(currentZoomValue, 0, 1, autoZoomStart, initialZoomTarget);
                     SetZoomAtCenter(currentZoom);
 
-                    Vector2 currentCenter = Vector2.Lerp(autoZoomNormalizedStartPosition, targetMarkerPosition, currentValue);
+                    float currentLocationValue = autoZoomLocationCurve.Evaluate(alpha);
+                    Vector2 currentCenter = Vector2.Lerp(autoZoomNormalizedStartPosition, targetMarkerPosition, currentLocationValue);
                     SetCenter(currentCenter);
                 }
                 else

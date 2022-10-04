@@ -89,9 +89,9 @@ public class MapZoom : MonoBehaviour
         if(IsAutoZoomInProgress)
         {
             autoZoomCurrentTime += Time.deltaTime;
-            if(NewGameManager.Instance && NewGameManager.Instance.currentLocationGO)
+            if(NewGameManager.Instance && NewGameManager.Instance.CurrentLocationObject)
             {
-                GameObject targetMarker = NewGameManager.Instance.currentLocationGO;
+                GameObject targetMarker = NewGameManager.Instance.CurrentLocationObject.gameObject;
                 Vector2 targetMarkerPosition = targetMarker.GetComponent<RectTransform>().anchoredPosition;
                 if (autoZoomCurrentTime < initialZoomDuration)
                 {

@@ -1078,7 +1078,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2816,8 +2816,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   initialZoomDuration: 3
-  initialZoomMaxDelta: 600
-  initialZoomMoveThreshold: 50
   centerButton: {fileID: 1171429904}
 --- !u!1 &1685505550
 GameObject:
@@ -3048,8 +3046,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 0.59607846}
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3897,6 +3895,7 @@ MonoBehaviour:
   healthPage: {fileID: 1724347344625996065}
   mapPage: {fileID: 982535698}
   settingsPage: {fileID: 1724347345458959052}
+  locationMarkerParent: {fileID: 8936677165977290990}
 --- !u!1 &1724347345028569346
 GameObject:
   m_ObjectHideFlags: 0
@@ -5486,6 +5485,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
       objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Southampton
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
 --- !u!114 &841626620823504527 stripped
@@ -5816,6 +5819,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
       objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Paris
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
 --- !u!114 &7642549851684743343 stripped
@@ -6143,6 +6150,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
       objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Marseille
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
 --- !u!1 &7803878696408650273 stripped
@@ -6469,6 +6480,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
       objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: LeHavre
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
 --- !u!114 &1160451319005564886 stripped
@@ -6783,6 +6798,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
       objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Genoa
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
 --- !u!224 &7803878696826980321 stripped
@@ -7087,6 +7106,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
       objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Brussels
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
 --- !u!1 &7803878696793189210 stripped
@@ -7312,6 +7335,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
       objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Bremerhaven
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
 --- !u!224 &7803878696882340411 stripped
@@ -7514,6 +7541,10 @@ PrefabInstance:
     - target: {fileID: 8278260690162853304, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
+      objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Cherbourg-en-Cotentin
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
@@ -7835,6 +7866,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
       objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: London
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
 --- !u!114 &1160451320848835661 stripped
@@ -8149,6 +8184,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
       objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Antwerp
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
 --- !u!1 &7680990356946718745 stripped
@@ -8386,6 +8425,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
       objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Hamburg
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
 --- !u!1 &7680990357121455879 stripped
@@ -8622,6 +8665,10 @@ PrefabInstance:
     - target: {fileID: 8278260690162853304, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
+      objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Rotterdam
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
@@ -8879,6 +8926,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
       objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Luxembourg
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
 --- !u!1 &7680990356379036948 stripped
@@ -9114,6 +9165,10 @@ PrefabInstance:
     - target: {fileID: 8278260690162853304, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
+      objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Liverpool
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
@@ -9852,6 +9907,10 @@ PrefabInstance:
     - target: {fileID: 8278260690162853304, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -78.733
+      objectReference: {fileID: 0}
+    - target: {fileID: 8611622528750010173, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}
+      propertyPath: locationName
+      value: Lubeck
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a30b7ec35ca758349ba9fba10a76d501, type: 3}

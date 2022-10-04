@@ -57,6 +57,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject blur;
     [SerializeField]
+    private Diary diary;
+    [SerializeField]
     private string defaultScene;
 
     private List<Scene> scenes = new List<Scene>();
@@ -65,11 +67,22 @@ public class LevelInstance : MonoBehaviour
     private Scene currentAdditiveScene = null;
     private IEnumerable<GameObject> currentHiddenObjects;
 
+    private static LevelInstance instance;
+    public static LevelInstance Instance { get { return instance; } }
+
+    public Diary Diary { get { return diary; } }
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     {
         if(string.IsNullOrWhiteSpace(defaultScene))
         {
-            Debug.LogError("Default scene is empty in level instance");
+            Debug.Log("Default scene is empty in level instance");
+            return;
         }
 
         for(int i = 0; i < sceneParent.transform.childCount; ++i)

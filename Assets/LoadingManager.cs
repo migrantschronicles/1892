@@ -7,20 +7,15 @@ public class LoadingManager : MonoBehaviour
 {
 
     private bool loadInitiated = false;
-    private NewGameManager gm;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<NewGameManager>();
-    }
+    private string loadLevel;
 
     // Update is called once per frame
     void Update()
     {
         if (!loadInitiated) 
         {
-            LoadNextLevel(gm.currentLocation);
+            loadLevel = NewGameManager.Instance.currentLocation;
+            LoadNextLevel(loadLevel);
             loadInitiated = true;
         }
     }
@@ -28,7 +23,17 @@ public class LoadingManager : MonoBehaviour
     public void LoadNextLevel(string name) 
     {
         StartCoroutine(WaitXSeconds(3));
+        SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.LoadScene(sceneName: name);
+    }
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
+    {
+        if(scene.name == loadLevel)
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            NewGameManager.Instance.PostLevelLoad();
+        }
     }
 
     public IEnumerator WaitXSeconds(float seconds) 

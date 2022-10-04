@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class NewGameManager : MonoBehaviour
 {
 
     public string currentLocation;
-    public GameObject currentLocationGO;
-    public List<GameObject> allLocations;
-    public List<string> allLocationsStr;
-    public List<GameObject> visitedLocations;
     public List<string> visitedLocationsStr;
 
     private static bool isInitialized = false;
@@ -34,6 +31,14 @@ public class NewGameManager : MonoBehaviour
     // Inventory
     public PlayerInventory inventory = new PlayerInventory();
 
+    public LocationMarker CurrentLocationObject
+    {
+        get
+        {
+            return LevelInstance.Instance.Diary.LocationMarkerObjects.First(marker => marker.LocationName == currentLocation);
+        }
+    }
+
     public static NewGameManager Instance
     {
         get
@@ -44,11 +49,12 @@ public class NewGameManager : MonoBehaviour
 
     void Awake()
     {
-        DontDestroyOnLoad(this);
-
         if (instance == null)
         {
+            // Detach the child game object.
+            transform.SetParent(null, false);
             instance = gameObject;
+            DontDestroyOnLoad(this);
             inventory.Initialize();
         }
         else
@@ -87,222 +93,149 @@ public class NewGameManager : MonoBehaviour
         Navigate();*/
         // ^^^^^^^^^^^^^^^^^^^ Old Manager code until here ^^^^^^^^^^^^^^^^^^^^
 
-        // Assigning current (starting) location & making it's marker available according to its type
-        foreach (GameObject location in allLocations)
+        InitAfterLoad();
+        isInitialized = true;
+    }
+
+    private void InitAfterLoad()
+    {
+        foreach (LocationMarker location in LevelInstance.Instance.Diary.LocationMarkerObjects)
         {
-
-            // Initializing string data collection (Locations, visited locations)
-            Debug.Log(location.transform.name.Split(' ')[0]);
-            Debug.Log(allLocationsStr);
-            Debug.Log(location);
-            allLocationsStr.Add(location.transform.name.Split(' ')[0]);
-
-            // Assigning current location
-            if(location.gameObject.name == (currentLocation + " Marker")) 
+            // Re-callibrating vistedLocarions List
+            if (visitedLocationsStr.Contains(location.LocationName) || location.LocationName == currentLocation)
             {
-                currentLocationGO = location;
-                currentLocationGO.GetComponent<LocationMarker>().SetUnlocked();
+                location.SetUnlocked();
             }
 
             // Assigning capital markers their art accordingly
-            if (location.gameObject.GetComponent<TransportationButtons>().capital) 
+            if(location.GetComponent<TransportationButtons>().capital)
             {
                 location.GetComponent<Image>().sprite = currentCityCapital;
             }
-        }
-        // Turning off all map routes/lines
-        foreach (GameObject location in allLocations)
-        {
-            foreach (GameObject line in location.GetComponent<TransportationButtons>().availableRoutes) 
+
+            foreach(GameObject line in location.GetComponent<TransportationButtons>().availableRoutes)
             {
-                Debug.Log(line.name + " is set off");
                 line.SetActive(false);
+            }
+        }
+
+        // Updating Map UI
+        for (int i = 0; i < visitedLocationsStr.Count - 1; ++i)
+        {
+            // Updating Map Markers UI
+            LocationMarker visitedMarker = LevelInstance.Instance.Diary.LocationMarkerObjects.First(marker => marker.LocationName == visitedLocationsStr[i]);
+            TransportationButtons transportation = visitedMarker.GetComponent<TransportationButtons>();
+            bool isCapital = transportation.capital;
+            if (visitedLocationsStr[i] == currentLocation)
+            {
+                visitedMarker.GetComponent<Image>().sprite = isCapital ? currentCityCapital : currentCityMarker;
+            }
+            else if (isCapital)
+            {
+                visitedMarker.GetComponent<Image>().sprite = traveledCityCapital;
+            }
+            else
+            {
+                visitedMarker.GetComponent<Image>().sprite = traveledCityMarker;
+            }
+
+            // Updating Routes UI
+            foreach (GameObject line in transportation.availableRoutes)
+            {
+                line.SetActive(true);
+                line.GetComponent<Image>().sprite = line.GetComponent<Route>().untraveledRoute;
+                if (line.gameObject.name == visitedLocationsStr[i + 1] || line.gameObject.name == currentLocation)
+                {
+                    if (i == visitedLocationsStr.Count - 2)
+                        line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
+                    else line.GetComponent<Image>().sprite = line.GetComponent<Route>().traveledRoute;
+                }
             }
         }
 
         // Assigning current location to map UI label
         GameObject.FindGameObjectWithTag("CurrentLocation").GetComponent<Text>().text = currentLocation;
-
-        isInitialized = true;
     }
 
-    private void InitAfterLoad() 
+    public void PostLevelLoad()
     {
-        visitedLocations.Clear();
-        allLocations.Clear();
-
-        GameObject allLocationsGO = GameObject.FindGameObjectWithTag("Locations");
-        Debug.Log(allLocationsGO);
-        if (allLocationsGO) // If Diary exists
+        if(isInitialized)
         {
-
-
-            foreach (Transform location in allLocationsGO.transform)
-            {
-                allLocations.Add(location.gameObject);
-                if (location.gameObject.name == currentLocation + " Marker")
-                    currentLocationGO = location.gameObject;
-            }
-
-            
-            foreach (GameObject location in allLocations)
-            {
-
-                // Setting capitals UI accordingly.
-                if (location.GetComponent<TransportationButtons>().capital) 
-                {
-                    location.GetComponent<Image>().sprite = currentCityCapital;
-                }
-
-                // Turning off all map routes/lines
-                foreach (GameObject line in location.GetComponent<TransportationButtons>().availableRoutes)
-                {
-                    Debug.Log(line.name + " is set off");
-                    line.SetActive(false);
-                }
-            }
-
-            // Re-callibrating vistedLocarions List
-            foreach (string visitedLocation in visitedLocationsStr)
-            {
-                foreach (GameObject location in allLocations)
-                {
-                    if (location.gameObject.name == visitedLocation + " Marker")
-                    {
-                        visitedLocations.Add(location);
-                        location.GetComponent<LocationMarker>().SetUnlocked();
-                    }
-                }
-            }
-
-            // Updating Map UI
-            for(int i=0;i<visitedLocations.Count-1;i++)
-            {
-                // Updating Map Markers UI
-                if(visitedLocations[i] == currentLocationGO && visitedLocations[i].GetComponent<TransportationButtons>().capital)
-                    visitedLocations[i].GetComponent<Image>().sprite = currentCityCapital;
-                else if(visitedLocations[i] == currentLocationGO && !visitedLocations[i].GetComponent<TransportationButtons>().capital)
-                    visitedLocations[i].GetComponent<Image>().sprite = currentCityMarker;
-                else if(visitedLocations[i].GetComponent<TransportationButtons>().capital)
-                    visitedLocations[i].GetComponent<Image>().sprite = traveledCityCapital;
-                else visitedLocations[i].GetComponent<Image>().sprite = traveledCityMarker;
-
-                // Updating Routes UI
-                foreach(GameObject line in visitedLocations[i].GetComponent<TransportationButtons>().availableRoutes) 
-                {
-                    line.SetActive(true);
-                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().untraveledRoute;
-                    Debug.Log(line.gameObject.name);
-                    if (line.gameObject.name == visitedLocations[i + 1].gameObject.name || line.gameObject.name == currentLocation) 
-                    {
-                        if (i == visitedLocations.Count - 2)
-                            line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
-                        else line.GetComponent<Image>().sprite = line.GetComponent<Route>().traveledRoute;
-                    }
-                }
-            }
-
-            // Assigning current location to map UI label
-            GameObject.FindGameObjectWithTag("CurrentLocation").GetComponent<Text>().text = currentLocation;
-
-            
-
-            // Still need to update the UI; Markers, Routes, Capitals UI depending on visited/unvisited/current.
-
-            
-        }
-        else Debug.Log("Diary doesn't exist in this scene");
-    }
-
-    public void OnLevelWasLoaded() 
-    {
-        if (isInitialized)
             InitAfterLoad();
+        }
     }
 
     public void UnlockLocation(string name) 
     {
-        foreach(GameObject location in allLocations) 
+        LocationMarker marker = LevelInstance.Instance.Diary.LocationMarkerObjects.First(marker => marker.LocationName == name);
+        if(marker)
         {
-            if (location.gameObject.name == (name + " Marker")) {
-                location.GetComponent<LocationMarker>().SetUnlocked();
-                Debug.Log("Unlocked new location: " + name);
-            }
+            marker.SetUnlocked();
         }
     }
 
     public void UnlockAllLocations() 
     {
-        foreach (GameObject location in allLocations)
+        foreach(LocationMarker marker in LevelInstance.Instance.Diary.LocationMarkerObjects)
         {
-            location.GetComponent<LocationMarker>().SetUnlocked();
-            Debug.Log("Unlocked new location: " + name);
+            marker.SetUnlocked();
         }
     }
 
     public void GoToLocation(string name, string method) 
     {
         Debug.Log("Starting to head down to " + name + " by " + method);
-        GameObject newLocation = null;
-        foreach(GameObject location in allLocations) 
+        LocationMarker currentLocationObject = CurrentLocationObject;
+        GameObject line = currentLocationObject.GetComponent<TransportationButtons>().availableRoutes.First(route => route.name == name);
+        if(line == null)
         {
-            if (location.name == (name + " Marker"))
-                newLocation = location;
+            return;
         }
-        foreach(GameObject line in currentLocationGO.GetComponent<TransportationButtons>().availableRoutes) 
+
+        LocationMarker newLocation = LevelInstance.Instance.Diary.LocationMarkerObjects.First(marker => marker.LocationName == name);
+        if (newLocation == null)
         {
-            if(line.name == name) 
-            {
-
-                // Initiate loading screen to move to new location
-
-                // Update Map UI
-                foreach (GameObject line2 in currentLocationGO.GetComponent<TransportationButtons>().availableRoutes) 
-                {
-                    if (line2.GetComponent<Route>().attachedMarker.GetComponent<TransportationButtons>().capital)
-                        line2.GetComponent<Route>().attachedMarker.GetComponent<Image>().sprite = untraveledCityCapital;
-                    else line2.GetComponent<Route>().attachedMarker.GetComponent<Image>().sprite = untraveledCityMarker;
-                    line2.GetComponent<Image>().sprite = line2.GetComponent<Route>().untraveledRoute;
-                    line2.SetActive(true);
-                }
-
-                //if(method == "Ship")
-                //    line.GetComponent<Image>().sprite = line.GetComponent<Route>().waterRoute;
-                //else 
-                line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
-                // Add all routes to an array to be updated in the next city to be 'traveled'
-                if (!visitedLocations.Exists(o => o == currentLocationGO))
-                {
-                    visitedLocations.Add(currentLocationGO);
-                    visitedLocationsStr.Add(currentLocationGO.gameObject.name.Split(' ')[0]);
-                }
-                if(currentLocationGO.GetComponent<TransportationButtons>().capital)
-                    currentLocationGO.GetComponent<Image>().sprite = traveledCityCapital;
-                else currentLocationGO.GetComponent<Image>().sprite = traveledCityMarker;
-
-                line.SetActive(true);
-
-                // Set next location variables
-                currentLocation = name;
-                currentLocationGO = newLocation;
-                visitedLocations.Add(currentLocationGO);
-                visitedLocationsStr.Add(currentLocationGO.gameObject.name.Split(' ')[0]);
-                if (newLocation.GetComponent<TransportationButtons>().capital)
-                    newLocation.GetComponent<Image>().sprite = currentCityCapital;
-                else newLocation.GetComponent<Image>().sprite = currentCityMarker;
-
-                currentLocationGO.GetComponent<TransportationButtons>().DisableTransportationOptions();
-                // Load level
-                SceneManager.LoadScene(sceneName: "LoadingScene");
-
-                Debug.Log("Traveled to " + name + " by " + method);
-                
-
-            }
-            
+            return;
         }
+
+        // Initiate loading screen to move to new location
+
+        // Update Map UI
+        foreach(GameObject currentLine in currentLocationObject.GetComponent<TransportationButtons>().availableRoutes)
+        {
+            if (currentLine.GetComponent<Route>().attachedMarker.GetComponent<TransportationButtons>().capital)
+                currentLine.GetComponent<Route>().attachedMarker.GetComponent<Image>().sprite = untraveledCityCapital;
+            else currentLine.GetComponent<Route>().attachedMarker.GetComponent<Image>().sprite = untraveledCityMarker;
+            currentLine.GetComponent<Image>().sprite = currentLine.GetComponent<Route>().untraveledRoute;
+            currentLine.SetActive(true);
+        }
+
+        //if(method == "Ship")
+        //    line.GetComponent<Image>().sprite = line.GetComponent<Route>().waterRoute;
+        //else 
+        line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
+
+        // Add all routes to an array to be updated in the next city to be 'traveled'
+        if(!visitedLocationsStr.Contains(currentLocation))
+        {
+            visitedLocationsStr.Add(currentLocation);
+        }
+
+        if (currentLocationObject.GetComponent<TransportationButtons>().capital)
+            currentLocationObject.GetComponent<Image>().sprite = traveledCityCapital;
+        else currentLocationObject.GetComponent<Image>().sprite = traveledCityMarker;
+
+        line.SetActive(true);
+
+        // Set next location variables
+        currentLocation = name;
+        if (newLocation.GetComponent<TransportationButtons>().capital)
+            newLocation.GetComponent<Image>().sprite = currentCityCapital;
+        else newLocation.GetComponent<Image>().sprite = currentCityMarker;
+
+        currentLocationObject.GetComponent<TransportationButtons>().DisableTransportationOptions();
+
+        // Load level
+        SceneManager.LoadScene(sceneName: "LoadingScene");
     }
-
-
-
 }

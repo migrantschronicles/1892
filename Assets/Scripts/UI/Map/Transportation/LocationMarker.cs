@@ -13,6 +13,8 @@ public enum LocationMarkerScaling
 public class LocationMarker : MonoBehaviour
 {
     [SerializeField]
+    private string locationName;
+    [SerializeField]
     private Image markerImage;
     [SerializeField]
     private GameObject transportationMethodsGO;
@@ -41,6 +43,8 @@ public class LocationMarker : MonoBehaviour
     private MapZoom mapZoom;
     private Vector3 initialTransportationMethodsScale;
     private Vector3 initialMarkerImageScale;
+
+    public string LocationName { get { return locationName; } }
 
     private void Start()
     {

@@ -9,6 +9,5 @@ public class Route : MonoBehaviour
     public Sprite untraveledRoute; // Untraveled, but discovered; grey
     public Sprite currentRoute; // Red
     public Sprite traveledRoute; // Brown
-    public Sprite waterRoute; // Blue
 
 }

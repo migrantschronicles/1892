@@ -107,7 +107,7 @@ public class NewGameManager : MonoBehaviour
             // Assigning capital markers their art accordingly
             if (location.gameObject.GetComponent<TransportationButtons>().capital) 
             {
-                location.GetComponent<Image>().sprite = currentCityCapital;
+                location.transform.GetChild(2).GetComponent<Image>().sprite = currentCityCapital;
             }
         }
         // Turning off all map routes/lines
@@ -151,7 +151,7 @@ public class NewGameManager : MonoBehaviour
                 // Setting capitals UI accordingly.
                 if (location.GetComponent<TransportationButtons>().capital) 
                 {
-                    location.GetComponent<Image>().sprite = currentCityCapital;
+                    location.transform.GetChild(2).GetComponent<Image>().sprite = currentCityCapital;
                 }
 
                 // Turning off all map routes/lines
@@ -180,12 +180,12 @@ public class NewGameManager : MonoBehaviour
             {
                 // Updating Map Markers UI
                 if(visitedLocations[i] == currentLocationGO && visitedLocations[i].GetComponent<TransportationButtons>().capital)
-                    visitedLocations[i].GetComponent<Image>().sprite = currentCityCapital;
+                    visitedLocations[i].transform.GetChild(2).GetComponent<Image>().sprite = currentCityCapital;
                 else if(visitedLocations[i] == currentLocationGO && !visitedLocations[i].GetComponent<TransportationButtons>().capital)
-                    visitedLocations[i].GetComponent<Image>().sprite = currentCityMarker;
+                    visitedLocations[i].transform.GetChild(2).GetComponent<Image>().sprite = currentCityMarker;
                 else if(visitedLocations[i].GetComponent<TransportationButtons>().capital)
-                    visitedLocations[i].GetComponent<Image>().sprite = traveledCityCapital;
-                else visitedLocations[i].GetComponent<Image>().sprite = traveledCityMarker;
+                    visitedLocations[i].transform.GetChild(2).GetComponent<Image>().sprite = traveledCityCapital;
+                else visitedLocations[i].transform.GetChild(2).GetComponent<Image>().sprite = traveledCityMarker;
 
                 // Updating Routes UI
                 foreach(GameObject line in visitedLocations[i].GetComponent<TransportationButtons>().availableRoutes) 
@@ -260,8 +260,8 @@ public class NewGameManager : MonoBehaviour
                 foreach (GameObject line2 in currentLocationGO.GetComponent<TransportationButtons>().availableRoutes) 
                 {
                     if (line2.GetComponent<Route>().attachedMarker.GetComponent<TransportationButtons>().capital)
-                        line2.GetComponent<Route>().attachedMarker.GetComponent<Image>().sprite = untraveledCityCapital;
-                    else line2.GetComponent<Route>().attachedMarker.GetComponent<Image>().sprite = untraveledCityMarker;
+                        line2.GetComponent<Route>().attachedMarker.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityCapital;
+                    else line2.GetComponent<Route>().attachedMarker.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityMarker;
                     line2.GetComponent<Image>().sprite = line2.GetComponent<Route>().untraveledRoute;
                     line2.SetActive(true);
                 }
@@ -277,8 +277,8 @@ public class NewGameManager : MonoBehaviour
                     visitedLocationsStr.Add(currentLocationGO.gameObject.name.Split(' ')[0]);
                 }
                 if(currentLocationGO.GetComponent<TransportationButtons>().capital)
-                    currentLocationGO.GetComponent<Image>().sprite = traveledCityCapital;
-                else currentLocationGO.GetComponent<Image>().sprite = traveledCityMarker;
+                    currentLocationGO.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityCapital;
+                else currentLocationGO.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityMarker;
 
                 line.SetActive(true);
 
@@ -288,8 +288,8 @@ public class NewGameManager : MonoBehaviour
                 visitedLocations.Add(currentLocationGO);
                 visitedLocationsStr.Add(currentLocationGO.gameObject.name.Split(' ')[0]);
                 if (newLocation.GetComponent<TransportationButtons>().capital)
-                    newLocation.GetComponent<Image>().sprite = currentCityCapital;
-                else newLocation.GetComponent<Image>().sprite = currentCityMarker;
+                    newLocation.transform.GetChild(2).GetComponent<Image>().sprite = currentCityCapital;
+                else newLocation.transform.GetChild(2).GetComponent<Image>().sprite = currentCityMarker;
 
                 currentLocationGO.GetComponent<TransportationButtons>().DisableTransportationOptions();
                 // Load level

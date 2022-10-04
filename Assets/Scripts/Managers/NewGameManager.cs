@@ -52,6 +52,11 @@ public class NewGameManager : MonoBehaviour
     {
         if (Instance == null)
         {
+            if(string.IsNullOrWhiteSpace(currentLocation))
+            {
+                currentLocation = SceneManager.GetActiveScene().name;
+            }
+
             // Detach the child game object.
             transform.SetParent(null, false);
             Instance = this;

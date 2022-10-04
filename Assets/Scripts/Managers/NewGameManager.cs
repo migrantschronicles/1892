@@ -17,6 +17,7 @@ public class NewGameManager : MonoBehaviour
     public float time;
     public int food;
     public int money;
+    public string date;
 
     // UI 
     public Sprite traveledCityMarker;
@@ -161,6 +162,16 @@ public class NewGameManager : MonoBehaviour
 
         // Assigning current location to map UI label
         GameObject.FindGameObjectWithTag("CurrentLocation").GetComponent<Text>().text = currentLocation;
+
+        // Assigning Interface Values
+        if (GameObject.FindGameObjectWithTag("Interface"))
+        {
+            GameObject.FindGameObjectWithTag("InterfaceDateText").GetComponent<Text>().text = date;
+            GameObject.FindGameObjectWithTag("InterfaceMoneyText").GetComponent<Text>().text = money.ToString();
+            GameObject.FindGameObjectWithTag("InterfaceFoodText").GetComponent<Text>().text = food.ToString();
+            GameObject.FindGameObjectWithTag("InterfaceLocationText").GetComponent<Text>().text = currentLocation;
+        }
+        else Debug.Log("Missing Interface Prefab");
     }
 
     public void PostLevelLoad()
@@ -188,8 +199,18 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
-    public void GoToLocation(string name, string method) 
+    public void GoToLocation(string name, string method, float timeNeeded, int moneyNeeded, int foodNeeded) 
     {
+        if (money < moneyNeeded || food < foodNeeded)
+        {
+            return;
+        }
+
+        // Consuming money and food accordingly
+        food -= foodNeeded;
+        money -= moneyNeeded;
+        time += timeNeeded;
+
         Debug.Log("Starting to head down to " + name + " by " + method);
         LocationMarker currentLocationObject = CurrentLocationObject;
         GameObject line = currentLocationObject.GetComponent<TransportationButtons>().availableRoutes.First(route => route.name == name);

@@ -161,7 +161,11 @@ public class NewGameManager : MonoBehaviour
         }
 
         // Assigning current location to map UI label
-        GameObject.FindGameObjectWithTag("CurrentLocation").GetComponent<Text>().text = currentLocation;
+        GameObject currentLocationLabel = GameObject.FindGameObjectWithTag("CurrentLocation");
+        if (currentLocationLabel != null)
+        {
+            currentLocationLabel.GetComponent<Text>().text = currentLocation;
+        }
 
         // Assigning Interface Values
         if (GameObject.FindGameObjectWithTag("Interface"))

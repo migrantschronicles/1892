@@ -114,6 +114,7 @@ public class LevelInstance : MonoBehaviour
         dialogSystem.gameObject.SetActive(false);
         if (diaryEntry)
         {
+            SetBlurAfterGameObject(sceneParent);
             NewGameManager.Instance.AddDiaryEntry(diaryEntry);
             backButton.gameObject.SetActive(true);
             ui.SetUIElementsVisible(false);

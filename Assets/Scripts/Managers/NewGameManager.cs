@@ -39,6 +39,18 @@ public class NewGameManager : MonoBehaviour
     public delegate void OnDiaryEntryAdded(DiaryEntry entry);
     public event OnDiaryEntryAdded onDiaryEntryAdded;
 
+    public delegate void OnFoodChangedDelegate(int food);
+    public event OnFoodChangedDelegate onFoodChanged;
+
+    public delegate void OnMoneyChangedDelegate(int money);
+    public event OnMoneyChangedDelegate onMoneyChanged;
+
+    public delegate void OnDateChangedDelegate(string date);
+    public event OnDateChangedDelegate onDateChanged;
+
+    public delegate void OnTimeChangedDelegate(float time);
+    public event OnTimeChangedDelegate onTimeChanged;
+
     public LocationMarker CurrentLocationObject
     {
         get
@@ -159,23 +171,6 @@ public class NewGameManager : MonoBehaviour
                 }
             }
         }
-
-        // Assigning current location to map UI label
-        GameObject currentLocationLabel = GameObject.FindGameObjectWithTag("CurrentLocation");
-        if (currentLocationLabel != null)
-        {
-            currentLocationLabel.GetComponent<Text>().text = currentLocation;
-        }
-
-        // Assigning Interface Values
-        if (GameObject.FindGameObjectWithTag("Interface"))
-        {
-            GameObject.FindGameObjectWithTag("InterfaceDateText").GetComponent<Text>().text = date;
-            GameObject.FindGameObjectWithTag("InterfaceMoneyText").GetComponent<Text>().text = money.ToString();
-            GameObject.FindGameObjectWithTag("InterfaceFoodText").GetComponent<Text>().text = food.ToString();
-            GameObject.FindGameObjectWithTag("InterfaceLocationText").GetComponent<Text>().text = currentLocation;
-        }
-        else Debug.Log("Missing Interface Prefab");
     }
 
     public void PostLevelLoad()
@@ -203,6 +198,30 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
+    private void SetFood(int newFood)
+    {
+        food = Mathf.Max(newFood, 0);
+        onFoodChanged?.Invoke(food);
+    }
+
+    private void SetMoney(int newMoney)
+    {
+        money = newMoney;
+        onMoneyChanged?.Invoke(money);
+    }
+
+    private void SetDate(string newDate)
+    {
+        date = newDate;
+        onDateChanged?.Invoke(date);
+    }
+
+    private void SetTime(float newTime)
+    {
+        time = newTime;
+        onTimeChanged?.Invoke(time);
+    }
+
     public void GoToLocation(string name, string method, float timeNeeded, int moneyNeeded, int foodNeeded) 
     {
         if (money < moneyNeeded || food < foodNeeded)
@@ -211,9 +230,9 @@ public class NewGameManager : MonoBehaviour
         }
 
         // Consuming money and food accordingly
-        food -= foodNeeded;
-        money -= moneyNeeded;
-        time += timeNeeded;
+        SetFood(food - foodNeeded);
+        SetMoney(money - moneyNeeded);
+        SetTime(time + timeNeeded);
 
         Debug.Log("Starting to head down to " + name + " by " + method);
         LocationMarker currentLocationObject = CurrentLocationObject;

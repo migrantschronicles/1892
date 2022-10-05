@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum DiaryPageType
 {
@@ -28,6 +29,8 @@ public class Diary : MonoBehaviour
     private MapZoom mapZoom;
     [SerializeField]
     private GameObject locationMarkerParent;
+    [SerializeField]
+    private Text currentLocationText;
 
     private Dictionary<string, LocationMarker> locationMarkers;
 
@@ -74,6 +77,11 @@ public class Diary : MonoBehaviour
         {
             GatherLocationMarkers();
         }
+    }
+
+    private void Start()
+    {
+        currentLocationText.text = NewGameManager.Instance.currentLocation;
     }
 
     private void GatherLocationMarkers()

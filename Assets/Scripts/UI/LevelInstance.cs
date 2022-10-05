@@ -122,6 +122,7 @@ public class LevelInstance : MonoBehaviour
         {
             backButton.gameObject.SetActive(false);
             ui.SetUIElementsVisible(true);
+            ui.SetDiaryVisible(false);
         }
     }
 

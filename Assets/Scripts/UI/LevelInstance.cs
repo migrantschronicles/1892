@@ -124,13 +124,13 @@ public class LevelInstance : MonoBehaviour
             SetBlurAfterGameObject(sceneParent);
             NewGameManager.Instance.AddDiaryEntry(diaryEntry);
             backButton.gameObject.SetActive(true);
-            ui.SetUIElementsVisible(false);
+            ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
             ui.SetDiaryVisible(true, DiaryPageType.Diary);
         }
         else
         {
             backButton.gameObject.SetActive(false);
-            ui.SetUIElementsVisible(true);
+            ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
             ui.SetDiaryVisible(false);
         }
     }
@@ -139,7 +139,7 @@ public class LevelInstance : MonoBehaviour
     {
         dialogSystem.gameObject.SetActive(false);
         backButton.gameObject.SetActive(false);
-        ui.SetUIElementsVisible(true);
+        ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
         ui.SetDiaryVisible(false);
         DisableBlur();
         
@@ -238,7 +238,7 @@ public class LevelInstance : MonoBehaviour
     {
         dialogSystem.gameObject.SetActive(true);
         backButton.gameObject.SetActive(true);
-        ui.SetUIElementsVisible(false);
+        ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
 
         if(currentScene)
         {
@@ -291,7 +291,7 @@ public class LevelInstance : MonoBehaviour
         currentShop = shop;
         currentShop.gameObject.SetActive(true);
         backButton.gameObject.SetActive(true);
-        ui.SetUIElementsVisible(false);
+        ui.SetUIElementsVisible(InterfaceVisibilityFlags.StatusInfo);
 
         if(currentScene)
         {
@@ -323,7 +323,7 @@ public class LevelInstance : MonoBehaviour
     public void OpenDiary()
     {
         SetBlurAfterGameObject(sceneParent);
-        ui.SetUIElementsVisible(false);
+        ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
         ui.SetDiaryVisible(true);
         backButton.gameObject.SetActive(true);
     }

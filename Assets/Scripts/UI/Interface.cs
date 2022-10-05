@@ -3,6 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum InterfaceVisibilityFlags
+{
+    /// No interface elements are visible
+    None = 0,
+    /// Only the clock button is visible
+    ClockButton = 1,
+    /// Only the diary button is visible
+    DiaryButton = 2,
+    // If the status needs to be divided (handle e.g. food and money separately), add bitflags
+    /// Only the status is visible
+    StatusInfo = 4,
+
+    /// All interface elements are visible
+    All = ClockButton | DiaryButton | StatusInfo
+}
+
 public class Interface : MonoBehaviour
 {
     [SerializeField]
@@ -67,11 +83,11 @@ public class Interface : MonoBehaviour
     /**
      * Hides every ui element like button or location text.
      */
-    public void SetUIElementsVisible(bool visible)
+    public void SetUIElementsVisible(InterfaceVisibilityFlags flags)
     {
-        locationInfo.SetActive(visible);
-        clockButton.SetActive(visible);
-        diaryButton.SetActive(visible);
+        locationInfo.SetActive((flags & InterfaceVisibilityFlags.StatusInfo) != 0);
+        clockButton.SetActive((flags & InterfaceVisibilityFlags.ClockButton) != 0);
+        diaryButton.SetActive((flags & InterfaceVisibilityFlags.DiaryButton) != 0);
     }
 
     public void SetDiaryVisible(bool visible, DiaryPageType type = DiaryPageType.Inventory)

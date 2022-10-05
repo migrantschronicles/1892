@@ -139,7 +139,7 @@ public class NewGameManager : MonoBehaviour
         }
 
         // Updating Map UI
-        for (int i = 0; i < visitedLocationsStr.Count - 1; ++i)
+        for (int i = 0; i < visitedLocationsStr.Count; ++i)
         {
             // Updating Map Markers UI
             LocationMarker visitedMarker = LevelInstance.Instance.Diary.LocationMarkerObjects.First(marker => marker.LocationName == visitedLocationsStr[i]);
@@ -162,12 +162,17 @@ public class NewGameManager : MonoBehaviour
             foreach (GameObject line in transportation.availableRoutes)
             {
                 line.SetActive(true);
-                line.GetComponent<Image>().sprite = line.GetComponent<Route>().untraveledRoute;
-                if (line.gameObject.name == visitedLocationsStr[i + 1] || line.gameObject.name == currentLocation)
+                if(line.gameObject.name == currentLocation && i == visitedLocationsStr.Count - 1)
                 {
-                    if (i == visitedLocationsStr.Count - 2)
-                        line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
-                    else line.GetComponent<Image>().sprite = line.GetComponent<Route>().traveledRoute;
+                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
+                }
+                else if(i < visitedLocationsStr.Count - 1 && line.gameObject.name == visitedLocationsStr[i + 1])
+                {
+                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().traveledRoute;
+                }
+                else
+                {
+                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().untraveledRoute;
                 }
             }
         }

@@ -151,6 +151,7 @@ public class LevelInstance : MonoBehaviour
         if(previousScene != null && currentScene.SceneName != previousScene)
         {
             OpenScene(previousScene);
+            previousScene = null;
         }
 
         if(currentScene)
@@ -198,7 +199,6 @@ public class LevelInstance : MonoBehaviour
         {
             currentScene.OnActiveStatusChanged(false);
             currentScene.gameObject.SetActive(false);
-            previousScene = currentScene.SceneName;
         }
 
         currentScene = scene;
@@ -253,12 +253,9 @@ public class LevelInstance : MonoBehaviour
 
     public void StartDialog(DialogButton button)
     {
-        if(string.IsNullOrWhiteSpace(button.SceneName))
+        if(!string.IsNullOrWhiteSpace(button.SceneName))
         {
             previousScene = currentScene?.SceneName;
-        }
-        else
-        {
             OpenScene(button.SceneName);
         }
 

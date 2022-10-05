@@ -41,6 +41,7 @@ public class DiaryPages : MonoBehaviour
 
     private List<GameObject> pages = new List<GameObject>();
     private int currentDoublePageIndex = -1;
+    private List<ElementAnimator> currentAnimators = new List<ElementAnimator>();
 
     /**
      * @return The number of double pages. If the last page ends on the left, it returns the same number as if the last page would end on the right.
@@ -53,11 +54,14 @@ public class DiaryPages : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         prevPageButton.onClick.AddListener(OpenPrevDoublePage);
         nextPageButton.onClick.AddListener(OpenNextDoublePage);
+    }
 
+    private void Start()
+    {
         foreach(DiaryEntry entry in NewGameManager.Instance.DiaryEntries)
         {
             AddEntry(entry);
@@ -75,6 +79,8 @@ public class DiaryPages : MonoBehaviour
 
     public void AddEntry(DiaryEntry entry)
     {
+        StopAnimators();
+
         // Add an empty page if the previous entry ended left, but the new one should also start left.
         bool isRight = allowNewEntriesOnSameDoublePage && !entry.startOnNewDoublePage && pages.Count % 2 != 0;
         if(!isRight && pages.Count % 2 != 0)
@@ -92,25 +98,33 @@ public class DiaryPages : MonoBehaviour
             bool newPageIsLeft = pages.Count % 2 == 0;
             GameObject parent = newPageIsLeft ? contentLeft : contentRight;
             GameObject newPage = Instantiate(data.prefab, parent.transform);
-            IDiaryPage diaryPage = newPage.GetComponent<IDiaryPage>();
-            diaryPage.SetData(data);
 
             foreach(DiaryPageDrawing drawing in data.drawings)
             {
                 if(drawing.IsEnabled)
                 {
-                    AddDrawingToPage(newPage, drawing);
+                    GameObject drawingGO = AddDrawingToPage(newPage, drawing);
+                    currentAnimators.Add(ImageElementAnimator.FromImage(this, drawingGO.GetComponentInChildren<Image>()));
                 }
             }
+
+            IDiaryPage diaryPage = newPage.GetComponent<IDiaryPage>();
+            diaryPage.SetData(data);
+            currentAnimators.AddRange(diaryPage.CreateAnimators());
 
             newPage.SetActive(false);
             pages.Add(newPage);
         }
 
         OpenDoublePage(GetDoublePageIndexFromPageIndex(firstPageIndex));
+
+        if(currentAnimators.Count > 0)
+        {
+            StartAnimator(currentAnimators[0]);
+        }
     }
 
-    private void AddDrawingToPage(GameObject page, DiaryPageDrawing drawing)
+    private GameObject AddDrawingToPage(GameObject page, DiaryPageDrawing drawing)
     {
         // Create the sketch drawing.
         GameObject newSketchGO = new GameObject("SketchDrawing", typeof(RectTransform), typeof(Image));
@@ -174,6 +188,8 @@ public class DiaryPages : MonoBehaviour
         rectTransform.anchorMax = anchor;
         rectTransform.anchoredPosition = position;
         rectTransform.sizeDelta = size;
+
+        return newSketchGO;
     }
 
     public void OpenDoublePage(int index)
@@ -217,7 +233,11 @@ public class DiaryPages : MonoBehaviour
 
     public void OpenPrevDoublePage()
     {
-        if(currentDoublePageIndex > 0)
+        if(currentAnimators.Count > 0)
+        {
+            StopAnimators();
+        }
+        else if(currentDoublePageIndex > 0)
         {
             OpenDoublePage(currentDoublePageIndex - 1);
         }
@@ -225,9 +245,39 @@ public class DiaryPages : MonoBehaviour
 
     public void OpenNextDoublePage()
     {
-        if(currentDoublePageIndex < DoublePageCount - 1)
+        if(currentAnimators.Count > 0)
+        {
+            StopAnimators();
+        }
+        else if(currentDoublePageIndex < DoublePageCount - 1)
         {
             OpenDoublePage(currentDoublePageIndex + 1);
         }
+    }
+
+    public void StopAnimators()
+    {
+        foreach(ElementAnimator animator in currentAnimators)
+        {
+            animator.Finish();
+        }
+        currentAnimators.Clear();
+    }
+
+    private void OnAnimatorFinished(ElementAnimator animator)
+    {
+        animator.onFinished -= OnAnimatorFinished;
+        Debug.Assert(animator == currentAnimators[0]);
+        currentAnimators.RemoveAt(0);
+        if(currentAnimators.Count > 0)
+        {
+            StartAnimator(currentAnimators[0]);
+        }
+    }
+
+    private void StartAnimator(ElementAnimator animator)
+    {
+        animator.onFinished += OnAnimatorFinished;
+        animator.Start();
     }
 }

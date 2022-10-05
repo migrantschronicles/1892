@@ -5,4 +5,5 @@ using UnityEngine;
 public interface IDiaryPage
 {
     void SetData(DiaryPageData data);
+    IEnumerable<ElementAnimator> CreateAnimators();
 }

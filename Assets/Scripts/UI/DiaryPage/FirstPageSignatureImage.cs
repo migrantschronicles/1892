@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,15 @@ public class FirstPageSignatureImage : FirstPage
     private Text signature;
     [SerializeField]
     private Image image;
+
+    public override IEnumerable<ElementAnimator> CreateAnimators()
+    {
+        return base.CreateAnimators().Concat(new List<ElementAnimator>()
+        {
+            TextElementAnimator.FromText(this, signature),
+            ImageElementAnimator.FromImage(this, image)
+        });
+    }
 
     public override void SetData(DiaryPageData data)
     {

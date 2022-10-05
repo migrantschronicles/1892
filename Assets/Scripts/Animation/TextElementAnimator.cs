@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public interface IAnimatedText
 {
@@ -9,20 +10,38 @@ public interface IAnimatedText
 
 public class TextElementAnimator : ElementAnimator
 {
+    private static readonly float defaultTimeForCharacters = 0.1f;
+
     private enum TextMode { Normal, Bold, Italic }
 
-    private IAnimatedText animatedText;
+    private IAnimatedText animatedTextInterface;
+    private Text animatedText;
     private string text;
     private float timeForCharacters;
     private Coroutine coroutine;
     private MonoBehaviour owner;
 
-    public TextElementAnimator(MonoBehaviour owner, IAnimatedText animatedText, string text, float timeForCharacters)
+    public TextElementAnimator(MonoBehaviour owner, IAnimatedText animatedTextInterface, string text, float timeForCharacters)
+    {
+        this.animatedTextInterface = animatedTextInterface;
+        this.text = text;
+        this.timeForCharacters = timeForCharacters;
+        this.owner = owner;
+        animatedTextInterface.SetText("");
+    }
+
+    public TextElementAnimator(MonoBehaviour owner, Text animatedText, string text, float timeForCharacters)
     {
         this.animatedText = animatedText;
         this.text = text;
         this.timeForCharacters = timeForCharacters;
         this.owner = owner;
+        animatedText.text = "";
+    }
+
+    public static TextElementAnimator FromText(MonoBehaviour owner, Text animatedText)
+    {
+        return new TextElementAnimator(owner, animatedText, animatedText.text, defaultTimeForCharacters);
     }
 
     private IEnumerator Animate()
@@ -98,7 +117,7 @@ public class TextElementAnimator : ElementAnimator
                 case TextMode.Italic: fullText += $"<i>{modeText}</i>"; break;
             }
 
-            animatedText.SetText(fullText);
+            SetText(fullText);
             yield return new WaitForSeconds(timeForCharacters);
         }
 
@@ -112,7 +131,22 @@ public class TextElementAnimator : ElementAnimator
 
     public override void Finish()
     {
-        owner.StopCoroutine(coroutine);
-        animatedText.SetText(text);
+        if(coroutine != null)
+        {
+            owner.StopCoroutine(coroutine);
+        }
+        SetText(text);
+    }
+
+    private void SetText(string value)
+    {
+        if(animatedTextInterface != null)
+        {
+            animatedTextInterface.SetText(value);
+        }
+        else if(animatedText != null)
+        {
+            animatedText.text = value;
+        }
     }
 }

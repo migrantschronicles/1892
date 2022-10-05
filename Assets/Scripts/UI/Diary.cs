@@ -31,6 +31,8 @@ public class Diary : MonoBehaviour
     private GameObject locationMarkerParent;
     [SerializeField]
     private Text currentLocationText;
+    [SerializeField]
+    private DiaryPages diaryPages;
 
     private Dictionary<string, LocationMarker> locationMarkers;
 
@@ -146,6 +148,7 @@ public class Diary : MonoBehaviour
         mapPage.SetActive(false);
         settingsPage.SetActive(false);
         diaryPage.SetActive(false);
+        diaryPages.StopAnimators();
     }
 
     public void SetVisible(bool visible, DiaryPageType page = DiaryPageType.Inventory)
@@ -155,6 +158,10 @@ public class Diary : MonoBehaviour
         {
             mapZoom.ResetInitialZoom();
             OpenPage(page);
+        }
+        else
+        {
+            diaryPages.StopAnimators();
         }
     }
 }

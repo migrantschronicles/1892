@@ -10,6 +10,15 @@ public class ImageTopPage : MonoBehaviour, IDiaryPage
     [SerializeField]
     private Text text;
 
+    public IEnumerable<ElementAnimator> CreateAnimators()
+    {
+        return new List<ElementAnimator>()
+        {
+            ImageElementAnimator.FromImage(this, image),
+            TextElementAnimator.FromText(this, text)
+        };
+    }
+
     public void SetData(DiaryPageData data)
     {
         image.sprite = data.image;

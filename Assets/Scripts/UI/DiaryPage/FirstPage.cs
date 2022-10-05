@@ -10,6 +10,15 @@ public class FirstPage : MonoBehaviour, IDiaryPage
     [SerializeField]
     private Text text;
 
+    public virtual IEnumerable<ElementAnimator> CreateAnimators()
+    {
+        return new List<ElementAnimator>()
+        {
+            TextElementAnimator.FromText(this, dateText),
+            TextElementAnimator.FromText(this, text)
+        };
+    }
+
     public virtual void SetData(DiaryPageData data)
     {
         text.text = LocalizationManager.Instance.GetLocalizedString(data.text);

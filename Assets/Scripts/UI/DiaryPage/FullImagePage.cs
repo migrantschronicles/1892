@@ -8,6 +8,14 @@ public class FullImagePage : MonoBehaviour, IDiaryPage
     [SerializeField]
     private Image image;
 
+    public IEnumerable<ElementAnimator> CreateAnimators()
+    {
+        return new List<ElementAnimator>()
+        {
+            ImageElementAnimator.FromImage(this, image)
+        };
+    }
+
     public void SetData(DiaryPageData data)
     {
         image.sprite = data.image;

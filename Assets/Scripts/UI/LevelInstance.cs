@@ -70,6 +70,7 @@ public class LevelInstance : MonoBehaviour
     private Shop currentShop;
     private Scene currentAdditiveScene = null;
     private IEnumerable<GameObject> currentHiddenObjects;
+    private string previousScene;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -79,6 +80,7 @@ public class LevelInstance : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        previousScene = defaultScene;
     }
 
     private void Start()
@@ -112,7 +114,6 @@ public class LevelInstance : MonoBehaviour
         dialogSystem.gameObject.SetActive(false);
         if (diaryEntry)
         {
-            ///@todo Uncomment when new game manager is implemented in every map.
             NewGameManager.Instance.AddDiaryEntry(diaryEntry);
             backButton.gameObject.SetActive(true);
             ui.SetUIElementsVisible(false);
@@ -147,9 +148,9 @@ public class LevelInstance : MonoBehaviour
             currentAdditiveScene = null;
         }
 
-        if(currentScene.SceneName != defaultScene)
+        if(previousScene != null && currentScene.SceneName != previousScene)
         {
-            OpenScene(defaultScene);
+            OpenScene(previousScene);
         }
 
         if(currentScene)
@@ -197,6 +198,7 @@ public class LevelInstance : MonoBehaviour
         {
             currentScene.OnActiveStatusChanged(false);
             currentScene.gameObject.SetActive(false);
+            previousScene = currentScene.SceneName;
         }
 
         currentScene = scene;
@@ -251,7 +253,11 @@ public class LevelInstance : MonoBehaviour
 
     public void StartDialog(DialogButton button)
     {
-        if(!string.IsNullOrWhiteSpace(button.SceneName))
+        if(string.IsNullOrWhiteSpace(button.SceneName))
+        {
+            previousScene = currentScene?.SceneName;
+        }
+        else
         {
             OpenScene(button.SceneName);
         }

@@ -94,11 +94,86 @@ public class DiaryPages : MonoBehaviour
             GameObject newPage = Instantiate(data.prefab, parent.transform);
             IDiaryPage diaryPage = newPage.GetComponent<IDiaryPage>();
             diaryPage.SetData(data);
+
+            foreach(DiaryPageDrawing drawing in data.drawings)
+            {
+                if(drawing.IsEnabled)
+                {
+                    AddDrawingToPage(newPage, drawing);
+                }
+            }
+
             newPage.SetActive(false);
             pages.Add(newPage);
         }
 
         OpenDoublePage(GetDoublePageIndexFromPageIndex(firstPageIndex));
+    }
+
+    private void AddDrawingToPage(GameObject page, DiaryPageDrawing drawing)
+    {
+        // Create the sketch drawing.
+        GameObject newSketchGO = new GameObject("SketchDrawing", typeof(RectTransform), typeof(Image));
+        Image newSketchImage = newSketchGO.GetComponent<Image>();
+        newSketchImage.color = Color.white;
+        newSketchImage.raycastTarget = false;
+        newSketchImage.sprite = drawing.image;
+        newSketchImage.preserveAspect = drawing.preserveAspect;
+
+        // Attach it to the page.
+        newSketchGO.transform.SetParent(page.transform, false);
+        newSketchGO.transform.SetSiblingIndex(0);
+        RectTransform rectTransform = newSketchGO.GetComponent<RectTransform>();
+        Vector2 anchor = Vector2.zero;
+        Vector2 position = Vector2.zero;
+        Vector2 size = drawing.overrideSize ? drawing.size : drawing.image.rect.size;
+
+        switch(drawing.location)
+        {
+            case DiaryPageDrawingLocation.BottomLeft:
+            {
+                anchor = Vector2.zero;
+                position = size / 2;
+                break;
+            }
+
+            case DiaryPageDrawingLocation.BottomRight:
+            {
+                anchor = new Vector2(1, 0);
+                position = new Vector2(-size.x / 2, size.y / 2);
+                break;
+            }
+
+            case DiaryPageDrawingLocation.TopLeft:
+            {
+                anchor = new Vector2(0, 1);
+                position = new Vector2(size.x / 2, -size.y / 2);
+                break;
+            }
+
+            case DiaryPageDrawingLocation.TopRight:
+            {
+                anchor = new Vector2(1, 1);
+                position = -size / 2;
+                break;
+            }
+
+            case DiaryPageDrawingLocation.Center:
+            {
+                anchor = new Vector2(0.5f, 0.5f);
+                position = Vector2.zero;
+                break;
+            }
+        }
+
+        // Add the specified offset
+        position += drawing.offset;
+
+        // Set the position and size.
+        rectTransform.anchorMin = anchor;
+        rectTransform.anchorMax = anchor;
+        rectTransform.anchoredPosition = position;
+        rectTransform.sizeDelta = size;
     }
 
     public void OpenDoublePage(int index)

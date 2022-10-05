@@ -22,10 +22,17 @@ using UnityEngine.UI;
  * 
  * In the LevelInstance object, you can now set the default scene (the main scene).
  * 
+ * SCENE BUTTON
+ * This is a prefab to switch the scene on click.
+ * You can add it to the level (to the interactables of the scene) and set the Scene Name property in the Scene Button script.
+ * Now if you press the button, the scene switches to the new scene.
+ * 
  * ADD A DIALOG BUTTON
  * If you add a dialog button, you can set the scene name the dialog should start in in the DialogButton script.
  * This tells the level instance to open that scene if the dialog button is pressed.
- * If the field stays empty, the current scene is used.
+ * This is different from the Scene Button in that it will return to the previous scene after the dialog is closed.
+ * Also, the blur gets added to the new scene.
+ * If the field stays empty, the current scene stays.
  * In the Button::OnClick, you should add one callback: 
  * It should call LevelInstance.StartDialog with the dialog button as a parameter.
  * This automatically takes care of showing / hiding everything and the dialog starts.

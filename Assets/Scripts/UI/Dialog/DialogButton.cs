@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DialogButton : MonoBehaviour
 {
+    [SerializeField]
+    private Button dialogButton;
     [SerializeField, Tooltip("The condition under which this dialog button is active")]
     private DialogCondition condition;
     [SerializeField, Tooltip("The scene to open for this dialog, or leave empty for current scene")]
@@ -21,10 +24,16 @@ public class DialogButton : MonoBehaviour
     {
         OnConditionsChanged();
         DialogSystem.Instance.AddOnConditionsChanged(condition.GetAllConditions(), OnConditionsChanged);
+        dialogButton.onClick.AddListener(OnStartDialog);
     }
 
     private void OnConditionsChanged()
     {
         gameObject.SetActive(condition.Test());
+    }
+
+    private void OnStartDialog()
+    {
+        LevelInstance.Instance.StartDialog(this);
     }
 }

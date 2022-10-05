@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogBubble : MonoBehaviour, IDialogBubble
+public class DialogBubble : MonoBehaviour, IAnimatedText
 {
     [SerializeField]
     private Image background;

@@ -2,31 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class DialogAnimator
+public interface IAnimatedText
 {
-    public delegate void OnFinishedDelegate(DialogAnimator animator);
-    public OnFinishedDelegate OnFinished;
-
-    public abstract void Start();
-    public abstract void Finish();
+    void SetText(string text);
 }
 
-public class DialogTextAnimator : DialogAnimator
+public class TextElementAnimator : ElementAnimator
 {
     private enum TextMode { Normal, Bold, Italic }
 
-    private IDialogBubble bubble;
+    private IAnimatedText animatedText;
     private string text;
     private float timeForCharacters;
     private Coroutine coroutine;
-    private MonoBehaviour target;
+    private MonoBehaviour owner;
 
-    public DialogTextAnimator(MonoBehaviour target, IDialogBubble bubble, string text, float timeForCharacters)
+    public TextElementAnimator(MonoBehaviour owner, IAnimatedText animatedText, string text, float timeForCharacters)
     {
-        this.bubble = bubble;
+        this.animatedText = animatedText;
         this.text = text;
         this.timeForCharacters = timeForCharacters;
-        this.target = target;
+        this.owner = owner;
     }
 
     private IEnumerator Animate()
@@ -44,18 +40,18 @@ public class DialogTextAnimator : DialogAnimator
         TextMode desiredMode = TextMode.Normal;
         // True if currently reading characters in between <...>
         bool betweenTags = false;
-        for(int i = 1; i <= text.Length; ++i)
+        for (int i = 1; i <= text.Length; ++i)
         {
             char c = text[i - 1];
-            if(c == '<')
+            if (c == '<')
             {
                 betweenTags = true;
                 continue;
             }
-            else if(c == '>')
+            else if (c == '>')
             {
                 betweenTags = false;
-                if(mode != TextMode.Normal)
+                if (mode != TextMode.Normal)
                 {
                     // This is the closing tag, so reset everything.
                     mode = TextMode.Normal;
@@ -69,13 +65,13 @@ public class DialogTextAnimator : DialogAnimator
                     continue;
                 }
             }
-            else if(betweenTags)
+            else if (betweenTags)
             {
-                if(c == 'b')
+                if (c == 'b')
                 {
                     desiredMode = TextMode.Bold;
                 }
-                else if(c == 'i')
+                else if (c == 'i')
                 {
                     desiredMode = TextMode.Italic;
                 }
@@ -84,7 +80,7 @@ public class DialogTextAnimator : DialogAnimator
             }
             else
             {
-                if(mode == TextMode.Normal)
+                if (mode == TextMode.Normal)
                 {
                     displayedText += c;
                 }
@@ -96,27 +92,27 @@ public class DialogTextAnimator : DialogAnimator
 
             // Fill the full text displayed (displayedText + modeText).
             string fullText = displayedText;
-            switch(mode)
+            switch (mode)
             {
                 case TextMode.Bold: fullText += $"<b>{modeText}</b>"; break;
                 case TextMode.Italic: fullText += $"<i>{modeText}</i>"; break;
             }
 
-            bubble.SetText(fullText);
+            animatedText.SetText(fullText);
             yield return new WaitForSeconds(timeForCharacters);
         }
 
-        OnFinished.Invoke(this);
+        onFinished.Invoke(this);
     }
 
     public override void Start()
     {
-        coroutine = target.StartCoroutine(Animate());
+        coroutine = owner.StartCoroutine(Animate());
     }
 
     public override void Finish()
     {
-        target.StopCoroutine(coroutine);
-        bubble.SetText(text);
+        owner.StopCoroutine(coroutine);
+        animatedText.SetText(text);
     }
 }

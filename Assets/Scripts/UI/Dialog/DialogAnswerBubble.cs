@@ -12,7 +12,7 @@ public enum AnswerType
     Items
 }
 
-public class DialogAnswerBubble : MonoBehaviour, IDialogBubble
+public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 {
     public UnityEvent<DialogAnswerBubble> OnSelected = new UnityEvent<DialogAnswerBubble> ();
 

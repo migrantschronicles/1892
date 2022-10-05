@@ -111,7 +111,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private DialogDecision currentDecision;
     private float currentY = 0;
     private List<DialogAnswerBubble> currentAnswers = new List<DialogAnswerBubble>();
-    private List<DialogAnimator> currentAnimators = new List<DialogAnimator>();
+    private List<ElementAnimator> currentAnimators = new List<ElementAnimator>();
     private Dictionary<string, OnConditionsChanged> onConditionsChangedListeners = new Dictionary<string, OnConditionsChanged>();
 
     private void Awake()
@@ -215,7 +215,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
 
     private void ResetState()
     {
-        foreach (DialogAnimator animator in currentAnimators)
+        foreach (ElementAnimator animator in currentAnimators)
         {
             animator.Finish();
         }
@@ -476,17 +476,17 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    private void StartTextAnimation(IDialogBubble bubble, string text)
+    private void StartTextAnimation(IAnimatedText bubble, string text)
     {
-        DialogAnimator animator = new DialogTextAnimator(this, bubble, text, timeForCharacters);
+        ElementAnimator animator = new TextElementAnimator(this, bubble, text, timeForCharacters);
         currentAnimators.Add(animator);
-        animator.OnFinished += OnAnimationFinished;
+        animator.onFinished += OnAnimationFinished;
         animator.Start();
     }
 
-    private void OnAnimationFinished(DialogAnimator animator)
+    private void OnAnimationFinished(ElementAnimator animator)
     {
-        animator.OnFinished -= OnAnimationFinished;
+        animator.onFinished -= OnAnimationFinished;
         currentAnimators.Remove(animator);
         OnCurrentAnimatorsChanged();
     }
@@ -611,7 +611,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     {
         if (currentAnimators.Count != 0)
         {
-            foreach (DialogAnimator animator in currentAnimators)
+            foreach (ElementAnimator animator in currentAnimators)
             {
                 animator.Finish();
             }

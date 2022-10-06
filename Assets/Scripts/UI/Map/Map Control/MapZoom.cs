@@ -30,6 +30,10 @@ public class MapZoom : MonoBehaviour
     private float initialZoomDuration = 3.0f;
     [SerializeField]
     private Button centerButton;
+    [SerializeField]
+    private float level1Breakpoint = 0.5f;
+    [SerializeField]
+    private float level2Breakpoint = 1.5f;
 
     private float zoomLevel = 1.0f;
     private Vector2 originalScale;
@@ -41,6 +45,27 @@ public class MapZoom : MonoBehaviour
 
     public delegate void OnMapZoomChangedEvent(float zoomLevel);
     public event OnMapZoomChangedEvent onMapZoomChangedEvent;
+
+    public float Level1Breakpoint { get { return level1Breakpoint; } }
+    public float Level2Breakpoint { get { return level2Breakpoint; } }
+    public int VisibleLevel
+    {
+        get
+        {
+            if(zoomLevel >= level2Breakpoint)
+            {
+                return 2;
+            }
+            else if(zoomLevel >= Level1Breakpoint)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
 
     public float ZoomLevel
     {
@@ -282,5 +307,17 @@ public class MapZoom : MonoBehaviour
         Vector2 boundedSize = rectTransform.rect.size - normalizedViewportSize;
 
         return (scrollRect.normalizedPosition - new Vector2(0.5f, 0.5f)) * boundedSize;
+    }
+
+    public bool IsVisible(Rect rect)
+    {
+        // The viewport size, in the map content size transform
+        Vector2 normalizedViewportSize = transform.parent.GetComponent<RectTransform>().rect.size / rectTransform.localScale;
+
+        Vector2 center = GetCenter();
+        center += rectTransform.rect.size / 2;
+
+        Rect viewportRect = new Rect(center - normalizedViewportSize / 2, normalizedViewportSize);
+        return viewportRect.Overlaps(rect);
     }
 }

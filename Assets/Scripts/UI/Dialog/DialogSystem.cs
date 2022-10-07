@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -724,6 +725,52 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         else if (currentElement != null)
         {
             ProcessNextElement();
+        }
+    }
+
+    public static void LogValidateError(string message, GameObject go)
+    {
+        Debug.LogError($"({go.name}): {message}");
+    }
+
+    public static void ValidateSetConditions(IEnumerable<SetCondition> setConditions, GameObject go)
+    {
+        foreach(var condition in setConditions)
+        {
+            if(string.IsNullOrWhiteSpace(condition.Condition))
+            {
+                LogValidateError("Trying to set an empty condition", go);
+            }
+        }
+    }
+
+    public static void ValidateChildren(DialogElementType[] allowedTypes, GameObject go, bool requiresChildren = false)
+    {
+        if(requiresChildren && go.transform.childCount == 0)
+        {
+            LogValidateError("The dialog element must have children", go);
+        }
+        else if((allowedTypes == null || allowedTypes.Length == 0) && go.transform.childCount > 0)
+        {
+            LogValidateError("The dialog element may not contain children", go);
+        }
+        else
+        {
+            for (int i = 0; i < go.transform.childCount; ++i)
+            {
+                DialogElement element = go.transform.GetChild(i).GetComponent<DialogElement>();
+                if(element == null)
+                {
+                    LogValidateError($"Only dialog elements are allowed as children, not {go.transform.GetChild(i).name}", go);
+                }
+                else
+                {
+                    if(!allowedTypes.Contains(element.Type))
+                    {
+                        LogValidateError($"The element may not contain a {element.Type} dialog element as a child", go);
+                    }
+                }
+            }
         }
     }
 }

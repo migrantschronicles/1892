@@ -16,4 +16,18 @@ public class Dialog : DialogElement
     {
         Type = DialogElementType.Dialog;
     }
+
+#if UNITY_EDITOR
+    private void Start()
+    {
+        DialogSystem.ValidateSetConditions(SetOnFinishedConditions, gameObject);
+        DialogSystem.ValidateChildren(new DialogElementType[]
+        {
+            DialogElementType.Line,
+            DialogElementType.Selector,
+            DialogElementType.Redirector,
+            DialogElementType.Decision
+        }, gameObject);
+    }
+#endif
 }

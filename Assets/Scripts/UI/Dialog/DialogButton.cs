@@ -20,8 +20,42 @@ public class DialogButton : MonoBehaviour
     public string AdditiveSceneName { get { return additiveSceneName; } }
     public IEnumerable<GameObject> HideObjects { get { return hideObjects; } }
 
+#if UNITY_EDITOR
+    private void Validate()
+    {
+        for (int i = 0; i < transform.childCount; ++i)
+        {
+            Dialog dialog = transform.GetChild(i).GetComponent<Dialog>();
+            if(dialog == null)
+            {
+                DialogSystem.LogValidateError($"A dialog button should only contain Dialog prefabs as children, not {transform.GetChild(i).name}", 
+                    gameObject);
+            }
+        }
+
+        if(!string.IsNullOrWhiteSpace(sceneName))
+        {
+            if(!LevelInstance.Instance.HasScene(sceneName))
+            {
+                DialogSystem.LogValidateError($"The scene '{sceneName}' does not exist", gameObject);
+            }
+        }
+
+        if(!string.IsNullOrWhiteSpace(additiveSceneName))
+        {
+            if(!LevelInstance.Instance.HasScene(additiveSceneName))
+            {
+                DialogSystem.LogValidateError($"The additive scene '{additiveSceneName}' does not exist", gameObject);
+            }
+        }
+    }
+#endif
+
     private void Start()
     {
+#if UNITY_EDITOR
+        Validate();
+#endif
         OnConditionsChanged();
         DialogSystem.Instance.AddOnConditionsChanged(condition.GetAllConditions(), OnConditionsChanged);
         dialogButton.onClick.AddListener(OnStartDialog);

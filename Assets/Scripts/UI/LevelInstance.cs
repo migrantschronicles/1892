@@ -98,6 +98,15 @@ public class LevelInstance : MonoBehaviour
     {
         instance = this;
         previousScene = defaultScene;
+
+        for (int i = 0; i < sceneParent.transform.childCount; ++i)
+        {
+            Scene scene = sceneParent.transform.GetChild(i).GetComponent<Scene>();
+            if (scene != null)
+            {
+                scenes.Add(scene);
+            }
+        }
     }
 
     private void Start()
@@ -106,15 +115,6 @@ public class LevelInstance : MonoBehaviour
         {
             Debug.Log("Default scene is empty in level instance");
             return;
-        }
-
-        for(int i = 0; i < sceneParent.transform.childCount; ++i)
-        {
-            Scene scene = sceneParent.transform.GetChild(i).GetComponent<Scene>();
-            if(scene != null)
-            {
-                scenes.Add(scene);
-            }
         }
 
         backButton.onClick.AddListener(OnBack);
@@ -239,6 +239,16 @@ public class LevelInstance : MonoBehaviour
                 currentHiddenObjects = null;
             }
         }
+    }
+
+    public bool HasScene(string name)
+    {
+        if(string.IsNullOrWhiteSpace(name))
+        {
+            return false;
+        }
+
+        return scenes.Exists(scene => scene.SceneName == name);
     }
 
     public Scene GetScene(string name)

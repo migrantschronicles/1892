@@ -1,10 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEditor.Rendering.FilterWindow;
 
 /**
  * The dialog system that controls the dialogs in one level. 
@@ -66,9 +63,18 @@ using static UnityEditor.Rendering.FilterWindow;
  * A child of a DialogDecision.
  * You can set the text that should be displayed and select which answer type it is. Depending on the answer type the next action will be done automatically
  * (e.g. AnswerType.Items: automatically opens inventory to trade items).
+ * If the answer type is Items or Quest, you need to select the shop that you want to open (should be placed in the Overlays of the LevelInstance).
+ * If autoTriggerAction is enabled, selecting this option will immediately trigger the action (opening the shop / the diary map).
+ * If it is disabled, you need to place a DialogTriggerLastOption when you want to trigger it.
+ * You can use this, if you want to have the shop opened, but you want to have one or more dialog lines first before opening the shop.
+ * The dialog will continue after the back button of the shop / diary was pressed.
  * You can also set the conditions that should be added if this specific option is chosen.
  * You can also add conditions that must be met so that the option is displayed in the first place.
  * This can be useful if you do not have an option anymore because of some action on another level.
+ * 
+ * DIALOG TRIGGER LAST OPTION
+ * Triggers the action of the last decision option that was selected.
+ * Useful if you e.g. want to open the diary map after a Travel option, but want to have a few lines before really opening the map.
  * 
  * DIALOG SELECTOR
  * A selector is a parent for dialog elements that should only be displayed if certain conditions meet.
@@ -93,8 +99,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private GameObject linePrefab;
     [SerializeField]
     private GameObject answerPrefab;
-    [SerializeField]
-    private Button closeButton;
     [SerializeField, Tooltip("The vertical space between each bubble")]
     private float spacing = 30;
     [SerializeField, Tooltip("The time for each character in a text animation")]
@@ -109,6 +113,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private DialogElement currentElement;
     private DialogBubble currentBubble;
     private DialogDecision currentDecision;
+    private DialogDecisionOption lastSelectedOption;
     private float currentY = 0;
     private List<DialogAnswerBubble> currentAnswers = new List<DialogAnswerBubble>();
     private List<ElementAnimator> currentAnimators = new List<ElementAnimator>();
@@ -121,18 +126,12 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         content = scrollView.content.gameObject;
     }
 
-    private void Start()
-    {
-        closeButton?.onClick.AddListener(OnClose);
-    }
-
     private void Activate()
     {
         gameObject.SetActive(true);
-        closeButton?.gameObject.SetActive(true);
     }
 
-    private void OnClose()
+    public void OnClose()
     {
         StopAllCoroutines();
         currentAnimators.Clear();
@@ -226,6 +225,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         currentBubble = null;
         currentDecision = null;
         currentAnswers.Clear();
+        lastSelectedOption = null;
     }
 
     private bool IsLastLine(DialogLine line)
@@ -243,6 +243,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
                     case DialogElementType.Decision:
                     case DialogElementType.Selector:
                     case DialogElementType.Redirector:
+                    case DialogElementType.TriggerLastOption:
                         return false;
                 }
             }
@@ -274,7 +275,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         ProcessElement(currentElement);
     }
 
-    private void ProcessNextElement()
+    private bool ProcessNextElement()
     {
         if(currentElement)
         {
@@ -284,6 +285,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
                 // Process the next sibling element.
                 currentElement = currentElement.transform.parent.GetChild(nextIndex).GetComponent<DialogElement>();
                 ProcessElement(currentElement);
+                return true;
             }
             else
             {
@@ -300,6 +302,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
                         currentElement = parentSelector.transform.parent.GetChild(nextParentIndex).GetComponent<DialogElement>();
                         ProcessElement(currentElement);
                         processed = true;
+                        return true;
                     }
                     else
                     {
@@ -309,6 +312,8 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
                 }
             }
         }
+
+        return false;
     }
 
     private void ProcessElement(DialogElement element)
@@ -336,6 +341,12 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
             case DialogElementType.Selector:
             {
                 ProcessSelector((DialogSelector)element);
+                break;
+            }
+
+            case DialogElementType.TriggerLastOption:
+            {
+                ProcessTriggerLastOption((DialogTriggerLastOption)element);
                 break;
             }
         }
@@ -425,6 +436,53 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
             }
         }
     }
+
+    /**
+     * Opens the shop or diary map for the selected option, if necessary.
+     * @return True if a shop or diary was opened, false if no action was needed.
+     */
+    private bool HandleOption(DialogDecisionOption decisionOption)
+    {
+        switch (decisionOption.AnswerType)
+        {
+            case AnswerType.Quest:
+            case AnswerType.Items:
+            {
+                if (decisionOption.shop)
+                {
+                    LevelInstance.Instance.OpenShop(decisionOption.shop);
+                    return true;
+                }
+                break;
+            }
+
+            case AnswerType.Travel:
+            {
+                LevelInstance.Instance.OpenDiary(DiaryPageType.Map);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void ProcessTriggerLastOption(DialogTriggerLastOption triggerLastOption)
+    {
+        if(!lastSelectedOption)
+        {
+            return;
+        }
+
+        if(!HandleOption(lastSelectedOption))
+        {
+            // The decision option either did not have an answertype selected that needs an action, or has invalid values,
+            // so go ahead to the next element.
+            if(!ProcessNextElement())
+            {
+                OnDialogFinished();
+            }
+        }
+    }
     
     private void OnAnswerSelected(DialogAnswerBubble bubble)
     {
@@ -454,6 +512,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         }
         currentAnswers.Clear();
         currentDecision = null;
+        lastSelectedOption = bubble.Answer;
 
         // Set the y position to the first answer.
         RectTransform bubbleTransform = bubble.GetComponent<RectTransform>();
@@ -465,14 +524,58 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY);
         currentY += spacing;
 
-        // Display the next dialog after the answer (the childs of the answer).
-        if(bubble.Answer.transform.childCount > 0)
+        bool continueDialog = true;
+        // Check if the decision option wants to trigger its action.
+        if(bubble.Answer.autoTriggerAction)
         {
-            EnterElementContainer(bubble.Answer);
+            continueDialog = !HandleOption(bubble.Answer);
+        }
+
+        if(continueDialog)
+        {
+            ContinueAfterLastOption();
+        }
+    }
+
+    /**
+     * Called after the overlay was closed, that was triggered of the selected option.
+     */
+    private void ContinueAfterLastOption()
+    {
+        if(!lastSelectedOption)
+        {
+            return;
+        }
+
+        // Display the next dialog after the answer (the childs of the answer).
+        if (lastSelectedOption.transform.childCount > 0)
+        {
+            EnterElementContainer(lastSelectedOption);
         }
         else
         {
             OnDialogFinished();
+        }
+    }
+
+    /**
+     * Called when the back button was pressed during an overlay (when a shop or diary was opened during dialog).
+     */
+    public void OnOverlayClosed()
+    {
+        if(currentElement.Type == DialogElementType.TriggerLastOption)
+        {
+            // If the overlay was triggered because of TriggerLastOption, process the next element after this.
+            if(!ProcessNextElement())
+            {
+                // There was no next element, so the dialog is finished.
+                OnDialogFinished();
+            }
+        }
+        else
+        {
+            // The overlay was triggered because the decision option had autoTriggerAction selected
+            ContinueAfterLastOption();
         }
     }
 

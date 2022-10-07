@@ -10,6 +10,7 @@ public enum DialogElementType
     Dialog,
     Selector,
     Redirector,
+    TriggerLastOption
 }
 
 public class DialogElement : MonoBehaviour

@@ -13,6 +13,10 @@ public class DialogDecisionOption : DialogElement
     public AnswerType AnswerType;
     [Tooltip("The text to display")]
     public LocalizedString Text;
+    [Tooltip("Trigger the action (e.g. open inventory to trade items) automatically or use DialogTriggerLastOption manually.")]
+    public bool autoTriggerAction = true;
+    [Tooltip("The shop to open for Quest and Items answer types")]
+    public Shop shop;
 
     public DialogDecisionOption()
     {

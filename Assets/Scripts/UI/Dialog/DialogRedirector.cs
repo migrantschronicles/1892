@@ -13,4 +13,16 @@ public class DialogRedirector : DialogElement
     {
         Type = DialogElementType.Redirector;
     }
+
+#if UNITY_EDITOR
+    private void Start()
+    {
+        if(Target == null)
+        {
+            DialogSystem.LogValidateError("Target dialog is not set", gameObject);
+        }
+
+        DialogSystem.ValidateChildren(null, gameObject);
+    }
+#endif
 }

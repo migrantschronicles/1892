@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+enum OverlayMode
+{
+    None,
+    Shop,
+    Diary
+}
+
 /**
  * A prefab to add to each level as the root for every ui element.
  * This is so that new elements like the new game manager can be easily added and existing elements can be easily changed across levels.
@@ -52,6 +59,8 @@ using UnityEngine.UI;
  * To open the shop, you can add a callback to the Button::OnClick:
  * It should call LevelInstance.OpenShop with the shop you want to open as the argument.
  * The level instance takes care of showing / hiding everything.
+ * If this is a shop for the dialog (for a Quest / Items decision option), it should be placed in the Overlays game object.
+ * Otherwise, it can be placed in the scene where it is used.
  */
 public class LevelInstance : MonoBehaviour
 {
@@ -78,6 +87,7 @@ public class LevelInstance : MonoBehaviour
     private Scene currentAdditiveScene = null;
     private IEnumerable<GameObject> currentHiddenObjects;
     private string previousScene;
+    private OverlayMode overlayMode = OverlayMode.None; 
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -88,6 +98,15 @@ public class LevelInstance : MonoBehaviour
     {
         instance = this;
         previousScene = defaultScene;
+
+        for (int i = 0; i < sceneParent.transform.childCount; ++i)
+        {
+            Scene scene = sceneParent.transform.GetChild(i).GetComponent<Scene>();
+            if (scene != null)
+            {
+                scenes.Add(scene);
+            }
+        }
     }
 
     private void Start()
@@ -96,15 +115,6 @@ public class LevelInstance : MonoBehaviour
         {
             Debug.Log("Default scene is empty in level instance");
             return;
-        }
-
-        for(int i = 0; i < sceneParent.transform.childCount; ++i)
-        {
-            Scene scene = sceneParent.transform.GetChild(i).GetComponent<Scene>();
-            if(scene != null)
-            {
-                scenes.Add(scene);
-            }
         }
 
         backButton.onClick.AddListener(OnBack);
@@ -137,44 +147,108 @@ public class LevelInstance : MonoBehaviour
 
     private void OnBack()
     {
-        dialogSystem.gameObject.SetActive(false);
-        backButton.gameObject.SetActive(false);
-        ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-        ui.SetDiaryVisible(false);
-        DisableBlur();
-        
-        if(currentShop)
+        if(overlayMode != OverlayMode.None)
         {
-            currentShop.gameObject.SetActive(false);
-            currentShop = null;
-        }
+            // The back button has been pressed during an overlay (can only happen during a dialog, when a shop or the map is opened),
+            // so return to the dialog system.
 
-        if(currentAdditiveScene)
-        {
-            currentAdditiveScene.OnActiveStatusChanged(false);
-            currentAdditiveScene.gameObject.SetActive(false);
-            currentAdditiveScene = null;
-        }
-
-        if(previousScene != null && currentScene.SceneName != previousScene)
-        {
-            OpenScene(previousScene);
-            previousScene = null;
-        }
-
-        if(currentScene)
-        {
-            currentScene.SetInteractablesVisible(true);
-        }
-
-        if(currentHiddenObjects != null)
-        {
-            foreach(GameObject go in currentHiddenObjects)
+            switch(overlayMode)
             {
-                go.SetActive(true);
+                case OverlayMode.Shop:
+                {
+                    // A shop was open, so deactivate it.
+                    currentShop.gameObject.SetActive(false);
+                    currentShop = null;
+                    break;
+                }
+
+                case OverlayMode.Diary:
+                {
+                    // The map was open, hide it.
+                    ui.SetDiaryVisible(false);
+                    break;
+                }
             }
-            currentHiddenObjects = null;
+
+            // Readd all the necessary elements for the dialog
+
+            if(currentAdditiveScene)
+            {
+                currentAdditiveScene.gameObject.SetActive(true);
+            }
+
+            ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+            SetBlurAfterGameObject(currentScene.gameObject);
+            overlayMode = OverlayMode.None;
+            dialogSystem.gameObject.SetActive(true);
+            dialogSystem.OnOverlayClosed();
         }
+        else
+        {
+            // The back button has been pressed during a dialog, in a shop, in the diary, etc.
+
+            if(dialogSystem.gameObject.activeSelf)
+            {
+                // If the dialog was active, notify it to clear its entries.
+                dialogSystem.OnClose();
+            }
+
+            // Hide everything
+            dialogSystem.gameObject.SetActive(false);
+            backButton.gameObject.SetActive(false);
+            ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
+            ui.SetDiaryVisible(false);
+            DisableBlur();
+
+            if (currentShop)
+            {
+                // Hide the shop
+                currentShop.gameObject.SetActive(false);
+                currentShop = null;
+            }
+
+            if (currentAdditiveScene)
+            {
+
+                // Hide the additive scene that was enabled during a dialog.
+                currentAdditiveScene.OnActiveStatusChanged(false);
+                currentAdditiveScene.gameObject.SetActive(false);
+                currentAdditiveScene = null;
+            }
+
+            if (previousScene != null && currentScene.SceneName != previousScene)
+            {
+                // If the scene switched for a dialog temporarily, return to the previous scene.
+                OpenScene(previousScene);
+                previousScene = null;
+            }
+
+            if (currentScene)
+            {
+                // Enable the buttons again.
+                currentScene.SetInteractablesVisible(true);
+            }
+
+            if (currentHiddenObjects != null)
+            {
+                // Reactivate all the characters that were hidden during the dialog.
+                foreach (GameObject go in currentHiddenObjects)
+                {
+                    go.SetActive(true);
+                }
+                currentHiddenObjects = null;
+            }
+        }
+    }
+
+    public bool HasScene(string name)
+    {
+        if(string.IsNullOrWhiteSpace(name))
+        {
+            return false;
+        }
+
+        return scenes.Exists(scene => scene.SceneName == name);
     }
 
     public Scene GetScene(string name)
@@ -283,6 +357,12 @@ public class LevelInstance : MonoBehaviour
 
     public void OpenShop(Shop shop)
     {
+        if(overlayMode != OverlayMode.None)
+        {
+            Debug.LogError("Only one shop may be opened during a dialog");
+            return;
+        }
+
         if(currentShop)
         {
             currentShop.gameObject.SetActive(false);
@@ -297,6 +377,17 @@ public class LevelInstance : MonoBehaviour
         {
             currentScene.SetInteractablesVisible(false);
             SetBlurInFrontOfGameObject(shop.gameObject);
+        }
+
+        if(dialogSystem.gameObject.activeSelf)
+        {
+            // This is an overlay (a shop was opened during a dialog (the corresponding decision option was selected), so hide the dialog).
+            overlayMode = OverlayMode.Shop;
+            dialogSystem.gameObject.SetActive(false);
+            if(currentAdditiveScene)
+            {
+                currentAdditiveScene.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -320,11 +411,22 @@ public class LevelInstance : MonoBehaviour
         blur.SetActive(false);
     }
 
-    public void OpenDiary()
+    public void OpenDiary(DiaryPageType type = DiaryPageType.Inventory)
     {
         SetBlurAfterGameObject(sceneParent);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-        ui.SetDiaryVisible(true);
+        ui.SetDiaryVisible(true, type);
         backButton.gameObject.SetActive(true);
+
+        if (dialogSystem.gameObject.activeSelf)
+        {
+            // This is an overlay (the travel decision option was selected during a dialog), so hide the dialog system.
+            overlayMode = OverlayMode.Diary;
+            dialogSystem.gameObject.SetActive(false);
+            if (currentAdditiveScene)
+            {
+                currentAdditiveScene.gameObject.SetActive(false);
+            }
+        }
     }
 }

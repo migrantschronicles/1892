@@ -16,4 +16,17 @@ public class DialogLine : DialogElement
     {
         Type = DialogElementType.Line;
     }
+
+#if UNITY_EDITOR
+    private void Start()
+    {
+        if(Text.IsEmpty)
+        {
+            DialogSystem.LogValidateError("Text is empty", gameObject);
+        }
+
+        DialogSystem.ValidateSetConditions(SetConditions, gameObject);
+        DialogSystem.ValidateChildren(null, gameObject);
+    }
+#endif
 }

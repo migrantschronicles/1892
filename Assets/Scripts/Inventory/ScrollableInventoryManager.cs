@@ -16,6 +16,10 @@ public class ScrollableInventoryManager : InventoryManager
     private Color defaultBagButtonColor = Color.white;
     [SerializeField]
     private Color enabledBagButtonColor = Color.white;
+    [SerializeField]
+    private Image bagImage;
+    [SerializeField]
+    private Sprite[] bagImages;
 
     private int currentBagIndex = 0;
 
@@ -67,6 +71,12 @@ public class ScrollableInventoryManager : InventoryManager
         bagDownButton.targetGraphic.color = CanScrollDown ? enabledBagButtonColor : defaultBagButtonColor;
         bagUpButton.enabled = CanScrollUp;
         bagDownButton.enabled = CanScrollDown;
+
+        // Set the background image if necessary.
+        if(bagImages != null && bagImages.Length > 0)
+        {
+            bagImage.sprite = bagImages[currentBagIndex % bagImages.Length];
+        }
 
         // Show all inventory slots of the new Bag
         foreach (InventorySlot slot in slots)

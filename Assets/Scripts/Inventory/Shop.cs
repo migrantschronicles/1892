@@ -37,6 +37,8 @@ public class Shop : MonoBehaviour
         arrowLeft.SetActive(false);
         arrowRight.SetActive(false);
 
+        Luggage.SetBagCount(3);
+
         Basket.ResetItems(ShopItems);
         Luggage.ResetItems(NewGameManager.Instance.inventory.Items);
 

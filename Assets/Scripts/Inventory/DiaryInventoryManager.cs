@@ -94,6 +94,7 @@ public class DiaryInventoryManager : InventoryManager
 
         if(TryRemoveItemAt(selectedSlot.X, selectedSlot.Y))
         {
+            NewGameManager.Instance.inventory.OnItemAmountChanged(selectedSlot.Item, -1);
             if(GetInventorySlotAt(selectedSlot.X, selectedSlot.Y) == selectedSlot)
             {
                 // The item amount was decreased.

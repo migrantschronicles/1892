@@ -17,7 +17,14 @@ public class ShopButton : MonoBehaviour
 
     private void Start()
     {
-        button.onClick.AddListener(OnOpenShop);
+        if(shop)
+        {
+            button.onClick.AddListener(OnOpenShop);
+        }
+        else
+        {
+            Debug.Log($"({name}): Remove the Button::OnClick and add the shop you want to show in the ShopButton script");
+        }
     }
 
     private void OnOpenShop()

@@ -107,6 +107,10 @@ public class LevelInstance : MonoBehaviour
                 scenes.Add(scene);
             }
         }
+
+        // Set the frame rate limit to 30 fps.
+        // This should suffice for mobile, 60 fps should not be needed.
+        Application.targetFrameRate = 30;
     }
 
     private void Start()

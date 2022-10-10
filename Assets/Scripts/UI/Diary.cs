@@ -33,6 +33,10 @@ public class Diary : MonoBehaviour
     private Text currentLocationText;
     [SerializeField]
     private DiaryPages diaryPages;
+    [SerializeField]
+    private Button prevPageButton;
+    [SerializeField]
+    private Button nextPageButton;
 
     private Dictionary<string, LocationMarker> locationMarkers;
 
@@ -108,7 +112,10 @@ public class Diary : MonoBehaviour
     public void OpenDiaryPage()
     {
         CloseAll();
+        prevPageButton.gameObject.SetActive(true);
+        nextPageButton.gameObject.SetActive(true);
         diaryPage.SetActive(true);
+        diaryPages.OnVisiblityChanged(true);
     }
 
     public void OpenHealthPage()
@@ -148,7 +155,9 @@ public class Diary : MonoBehaviour
         mapPage.SetActive(false);
         settingsPage.SetActive(false);
         diaryPage.SetActive(false);
-        diaryPages.StopAnimators();
+        diaryPages.OnVisiblityChanged(false);
+        prevPageButton.gameObject.SetActive(false);
+        nextPageButton.gameObject.SetActive(false);
     }
 
     public void SetVisible(bool visible, DiaryPageType page = DiaryPageType.Inventory)

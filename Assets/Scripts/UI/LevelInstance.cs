@@ -411,7 +411,12 @@ public class LevelInstance : MonoBehaviour
         blur.SetActive(false);
     }
 
-    public void OpenDiary(DiaryPageType type = DiaryPageType.Inventory)
+    public void OpenDiary()
+    {
+        OpenDiary(DiaryPageType.Inventory);
+    }
+
+    public void OpenDiary(DiaryPageType type)
     {
         SetBlurAfterGameObject(sceneParent);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);

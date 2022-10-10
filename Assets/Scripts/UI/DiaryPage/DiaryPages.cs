@@ -38,6 +38,10 @@ public class DiaryPages : MonoBehaviour
     private Button prevPageButton;
     [SerializeField]
     private Button nextPageButton;
+    [SerializeField]
+    private Button contentLeftButton;
+    [SerializeField]
+    private Button contentRightButton;
 
     private List<GameObject> pages = new List<GameObject>();
     private int currentDoublePageIndex = -1;
@@ -58,6 +62,8 @@ public class DiaryPages : MonoBehaviour
     {
         prevPageButton.onClick.AddListener(OpenPrevDoublePage);
         nextPageButton.onClick.AddListener(OpenNextDoublePage);
+        contentLeftButton.onClick.AddListener(StopAnimators);
+        contentRightButton.onClick.AddListener(StopAnimators);
     }
 
     private void Start()
@@ -75,6 +81,24 @@ public class DiaryPages : MonoBehaviour
         {
             NewGameManager.Instance.onDiaryEntryAdded -= AddEntry;
         }
+    }
+
+    public void OnVisiblityChanged(bool visible)
+    {
+        if (visible)
+        {
+            UpdateButtons();
+        }
+        else
+        {
+            StopAnimators();
+        }
+    }
+
+    private void UpdateButtons()
+    {
+        prevPageButton.gameObject.SetActive(currentDoublePageIndex > 0);
+        nextPageButton.gameObject.SetActive(currentDoublePageIndex < DoublePageCount - 1);
     }
 
     public void AddEntry(DiaryEntry entry)
@@ -202,6 +226,7 @@ public class DiaryPages : MonoBehaviour
         CloseCurrentPages();
         currentDoublePageIndex = index;
         SetDoublePageActive(currentDoublePageIndex, true);
+        UpdateButtons();
     }
 
     private void CloseCurrentPages()
@@ -233,11 +258,9 @@ public class DiaryPages : MonoBehaviour
 
     public void OpenPrevDoublePage()
     {
-        if(currentAnimators.Count > 0)
-        {
-            StopAnimators();
-        }
-        else if(currentDoublePageIndex > 0)
+        StopAnimators();
+        
+        if(currentDoublePageIndex > 0)
         {
             OpenDoublePage(currentDoublePageIndex - 1);
         }
@@ -245,11 +268,9 @@ public class DiaryPages : MonoBehaviour
 
     public void OpenNextDoublePage()
     {
-        if(currentAnimators.Count > 0)
-        {
-            StopAnimators();
-        }
-        else if(currentDoublePageIndex < DoublePageCount - 1)
+        StopAnimators();
+
+        if(currentDoublePageIndex < DoublePageCount - 1)
         {
             OpenDoublePage(currentDoublePageIndex + 1);
         }

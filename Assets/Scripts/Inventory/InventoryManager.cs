@@ -68,6 +68,8 @@ public abstract class InventoryManager : MonoBehaviour
      */
     public void ApplyGhostMode()
     {
+        ghostMode = false;
+
         // Actually remove the removed slots before the next step.
         foreach (InventorySlot slot in removedSlots)
         {
@@ -87,8 +89,6 @@ public abstract class InventoryManager : MonoBehaviour
                 OnItemAmountChanged(slot.Item, changedAmount);
             }
         }
-
-        ghostMode = false;
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class InventoryManager : MonoBehaviour
 
     private void OnItemAmountChanged(Item item, int changedAmount)
     {
-        if(!blockBroadcast && onItemAmountChanged != null)
+        if(!blockBroadcast && onItemAmountChanged != null && !ghostMode)
         {
             onItemAmountChanged.Invoke(item, changedAmount);
         }

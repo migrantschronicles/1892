@@ -28,7 +28,7 @@ public abstract class InventoryManager : MonoBehaviour
     protected int bagCount = 0;
     protected List<InventorySlot> slots = new List<InventorySlot>();
     // Removed inventory slots during ghost mode.
-    private List<InventorySlot> removedSlots = new List<InventorySlot>();
+    protected List<InventorySlot> removedSlots = new List<InventorySlot>();
     private bool ghostMode = false;
     private bool blockBroadcast = false;
 

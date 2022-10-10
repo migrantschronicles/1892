@@ -81,7 +81,10 @@ public class ScrollableInventoryManager : InventoryManager
         // Show all inventory slots of the new Bag
         foreach (InventorySlot slot in slots)
         {
-            TryAttachSlot(slot);
+            if(!removedSlots.Contains(slot))
+            {
+                TryAttachSlot(slot);
+            }
         }
     }
 

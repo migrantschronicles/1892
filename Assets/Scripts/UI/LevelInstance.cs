@@ -438,4 +438,9 @@ public class LevelInstance : MonoBehaviour
             }
         }
     }
+
+    public void SetBackButtonVisible(bool visible)
+    {
+        backButton.gameObject.SetActive(visible);
+    }
 }

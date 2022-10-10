@@ -21,8 +21,6 @@ public class Shop : MonoBehaviour
     [SerializeField]
     private Text moneyText;
     [SerializeField]
-    private Button backButton;
-    [SerializeField]
     private Item[] ShopItems;
 
     private bool transferInProgress = false;
@@ -109,7 +107,7 @@ public class Shop : MonoBehaviour
         moneyText.gameObject.SetActive(price != 0);
 
         // Back button
-        backButton?.gameObject.SetActive(transferChanges.Count == 0);
+        LevelInstance.Instance.SetBackButtonVisible(transferChanges.Count == 0);
     }
 
     private int CalculatePrice()

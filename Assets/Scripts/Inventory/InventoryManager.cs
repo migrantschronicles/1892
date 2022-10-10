@@ -406,7 +406,7 @@ public abstract class InventoryManager : MonoBehaviour
         onSlotClicked.Invoke(slot);
     }
 
-    private InventorySlot GetInventorySlotAt(int x, int y)
+    protected InventorySlot GetInventorySlotAt(int x, int y)
     {
         foreach (InventorySlot slot in slots)
         {

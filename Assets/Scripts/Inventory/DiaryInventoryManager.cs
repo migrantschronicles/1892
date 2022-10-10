@@ -20,6 +20,9 @@ public class DiaryInventoryManager : InventoryManager
     protected override void Start()
     {
         base.Start();
+        bag0.onRemoveItem += OnRemoveItem;
+        bag1.onRemoveItem += OnRemoveItem;
+        bag2.onRemoveItem += OnRemoveItem;
         ResetItems(NewGameManager.Instance.inventory.Items);
     }
 
@@ -64,5 +67,43 @@ public class DiaryInventoryManager : InventoryManager
 
         selectedSlot = slot;
         selectedSlot.EnableGhostMode();
+    }
+
+    private void OnRemoveItem(DiaryInventoryContainer container)
+    {
+        if(!selectedSlot)
+        {
+            return;
+        }
+
+        int bagIndex = GetBagIndex(selectedSlot.Y);
+        switch(bagIndex)
+        {
+            case 0:
+                if (container != bag0) return;
+                break;
+
+            case 1:
+                if (container != bag1) return;
+                break;
+
+            case 2:
+                if (container != bag2) return;
+                break;
+        }
+
+        if(TryRemoveItemAt(selectedSlot.X, selectedSlot.Y))
+        {
+            if(GetInventorySlotAt(selectedSlot.X, selectedSlot.Y) == selectedSlot)
+            {
+                // The item amount was decreased.
+                selectedSlot.EnableGhostMode();
+            }
+            else
+            {
+                descriptionText.text = "";
+                selectedSlot = null;
+            }
+        }
     }
 }

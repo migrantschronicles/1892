@@ -54,10 +54,8 @@ enum OverlayMode
  * 
  * ADD A SHOP
  * If you have a shop on a scene, you can add the prefab Shop to the scene it appears on.
- * Set the back button in the Shop script to the back button in the level instance object.
  * You can add a ShopButton prefab to the Interactives game object of the scene it should appear on.
- * To open the shop, you can add a callback to the Button::OnClick:
- * It should call LevelInstance.OpenShop with the shop you want to open as the argument.
+ * To open the shop, you need to select the shop you want to open in the ShopButton script on the ShopButton.
  * The level instance takes care of showing / hiding everything.
  * If this is a shop for the dialog (for a Quest / Items decision option), it should be placed in the Overlays game object.
  * Otherwise, it can be placed in the scene where it is used.

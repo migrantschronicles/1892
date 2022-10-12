@@ -8,42 +8,32 @@ public class MainMenu : MonoBehaviour
     private Animator diaryAnimator;
     [SerializeField]
     private Animator coverAnimator;
+    [SerializeField]
+    private Animator newGamePage0;
 
-    public void ContinueGame()
+    private Animator currentPage;
+
+    public void OpenDiary()
     {
-        OpenDiary();
+        OpenDiary(null);
     }
 
-    public void NewGame()
-    {
-        OpenDiary();
-    }
-
-    public void NewGamePlus()
-    {
-        OpenDiary();
-    }
-
-    public void StartTutorial()
-    {
-        OpenDiary();
-    }
-
-    public void OpenSettings()
-    {
-        OpenDiary();
-    }
-
-    private void OpenDiary()
+    public void OpenDiary(Animator page)
     {
         diaryAnimator.SetBool("Opened", true);
         coverAnimator.SetBool("DiaryOpened", true);
+
+        if(page)
+        {
+            OpenPage(page, true);
+        }
     }
 
     public void CloseDiary()
     {
         diaryAnimator.SetBool("Opened", false);
         coverAnimator.SetBool("DiaryOpened", false);
+        CloseCurrentPage(true);
     }
 
     public void ScrollBackward()
@@ -54,5 +44,34 @@ public class MainMenu : MonoBehaviour
     public void ScrollForward()
     {
         diaryAnimator.SetTrigger("ScrollForward");
+    }
+
+    private void CloseCurrentPage(bool fromRight)
+    {
+        if(currentPage)
+        {
+            currentPage.SetTrigger(fromRight ? "CloseRight" : "CloseLeft");
+            currentPage = null;
+        }
+    }
+
+    private void OpenPage(Animator page, bool fromRight)
+    {
+        currentPage = page;
+        currentPage.SetTrigger(fromRight ? "OpenRight" : "OpenLeft");
+    }
+
+    public void OpenNextPage(Animator nextPage)
+    {
+        CloseCurrentPage(false);
+        OpenPage(nextPage, true);
+        ScrollForward();
+    }
+
+    public void OpenPreviousPage(Animator prevPage)
+    {
+        CloseCurrentPage(true);
+        OpenPage(prevPage, false);
+        ScrollBackward();
     }
 }

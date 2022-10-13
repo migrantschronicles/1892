@@ -14,7 +14,11 @@ public class NewGameManager : MonoBehaviour
     private static bool isInitialized = false;
 
     // Game Stats
-    public float time;
+    public float timeSpeed = 0.1f;
+    public float seconds;
+    public int minutes;
+    public int hour;
+
     public int food;
     public int money;
     public string date;
@@ -88,6 +92,24 @@ public class NewGameManager : MonoBehaviour
         {
             Initialize();
         }
+    }
+
+    void Update() 
+    {
+        seconds += Time.deltaTime * timeSpeed;
+
+        if (seconds >= 60) 
+        {
+            seconds = 0;
+            minutes += 1;
+        }
+
+        if (minutes >= 60) 
+        {
+            hour += 1;
+            minutes = 0;
+        }
+
     }
 
     private void Initialize()
@@ -221,11 +243,12 @@ public class NewGameManager : MonoBehaviour
         onDateChanged?.Invoke(date);
     }
 
-    private void SetTime(float newTime)
+    // I commented this as it gave me errors - L
+    /*private void SetTime(float newTime)
     {
         time = newTime;
         onTimeChanged?.Invoke(time);
-    }
+    }*/
 
     public void GoToLocation(string name, string method, float timeNeeded, int moneyNeeded, int foodNeeded) 
     {
@@ -237,7 +260,7 @@ public class NewGameManager : MonoBehaviour
         // Consuming money and food accordingly
         SetFood(food - foodNeeded);
         SetMoney(money - moneyNeeded);
-        SetTime(time + timeNeeded);
+        //SetTime(time + timeNeeded); // Have to uncomment this later on when time is fixed - L
 
         Debug.Log("Starting to head down to " + name + " by " + method);
         LocationMarker currentLocationObject = CurrentLocationObject;

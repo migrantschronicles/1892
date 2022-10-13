@@ -7,8 +7,6 @@ public class DialogButton : MonoBehaviour
 {
     [SerializeField]
     private Button dialogButton;
-    [SerializeField, Tooltip("The condition under which this dialog button is active")]
-    private DialogCondition condition;
     [SerializeField, Tooltip("The scene to open for this dialog, or leave empty for current scene")]
     private string sceneName;
     [SerializeField, Tooltip("The scene which should be layered on top of the blur (the characters left and right)")]
@@ -56,14 +54,7 @@ public class DialogButton : MonoBehaviour
 #if UNITY_EDITOR
         Validate();
 #endif
-        OnConditionsChanged();
-        DialogSystem.Instance.AddOnConditionsChanged(condition.GetAllConditions(), OnConditionsChanged);
         dialogButton.onClick.AddListener(OnStartDialog);
-    }
-
-    private void OnConditionsChanged()
-    {
-        gameObject.SetActive(condition.Test());
     }
 
     private void OnStartDialog()

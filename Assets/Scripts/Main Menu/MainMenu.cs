@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /**
  * To open the diary, call MainMenu::OpenDiary with the page you want opened as the argument.
@@ -85,5 +86,10 @@ public class MainMenu : MonoBehaviour
         CloseCurrentPage(true);
         OpenPage(prevPage, false);
         ScrollBackward();
+    }
+
+    public void OnStartGame()
+    {
+        SceneManager.LoadScene("Pfaffenthal");
     }
 }

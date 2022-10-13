@@ -26,6 +26,9 @@ enum OverlayMode
  * These should contain all static (non-interactable) elements of the scene.
  * In the Interactives object, you can add all of the buttons for the scene (DialogButton / ShopButton).
  * The Interactives automatically hide when a dialog is started or a shop is opened.
+ * You can add a SceneElementSelector anywhere in Background, Middleground or Foreground.
+ * In the SceneElementSelector, you can set the condition under which the childs of the selector should be visible,
+ * so you can hide elements based on a condition (e.g. some people are only there if the ship is there).
  * 
  * In the LevelInstance object, you can now set the default scene (the main scene).
  * 

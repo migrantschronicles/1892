@@ -19,6 +19,11 @@ public class NewGameManager : MonoBehaviour
     public int minutes;
     public int hour;
 
+    public Transform hourHandle;
+    public Transform minuteHandle;
+    public float minuteOffset = 13.193f;
+    public float hourOffset = 101.601f;
+
     public int food;
     public int money;
     public string date;
@@ -97,6 +102,9 @@ public class NewGameManager : MonoBehaviour
     void Update() 
     {
         seconds += Time.deltaTime * timeSpeed;
+        minuteHandle.rotation = Quaternion.Euler(0, 0, minuteHandle.rotation.z - (minutes * (360/60)) + minuteOffset);
+        hourHandle.rotation = Quaternion.Euler(0, 0, hourHandle.rotation.z - (hour * (360 / 12)) + hourOffset);
+
 
         if (seconds >= 60) 
         {

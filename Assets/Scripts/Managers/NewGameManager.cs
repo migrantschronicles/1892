@@ -287,7 +287,7 @@ public class NewGameManager : MonoBehaviour
         // Initiate loading screen to move to new location
 
         // Update Map UI
-        /*foreach(GameObject currentLine in currentLocationObject.GetComponent<TransportationButtons>().availableRoutes)
+        foreach(GameObject currentLine in currentLocationObject.GetComponent<TransportationButtons>().availableRoutes)
         {
             if (currentLine.GetComponent<Route>().attachedMarker.GetComponent<TransportationButtons>().capital)
                 currentLine.GetComponent<Route>().attachedMarker.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityCapital;
@@ -296,8 +296,10 @@ public class NewGameManager : MonoBehaviour
             currentLine.SetActive(true);
         }
 
-
-        line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;*/ // Loai: Commented update UI so UI always updates after scene load.
+        //if(method == "Ship")
+        //    line.GetComponent<Image>().sprite = line.GetComponent<Route>().waterRoute;
+        //else 
+        line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
 
         // Add all routes to an array to be updated in the next city to be 'traveled'
         if(!visitedLocationsStr.Contains(currentLocation))
@@ -305,17 +307,17 @@ public class NewGameManager : MonoBehaviour
             visitedLocationsStr.Add(currentLocation);
         }
 
-        /*if (currentLocationObject.GetComponent<TransportationButtons>().capital)
+        if (currentLocationObject.GetComponent<TransportationButtons>().capital)
             currentLocationObject.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityCapital;
         else currentLocationObject.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityMarker;
 
-        line.SetActive(true);*/ // Loai: Commented update UI so UI always updates after scene load.
+        line.SetActive(true);
 
         // Set next location variables
         currentLocation = name;
-        /*if (newLocation.GetComponent<TransportationButtons>().capital)
+        if (newLocation.GetComponent<TransportationButtons>().capital)
             newLocation.transform.GetChild(2).GetComponent<Image>().sprite = currentCityCapital;
-        else newLocation.transform.GetChild(2).GetComponent<Image>().sprite = currentCityMarker;*/ // Loai: Commented update UI so UI always updates after scene load.
+        else newLocation.transform.GetChild(2).GetComponent<Image>().sprite = currentCityMarker;
 
         currentLocationObject.GetComponent<TransportationButtons>().DisableTransportationOptions();
 

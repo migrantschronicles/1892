@@ -8,6 +8,8 @@ using System.Linq;
 public class NewGameManager : MonoBehaviour
 {
 
+    public string userName;
+    
     public string currentLocation;
     public List<string> visitedLocationsStr;
 

@@ -5,6 +5,21 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
 
+public enum TransporationMethod
+{
+    Foot,
+    Train,
+    Ship,
+    Carriage
+}
+
+public class Journey
+{
+    public string destination;
+    public TransporationMethod method;
+    public int money;
+}
+
 public class NewGameManager : MonoBehaviour
 {
 

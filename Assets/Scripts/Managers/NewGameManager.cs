@@ -103,6 +103,12 @@ public class NewGameManager : MonoBehaviour
 
     void Update() 
     {
+        if(!minuteHandle || !hourHandle) 
+        {
+            minuteHandle = GameObject.FindGameObjectWithTag("minutesHandle").transform;
+            hourHandle = GameObject.FindGameObjectWithTag("hoursHandle").transform;
+        }
+
         seconds += Time.deltaTime * timeSpeed;
         minuteHandle.rotation = Quaternion.Euler(0, 0, minuteHandle.rotation.z - (minutes * (360/60)) + minuteOffset);
         hourHandle.rotation = Quaternion.Euler(0, 0, hourHandle.rotation.z - (hour * (360 / 12)) + hourOffset);
@@ -224,6 +230,19 @@ public class NewGameManager : MonoBehaviour
         if(marker)
         {
             marker.SetUnlocked();
+
+            // Updating marker UI
+            if (marker.gameObject.GetComponent<TransportationButtons>().capital) marker.gameObject.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityCapital; // Discovered capital
+            else marker.gameObject.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityMarker; // Discovered marker
+            
+            // Updating route UI
+            foreach (GameObject line in CurrentLocationObject.gameObject.GetComponent<TransportationButtons>().availableRoutes)
+            {
+                if(line.name == name) {
+                    line.SetActive(true);
+                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().untraveledRoute;
+                }
+            }
         }
     }
 
@@ -251,6 +270,11 @@ public class NewGameManager : MonoBehaviour
     {
         date = newDate;
         onDateChanged?.Invoke(date);
+    }
+
+    public void NextDay() 
+    {
+        Debug.Log("Go to next day here, via clock");
     }
 
     // I commented this as it gave me errors - L

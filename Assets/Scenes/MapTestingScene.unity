@@ -513,14 +513,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 835083995}
         m_TargetAssemblyTypeName: MapTest, Assembly-CSharp
-        m_MethodName: UnlockAllLocations
-        m_Mode: 1
+        m_MethodName: UnlockLocation
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Belgium
+          m_StringArgument: Brussels
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &775160172
@@ -686,6 +686,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afdaa6f266b120e42865e8ed3eec32a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  userName: 
   currentLocation: Luxembourg
   visitedLocationsStr: []
   timeSpeed: 0.1
@@ -802,7 +803,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Unlock All Locations
+  m_Text: 'Unlock Brussels
 
 '
 --- !u!222 &1800318083

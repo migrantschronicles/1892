@@ -22,11 +22,46 @@ public class Shop : MonoBehaviour
     private Text moneyText;
     [SerializeField]
     private Item[] ShopItems;
+    [SerializeField]
+    private Item shopRequiresItem;
 
     private bool transferInProgress = false;
     /// The changes during a transfer.
     /// Positive values mean from basket to luggage, negative values mean from luggage to basket.
     private Dictionary<Item, int> transferChanges = new Dictionary<Item, int>();
+
+    private bool MeetsRequiredItems
+    {
+        get
+        {
+            if(shopRequiresItem)
+            {
+                if(!Basket.HasItem(shopRequiresItem))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    private bool CanClose
+    {
+        get
+        {
+            return transferChanges.Count == 0 && MeetsRequiredItems;
+        }
+    }
+
+    private bool CanAccept
+    {
+        get
+        {
+            int price = CalculatePrice();
+            return (price < 0 || NewGameManager.Instance.money >= price);
+        }
+    }
 
     private void Start()
     {
@@ -42,6 +77,8 @@ public class Shop : MonoBehaviour
         Luggage.ResetItems(NewGameManager.Instance.inventory.Items);
 
         Luggage.onItemAmountChanged += OnLuggageItemAmountChanged;
+
+        UpdateDynamics();
     }
 
     private void OnBasketItemClicked(InventorySlot slot)
@@ -108,10 +145,10 @@ public class Shop : MonoBehaviour
         moneyText.gameObject.SetActive(price != 0);
 
         // Accept Button
-        AcceptButton.enabled = price < 0 || NewGameManager.Instance.money >= price;
+        AcceptButton.enabled = CanAccept;
 
         // Back button
-        LevelInstance.Instance.SetBackButtonVisible(transferChanges.Count == 0);
+        LevelInstance.Instance.SetBackButtonVisible(CanClose);
     }
 
     private int CalculatePrice()

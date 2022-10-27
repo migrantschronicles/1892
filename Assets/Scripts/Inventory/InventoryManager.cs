@@ -439,4 +439,26 @@ public abstract class InventoryManager : MonoBehaviour
     {
         return y / GridHeight;
     }
+
+    /**
+     * Checks if the inventory manager has an item.
+     * Also includes items added during ghost mode.
+     */
+    public bool HasItem(Item item)
+    {
+        foreach(InventorySlot slot in slots)
+        {
+            if(removedSlots.Contains(slot))
+            {
+                continue;
+            }
+
+            if(slot.Item == item && (slot.Amount > 0 || slot.ChangedAmount > 0))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

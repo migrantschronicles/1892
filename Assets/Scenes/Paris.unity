@@ -132,7 +132,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1011960336168767627, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
       propertyPath: m_Name
-      value: Shop
+      value: MaupassantShop
       objectReference: {fileID: 0}
     - target: {fileID: 1011960336168767627, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
       propertyPath: m_IsActive
@@ -2410,12 +2410,20 @@ PrefabInstance:
       value: 375622439473152
       objectReference: {fileID: 0}
     - target: {fileID: 8720536988842980654, guid: 362309e3c74ad9b4a92152b048b2bd31, type: 3}
+      propertyPath: EnabledCondition.Children.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8720536988842980654, guid: 362309e3c74ad9b4a92152b048b2bd31, type: 3}
       propertyPath: SetConditions.Array.data[0].Condition
       value: cholera_given_food
       objectReference: {fileID: 0}
     - target: {fileID: 8720536988842980654, guid: 362309e3c74ad9b4a92152b048b2bd31, type: 3}
       propertyPath: Text.m_TableReference.m_TableCollectionName
       value: GUID:f50a4810905acaa469e64b66c15b8417
+      objectReference: {fileID: 0}
+    - target: {fileID: 8720536988842980654, guid: 362309e3c74ad9b4a92152b048b2bd31, type: 3}
+      propertyPath: EnabledCondition.Children.Array.data[0].Condition
+      value: food
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 362309e3c74ad9b4a92152b048b2bd31, type: 3}
@@ -4662,6 +4670,14 @@ PrefabInstance:
       propertyPath: backButton
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3088906268953208436, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
+      propertyPath: ShopItems.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3088906268953208436, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
+      propertyPath: ShopItems.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: d0da3f17cbf50b4489fad218310ebd38, type: 2}
     - target: {fileID: 8247026515280812583, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

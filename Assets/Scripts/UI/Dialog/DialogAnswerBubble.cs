@@ -31,6 +31,8 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     [SerializeField]
     private bool isSelected;
     [SerializeField]
+    private bool isEnabled = true;
+    [SerializeField]
     private Color defaultBackgroundColor = Color.white;
     [SerializeField]
     private Color defaultDiamondColor = new Color(0.9215686275f, 0.9215686275f, 0.9215686275f);
@@ -38,6 +40,10 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     private Color selectedBackgroundColor = new Color(0.6f, 0.6509803922f, 0.4627450980f);
     [SerializeField]
     private Color selectedDiamondColor = new Color(0.6745098039f, 0.7137254902f, 0.5647058824f);
+    [SerializeField]
+    private Color disabledBackgroundColor = Color.grey;
+    [SerializeField]
+    private Color disabledDiamondColor = new Color(0.9215686275f, 0.9215686275f, 0.9215686275f) * 0.5f;
     [SerializeField]
     private Sprite talkingIcon;
     [SerializeField]
@@ -79,13 +85,19 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
         UpdateColors();
         UpdatePosition();
         UpdateIcon();
+        UpdateButton();
     }
 #endif
 
+    private void UpdateButton()
+    {
+        button.enabled = isEnabled;
+    }
+
     private void UpdateColors()
     {
-        background.color = isSelected ? selectedBackgroundColor : defaultBackgroundColor;
-        diamond.color = isSelected ? selectedDiamondColor : defaultDiamondColor;
+        background.color = isSelected ? selectedBackgroundColor : (isEnabled ? defaultBackgroundColor : disabledBackgroundColor);
+        diamond.color = isSelected ? selectedDiamondColor : (isEnabled ? defaultDiamondColor : disabledDiamondColor);
     }
 
     private void UpdatePosition()
@@ -116,11 +128,13 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     {
         Answer = answer;
         answerType = answer.AnswerType;
+        isEnabled = answer.EnabledCondition.Test();
         // No need to add callback when the language changed, since the language can't change during a dialog.
         text.text = LocalizationManager.Instance.GetLocalizedString(answer.Text);
         UpdateColors();
         UpdatePosition();
         UpdateIcon();
+        UpdateButton();
     }
 
     public void SetText(string value)
@@ -130,6 +144,6 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 
     public void SetButtonEnabled(bool enabled = true)
     {
-        button.enabled = enabled;
+        button.enabled = isEnabled && enabled;
     }
 }

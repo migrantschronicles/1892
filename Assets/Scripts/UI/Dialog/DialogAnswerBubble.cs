@@ -43,7 +43,7 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     [SerializeField]
     private Color disabledBackgroundColor = Color.grey;
     [SerializeField]
-    private Color disabledDiamondColor = new Color(0.9215686275f, 0.9215686275f, 0.9215686275f) * 0.5f;
+    private Color disabledDiamondColor = new Color(0.4607843138f, 0.4607843138f, 0.4607843138f);
     [SerializeField]
     private Sprite talkingIcon;
     [SerializeField]

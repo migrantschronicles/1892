@@ -26,6 +26,11 @@ public class MainMenu : MonoBehaviour
 
     private Animator currentPage;
 
+    private void Start()
+    {
+        Application.targetFrameRate = 30;
+    }
+
     public void OpenDiary()
     {
         OpenDiary(null);
@@ -86,10 +91,5 @@ public class MainMenu : MonoBehaviour
         CloseCurrentPage(true);
         OpenPage(prevPage, false);
         ScrollBackward();
-    }
-
-    public void OnStartGame()
-    {
-        SceneManager.LoadScene("Pfaffenthal");
     }
 }

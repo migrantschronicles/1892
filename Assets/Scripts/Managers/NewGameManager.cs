@@ -261,7 +261,7 @@ public class NewGameManager : MonoBehaviour
         onFoodChanged?.Invoke(food);
     }
 
-    private void SetMoney(int newMoney)
+    public void SetMoney(int newMoney)
     {
         money = newMoney;
         onMoneyChanged?.Invoke(money);

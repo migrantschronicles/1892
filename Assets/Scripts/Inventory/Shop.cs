@@ -35,6 +35,7 @@ public class Shop : MonoBehaviour
         arrowLeft.SetActive(false);
         arrowRight.SetActive(false);
 
+        Basket.SetBagCount(1);
         Luggage.SetBagCount(3);
 
         Basket.ResetItems(ShopItems);
@@ -106,6 +107,9 @@ public class Shop : MonoBehaviour
         moneyText.text = price.ToString();
         moneyText.gameObject.SetActive(price != 0);
 
+        // Accept Button
+        AcceptButton.enabled = price < 0 || NewGameManager.Instance.money >= price;
+
         // Back button
         LevelInstance.Instance.SetBackButtonVisible(transferChanges.Count == 0);
     }
@@ -128,6 +132,7 @@ public class Shop : MonoBehaviour
             Basket.EnableGhostMode();
             Luggage.EnableGhostMode();
             AcceptButton.gameObject.SetActive(true);
+            AcceptButton.enabled = true;
             CancelButton.gameObject.SetActive(true);
             AcceptButton.onClick.AddListener(AcceptTransfer);
             CancelButton.onClick.AddListener(CancelTransfer);
@@ -147,9 +152,16 @@ public class Shop : MonoBehaviour
 
     private void AcceptTransfer()
     {
+        int price = CalculatePrice();
+        if(price > 0 && price > NewGameManager.Instance.money)
+        {
+            return;
+        }
+
         Basket.ApplyGhostMode();
         Luggage.ApplyGhostMode();
         StopTransfer();
+        NewGameManager.Instance.SetMoney(NewGameManager.Instance.money - price);
     }
 
     private void CancelTransfer()

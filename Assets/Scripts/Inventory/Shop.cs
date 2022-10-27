@@ -24,6 +24,8 @@ public class Shop : MonoBehaviour
     private Item[] ShopItems;
     [SerializeField]
     private Item shopRequiresItem;
+    [SerializeField, Tooltip("True if this is a shop where transfering items does not cost anything (shops during dialogs)")]
+    private bool freeShop;
 
     private bool transferInProgress = false;
     /// The changes during a transfer.
@@ -58,6 +60,11 @@ public class Shop : MonoBehaviour
     {
         get
         {
+            if(freeShop)
+            {
+                return true;
+            }
+
             int price = CalculatePrice();
             return (price < 0 || NewGameManager.Instance.money >= price);
         }
@@ -142,7 +149,7 @@ public class Shop : MonoBehaviour
         // Money
         int price = CalculatePrice();
         moneyText.text = price.ToString();
-        moneyText.gameObject.SetActive(price != 0);
+        moneyText.gameObject.SetActive(price != 0 && !freeShop);
 
         // Accept Button
         AcceptButton.enabled = CanAccept;
@@ -189,16 +196,20 @@ public class Shop : MonoBehaviour
 
     private void AcceptTransfer()
     {
-        int price = CalculatePrice();
-        if(price > 0 && price > NewGameManager.Instance.money)
+        if(!freeShop)
         {
-            return;
+            int price = CalculatePrice();
+            if (price > 0 && price > NewGameManager.Instance.money)
+            {
+                return;
+            }
+
+            NewGameManager.Instance.SetMoney(NewGameManager.Instance.money - price);
         }
 
         Basket.ApplyGhostMode();
         Luggage.ApplyGhostMode();
         StopTransfer();
-        NewGameManager.Instance.SetMoney(NewGameManager.Instance.money - price);
     }
 
     private void CancelTransfer()

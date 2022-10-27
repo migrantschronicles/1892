@@ -72,6 +72,9 @@ using UnityEngine.UI;
  * You can also set the conditions that should be added if this specific option is chosen.
  * You can also add conditions that must be met so that the option is displayed in the first place.
  * This can be useful if you do not have an option anymore because of some action on another level.
+ * You can also add EnabledCondition. This lets you disable an option if a condition is not met.
+ * You can use this e.g. if you want to trade items, but the player does not have a required item.
+ * Then you can add a SetCondition in the item, and enable the option only if the player has the item in the inventory.
  * 
  * DIALOG TRIGGER LAST OPTION
  * Triggers the action of the last decision option that was selected.

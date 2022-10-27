@@ -20,6 +20,7 @@ public class NewGameManager : MonoBehaviour
     public float seconds;
     public int minutes;
     public int hour;
+    public int day = 0;
 
     public Transform hourHandle;
     public Transform minuteHandle;
@@ -111,7 +112,7 @@ public class NewGameManager : MonoBehaviour
 
         seconds += Time.deltaTime * timeSpeed;
         minuteHandle.rotation = Quaternion.Euler(0, 0, minuteHandle.rotation.z - (minutes * (360/60)) + minuteOffset);
-        hourHandle.rotation = Quaternion.Euler(0, 0, hourHandle.rotation.z - (hour * (360 / 12)) + hourOffset);
+        hourHandle.rotation = Quaternion.Euler(0, 0, hourHandle.rotation.z - (hour * (360 / 12) + (minutes*0.5f)) + hourOffset);
 
 
         if (seconds >= 60) 
@@ -149,7 +150,7 @@ public class NewGameManager : MonoBehaviour
         map.DrawCity(CityData.Pfaffenthal);
         Navigate();*/
         // ^^^^^^^^^^^^^^^^^^^ Old Manager code until here ^^^^^^^^^^^^^^^^^^^^
-
+        SetMorningTime();
         InitAfterLoad();
         isInitialized = true;
     }
@@ -275,6 +276,14 @@ public class NewGameManager : MonoBehaviour
     public void NextDay() 
     {
         Debug.Log("Go to next day here, via clock");
+        day += 1;
+        SetMorningTime();
+    }
+
+    public void SetMorningTime() 
+    {
+        hour = 0;
+        minutes = 0;
     }
 
     // I commented this as it gave me errors - L

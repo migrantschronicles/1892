@@ -45,7 +45,10 @@ public class PlayerInventory
             if(newAmount <= 0)
             {
                 items.Remove(item);
-                NewGameManager.Instance.RemoveConditions(item.SetConditions);
+                if (item.SetConditions != null && item.SetConditions.Length > 0)
+                {
+                    NewGameManager.Instance.RemoveConditions(item.SetConditions);
+                }
             }
             else
             {
@@ -56,7 +59,10 @@ public class PlayerInventory
         {
             Debug.Assert(changedAmount > 0);
             items.Add(item, changedAmount);
-            NewGameManager.Instance.AddConditions(item.SetConditions);
+            if(item.SetConditions != null && item.SetConditions.Length > 0)
+            {
+                NewGameManager.Instance.AddConditions(item.SetConditions);
+            }
         }
     }
 }

@@ -354,17 +354,20 @@ public class PDFBuilder
             if(top)
             {
                 pdf.AddPage();
-                pdf.DrawPNG(i == 0 ? "PDF/PDF_Background_3.png" : "PDF/PDF_Background_3.2.png", 0, 0, pdf.PageWidth, pdf.PageHeight);
+                string background = i == journeys.Length - 1 ?
+                    (i == 0 ? "PDF/PDF_Background_3.png" : "PDF/PDF_Background_3.3.png") :
+                    (i == 0 ? "PDF/PDF_Background_3.1.png" : "PDF/PDF_Background_3.2.png");
+                pdf.DrawPNG(background, 0, 0, pdf.PageWidth, pdf.PageHeight);
                 DrawPageNumber(pdf, ++pageNumber);
             }
 
             // City Name
             pdf.FontSize = 15;
             string cityName = $"{i + 1}. {journeys[i].destination}";
-            pdf.DrawText(cityName, 94, top ? 56 : 460);
+            pdf.DrawText(cityName, 94, top ? 49 : 457);
 
             // Screenshot
-            pdf.DrawPNG("Screenshot.png", 94, top ? 82 : 486, 407, 255);
+            pdf.DrawPNG("Screenshot.png", 94, top ? 77 : 485, 407, 255);
 
             // Transport icon
             if(i > 0)
@@ -383,12 +386,21 @@ public class PDFBuilder
 
             // Status
             pdf.FontSize = 10;
+            int row0Y = top ? 347 : 751;
+            int row1Y = top ? 361 : 765;
+            int row2Y = top ? 372 : 776;
             // Ingame time frame.
-            pdf.DrawText("02:03:02", 305, top ? 347 : 751);
+            pdf.DrawText("02:03:02", 187, row0Y);
             // Money
-            pdf.DrawText($"{journeys[i].money} LUF", 305, top ? 361 : 765);
+            pdf.DrawText($"{journeys[i].money} LUF", 187, row1Y);
+            // Names
+            pdf.DrawText("Elis Beffort:", 297, row0Y);
+            pdf.DrawText("Mreis Beffort:", 297, row1Y);
+            pdf.DrawText("Matti Beffort:", 297, row2Y);
             // Health
-            pdf.DrawText("Healthy", 305, top ? 372 : 776);
+            pdf.DrawText("healthy", 392, row0Y);
+            pdf.DrawText("bad mental health", 392, row1Y);
+            pdf.DrawText("malnourished", 392, row2Y);
         }
     }
 

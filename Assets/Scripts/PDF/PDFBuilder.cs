@@ -303,7 +303,7 @@ public class PDFBuilder
         // Overall Playtime
         pdf.DrawText("02h 28m", 305, 392);
         // Character choice
-        pdf.DrawPNG("Screenshot.png", 190, 498, 214, 250);
+        pdf.DrawPNG("PDF/Frame Character.png", 190, 498, 214, 250);
         // Page Number
         DrawPageNumber(pdf, ++pageNumber);
     }
@@ -314,7 +314,7 @@ public class PDFBuilder
         pdf.FontSize = 12;
         pdf.DrawPNG("PDF/PDF_Background_2.png", 0, 0, pdf.PageWidth, pdf.PageHeight);
         // Screenshot
-        pdf.DrawPNG("Screenshot.png", 61, 102, 473, 295);
+        pdf.DrawPNG("PDF/Diary-Book_Route.png", 61, 102, 473, 295);
         // Official documents
         pdf.DrawText("10", 408, 534);
         // Personal items
@@ -340,12 +340,20 @@ public class PDFBuilder
     private void DrawJourneys(IPDFPlatform pdf)
     {
         // Only test data
-        Journey[] journeys = new Journey[] {
-            new Journey { destination = "Luxembourg", method = TransporationMethod.Train, money = 82 },
-            new Journey { destination = "Paris", method = TransporationMethod.Foot, money = 2 },
-            new Journey { destination = "Hamburg", method = TransporationMethod.Ship, money = 112 },
-            new Journey { destination = "Antwerp", method = TransporationMethod.Carriage, money = 10293 },
-            new Journey { destination = "London", method = TransporationMethod.Train, money = 2834 }
+        Journey[] journeys = new Journey[] 
+        {
+            new Journey { destination = "Pfaffenthal", method = TransporationMethod.Foot, money = 28383 },
+            new Journey { destination = "Brussels", method = TransporationMethod.Foot, money = 28383 },
+            new Journey { destination = "Paris", method = TransporationMethod.Carriage, money = 28383},
+            new Journey { destination = "Antwerp", method = TransporationMethod.Train, money = 28383 }
+        };
+
+        string[] diaryEntries = new string[]
+        {
+            "PDF/Element 51.png",
+            "PDF/Element 48.png",
+            "PDF/Element 49.png",
+            "PDF/Element 50.png"
         };
 
         for (int i = 0; i < journeys.Length; ++i)
@@ -367,10 +375,10 @@ public class PDFBuilder
             pdf.DrawText(cityName, 94, top ? 49 : 457);
 
             // Screenshot
-            pdf.DrawPNG("Screenshot.png", 94, top ? 77 : 485, 407, 255);
+            pdf.DrawPNG(diaryEntries[i], 94, top ? 77 : 486, 407, 255);
 
             // Transport icon
-            if(i > 0)
+            if (i > 0)
             {
                 string iconPath = "PDF/Methods/";
                 switch(journeys[i].method)
@@ -387,7 +395,7 @@ public class PDFBuilder
             // Status
             pdf.FontSize = 10;
             int row0Y = top ? 347 : 751;
-            int row1Y = top ? 361 : 765;
+            int row1Y = top ? 360 : 764;
             int row2Y = top ? 372 : 776;
             // Ingame time frame.
             pdf.DrawText("02:03:02", 187, row0Y);

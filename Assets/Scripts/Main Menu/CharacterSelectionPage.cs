@@ -12,13 +12,13 @@ public class CharacterSelectionPage : MonoBehaviour
     [SerializeField]
     private CharacterOption option2;
     [SerializeField]
-    private Button nextButton;
+    private MainMenuButton nextButton;
 
     private CharacterOption selectedOption;
 
     private void Start()
     {
-        nextButton.enabled = false;
+        nextButton.SetEnabled(false);
         option0.onSelected += OnOptionSelected;
         option1.onSelected += OnOptionSelected;
         option2.onSelected += OnOptionSelected;
@@ -38,7 +38,7 @@ public class CharacterSelectionPage : MonoBehaviour
             UnselectAll();
             selectedOption = option;
             selectedOption.SetSelected(true);
-            nextButton.enabled = true;
+            nextButton.SetEnabled(true);
         }
     }
 }

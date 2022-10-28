@@ -7,20 +7,20 @@ using UnityEngine.UI;
 public class WarningPage : MonoBehaviour
 {
     [SerializeField]
-    private Button startGameButton;
+    private MainMenuButton startGameButton;
     [SerializeField]
     private InputField nameField;
 
     private void Start()
     {
-        startGameButton.enabled = false;
+        startGameButton.SetEnabled(false);
         nameField.onValueChanged.AddListener(OnNameChanged);
-        startGameButton.onClick.AddListener(OnStartGame);
+        startGameButton.onClick += OnStartGame;
     }
 
     private void OnNameChanged(string name)
     {
-        startGameButton.enabled = name.Length > 0;
+        startGameButton.SetEnabled(name.Length > 0);
     }
 
     private void OnStartGame()

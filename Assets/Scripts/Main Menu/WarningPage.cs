@@ -27,4 +27,9 @@ public class WarningPage : MonoBehaviour
     {
         SceneManager.LoadScene("Pfaffenthal");
     }
+
+    public void OpenMoreInfo()
+    {
+        Application.OpenURL("https://www.iom.int/sites/g/files/tmzbdl486/files/our_work/DMM/Migration-Health/MP_infosheets/MHPSS-refugees-asylum-seekers-migrants-Europe-Multi-Agency-guidance-note.pdf");
+    }
 }

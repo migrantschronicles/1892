@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using static DialogSystem;
 
 public enum TransporationMethod
 {
@@ -35,6 +36,7 @@ public class NewGameManager : MonoBehaviour
     public float seconds;
     public int minutes;
     public int hour;
+    public int day = 0;
 
     public Transform hourHandle;
     public Transform minuteHandle;
@@ -59,6 +61,9 @@ public class NewGameManager : MonoBehaviour
 
     // Diary entries
     private List<DiaryEntry> diaryEntries = new List<DiaryEntry>();
+
+    // Global conditions
+    private static List<string> globalConditions = new List<string>();
 
     public IEnumerable<DiaryEntry> DiaryEntries { get { return diaryEntries; } }
 
@@ -126,7 +131,7 @@ public class NewGameManager : MonoBehaviour
 
         seconds += Time.deltaTime * timeSpeed;
         minuteHandle.rotation = Quaternion.Euler(0, 0, minuteHandle.rotation.z - (minutes * (360/60)) + minuteOffset);
-        hourHandle.rotation = Quaternion.Euler(0, 0, hourHandle.rotation.z - (hour * (360 / 12)) + hourOffset);
+        hourHandle.rotation = Quaternion.Euler(0, 0, hourHandle.rotation.z - (hour * (360 / 12) + (minutes*0.5f)) + hourOffset);
 
 
         if (seconds >= 60) 
@@ -164,7 +169,7 @@ public class NewGameManager : MonoBehaviour
         map.DrawCity(CityData.Pfaffenthal);
         Navigate();*/
         // ^^^^^^^^^^^^^^^^^^^ Old Manager code until here ^^^^^^^^^^^^^^^^^^^^
-
+        SetMorningTime();
         InitAfterLoad();
         isInitialized = true;
     }
@@ -275,7 +280,7 @@ public class NewGameManager : MonoBehaviour
         onFoodChanged?.Invoke(food);
     }
 
-    private void SetMoney(int newMoney)
+    public void SetMoney(int newMoney)
     {
         money = newMoney;
         onMoneyChanged?.Invoke(money);
@@ -290,6 +295,14 @@ public class NewGameManager : MonoBehaviour
     public void NextDay() 
     {
         Debug.Log("Go to next day here, via clock");
+        day += 1;
+        SetMorningTime();
+    }
+
+    public void SetMorningTime() 
+    {
+        hour = 0;
+        minutes = 0;
     }
 
     // I commented this as it gave me errors - L
@@ -373,5 +386,74 @@ public class NewGameManager : MonoBehaviour
         {
             onDiaryEntryAdded.Invoke(entry);
         }
+    }
+
+
+    /**
+     * Adds a condition to the list.
+     */
+    public bool AddCondition(string condition)
+    {
+        if (string.IsNullOrWhiteSpace(condition))
+        {
+            return false;
+        }
+
+        if (!globalConditions.Contains(condition))
+        {
+            globalConditions.Add(condition);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Adds multiple conditions to the list.
+     */
+    public void AddConditions(IEnumerable<string> conditions)
+    {
+        foreach (string condition in conditions)
+        {
+            AddCondition(condition);
+        }
+    }
+
+    /**
+     * Removes a condition from the local and global list.
+     */
+    public bool RemoveCondition(string condition)
+    {
+        if (string.IsNullOrWhiteSpace(condition))
+        {
+            return false;
+        }
+
+        return globalConditions.Remove(condition);
+    }
+
+    /**
+     * Removes conditions from the local and global list.
+     */
+    public void RemoveConditions(IEnumerable<string> conditions)
+    {
+        foreach (string condition in conditions)
+        {
+            RemoveCondition(condition);
+        }
+    }
+
+    /**
+     * Checks if one condition is met.
+     * If condition is empty, it is considered to be met.
+     */
+    public bool HasCondition(string condition)
+    {
+        if (string.IsNullOrWhiteSpace(condition))
+        {
+            return true;
+        }
+
+        return globalConditions.Contains(condition);
     }
 }

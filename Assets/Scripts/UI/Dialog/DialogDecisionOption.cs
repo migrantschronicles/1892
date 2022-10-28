@@ -7,6 +7,8 @@ public class DialogDecisionOption : DialogElement
 {
     [Tooltip("The condition has to be met so that the answer option is displayed")]
     public DialogCondition Condition;
+    [Tooltip("The condition has to be met so that the answer option is activated, not deactived / disabled")]
+    public DialogCondition EnabledCondition;
     [Tooltip("The condition that will be set if this option is chosen")]
     public SetCondition[] SetConditions;
     [Tooltip("The answer type")]

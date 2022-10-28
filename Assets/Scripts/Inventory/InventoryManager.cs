@@ -72,7 +72,11 @@ public abstract class InventoryManager : MonoBehaviour
         // Actually remove the removed slots before the next step.
         foreach (InventorySlot slot in removedSlots)
         {
-            OnItemAmountChanged(slot.Item, slot.ChangedAmount);
+            if(slot.ChangedAmount != 0)
+            {
+                // If you add an item from the basket to the luggage and remove it from the luggage again in same ghost mode transaction, this can be 0.
+                OnItemAmountChanged(slot.Item, slot.ChangedAmount);
+            }
             slots.Remove(slot);
             DestroySlot(slot);
         }
@@ -121,7 +125,15 @@ public abstract class InventoryManager : MonoBehaviour
         // Readd all slots that were removed during ghost mode.
         foreach (InventorySlot removedSlot in removedSlots)
         {
-            TryAttachSlot(removedSlot);
+            if(removedSlot.Amount > 0)
+            {
+                TryAttachSlot(removedSlot);
+            }
+            else
+            {
+                slots.Remove(removedSlot);
+                DestroySlot(removedSlot);
+            }
         }
         removedSlots.Clear();
 
@@ -426,5 +438,27 @@ public abstract class InventoryManager : MonoBehaviour
     protected int GetBagIndex(int y)
     {
         return y / GridHeight;
+    }
+
+    /**
+     * Checks if the inventory manager has an item.
+     * Also includes items added during ghost mode.
+     */
+    public bool HasItem(Item item)
+    {
+        foreach(InventorySlot slot in slots)
+        {
+            if(removedSlots.Contains(slot))
+            {
+                continue;
+            }
+
+            if(slot.Item == item && (slot.Amount > 0 || slot.ChangedAmount > 0))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

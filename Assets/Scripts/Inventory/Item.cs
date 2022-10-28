@@ -20,6 +20,8 @@ public class Item : ScriptableObject
     public int Volume = 1;
     [Tooltip("The maximum stack count. 1 for not stackable, 0 for infinite stackable.")]
     public int MaxStackCount = 1;
+    [Tooltip("The conditions to add if the item is added to the inventory. Gets removed if the item is removed.")]
+    public string[] SetConditions;
 
     public bool IsStackable
     {

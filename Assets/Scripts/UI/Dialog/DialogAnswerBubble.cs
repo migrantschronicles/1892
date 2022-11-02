@@ -37,13 +37,19 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     [SerializeField]
     private Color defaultDiamondColor = new Color(0.9215686275f, 0.9215686275f, 0.9215686275f);
     [SerializeField]
+    private Color defaultForegroundColor = Color.black;
+    [SerializeField]
     private Color selectedBackgroundColor = new Color(0.6f, 0.6509803922f, 0.4627450980f);
     [SerializeField]
     private Color selectedDiamondColor = new Color(0.6745098039f, 0.7137254902f, 0.5647058824f);
     [SerializeField]
+    private Color selectedForegroundColor = Color.white;
+    [SerializeField]
     private Color disabledBackgroundColor = Color.grey;
     [SerializeField]
     private Color disabledDiamondColor = new Color(0.4607843138f, 0.4607843138f, 0.4607843138f);
+    [SerializeField]
+    private Color disabledForegroundColor = Color.white;
     [SerializeField]
     private Sprite talkingIcon;
     [SerializeField]
@@ -98,6 +104,7 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     {
         background.color = isSelected ? selectedBackgroundColor : (isEnabled ? defaultBackgroundColor : disabledBackgroundColor);
         diamond.color = isSelected ? selectedDiamondColor : (isEnabled ? defaultDiamondColor : disabledDiamondColor);
+        text.color = isSelected ? selectedForegroundColor : (isEnabled ? defaultForegroundColor : disabledForegroundColor);
     }
 
     private void UpdatePosition()

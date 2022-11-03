@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -86,13 +87,13 @@ public class LevelInstance : MonoBehaviour
     private Scene currentAdditiveScene = null;
     private IEnumerable<GameObject> currentHiddenObjects;
     private string previousScene;
-    private OverlayMode overlayMode = OverlayMode.None; 
+    private OverlayMode overlayMode = OverlayMode.None;
+    private bool tookDiaryScreenshot = false;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
 
     public Diary Diary { get { return ui.Diary; } }
-    public bool IsTakingScreenshot { get; private set; }
 
     private void Awake()
     {
@@ -199,8 +200,8 @@ public class LevelInstance : MonoBehaviour
             // Hide everything
             dialogSystem.gameObject.SetActive(false);
             backButton.gameObject.SetActive(false);
-            ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
             ui.SetDiaryVisible(false);
+            ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
             DisableBlur();
 
             if (currentShop)
@@ -441,5 +442,42 @@ public class LevelInstance : MonoBehaviour
     public void SetBackButtonVisible(bool visible)
     {
         backButton.gameObject.SetActive(visible);
+    }
+
+    public void ConditionallyTakeDiaryEntryScreenshot()
+    { 
+        if(tookDiaryScreenshot)
+        {
+            return;
+        }
+
+        bool wasBackButtonVisible = backButton.gameObject.activeSelf;
+        backButton.gameObject.SetActive(false);
+
+        Canvas canvas = GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = Camera.main;
+
+        RenderTexture screenTexture = new RenderTexture(Screen.width, Screen.height, 16);
+        Camera.main.targetTexture = screenTexture;
+        Camera.main.Render();
+
+        Texture2D renderedTexture = new Texture2D(Screen.width, Screen.height);
+        RenderTexture.active = screenTexture;
+        renderedTexture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        RenderTexture.active = null;
+
+        byte[] pngBytes = renderedTexture.EncodeToPNG();
+        string outputPath = Path.Combine(Application.persistentDataPath, $"{NewGameManager.Instance.currentLocation}.png");
+        File.WriteAllBytes(outputPath, pngBytes);
+
+        Camera.main.targetTexture = null;
+        canvas.worldCamera = null;
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+        Debug.Log($"Captured diary screenshot: {outputPath}");
+        backButton.gameObject.SetActive(wasBackButtonVisible);
+
+        tookDiaryScreenshot = true;
     }
 }

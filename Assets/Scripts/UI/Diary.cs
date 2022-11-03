@@ -150,19 +150,23 @@ public class Diary : MonoBehaviour
 
     private void CloseAll()
     {
+        diaryPages.OnVisiblityChanged(false);
+        if (diaryPage.activeSelf)
+        {
+            LevelInstance.Instance.ConditionallyTakeDiaryEntryScreenshot();
+        }
+
         inventoryPage.SetActive(false);
         healthPage.SetActive(false);
         mapPage.SetActive(false);
         settingsPage.SetActive(false);
         diaryPage.SetActive(false);
-        diaryPages.OnVisiblityChanged(false);
         prevPageButton.gameObject.SetActive(false);
         nextPageButton.gameObject.SetActive(false);
     }
 
     public void SetVisible(bool visible, DiaryPageType page = DiaryPageType.Inventory)
     {
-        gameObject.SetActive(visible);
         if(visible)
         {
             mapZoom.ResetInitialZoom();
@@ -170,7 +174,8 @@ public class Diary : MonoBehaviour
         }
         else
         {
-            diaryPages.StopAnimators();
+            diaryPages.StopAnimators(true);
         }
+        gameObject.SetActive(visible);
     }
 }

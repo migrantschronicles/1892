@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -88,8 +86,7 @@ public class LevelInstance : MonoBehaviour
     private Scene currentAdditiveScene = null;
     private IEnumerable<GameObject> currentHiddenObjects;
     private string previousScene;
-    private OverlayMode overlayMode = OverlayMode.None;
-    private List<Action> latentUIActions = new List<Action>();
+    private OverlayMode overlayMode = OverlayMode.None; 
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -444,63 +441,5 @@ public class LevelInstance : MonoBehaviour
     public void SetBackButtonVisible(bool visible)
     {
         backButton.gameObject.SetActive(visible);
-    }
-
-    /**
-     * Executes an action that hides / shows / manipulates ui elements.
-     * If a screenshot is currently made, this is called after the screenshot is done.
-     * Else it is executed right away.
-     */
-    public void ExecuteLatentUIAction(Action action)
-    {
-        if(IsTakingScreenshot)
-        {
-            latentUIActions.Add(action);
-        }
-        else
-        {
-            action();
-        }
-    }
-
-    /**
-     * Called after a screenshot has been taken.
-     */
-    public void OnScreenshotTaken()
-    {
-        foreach(Action action in latentUIActions)
-        {
-            action();
-        }
-        latentUIActions.Clear();
-    }
-
-    public void TakeDiaryEntryScreenshot()
-    {
-        IsTakingScreenshot = true;
-        StartCoroutine(CaptureDiaryEntry());
-    }
-
-    private IEnumerator CaptureDiaryEntry()
-    {
-        // Wait till the last possible moment before screen rendering to hide the UI
-        yield return null;
-
-        bool backButtonVisible = backButton.gameObject.activeSelf;
-        backButton.gameObject.SetActive(false);
-
-        // Wait for screen rendering to complete
-        yield return new WaitForEndOfFrame();
-
-        string path = $"{NewGameManager.Instance.currentLocation}.png";
-#if !(UNITY_ANDROID || UNITY_IOS) || UNITY_EDITOR
-        path = Path.Combine(Application.persistentDataPath, path);
-#endif
-
-        ScreenCapture.CaptureScreenshot(path);
-        Debug.Log($"Captured screenshot at {path}");
-        backButton.gameObject.SetActive(backButtonVisible);
-
-        OnScreenshotTaken();
     }
 }

@@ -46,7 +46,6 @@ public class DiaryPages : MonoBehaviour
     private List<GameObject> pages = new List<GameObject>();
     private int currentDoublePageIndex = -1;
     private List<ElementAnimator> currentAnimators = new List<ElementAnimator>();
-    private DiaryEntry entryToCapture;
 
     /**
      * @return The number of double pages. If the last page ends on the left, it returns the same number as if the last page would end on the right.
@@ -63,8 +62,8 @@ public class DiaryPages : MonoBehaviour
     {
         prevPageButton.onClick.AddListener(OpenPrevDoublePage);
         nextPageButton.onClick.AddListener(OpenNextDoublePage);
-        contentLeftButton.onClick.AddListener(() => StopAnimators(true));
-        contentRightButton.onClick.AddListener(() => StopAnimators(true));
+        contentLeftButton.onClick.AddListener(StopAnimators);
+        contentRightButton.onClick.AddListener(StopAnimators);
     }
 
     private void Start()
@@ -92,7 +91,7 @@ public class DiaryPages : MonoBehaviour
         }
         else
         {
-            StopAnimators(true);
+            StopAnimators();
         }
     }
 
@@ -105,7 +104,6 @@ public class DiaryPages : MonoBehaviour
     public void AddEntry(DiaryEntry entry)
     {
         StopAnimators();
-        entryToCapture = entry;
 
         // Add an empty page if the previous entry ended left, but the new one should also start left.
         bool isRight = allowNewEntriesOnSameDoublePage && !entry.startOnNewDoublePage && pages.Count % 2 != 0;
@@ -260,7 +258,7 @@ public class DiaryPages : MonoBehaviour
 
     public void OpenPrevDoublePage()
     {
-        StopAnimators(true);
+        StopAnimators();
         
         if(currentDoublePageIndex > 0)
         {
@@ -270,7 +268,7 @@ public class DiaryPages : MonoBehaviour
 
     public void OpenNextDoublePage()
     {
-        StopAnimators(true);
+        StopAnimators();
 
         if(currentDoublePageIndex < DoublePageCount - 1)
         {
@@ -278,17 +276,13 @@ public class DiaryPages : MonoBehaviour
         }
     }
 
-    public void StopAnimators(bool takeScreenshot = false)
+    public void StopAnimators()
     {
         foreach(ElementAnimator animator in currentAnimators)
         {
             animator.Finish();
         }
         currentAnimators.Clear();
-        if(takeScreenshot)
-        {
-            ConditionallyCaptureScreen();
-        }
     }
 
     private void OnAnimatorFinished(ElementAnimator animator)
@@ -300,26 +294,11 @@ public class DiaryPages : MonoBehaviour
         {
             StartAnimator(currentAnimators[0]);
         }
-        else
-        {
-            ConditionallyCaptureScreen();
-        }
     }
 
     private void StartAnimator(ElementAnimator animator)
     {
         animator.onFinished += OnAnimatorFinished;
         animator.Start();
-    }
-
-    private void ConditionallyCaptureScreen()
-    {
-        if(!entryToCapture)
-        {
-            return;
-        }
-
-        LevelInstance.Instance.TakeDiaryEntryScreenshot();
-        entryToCapture = null;
     }
 }

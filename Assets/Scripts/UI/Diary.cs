@@ -105,50 +105,35 @@ public class Diary : MonoBehaviour
 
     public void OpenInventoryPage()
     {
-        LevelInstance.Instance.ExecuteLatentUIAction(() =>
-        {
-            CloseAll();
-            inventoryPage.SetActive(true);
-        });
+        CloseAll();
+        inventoryPage.SetActive(true);
     }
 
     public void OpenDiaryPage()
     {
-        LevelInstance.Instance.ExecuteLatentUIAction(() =>
-        {
-            CloseAll();
-            prevPageButton.gameObject.SetActive(true);
-            nextPageButton.gameObject.SetActive(true);
-            diaryPage.SetActive(true);
-            diaryPages.OnVisiblityChanged(true);
-        });
+        CloseAll();
+        prevPageButton.gameObject.SetActive(true);
+        nextPageButton.gameObject.SetActive(true);
+        diaryPage.SetActive(true);
+        diaryPages.OnVisiblityChanged(true);
     }
 
     public void OpenHealthPage()
     {
-        LevelInstance.Instance.ExecuteLatentUIAction(() =>
-        {
-            CloseAll();
-            healthPage.SetActive(true);
-        });
+        CloseAll();
+        healthPage.SetActive(true);
     }
 
     public void OpenSettingsPage()
     {
-        LevelInstance.Instance.ExecuteLatentUIAction(() =>
-        {
-            CloseAll();
-            settingsPage.SetActive(true);
-        });
+        CloseAll();
+        settingsPage.SetActive(true);
     }
 
     public void OpenMapPage()
     {
-        LevelInstance.Instance.ExecuteLatentUIAction(() =>
-        {
-            CloseAll();
-            mapPage.SetActive(true);
-        });
+        CloseAll();
+        mapPage.SetActive(true);
     }
 
     public void OpenPage(DiaryPageType page)

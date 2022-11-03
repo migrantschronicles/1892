@@ -76,8 +76,6 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject blur;
     [SerializeField]
-    private Diary diary;
-    [SerializeField]
     private Interface ui;
     [SerializeField]
     private string defaultScene;
@@ -96,6 +94,7 @@ public class LevelInstance : MonoBehaviour
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
 
+    public Diary Diary { get { return ui.Diary; } }
     public bool IsTakingScreenshot { get; private set; }
 
     private void Awake()
@@ -194,7 +193,6 @@ public class LevelInstance : MonoBehaviour
         else
         {
             // The back button has been pressed during a dialog, in a shop, in the diary, etc.
-
             if(dialogSystem.gameObject.activeSelf)
             {
                 // If the dialog was active, notify it to clear its entries.

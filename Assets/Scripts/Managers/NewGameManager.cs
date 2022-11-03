@@ -79,8 +79,8 @@ public class NewGameManager : MonoBehaviour
     public delegate void OnDateChangedDelegate(string date);
     public event OnDateChangedDelegate onDateChanged;
 
-    public delegate void OnTimeChangedDelegate(float time);
-    public event OnTimeChangedDelegate onTimeChanged;
+    //public delegate void OnTimeChangedDelegate(float time);
+    //public event OnTimeChangedDelegate onTimeChanged;
 
     public LocationMarker CurrentLocationObject
     {

@@ -446,7 +446,7 @@ public class LevelInstance : MonoBehaviour
 
     public void ConditionallyTakeDiaryEntryScreenshot()
     { 
-        if(tookDiaryScreenshot)
+        if(tookDiaryScreenshot || !diaryEntry)
         {
             return;
         }

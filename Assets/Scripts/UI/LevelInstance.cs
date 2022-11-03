@@ -451,7 +451,7 @@ public class LevelInstance : MonoBehaviour
             return;
         }
 
-        Texture2D renderedTexture = TakeScreenshot(408, 255);
+        Texture2D renderedTexture = TakeScreenshot(816, 510);
 
         // Write the texture to the disk
         byte[] pngBytes = renderedTexture.EncodeToPNG();
@@ -471,7 +471,7 @@ public class LevelInstance : MonoBehaviour
     {
         ui.PrepareForMapScreenshot();
 
-        Texture2D renderedTexture = TakeScreenshot(472, 295);
+        Texture2D renderedTexture = TakeScreenshot(944, 590);
 
         Debug.Log($"Captured map screenshot");
         ui.ResetFromScreenshot();

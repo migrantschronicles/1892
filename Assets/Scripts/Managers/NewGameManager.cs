@@ -6,6 +6,21 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 using static DialogSystem;
 
+public enum TransporationMethod
+{
+    Foot,
+    Train,
+    Ship,
+    Carriage
+}
+
+public class Journey
+{
+    public string destination;
+    public TransporationMethod method;
+    public int money;
+}
+
 public class NewGameManager : MonoBehaviour
 {
 
@@ -440,5 +455,11 @@ public class NewGameManager : MonoBehaviour
         }
 
         return globalConditions.Contains(condition);
+    }
+
+    public void GeneratePDF()
+    {
+        PDFBuilder builder = new PDFBuilder();
+        builder.Generate();
     }
 }

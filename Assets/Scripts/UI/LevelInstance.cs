@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -86,7 +87,8 @@ public class LevelInstance : MonoBehaviour
     private Scene currentAdditiveScene = null;
     private IEnumerable<GameObject> currentHiddenObjects;
     private string previousScene;
-    private OverlayMode overlayMode = OverlayMode.None; 
+    private OverlayMode overlayMode = OverlayMode.None;
+    private bool tookDiaryScreenshot = false;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -198,8 +200,8 @@ public class LevelInstance : MonoBehaviour
             // Hide everything
             dialogSystem.gameObject.SetActive(false);
             backButton.gameObject.SetActive(false);
-            ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
             ui.SetDiaryVisible(false);
+            ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
             DisableBlur();
 
             if (currentShop)
@@ -440,5 +442,118 @@ public class LevelInstance : MonoBehaviour
     public void SetBackButtonVisible(bool visible)
     {
         backButton.gameObject.SetActive(visible);
+    }
+
+    public void ConditionallyTakeDiaryEntryScreenshot()
+    { 
+        if(tookDiaryScreenshot || !diaryEntry)
+        {
+            return;
+        }
+
+        Texture2D renderedTexture = TakeScreenshot(816, 510);
+
+        // Write the texture to the disk
+        byte[] pngBytes = renderedTexture.EncodeToPNG();
+        string outputPath = Path.Combine(Application.persistentDataPath, $"{NewGameManager.Instance.currentLocation}.png");
+        File.WriteAllBytes(outputPath, pngBytes);
+
+        Debug.Log($"Captured diary screenshot: {outputPath}");
+
+        tookDiaryScreenshot = true;
+    }
+
+    /**
+     * Takes a screenshot of the map and travel routes.
+     * Should only be called from PDFBuilder, not manually.
+     */
+    public Texture2D TakeMapScreenshot()
+    {
+        ui.PrepareForMapScreenshot();
+
+        Texture2D renderedTexture = TakeScreenshot(944, 590);
+
+        Debug.Log($"Captured map screenshot");
+        ui.ResetFromScreenshot();
+
+        return renderedTexture;
+    }
+
+    private Texture2D TakeScreenshot(int outputWidth, int outputHeight)
+    {
+        // Hide ui elements
+        bool wasBackButtonVisible = backButton.gameObject.activeSelf;
+        backButton.gameObject.SetActive(false);
+
+        // Set the canvas to render the ui as well
+        Canvas canvas = GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = Camera.main;
+
+        // Render the camera view to a new render texture
+        RenderTexture screenTexture = new RenderTexture(Screen.width, Screen.height, 16);
+        Camera.main.targetTexture = screenTexture;
+        Camera.main.Render();
+
+        // Set the output size and adjust the image size that is actually rendered (same aspect ratio of screen).
+        int targetWidth = outputWidth;
+        int targetHeight = outputHeight;
+        float sourceAspect = (float)Screen.width / Screen.height;
+        float outputAspect = outputWidth / outputHeight;
+        if (!Mathf.Approximately(sourceAspect, outputAspect))
+        {
+            if (outputAspect > sourceAspect)
+            {
+                targetWidth = (int)(targetHeight * sourceAspect);
+            }
+            else if (outputAspect < sourceAspect)
+            {
+                targetHeight = (int)(targetWidth / sourceAspect);
+            }
+        }
+
+        // Resize the screen texture to the new target size
+        RenderTexture resizedTexture = new RenderTexture(targetWidth, targetHeight, 16);
+        RenderTexture.active = resizedTexture;
+        Graphics.Blit(screenTexture, resizedTexture);
+
+        // Read the render texture into a texture.
+        Texture2D renderedTexture = new Texture2D(outputWidth, outputHeight);
+        int destX = 0;
+        int destY = 0;
+        if (!Mathf.Approximately(sourceAspect, outputAspect))
+        {
+            // Adjust the x and y position where the pixel data in the texture is written to.
+            if (outputAspect > sourceAspect)
+            {
+                destX = (int)((outputWidth - (outputHeight * sourceAspect)) / 2);
+            }
+            else if (outputAspect < sourceAspect)
+            {
+                destY = (int)((outputHeight - (outputWidth / sourceAspect)) / 2);
+            }
+
+            // Fill the background transparent
+            Color[] renderedTextureColors = renderedTexture.GetPixels();
+            Color backgroundColor = new Color(0, 0, 0, 0);
+            for (int i = 0; i < renderedTextureColors.Length; ++i)
+            {
+                renderedTextureColors[i] = backgroundColor;
+            }
+            renderedTexture.SetPixels(renderedTextureColors);
+        }
+        renderedTexture.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), destX, destY);
+        RenderTexture.active = null;
+
+        // Cleanup
+        Camera.main.targetTexture = null;
+        canvas.worldCamera = null;
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        screenTexture.Release();
+
+        // Show ui elements again
+        backButton.gameObject.SetActive(wasBackButtonVisible);
+
+        return renderedTexture;
     }
 }

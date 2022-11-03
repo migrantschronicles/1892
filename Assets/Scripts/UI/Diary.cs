@@ -39,6 +39,7 @@ public class Diary : MonoBehaviour
     private Button nextPageButton;
 
     private Dictionary<string, LocationMarker> locationMarkers;
+    private DiaryPageType openPage;
 
     public Dictionary<string, LocationMarker> LocationMarkers
     {
@@ -88,6 +89,11 @@ public class Diary : MonoBehaviour
     private void Start()
     {
         currentLocationText.text = NewGameManager.Instance.currentLocation;
+        openPage = inventoryPage.activeSelf ? DiaryPageType.Inventory :
+            (healthPage.activeSelf ? DiaryPageType.Health :
+            (diaryPage.activeSelf ? DiaryPageType.Diary :
+            (mapPage.activeSelf ? DiaryPageType.Map :
+            DiaryPageType.Settings)));
     }
 
     private void GatherLocationMarkers()
@@ -107,6 +113,7 @@ public class Diary : MonoBehaviour
     {
         CloseAll();
         inventoryPage.SetActive(true);
+        openPage = DiaryPageType.Inventory;
     }
 
     public void OpenDiaryPage()
@@ -116,24 +123,28 @@ public class Diary : MonoBehaviour
         nextPageButton.gameObject.SetActive(true);
         diaryPage.SetActive(true);
         diaryPages.OnVisiblityChanged(true);
+        openPage = DiaryPageType.Diary;
     }
 
     public void OpenHealthPage()
     {
         CloseAll();
         healthPage.SetActive(true);
+        openPage = DiaryPageType.Health;
     }
 
     public void OpenSettingsPage()
     {
         CloseAll();
         settingsPage.SetActive(true);
+        openPage = DiaryPageType.Settings;
     }
 
     public void OpenMapPage()
     {
         CloseAll();
         mapPage.SetActive(true);
+        openPage = DiaryPageType.Map;
     }
 
     public void OpenPage(DiaryPageType page)
@@ -150,19 +161,23 @@ public class Diary : MonoBehaviour
 
     private void CloseAll()
     {
+        diaryPages.OnVisiblityChanged(false);
+        if (diaryPage.activeSelf)
+        {
+            LevelInstance.Instance.ConditionallyTakeDiaryEntryScreenshot();
+        }
+
         inventoryPage.SetActive(false);
         healthPage.SetActive(false);
         mapPage.SetActive(false);
         settingsPage.SetActive(false);
         diaryPage.SetActive(false);
-        diaryPages.OnVisiblityChanged(false);
         prevPageButton.gameObject.SetActive(false);
         nextPageButton.gameObject.SetActive(false);
     }
 
     public void SetVisible(bool visible, DiaryPageType page = DiaryPageType.Inventory)
     {
-        gameObject.SetActive(visible);
         if(visible)
         {
             mapZoom.ResetInitialZoom();
@@ -170,7 +185,33 @@ public class Diary : MonoBehaviour
         }
         else
         {
-            diaryPages.StopAnimators();
+            diaryPages.StopAnimators(true);
         }
+        gameObject.SetActive(visible);
+    }
+
+    public void PrepareForMapScreenshot()
+    {
+        inventoryPage.SetActive(false);
+        healthPage.SetActive(false);
+        diaryPage.SetActive(false);
+        settingsPage.SetActive(false);
+        mapPage.SetActive(true);
+        mapZoom.PrepareForMapScreenshot();
+    }
+
+    public void ResetFromMapScreenshot()
+    {
+        mapZoom.ResetFromMapScreenshot();
+        inventoryPage.SetActive(openPage == DiaryPageType.Inventory);
+        healthPage.SetActive(openPage == DiaryPageType.Health);
+        diaryPage.SetActive(openPage == DiaryPageType.Diary);
+        mapPage.SetActive(openPage == DiaryPageType.Map);
+        settingsPage.SetActive(openPage == DiaryPageType.Settings);
+    }
+
+    public void GeneratePDF()
+    {
+        NewGameManager.Instance.GeneratePDF();
     }
 }

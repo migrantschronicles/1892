@@ -38,6 +38,8 @@ public class Interface : MonoBehaviour
     [SerializeField]
     private Diary diary;
 
+    public Diary Diary { get { return diary; } }
+
     private void Start()
     {
         NewGameManager.Instance.onDateChanged += OnDateChanged;

@@ -413,8 +413,15 @@ public class PDFBuilder
 
             // Screenshot
             string screenshotPath = Path.Combine(Application.persistentDataPath, $"{journeys[i].destination}.png");
-            string path = File.Exists(screenshotPath) ? screenshotPath : diaryEntries[i];
-            pdf.DrawPNG(path, 94, top ? 77 : 486, 408, 255);
+            RectInt screenshotRect = new RectInt(94, top ? 77 : 486, 408, 255);
+            if(File.Exists(screenshotPath))
+            {
+                pdf.DrawPNG(File.ReadAllBytes(screenshotPath), screenshotRect.x, screenshotRect.y, screenshotRect.width, screenshotRect.height);
+            }
+            else
+            {
+                pdf.DrawPNG(diaryEntries[i], screenshotRect.x, screenshotRect.y, screenshotRect.width, screenshotRect.height);
+            }
 
             // Transport icon
             if (i > 0)

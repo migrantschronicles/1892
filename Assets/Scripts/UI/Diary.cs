@@ -113,6 +113,7 @@ public class Diary : MonoBehaviour
     {
         CloseAll();
         inventoryPage.SetActive(true);
+        openPage = DiaryPageType.Inventory;
     }
 
     public void OpenDiaryPage()
@@ -122,24 +123,28 @@ public class Diary : MonoBehaviour
         nextPageButton.gameObject.SetActive(true);
         diaryPage.SetActive(true);
         diaryPages.OnVisiblityChanged(true);
+        openPage = DiaryPageType.Diary;
     }
 
     public void OpenHealthPage()
     {
         CloseAll();
         healthPage.SetActive(true);
+        openPage = DiaryPageType.Health;
     }
 
     public void OpenSettingsPage()
     {
         CloseAll();
         settingsPage.SetActive(true);
+        openPage = DiaryPageType.Settings;
     }
 
     public void OpenMapPage()
     {
         CloseAll();
         mapPage.SetActive(true);
+        openPage = DiaryPageType.Map;
     }
 
     public void OpenPage(DiaryPageType page)
@@ -152,8 +157,6 @@ public class Diary : MonoBehaviour
             case DiaryPageType.Diary: OpenDiaryPage(); break;
             case DiaryPageType.Settings: OpenSettingsPage(); break;
         }
-
-        openPage = page;
     }
 
     private void CloseAll()

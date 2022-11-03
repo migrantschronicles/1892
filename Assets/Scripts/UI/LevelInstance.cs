@@ -454,26 +454,78 @@ public class LevelInstance : MonoBehaviour
         bool wasBackButtonVisible = backButton.gameObject.activeSelf;
         backButton.gameObject.SetActive(false);
 
+        // Set the canvas to render the ui as well
         Canvas canvas = GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceCamera;
         canvas.worldCamera = Camera.main;
 
+        // Render the camera view to a new render texture
         RenderTexture screenTexture = new RenderTexture(Screen.width, Screen.height, 16);
         Camera.main.targetTexture = screenTexture;
         Camera.main.Render();
 
-        Texture2D renderedTexture = new Texture2D(Screen.width, Screen.height);
-        RenderTexture.active = screenTexture;
-        renderedTexture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        // Set the output size and adjust the image size that is actually rendered (same aspect ratio of screen).
+        int outputWidth = 408;
+        int outputHeight = 255;
+        int targetWidth = outputWidth;
+        int targetHeight = outputHeight;
+        float sourceAspect = (float)Screen.width / Screen.height;
+        float outputAspect = outputWidth / outputHeight;
+        if (!Mathf.Approximately(sourceAspect, outputAspect))
+        {
+            if(outputAspect > sourceAspect)
+            {
+                targetWidth = (int)(targetHeight * sourceAspect);
+            }
+            else if(outputAspect < sourceAspect)
+            {
+                targetHeight = (int)(targetWidth / sourceAspect);
+            }
+        }
+
+        // Resize the screen texture to the new target size
+        RenderTexture resizedTexture = new RenderTexture(targetWidth, targetHeight, 16);
+        RenderTexture.active = resizedTexture;
+        Graphics.Blit(screenTexture, resizedTexture);
+
+        // Read the render texture into a texture.
+        Texture2D renderedTexture = new Texture2D(outputWidth, outputHeight);
+        int destX = 0;
+        int destY = 0;
+        if(!Mathf.Approximately(sourceAspect, outputAspect))
+        {
+            // Adjust the x and y position where the pixel data in the texture is written to.
+            if(outputAspect > sourceAspect)
+            {
+                destX = (int)((outputWidth - (outputHeight * sourceAspect)) / 2);
+            }
+            else if(outputAspect < sourceAspect)
+            {
+                destY = (int)((outputHeight - (outputWidth / sourceAspect)) / 2);
+            }
+
+            // Fill the background transparent
+            Color[] renderedTextureColors = renderedTexture.GetPixels();
+            Color backgroundColor = new Color(0, 0, 0, 0);
+            for (int i = 0; i < renderedTextureColors.Length; ++i)
+            {
+                renderedTextureColors[i] = backgroundColor;
+            }
+            renderedTexture.SetPixels(renderedTextureColors);
+        }
+        renderedTexture.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), destX, destY);
         RenderTexture.active = null;
 
+        // Write the texture to the disk
         byte[] pngBytes = renderedTexture.EncodeToPNG();
         string outputPath = Path.Combine(Application.persistentDataPath, $"{NewGameManager.Instance.currentLocation}.png");
         File.WriteAllBytes(outputPath, pngBytes);
 
+        // Cleanup
         Camera.main.targetTexture = null;
         canvas.worldCamera = null;
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        screenTexture.Release();
 
         Debug.Log($"Captured diary screenshot: {outputPath}");
         backButton.gameObject.SetActive(wasBackButtonVisible);

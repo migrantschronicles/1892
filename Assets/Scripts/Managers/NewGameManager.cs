@@ -456,4 +456,10 @@ public class NewGameManager : MonoBehaviour
 
         return globalConditions.Contains(condition);
     }
+
+    public void GeneratePDF()
+    {
+        PDFBuilder builder = new PDFBuilder();
+        builder.Generate();
+    }
 }

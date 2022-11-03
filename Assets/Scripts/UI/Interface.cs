@@ -96,4 +96,14 @@ public class Interface : MonoBehaviour
     {
         diary.SetVisible(visible, type);
     }
+
+    public void PrepareForMapScreenshot()
+    {
+        diary.PrepareForMapScreenshot();
+    }
+
+    public void ResetFromScreenshot()
+    {
+        diary.ResetFromMapScreenshot();
+    }
 }

@@ -44,6 +44,15 @@ interface IPDFPlatform
      */
     void DrawPNG(string relativePath, int x, int y, int width, int height);
     /**
+     * Draws an image.
+     * @param pngBytes The bytes of the image, png encoded.
+     * @param x The x coordinate (left to right).
+     * @param y The y coordinate (top to bottom).
+     * @param width The width.
+     * @param height The height.
+     */
+    void DrawPNG(byte[] pngBytes, int x, int y, int width, int height);
+    /**
      * Saves the document.
      */
     void Close();
@@ -68,6 +77,7 @@ class WinPDFPlatform : IPDFPlatform
     class DrawImageData
     {
         public string relativePath;
+        public byte[] pngBytes;
         public int x;
         public int y;
         public int width;
@@ -110,6 +120,12 @@ class WinPDFPlatform : IPDFPlatform
         drawImages[pageIndex].Add(data);
     }
 
+    public void DrawPNG(byte[] pngBytes, int x, int y, int width, int height)
+    {
+        DrawImageData data = new DrawImageData { pngBytes = pngBytes, x = x, y = y, width = width, height = height };
+        drawImages[pageIndex].Add(data);
+    }
+
     public void Close()
     {
         sharpPdfDocument.createPDF(outputPath);
@@ -127,7 +143,15 @@ class WinPDFPlatform : IPDFPlatform
             List<DrawImageData> images = drawImages[i];
             foreach(DrawImageData data in images)
             {
-                XImage img = XImage.FromFile(Path.Combine(Application.streamingAssetsPath, data.relativePath));
+                XImage img;
+                if(data.pngBytes != null)
+                {
+                    img = XImage.FromStream(new MemoryStream(data.pngBytes));
+                }
+                else
+                {
+                    img = XImage.FromFile(Path.Combine(Application.streamingAssetsPath, data.relativePath));
+                }
                 gfx.DrawImage(img, data.x, data.y, data.width, data.height);
             }
         }
@@ -190,12 +214,17 @@ class MobilePDFPlatform : IPDFPlatform
 
         if(loadingRequest.result == UnityWebRequest.Result.Success)
         {
-            pdf.DrawImage(loadingRequest.downloadHandler.data, loadingRequest.downloadHandler.data.Length, x, y, width, height);
+            DrawPNG(loadingRequest.downloadHandler.data, x, y, width, height);
         }
         else
         {
             Debug.Log("Failed to load image " + fullPath);
         }
+    }
+
+    public void DrawPNG(byte[] pngBytes, int x, int y, int width, int height)
+    {
+        pdf.DrawImage(pngBytes, pngBytes.Length, x, y, width, height);
     }
 
     public void DrawText(string text, int x, int y)
@@ -308,13 +337,21 @@ public class PDFBuilder
         DrawPageNumber(pdf, ++pageNumber);
     }
 
-    private void DrawJourneyPage(IPDFPlatform pdf)
+    private void DrawJourneyPage(IPDFPlatform pdf, Texture2D mapScreenshot)
     {
         pdf.AddPage();
         pdf.FontSize = 12;
         pdf.DrawPNG("PDF/PDF_Background_2.png", 0, 0, pdf.PageWidth, pdf.PageHeight);
         // Screenshot
-        pdf.DrawPNG("PDF/Diary-Book_Route.png", 61, 102, 473, 295);
+        RectInt screenshotRect = new RectInt(61, 102, 472, 295);
+        if(mapScreenshot != null)
+        {
+            pdf.DrawPNG(mapScreenshot.EncodeToPNG(), screenshotRect.x, screenshotRect.y, screenshotRect.width, screenshotRect.height);
+        }
+        else
+        {
+            pdf.DrawPNG("PDF/Diary-Book_Route.png", screenshotRect.x, screenshotRect.y, screenshotRect.width, screenshotRect.height);
+        }
         // Official documents
         pdf.DrawText("10", 408, 534);
         // Personal items
@@ -375,7 +412,9 @@ public class PDFBuilder
             pdf.DrawText(cityName, 94, top ? 49 : 457);
 
             // Screenshot
-            pdf.DrawPNG(diaryEntries[i], 94, top ? 77 : 486, 407, 255);
+            string screenshotPath = Path.Combine(Application.persistentDataPath, $"{journeys[i].destination}.png");
+            string path = File.Exists(screenshotPath) ? screenshotPath : diaryEntries[i];
+            pdf.DrawPNG(path, 94, top ? 77 : 486, 408, 255);
 
             // Transport icon
             if (i > 0)
@@ -424,11 +463,14 @@ public class PDFBuilder
         //pdf.LoadFont("AlegreyaSans-Regular.ttf");
         //pdf.SetFont("AlegreyaSans-Regular.ttf");
 
+        // Generate the map screenshot
+        Texture2D mapScreenshot = LevelInstance.Instance?.TakeMapScreenshot();
+
         // TITLE PAGE
         DrawTitlePage(pdf);
 
         // JOURNEY
-        DrawJourneyPage(pdf);
+        DrawJourneyPage(pdf, mapScreenshot);
 
         // JOURNEYS
         DrawJourneys(pdf);

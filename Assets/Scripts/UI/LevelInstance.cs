@@ -451,6 +451,37 @@ public class LevelInstance : MonoBehaviour
             return;
         }
 
+        Texture2D renderedTexture = TakeScreenshot(408, 255);
+
+        // Write the texture to the disk
+        byte[] pngBytes = renderedTexture.EncodeToPNG();
+        string outputPath = Path.Combine(Application.persistentDataPath, $"{NewGameManager.Instance.currentLocation}.png");
+        File.WriteAllBytes(outputPath, pngBytes);
+
+        Debug.Log($"Captured diary screenshot: {outputPath}");
+
+        tookDiaryScreenshot = true;
+    }
+
+    /**
+     * Takes a screenshot of the map and travel routes.
+     * Should only be called from PDFBuilder, not manually.
+     */
+    public Texture2D TakeMapScreenshot()
+    {
+        ui.PrepareForMapScreenshot();
+
+        Texture2D renderedTexture = TakeScreenshot(472, 295);
+
+        Debug.Log($"Captured map screenshot");
+        ui.ResetFromScreenshot();
+
+        return renderedTexture;
+    }
+
+    private Texture2D TakeScreenshot(int outputWidth, int outputHeight)
+    {
+        // Hide ui elements
         bool wasBackButtonVisible = backButton.gameObject.activeSelf;
         backButton.gameObject.SetActive(false);
 
@@ -465,19 +496,17 @@ public class LevelInstance : MonoBehaviour
         Camera.main.Render();
 
         // Set the output size and adjust the image size that is actually rendered (same aspect ratio of screen).
-        int outputWidth = 408;
-        int outputHeight = 255;
         int targetWidth = outputWidth;
         int targetHeight = outputHeight;
         float sourceAspect = (float)Screen.width / Screen.height;
         float outputAspect = outputWidth / outputHeight;
         if (!Mathf.Approximately(sourceAspect, outputAspect))
         {
-            if(outputAspect > sourceAspect)
+            if (outputAspect > sourceAspect)
             {
                 targetWidth = (int)(targetHeight * sourceAspect);
             }
-            else if(outputAspect < sourceAspect)
+            else if (outputAspect < sourceAspect)
             {
                 targetHeight = (int)(targetWidth / sourceAspect);
             }
@@ -492,14 +521,14 @@ public class LevelInstance : MonoBehaviour
         Texture2D renderedTexture = new Texture2D(outputWidth, outputHeight);
         int destX = 0;
         int destY = 0;
-        if(!Mathf.Approximately(sourceAspect, outputAspect))
+        if (!Mathf.Approximately(sourceAspect, outputAspect))
         {
             // Adjust the x and y position where the pixel data in the texture is written to.
-            if(outputAspect > sourceAspect)
+            if (outputAspect > sourceAspect)
             {
                 destX = (int)((outputWidth - (outputHeight * sourceAspect)) / 2);
             }
-            else if(outputAspect < sourceAspect)
+            else if (outputAspect < sourceAspect)
             {
                 destY = (int)((outputHeight - (outputWidth / sourceAspect)) / 2);
             }
@@ -516,20 +545,15 @@ public class LevelInstance : MonoBehaviour
         renderedTexture.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), destX, destY);
         RenderTexture.active = null;
 
-        // Write the texture to the disk
-        byte[] pngBytes = renderedTexture.EncodeToPNG();
-        string outputPath = Path.Combine(Application.persistentDataPath, $"{NewGameManager.Instance.currentLocation}.png");
-        File.WriteAllBytes(outputPath, pngBytes);
-
         // Cleanup
         Camera.main.targetTexture = null;
         canvas.worldCamera = null;
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         screenTexture.Release();
 
-        Debug.Log($"Captured diary screenshot: {outputPath}");
+        // Show ui elements again
         backButton.gameObject.SetActive(wasBackButtonVisible);
 
-        tookDiaryScreenshot = true;
+        return renderedTexture;
     }
 }

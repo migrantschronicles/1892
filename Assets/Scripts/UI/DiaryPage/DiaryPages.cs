@@ -42,6 +42,10 @@ public class DiaryPages : MonoBehaviour
     private Button contentLeftButton;
     [SerializeField]
     private Button contentRightButton;
+    [SerializeField]
+    private AudioClip nextPageClip;
+    [SerializeField]
+    private AudioClip prevPageClip;
 
     private List<GameObject> pages = new List<GameObject>();
     private int currentDoublePageIndex = -1;
@@ -263,6 +267,7 @@ public class DiaryPages : MonoBehaviour
         if(currentDoublePageIndex > 0)
         {
             OpenDoublePage(currentDoublePageIndex - 1);
+            AudioManager.Instance.PlayFX(prevPageClip);
         }
     }
 
@@ -273,6 +278,7 @@ public class DiaryPages : MonoBehaviour
         if(currentDoublePageIndex < DoublePageCount - 1)
         {
             OpenDoublePage(currentDoublePageIndex + 1);
+            AudioManager.Instance.PlayFX(nextPageClip);
         }
     }
 

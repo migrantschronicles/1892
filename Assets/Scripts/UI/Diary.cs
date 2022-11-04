@@ -40,6 +40,7 @@ public class Diary : MonoBehaviour
 
     public AudioClip openClip;
     public AudioClip closeClip;
+    public AudioClip pageClip;
 
     private Dictionary<string, LocationMarker> locationMarkers;
     private DiaryPageType openPage;
@@ -117,6 +118,7 @@ public class Diary : MonoBehaviour
         CloseAll();
         inventoryPage.SetActive(true);
         openPage = DiaryPageType.Inventory;
+        AudioManager.Instance.PlayFX(pageClip);
     }
 
     public void OpenDiaryPage()
@@ -127,6 +129,7 @@ public class Diary : MonoBehaviour
         diaryPage.SetActive(true);
         diaryPages.OnVisiblityChanged(true);
         openPage = DiaryPageType.Diary;
+        AudioManager.Instance.PlayFX(pageClip);
     }
 
     public void OpenHealthPage()
@@ -134,6 +137,7 @@ public class Diary : MonoBehaviour
         CloseAll();
         healthPage.SetActive(true);
         openPage = DiaryPageType.Health;
+        AudioManager.Instance.PlayFX(pageClip);
     }
 
     public void OpenSettingsPage()
@@ -141,6 +145,7 @@ public class Diary : MonoBehaviour
         CloseAll();
         settingsPage.SetActive(true);
         openPage = DiaryPageType.Settings;
+        AudioManager.Instance.PlayFX(pageClip);
     }
 
     public void OpenMapPage()
@@ -148,6 +153,7 @@ public class Diary : MonoBehaviour
         CloseAll();
         mapPage.SetActive(true);
         openPage = DiaryPageType.Map;
+        AudioManager.Instance.PlayFX(pageClip);
     }
 
     public void OpenPage(DiaryPageType page)

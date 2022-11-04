@@ -25,8 +25,13 @@ public class AudioManager : MonoBehaviour
         Instance = this;
     }
 
-    public void PlayFX(AudioClip clip)
+    public void PlayFX(AudioClip clip, bool stopRunning = true)
     {
+        if((!stopRunning && fxSource.isPlaying) || !clip)
+        {
+            return; 
+        }
+
         fxSource.Stop();
         fxSource.clip = clip;
         fxSource.Play();
@@ -59,7 +64,7 @@ public class AudioManager : MonoBehaviour
     {
         while(true)
         {
-            PlayFX(typewriterClip);
+            PlayFX(typewriterClip, false);
             yield return new WaitForSeconds(typewriterTime);
         }
     }

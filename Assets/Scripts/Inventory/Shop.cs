@@ -29,6 +29,16 @@ public class Shop : MonoBehaviour
 
     public AudioClip openClip;
     public AudioClip closeClip;
+    [Tooltip("The transfer is cancelled")]
+    public AudioClip cancelTransferClip;
+    [Tooltip("The transfer is accepted, no money is spent nor received")]
+    public AudioClip acceptTransferClip;
+    [Tooltip("The user wanted to accept the transfer, but does not have enough money")]
+    public AudioClip notEnoughMoneyClip;
+    [Tooltip("The user accepted the transfer and sold items")]
+    public AudioClip receivedMoneyClip;
+    [Tooltip("The user accepted the transfer and spent money")]
+    public AudioClip spentMoneyClip;
 
     private bool transferInProgress = false;
     /// The changes during a transfer.
@@ -204,10 +214,28 @@ public class Shop : MonoBehaviour
             int price = CalculatePrice();
             if (price > 0 && price > NewGameManager.Instance.money)
             {
+                AudioManager.Instance.PlayFX(notEnoughMoneyClip);
                 return;
             }
 
             NewGameManager.Instance.SetMoney(NewGameManager.Instance.money - price);
+
+            if(price > 0)
+            {
+                AudioManager.Instance.PlayFX(spentMoneyClip);
+            }
+            else if(price < 0)
+            {
+                AudioManager.Instance.PlayFX(receivedMoneyClip);
+            }
+            else
+            {
+                AudioManager.Instance.PlayFX(acceptTransferClip);
+            }
+        }
+        else
+        {
+            AudioManager.Instance.PlayFX(acceptTransferClip);
         }
 
         Basket.ApplyGhostMode();
@@ -220,6 +248,7 @@ public class Shop : MonoBehaviour
         Basket.CancelGhostMode();
         Luggage.CancelGhostMode();
         StopTransfer();
+        AudioManager.Instance.PlayFX(cancelTransferClip);
     }
 
     private void OnLuggageItemAmountChanged(Item item, int changedAmount)

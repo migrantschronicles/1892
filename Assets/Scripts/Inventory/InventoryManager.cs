@@ -23,6 +23,8 @@ public abstract class InventoryManager : MonoBehaviour
 
     [SerializeField]
     private GameObject ItemSlotPrefab;
+    [SerializeField]
+    private AudioClip selectClip;
 
     protected int bagCount = 0;
     protected List<InventorySlot> slots = new List<InventorySlot>();
@@ -414,6 +416,7 @@ public abstract class InventoryManager : MonoBehaviour
 
     protected virtual void OnSlotClicked(InventorySlot slot)
     {
+        AudioManager.Instance.PlayFX(selectClip);
         onSlotClicked.Invoke(slot);
     }
 

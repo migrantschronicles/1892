@@ -27,6 +27,9 @@ public class Shop : MonoBehaviour
     [SerializeField, Tooltip("True if this is a shop where transfering items does not cost anything (shops during dialogs)")]
     private bool freeShop;
 
+    public AudioClip openClip;
+    public AudioClip closeClip;
+
     private bool transferInProgress = false;
     /// The changes during a transfer.
     /// Positive values mean from basket to luggage, negative values mean from luggage to basket.

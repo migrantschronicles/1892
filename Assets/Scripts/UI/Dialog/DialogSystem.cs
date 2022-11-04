@@ -108,6 +108,9 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     [SerializeField, Tooltip("The time for each character in a text animation")]
     private float timeForCharacters = 0.1f;
 
+    public AudioClip openClip;
+    public AudioClip closeClip;
+
     private GameObject content;
     private List<string> conditions = new List<string>();
 

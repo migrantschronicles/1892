@@ -38,6 +38,9 @@ public class Diary : MonoBehaviour
     [SerializeField]
     private Button nextPageButton;
 
+    public AudioClip openClip;
+    public AudioClip closeClip;
+
     private Dictionary<string, LocationMarker> locationMarkers;
     private DiaryPageType openPage;
 

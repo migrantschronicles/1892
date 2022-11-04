@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7836639015859468794}
   - component: {fileID: 7836639015859468793}
   - component: {fileID: 1936250667704138038}
+  - component: {fileID: 2972843654022833386}
   m_Layer: 5
   m_Name: SceneButton
   m_TagString: Untagged
@@ -120,7 +121,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7836639015859468794}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2972843654022833386}
+        m_TargetAssemblyTypeName: PlayFX, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1936250667704138038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,3 +148,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneName: 
   button: {fileID: 7836639015859468793}
+--- !u!114 &2972843654022833386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7836639015859468791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 478e635f8e39f03459e6a2937b305213, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fxClip: {fileID: 8300000, guid: e142b4af5a9badd4cbdddde4b82de62e, type: 3}

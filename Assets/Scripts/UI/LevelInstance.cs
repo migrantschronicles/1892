@@ -163,6 +163,7 @@ public class LevelInstance : MonoBehaviour
                 {
                     // A shop was open, so deactivate it.
                     currentShop.gameObject.SetActive(false);
+                    AudioManager.Instance.PlayFX(currentShop.closeClip);
                     currentShop = null;
                     break;
                 }
@@ -170,6 +171,7 @@ public class LevelInstance : MonoBehaviour
                 case OverlayMode.Diary:
                 {
                     // The map was open, hide it.
+                    AudioManager.Instance.PlayFX(ui.Diary.closeClip);
                     ui.SetDiaryVisible(false);
                     break;
                 }
@@ -195,12 +197,18 @@ public class LevelInstance : MonoBehaviour
             {
                 // If the dialog was active, notify it to clear its entries.
                 dialogSystem.OnClose();
+                AudioManager.Instance.PlayFX(dialogSystem.closeClip);
+                dialogSystem.gameObject.SetActive(false);
+            }
+
+            if(ui.Diary.gameObject.activeSelf)
+            {
+                ui.SetDiaryVisible(false);
+                AudioManager.Instance.PlayFX(ui.Diary.closeClip);
             }
 
             // Hide everything
-            dialogSystem.gameObject.SetActive(false);
             backButton.gameObject.SetActive(false);
-            ui.SetDiaryVisible(false);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
             DisableBlur();
 
@@ -208,12 +216,12 @@ public class LevelInstance : MonoBehaviour
             {
                 // Hide the shop
                 currentShop.gameObject.SetActive(false);
+                AudioManager.Instance.PlayFX(currentShop.closeClip);
                 currentShop = null;
             }
 
             if (currentAdditiveScene)
             {
-
                 // Hide the additive scene that was enabled during a dialog.
                 currentAdditiveScene.OnActiveStatusChanged(false);
                 currentAdditiveScene.gameObject.SetActive(false);
@@ -357,6 +365,8 @@ public class LevelInstance : MonoBehaviour
         {
             OpenSceneAdditive(button.AdditiveSceneName);
         }
+
+        AudioManager.Instance.PlayFX(dialogSystem.openClip);
     }
 
     public void OpenShop(Shop shop)
@@ -393,6 +403,8 @@ public class LevelInstance : MonoBehaviour
                 currentAdditiveScene.gameObject.SetActive(false);
             }
         }
+
+        AudioManager.Instance.PlayFX(shop.openClip);
     }
 
     private void SetBlurAfterGameObject(GameObject previous)

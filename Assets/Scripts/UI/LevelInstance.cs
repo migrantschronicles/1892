@@ -449,6 +449,8 @@ public class LevelInstance : MonoBehaviour
                 currentAdditiveScene.gameObject.SetActive(false);
             }
         }
+
+        AudioManager.Instance.PlayFX(ui.Diary.openClip);
     }
 
     public void SetBackButtonVisible(bool visible)

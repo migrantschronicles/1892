@@ -765,6 +765,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
             }
             currentAnimators.Clear();
             OnCurrentAnimatorsChanged();
+            AudioManager.Instance.PlayCutTypewriter();
         }
         else if (currentElement != null)
         {

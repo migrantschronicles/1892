@@ -287,6 +287,7 @@ public class DiaryPages : MonoBehaviour
         if(takeScreenshot)
         {
             LevelInstance.Instance.ConditionallyTakeDiaryEntryScreenshot();
+            AudioManager.Instance.PlayCutTypewriter();
         }
     }
 

@@ -110,6 +110,8 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
 
     public AudioClip openClip;
     public AudioClip closeClip;
+    public AudioClip lineClip;
+    public AudioClip decisionOptionClip;
 
     private GameObject content;
     private List<string> conditions = new List<string>();
@@ -385,6 +387,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         AddConditions(line.SetConditions);
         OnContentAdded(newLine);
         StartTextAnimation(currentBubble, LocalizationManager.Instance.GetLocalizedString(line.Text));
+        AudioManager.Instance.PlayFX(lineClip);
 
         if(IsLastLine(line))
         {
@@ -396,6 +399,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     {
         currentDecision = decision;
 
+        AudioManager.Instance.PlayFX(decisionOptionClip);
         for(int i = 0; i < currentDecision.transform.childCount; ++i)
         {
             DialogDecisionOption answer = currentDecision.transform.GetChild(i).GetComponent<DialogDecisionOption>();

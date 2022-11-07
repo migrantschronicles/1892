@@ -140,8 +140,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
 
     public void OnClose()
     {
-        StopAllCoroutines();
-        currentAnimators.Clear();
         ResetState();
         ClearContent();
     }

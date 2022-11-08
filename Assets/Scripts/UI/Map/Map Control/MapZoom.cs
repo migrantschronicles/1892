@@ -34,6 +34,12 @@ public class MapZoom : MonoBehaviour
     private float level1Breakpoint = 0.5f;
     [SerializeField]
     private float level2Breakpoint = 1.5f;
+    [SerializeField]
+    private Vector3 mapScreenshotPosition = new Vector3(711, 418);
+    [SerializeField]
+    private Vector3 mapScreenshotScale = new Vector3(0.8f, 0.8f);
+    [SerializeField]
+    private Vector2 mapScreenshotPivot = new Vector2(0.5f, 0.5f);
 
     private float zoomLevel = 1.0f;
     private Vector2 originalScale;
@@ -42,6 +48,10 @@ public class MapZoom : MonoBehaviour
     private float autoZoomStart = 1.0f;
     private Vector2 autoZoomNormalizedStartPosition;
     private ScrollRect scrollRect;
+    private float overrideZoom = -1.0f;
+    private Vector3 oldPivot;
+    private Vector3 oldLocalPosition;
+    private Vector3 oldLocalScale;
 
     public delegate void OnMapZoomChangedEvent(float zoomLevel);
     public event OnMapZoomChangedEvent onMapZoomChangedEvent;
@@ -94,9 +104,11 @@ public class MapZoom : MonoBehaviour
     {
         get
         {
-            return autoZoomCurrentTime >= 0.0f;
+            return autoZoomCurrentTime >= 0.0f && overrideZoom < 0.0f;
         }
     }
+
+    public bool IsMapScreenshotInProgress { get { return overrideZoom >= 0.0f; } }
 
     // Start is called before the first frame update
     void Start()
@@ -113,64 +125,67 @@ public class MapZoom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(IsAutoZoomInProgress)
+        if(overrideZoom < 0.0f)
         {
-            autoZoomCurrentTime += Time.deltaTime;
-            if(NewGameManager.Instance && NewGameManager.Instance.CurrentLocationObject)
+            if (IsAutoZoomInProgress)
             {
-                GameObject targetMarker = NewGameManager.Instance.CurrentLocationObject.gameObject;
-                Vector2 targetMarkerPosition = targetMarker.GetComponent<RectTransform>().anchoredPosition;
-                if (autoZoomCurrentTime < initialZoomDuration)
+                autoZoomCurrentTime += Time.deltaTime;
+                if (NewGameManager.Instance && NewGameManager.Instance.CurrentLocationObject)
                 {
-                    float alpha = autoZoomCurrentTime / initialZoomDuration;
-                    float currentZoomValue = initialZoomCurve.Evaluate(alpha);
-                    float currentZoom = RemapValue(currentZoomValue, 0, 1, autoZoomStart, initialZoomTarget);
-                    SetZoomAtCenter(currentZoom);
+                    GameObject targetMarker = NewGameManager.Instance.CurrentLocationObject.gameObject;
+                    Vector2 targetMarkerPosition = targetMarker.GetComponent<RectTransform>().anchoredPosition;
+                    if (autoZoomCurrentTime < initialZoomDuration)
+                    {
+                        float alpha = autoZoomCurrentTime / initialZoomDuration;
+                        float currentZoomValue = initialZoomCurve.Evaluate(alpha);
+                        float currentZoom = RemapValue(currentZoomValue, 0, 1, autoZoomStart, initialZoomTarget);
+                        SetZoomAtCenter(currentZoom);
 
-                    float currentLocationValue = autoZoomLocationCurve.Evaluate(alpha);
-                    Vector2 currentCenter = Vector2.Lerp(autoZoomNormalizedStartPosition, targetMarkerPosition, currentLocationValue);
-                    SetCenter(currentCenter);
+                        float currentLocationValue = autoZoomLocationCurve.Evaluate(alpha);
+                        Vector2 currentCenter = Vector2.Lerp(autoZoomNormalizedStartPosition, targetMarkerPosition, currentLocationValue);
+                        SetCenter(currentCenter);
+                    }
+                    else
+                    {
+                        autoZoomCurrentTime = -1.0f;
+                        SetCenterToMarker(targetMarker);
+                    }
                 }
-                else
-                {
-                    autoZoomCurrentTime = -1.0f;
-                    SetCenterToMarker(targetMarker);
-                }
-            }
-        }
-        else
-        {
-            // If this is an editor build, check if the mouse wheel was used (for testing).
-#if UNITY_EDITOR
-            float mouseScroll = Input.mouseScrollDelta.y;
-            if (!Mathf.Approximately(mouseScroll, 0.0f))
-            {
-                Zoom(mouseScroll, mouseZoomSpeed, Input.mousePosition);
             }
             else
             {
-#endif
-                // In non-editor builds, only touch should be used.
-                if (Input.touchCount == 2)
-                {
-                    // Get the current touch positions
-                    Touch t0 = Input.GetTouch(0);
-                    Touch t1 = Input.GetTouch(1);
-
-                    // Get the previous touch positions.
-                    Vector2 t0Prev = t0.position - t0.deltaPosition;
-                    Vector2 t1Prev = t1.position - t1.deltaPosition;
-
-                    // Get the delta distance
-                    float prevTouchDistance = Vector2.Distance(t0Prev, t1Prev);
-                    float touchDistance = Vector2.Distance(t0.position, t1.position);
-                    float deltaDistance = prevTouchDistance - touchDistance;
-                    Vector2 zoomPoint = (t0.position + t1.position) / 2;
-                    Zoom(-deltaDistance, touchZoomSpeed, zoomPoint);
-                }
+                // If this is an editor build, check if the mouse wheel was used (for testing).
 #if UNITY_EDITOR
-            }
+                float mouseScroll = Input.mouseScrollDelta.y;
+                if (!Mathf.Approximately(mouseScroll, 0.0f))
+                {
+                    Zoom(mouseScroll, mouseZoomSpeed, Input.mousePosition);
+                }
+                else
+                {
 #endif
+                    // In non-editor builds, only touch should be used.
+                    if (Input.touchCount == 2)
+                    {
+                        // Get the current touch positions
+                        Touch t0 = Input.GetTouch(0);
+                        Touch t1 = Input.GetTouch(1);
+
+                        // Get the previous touch positions.
+                        Vector2 t0Prev = t0.position - t0.deltaPosition;
+                        Vector2 t1Prev = t1.position - t1.deltaPosition;
+
+                        // Get the delta distance
+                        float prevTouchDistance = Vector2.Distance(t0Prev, t1Prev);
+                        float touchDistance = Vector2.Distance(t0.position, t1.position);
+                        float deltaDistance = prevTouchDistance - touchDistance;
+                        Vector2 zoomPoint = (t0.position + t1.position) / 2;
+                        Zoom(-deltaDistance, touchZoomSpeed, zoomPoint);
+                    }
+#if UNITY_EDITOR
+                }
+#endif
+            }
         }
     }
 
@@ -319,5 +334,36 @@ public class MapZoom : MonoBehaviour
 
         Rect viewportRect = new Rect(center - normalizedViewportSize / 2, normalizedViewportSize);
         return viewportRect.Overlaps(rect);
+    }
+
+    public void PrepareForMapScreenshot()
+    {
+        oldPivot = rectTransform.pivot;
+        oldLocalPosition = rectTransform.localPosition;
+        oldLocalScale = transform.localScale;
+
+        rectTransform.pivot = mapScreenshotPivot;
+        rectTransform.anchoredPosition = mapScreenshotPosition;
+        transform.localScale = mapScreenshotScale;
+
+        float mapScreenshotZoomLevel = mapScreenshotScale.x / originalScale.x;
+        overrideZoom = mapScreenshotZoomLevel;
+        if (onMapZoomChangedEvent != null)
+        {
+            onMapZoomChangedEvent.Invoke(mapScreenshotZoomLevel);
+        }
+    }
+
+    public void ResetFromMapScreenshot()
+    {
+        overrideZoom = -1.0f;
+        rectTransform.pivot = oldPivot;
+        rectTransform.localPosition = oldLocalPosition;
+        transform.localScale = oldLocalScale;
+
+        if (onMapZoomChangedEvent != null)
+        {
+            onMapZoomChangedEvent.Invoke(zoomLevel);
+        }
     }
 }

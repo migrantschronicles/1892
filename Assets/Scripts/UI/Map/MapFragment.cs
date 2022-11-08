@@ -59,7 +59,15 @@ public class MapFragment : MonoBehaviour
 
     public bool IsLevelVisible { get; private set; }
     public bool IsInViewport { get; private set; }
-    public bool IsVisible { get { return IsLevelVisible && IsInViewport; } }
+    public bool IsVisible 
+    { 
+        get 
+        {
+            return mapZoom.IsMapScreenshotInProgress ?
+                Level == 0 :
+                IsLevelVisible && IsInViewport;
+        } 
+    }
 
     private void Awake()
     {

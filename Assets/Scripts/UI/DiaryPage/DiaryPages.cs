@@ -42,6 +42,10 @@ public class DiaryPages : MonoBehaviour
     private Button contentLeftButton;
     [SerializeField]
     private Button contentRightButton;
+    [SerializeField]
+    private AudioClip nextPageClip;
+    [SerializeField]
+    private AudioClip prevPageClip;
 
     private List<GameObject> pages = new List<GameObject>();
     private int currentDoublePageIndex = -1;
@@ -62,8 +66,8 @@ public class DiaryPages : MonoBehaviour
     {
         prevPageButton.onClick.AddListener(OpenPrevDoublePage);
         nextPageButton.onClick.AddListener(OpenNextDoublePage);
-        contentLeftButton.onClick.AddListener(StopAnimators);
-        contentRightButton.onClick.AddListener(StopAnimators);
+        contentLeftButton.onClick.AddListener(() => StopAnimators(true));
+        contentRightButton.onClick.AddListener(() => StopAnimators(true));
     }
 
     private void Start()
@@ -91,7 +95,7 @@ public class DiaryPages : MonoBehaviour
         }
         else
         {
-            StopAnimators();
+            StopAnimators(false);
         }
     }
 
@@ -103,7 +107,7 @@ public class DiaryPages : MonoBehaviour
 
     public void AddEntry(DiaryEntry entry)
     {
-        StopAnimators();
+        StopAnimators(false);
 
         // Add an empty page if the previous entry ended left, but the new one should also start left.
         bool isRight = allowNewEntriesOnSameDoublePage && !entry.startOnNewDoublePage && pages.Count % 2 != 0;
@@ -258,31 +262,39 @@ public class DiaryPages : MonoBehaviour
 
     public void OpenPrevDoublePage()
     {
-        StopAnimators();
+        StopAnimators(true);
         
         if(currentDoublePageIndex > 0)
         {
             OpenDoublePage(currentDoublePageIndex - 1);
+            AudioManager.Instance.PlayFX(prevPageClip);
         }
     }
 
     public void OpenNextDoublePage()
     {
-        StopAnimators();
+        StopAnimators(true);
 
         if(currentDoublePageIndex < DoublePageCount - 1)
         {
             OpenDoublePage(currentDoublePageIndex + 1);
+            AudioManager.Instance.PlayFX(nextPageClip);
         }
     }
 
-    public void StopAnimators()
+    public void StopAnimators(bool takeScreenshot)
     {
         foreach(ElementAnimator animator in currentAnimators)
         {
             animator.Finish();
         }
         currentAnimators.Clear();
+
+        if(takeScreenshot)
+        {
+            LevelInstance.Instance.ConditionallyTakeDiaryEntryScreenshot();
+            AudioManager.Instance.PlayCutTypewriter();
+        }
     }
 
     private void OnAnimatorFinished(ElementAnimator animator)
@@ -293,6 +305,10 @@ public class DiaryPages : MonoBehaviour
         if(currentAnimators.Count > 0)
         {
             StartAnimator(currentAnimators[0]);
+        }
+        else
+        {
+            LevelInstance.Instance.ConditionallyTakeDiaryEntryScreenshot();
         }
     }
 

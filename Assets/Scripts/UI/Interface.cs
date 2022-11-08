@@ -38,6 +38,8 @@ public class Interface : MonoBehaviour
     [SerializeField]
     private Diary diary;
 
+    public Diary Diary { get { return diary; } }
+
     private void Start()
     {
         NewGameManager.Instance.onDateChanged += OnDateChanged;
@@ -93,5 +95,15 @@ public class Interface : MonoBehaviour
     public void SetDiaryVisible(bool visible, DiaryPageType type = DiaryPageType.Inventory)
     {
         diary.SetVisible(visible, type);
+    }
+
+    public void PrepareForMapScreenshot()
+    {
+        diary.PrepareForMapScreenshot();
+    }
+
+    public void ResetFromScreenshot()
+    {
+        diary.ResetFromMapScreenshot();
     }
 }

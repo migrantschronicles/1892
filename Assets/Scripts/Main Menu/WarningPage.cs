@@ -7,24 +7,29 @@ using UnityEngine.UI;
 public class WarningPage : MonoBehaviour
 {
     [SerializeField]
-    private Button startGameButton;
+    private MainMenuButton startGameButton;
     [SerializeField]
     private InputField nameField;
 
     private void Start()
     {
-        startGameButton.enabled = false;
+        startGameButton.SetEnabled(false);
         nameField.onValueChanged.AddListener(OnNameChanged);
-        startGameButton.onClick.AddListener(OnStartGame);
+        startGameButton.onClick += OnStartGame;
     }
 
     private void OnNameChanged(string name)
     {
-        startGameButton.enabled = name.Length > 0;
+        startGameButton.SetEnabled(name.Length > 0);
     }
 
     private void OnStartGame()
     {
         SceneManager.LoadScene("Pfaffenthal");
+    }
+
+    public void OpenMoreInfo()
+    {
+        Application.OpenURL("https://www.iom.int/sites/g/files/tmzbdl486/files/our_work/DMM/Migration-Health/MP_infosheets/MHPSS-refugees-asylum-seekers-migrants-Europe-Multi-Agency-guidance-note.pdf");
     }
 }

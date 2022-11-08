@@ -121,12 +121,14 @@ public class TextElementAnimator : ElementAnimator
             yield return new WaitForSeconds(timeForCharacters);
         }
 
+        AudioManager.Instance.StopTypewriter();
         onFinished.Invoke(this);
     }
 
     public override void Start()
     {
         coroutine = owner.StartCoroutine(Animate());
+        AudioManager.Instance.StartTypewriter();
     }
 
     public override void Finish()
@@ -134,6 +136,7 @@ public class TextElementAnimator : ElementAnimator
         if(coroutine != null)
         {
             owner.StopCoroutine(coroutine);
+            AudioManager.Instance.StopTypewriter();
         }
         SetText(text);
     }

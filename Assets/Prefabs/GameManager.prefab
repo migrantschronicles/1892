@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5195928808235029455
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7430646057224914511}
+  - component: {fileID: 6468859767798026066}
+  m_Layer: 5
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7430646057224914511
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &6468859767798026066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afdaa6f266b120e42865e8ed3eec32a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  userName: 
+  currentLocation: 
+  visitedLocationsStr: []
+  timeSpeed: 500
+  seconds: 0
+  minutes: 0
+  hour: 0
+  day: 0
+  hourHandle: {fileID: 0}
+  minuteHandle: {fileID: 0}
+  minuteOffset: 12.974
+  hourOffset: 160.711
+  food: 0
+  money: 0
+  date: 
+  traveledCityMarker: {fileID: 21300000, guid: 1cc50e2701a9f5146ba127fd140452c3, type: 3}
+  currentCityMarker: {fileID: 21300000, guid: 6609fb5a690da2f489e60a524ed1e35c, type: 3}
+  untraveledCityMarker: {fileID: 21300000, guid: 328a9ac03decfc042bd2593c041b18fe, type: 3}
+  traveledCityCapital: {fileID: 21300000, guid: 5bc75da8283307247926c55292479306, type: 3}
+  currentCityCapital: {fileID: 21300000, guid: 7f77ee98104aff34dbdb673c31a66013, type: 3}
+  untraveledCityCapital: {fileID: 21300000, guid: 1026717aa652e78499167d95ff15ac66, type: 3}
+  inventory:
+    startItems:
+    - {fileID: 11400000, guid: f164922e1f30dcb40bbb41e6d06ab3cc, type: 2}
+    - {fileID: 11400000, guid: 111059cc2057c244daddf7d4420ba6f0, type: 2}
+    - {fileID: 11400000, guid: d0da3f17cbf50b4489fad218310ebd38, type: 2}
+    - {fileID: 11400000, guid: 10dcf84441a7ee447b08f79481775195, type: 2}
+    - {fileID: 11400000, guid: 5c476888fe3d5ab479058f75673de7b7, type: 2}
+    - {fileID: 11400000, guid: ee54fdc737ff23440bf64b9de301ce58, type: 2}
+    - {fileID: 11400000, guid: 10dcf84441a7ee447b08f79481775195, type: 2}
+    - {fileID: 11400000, guid: 10dcf84441a7ee447b08f79481775195, type: 2}
+    - {fileID: 11400000, guid: 10dcf84441a7ee447b08f79481775195, type: 2}
+    - {fileID: 11400000, guid: 65e37b8bd65999b48937b24ce1ea20c6, type: 2}
+    - {fileID: 11400000, guid: e3ba060ac222f214fa1fc93348efde76, type: 2}

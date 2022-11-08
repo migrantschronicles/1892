@@ -4,6 +4,22 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using static DialogSystem;
+
+public enum TransporationMethod
+{
+    Foot,
+    Train,
+    Ship,
+    Carriage
+}
+
+public class Journey
+{
+    public string destination;
+    public TransporationMethod method;
+    public int money;
+}
 
 public class NewGameManager : MonoBehaviour
 {
@@ -46,6 +62,9 @@ public class NewGameManager : MonoBehaviour
     // Diary entries
     private List<DiaryEntry> diaryEntries = new List<DiaryEntry>();
 
+    // Global conditions
+    private static List<string> globalConditions = new List<string>();
+
     public IEnumerable<DiaryEntry> DiaryEntries { get { return diaryEntries; } }
 
     public delegate void OnDiaryEntryAdded(DiaryEntry entry);
@@ -60,8 +79,8 @@ public class NewGameManager : MonoBehaviour
     public delegate void OnDateChangedDelegate(string date);
     public event OnDateChangedDelegate onDateChanged;
 
-    public delegate void OnTimeChangedDelegate(float time);
-    public event OnTimeChangedDelegate onTimeChanged;
+    //public delegate void OnTimeChangedDelegate(float time);
+    //public event OnTimeChangedDelegate onTimeChanged;
 
     public LocationMarker CurrentLocationObject
     {
@@ -261,7 +280,7 @@ public class NewGameManager : MonoBehaviour
         onFoodChanged?.Invoke(food);
     }
 
-    private void SetMoney(int newMoney)
+    public void SetMoney(int newMoney)
     {
         money = newMoney;
         onMoneyChanged?.Invoke(money);
@@ -367,5 +386,80 @@ public class NewGameManager : MonoBehaviour
         {
             onDiaryEntryAdded.Invoke(entry);
         }
+    }
+
+
+    /**
+     * Adds a condition to the list.
+     */
+    public bool AddCondition(string condition)
+    {
+        if (string.IsNullOrWhiteSpace(condition))
+        {
+            return false;
+        }
+
+        if (!globalConditions.Contains(condition))
+        {
+            globalConditions.Add(condition);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Adds multiple conditions to the list.
+     */
+    public void AddConditions(IEnumerable<string> conditions)
+    {
+        foreach (string condition in conditions)
+        {
+            AddCondition(condition);
+        }
+    }
+
+    /**
+     * Removes a condition from the local and global list.
+     */
+    public bool RemoveCondition(string condition)
+    {
+        if (string.IsNullOrWhiteSpace(condition))
+        {
+            return false;
+        }
+
+        return globalConditions.Remove(condition);
+    }
+
+    /**
+     * Removes conditions from the local and global list.
+     */
+    public void RemoveConditions(IEnumerable<string> conditions)
+    {
+        foreach (string condition in conditions)
+        {
+            RemoveCondition(condition);
+        }
+    }
+
+    /**
+     * Checks if one condition is met.
+     * If condition is empty, it is considered to be met.
+     */
+    public bool HasCondition(string condition)
+    {
+        if (string.IsNullOrWhiteSpace(condition))
+        {
+            return true;
+        }
+
+        return globalConditions.Contains(condition);
+    }
+
+    public void GeneratePDF()
+    {
+        PDFBuilder builder = new PDFBuilder();
+        builder.Generate();
     }
 }

@@ -72,6 +72,9 @@ using UnityEngine.UI;
  * You can also set the conditions that should be added if this specific option is chosen.
  * You can also add conditions that must be met so that the option is displayed in the first place.
  * This can be useful if you do not have an option anymore because of some action on another level.
+ * You can also add EnabledCondition. This lets you disable an option if a condition is not met.
+ * You can use this e.g. if you want to trade items, but the player does not have a required item.
+ * Then you can add a SetCondition in the item, and enable the option only if the player has the item in the inventory.
  * 
  * DIALOG TRIGGER LAST OPTION
  * Triggers the action of the last decision option that was selected.
@@ -105,10 +108,13 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     [SerializeField, Tooltip("The time for each character in a text animation")]
     private float timeForCharacters = 0.1f;
 
+    public AudioClip openClip;
+    public AudioClip closeClip;
+    public AudioClip lineClip;
+    public AudioClip decisionOptionClip;
+
     private GameObject content;
     private List<string> conditions = new List<string>();
-    ///@todo Should be in the game manager.
-    private static List<string> globalConditions = new List<string>();
 
     private Dialog currentDialog;
     private DialogElement currentElement;
@@ -134,8 +140,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
 
     public void OnClose()
     {
-        StopAllCoroutines();
-        currentAnimators.Clear();
         ResetState();
         ClearContent();
     }
@@ -381,6 +385,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         AddConditions(line.SetConditions);
         OnContentAdded(newLine);
         StartTextAnimation(currentBubble, LocalizationManager.Instance.GetLocalizedString(line.Text));
+        AudioManager.Instance.PlayFX(lineClip);
 
         if(IsLastLine(line))
         {
@@ -392,6 +397,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     {
         currentDecision = decision;
 
+        AudioManager.Instance.PlayFX(decisionOptionClip);
         for(int i = 0; i < currentDecision.transform.childCount; ++i)
         {
             DialogDecisionOption answer = currentDecision.transform.GetChild(i).GetComponent<DialogDecisionOption>();
@@ -649,11 +655,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         bool successful = false;
         if(global)
         {
-            if(!globalConditions.Contains(condition))
-            {
-                globalConditions.Add(condition);
-                successful = true;
-            }
+            successful = NewGameManager.Instance.AddCondition(condition);
         }
         else
         {
@@ -693,6 +695,50 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     }
 
     /**
+     * Adds multiple conditions to the list.
+     */
+    public void AddConditions(IEnumerable<string> conditions, bool global)
+    {
+        foreach(string condition in conditions)
+        {
+            AddCondition(condition, global);
+        }
+    }
+
+    /**
+     * Removes a condition from the local and global list.
+     */
+    public void RemoveCondition(string condition)
+    {
+        if (string.IsNullOrWhiteSpace(condition))
+        {
+            return;
+        }
+
+        bool successful = false;
+        successful |= conditions.Remove(condition);
+        successful |= NewGameManager.Instance.RemoveCondition(condition);
+        if (successful)
+        {
+            if (onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChanged onConditionsChanged))
+            {
+                onConditionsChanged.Invoke();
+            }
+        }
+    }
+
+    /**
+     * Removes conditions from the local and global list.
+     */
+    public void RemoveConditions(IEnumerable<string> conditions)
+    {
+        foreach(string condition in conditions)
+        {
+            RemoveCondition(condition);
+        }
+    }
+
+    /**
      * Checks if one condition is met. Does not care whether it is met globally or locally.
      * If condition is empty, it is considered to be met.
      */
@@ -708,7 +754,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
             return true;
         }
 
-        return globalConditions.Contains(condition);
+        return NewGameManager.Instance.HasCondition(condition);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -721,6 +767,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
             }
             currentAnimators.Clear();
             OnCurrentAnimatorsChanged();
+            AudioManager.Instance.PlayCutTypewriter();
         }
         else if (currentElement != null)
         {

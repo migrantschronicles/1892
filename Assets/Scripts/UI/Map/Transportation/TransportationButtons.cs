@@ -16,6 +16,7 @@ public class TransportationButtons : MonoBehaviour
     public List<GameObject> transportationButtons;
 
     public bool walking, tram, carriage, cart, ship, train;
+    public AudioClip enableClip;
 
     // Start is called before the first frame update
     void Start()
@@ -61,7 +62,8 @@ public class TransportationButtons : MonoBehaviour
             }
         }
 
-        anim.SetBool("ButtonClicked", true);        
+        anim.SetBool("ButtonClicked", true);
+        AudioManager.Instance.PlayFX(enableClip);
     }
 
     public void DisableTransportationOptions() 

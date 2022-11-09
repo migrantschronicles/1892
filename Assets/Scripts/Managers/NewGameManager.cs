@@ -62,6 +62,10 @@ public class NewGameManager : MonoBehaviour
     // Diary entries
     private List<DiaryEntry> diaryEntries = new List<DiaryEntry>();
 
+    // Map routes 
+    public TransportationInfoTable transportationInfo { get; private set; } = new TransportationInfoTable();
+    public TextAsset transportationTableCSV;
+
     // Global conditions
     private static List<string> globalConditions = new List<string>();
 
@@ -170,6 +174,9 @@ public class NewGameManager : MonoBehaviour
         Navigate();*/
         // ^^^^^^^^^^^^^^^^^^^ Old Manager code until here ^^^^^^^^^^^^^^^^^^^^
         SetMorningTime();
+
+        transportationInfo.Initialize(transportationTableCSV);
+
         InitAfterLoad();
         isInitialized = true;
     }
@@ -312,8 +319,16 @@ public class NewGameManager : MonoBehaviour
         onTimeChanged?.Invoke(time);
     }*/
 
-    public void GoToLocation(string name, string method, float timeNeeded, int moneyNeeded, int foodNeeded) 
+    public void GoToLocation(string name, string method)
     {
+        TransportationRouteInfo routeInfo = transportationInfo.GetRouteInfo(currentLocation, name, method);
+
+        if (routeInfo == null) return;
+        float timeNeeded = routeInfo.time;
+        int moneyNeeded = routeInfo.cost;
+        int foodNeeded = routeInfo.food;
+
+
         if (money < moneyNeeded || food < foodNeeded)
         {
             return;

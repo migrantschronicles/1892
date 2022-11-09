@@ -23,6 +23,12 @@ public class MainMenu : MonoBehaviour
     private Animator coverAnimator;
     [SerializeField]
     private Animator newGamePage0;
+    [SerializeField]
+    private AudioClip openDiaryClip;
+    [SerializeField]
+    private AudioClip closeDiaryClip;
+    [SerializeField]
+    private AudioClip pageClip;
 
     private Animator currentPage;
 
@@ -40,6 +46,7 @@ public class MainMenu : MonoBehaviour
     {
         diaryAnimator.SetBool("Opened", true);
         coverAnimator.SetBool("DiaryOpened", true);
+        AudioManager.Instance.PlayFX(openDiaryClip);
 
         if(page)
         {
@@ -52,6 +59,7 @@ public class MainMenu : MonoBehaviour
         diaryAnimator.SetBool("Opened", false);
         coverAnimator.SetBool("DiaryOpened", false);
         CloseCurrentPage(true);
+        AudioManager.Instance.PlayFX(closeDiaryClip);
     }
 
     public void ScrollBackward()
@@ -84,6 +92,7 @@ public class MainMenu : MonoBehaviour
         CloseCurrentPage(false);
         OpenPage(nextPage, true);
         ScrollForward();
+        AudioManager.Instance.PlayFX(pageClip);
     }
 
     public void OpenPreviousPage(Animator prevPage)
@@ -91,5 +100,6 @@ public class MainMenu : MonoBehaviour
         CloseCurrentPage(true);
         OpenPage(prevPage, false);
         ScrollBackward();
+        AudioManager.Instance.PlayFX(pageClip);
     }
 }

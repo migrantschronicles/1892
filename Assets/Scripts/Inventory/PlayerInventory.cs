@@ -49,6 +49,14 @@ public class PlayerInventory
                 {
                     NewGameManager.Instance.RemoveConditions(item.SetConditions);
                 }
+
+                if(!HasItemCategory(item.category))
+                {
+                    if (item.category.SetConditions != null && item.category.SetConditions.Length > 0)
+                    {
+                        NewGameManager.Instance.RemoveConditions(item.category.SetConditions);
+                    }
+                }
             }
             else
             {
@@ -58,11 +66,189 @@ public class PlayerInventory
         else
         {
             Debug.Assert(changedAmount > 0);
+
+            if(!HasItemCategory(item.category))
+            {
+                if(item.category.SetConditions != null && item.category.SetConditions.Length > 0)
+                {
+                    NewGameManager.Instance.AddConditions(item.category.SetConditions);
+                }
+            }
+
             items.Add(item, changedAmount);
             if(item.SetConditions != null && item.SetConditions.Length > 0)
             {
                 NewGameManager.Instance.AddConditions(item.SetConditions);
             }
         }
+    }
+
+    /**
+     * @return True if the inventory has the specified item at least once.
+     */
+    public bool HasItem(Item item)
+    {
+        if(items.TryGetValue(item, out int amount))
+        {
+            return amount > 0;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return True if the inventory has an item of a specified type.
+     */
+    public bool HasItemType(ItemType type)
+    {
+        foreach(KeyValuePair<Item, int> item in items)
+        {
+            if(item.Key.ItemType == type && item.Value > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return True if the inventory has an item of a specified category.
+     */
+    public bool HasItemCategory(ItemCategory category)
+    {
+        foreach(KeyValuePair<Item, int> item in Items)
+        {
+            if(item.Key.category == category)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return The number of items of the specified item.
+     */
+    public int GetItemCount(Item item)
+    {
+        if(items.TryGetValue(item, out int amount))
+        {
+            return amount;
+        }
+
+        return 0;
+    }
+    
+    /**
+     * @return The total number of items of the specified type.
+     */
+    public int GetItemTypeCount(ItemType type)
+    {
+        int amount = 0;
+        foreach(KeyValuePair<Item, int> item in items)
+        {
+            if(item.Key.ItemType == type)
+            {
+                amount += item.Value;
+            }
+        }
+
+        return amount;
+    }
+
+    /**
+     * @return The total number of items of the specified category.
+     */
+    public int GetItemCategoryCount(ItemCategory category)
+    {
+        int amount = 0;
+        foreach (KeyValuePair<Item, int> item in items)
+        {
+            if (item.Key.category == category)
+            {
+                amount += item.Value;
+            }
+        }
+
+        return amount;
+    }
+
+    /**
+     * Removes an amount of items.
+     * @param item The item to remove
+     * @param amount The number of items to remove
+     * @return The amount of items removed.
+     */
+    public int RemoveItem(Item item, int amount = 1)
+    {
+        Debug.Assert(amount > 0);
+        if (items.TryGetValue(item, out int currentAmount))
+        {
+            amount = Mathf.Min(currentAmount, amount);
+            if(amount > 0)
+            {
+                OnItemAmountChanged(item, -amount);
+                return amount;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Removes an amount of items.
+     * @param type The item type to remove
+     * @param amount The number of items to remove
+     * @return The amount of items removed.
+     */
+    public int RemoveItemType(ItemType type, int amount = 1)
+    {
+        Debug.Assert(amount > 0);
+        List<KeyValuePair<Item, int>> itemsToRemove = new List<KeyValuePair<Item, int>>();
+        int removedAmount = 0;
+        foreach(KeyValuePair<Item, int> item in items)
+        {
+            if(item.Key.ItemType == type && item.Value > 0)
+            {
+                int amountToRemove = Mathf.Min(amount - removedAmount, item.Value);
+                itemsToRemove.Add(new KeyValuePair<Item, int>(item.Key, amountToRemove));
+                removedAmount += amountToRemove;
+
+                if(amount - removedAmount <= 0)
+                {
+                    break;
+                }
+            }
+        }
+
+        foreach(KeyValuePair<Item, int> item in itemsToRemove)
+        {
+            RemoveItem(item.Key, item.Value);
+        }
+
+        return removedAmount;
+    }
+
+    /**
+     * Removes an amount of items.
+     * @param category The item category to remove
+     * @param amount The number of items to remove
+     * @return The amount of items removed.
+     */
+    public int RemoveItemCategory(ItemCategory category, int amount = 1)
+    {
+        return RemoveItemType(category.type, amount);
+    }
+
+    /**
+     * Adds a specified item to the inventory.
+     * @param item The item to add.
+     * @param amount The amount
+     */
+    public void AddItem(Item item, int amount = 1)
+    {
+        OnItemAmountChanged(item, amount);
     }
 }

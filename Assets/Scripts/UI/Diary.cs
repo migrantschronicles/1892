@@ -37,6 +37,10 @@ public class Diary : MonoBehaviour
     private Button prevPageButton;
     [SerializeField]
     private Button nextPageButton;
+    [SerializeField]
+    private Button centerButton;
+    [SerializeField]
+    private GameObject currentLocation;
 
     public AudioClip openClip;
     public AudioClip closeClip;
@@ -170,17 +174,12 @@ public class Diary : MonoBehaviour
 
     private void CloseAll()
     {
-        diaryPages.OnVisiblityChanged(false);
-        if (diaryPage.activeSelf)
-        {
-            LevelInstance.Instance.ConditionallyTakeDiaryEntryScreenshot();
-        }
-
         inventoryPage.SetActive(false);
         healthPage.SetActive(false);
         mapPage.SetActive(false);
         settingsPage.SetActive(false);
         diaryPage.SetActive(false);
+        diaryPages.OnVisiblityChanged(false);
         prevPageButton.gameObject.SetActive(false);
         nextPageButton.gameObject.SetActive(false);
     }
@@ -207,16 +206,31 @@ public class Diary : MonoBehaviour
         settingsPage.SetActive(false);
         mapPage.SetActive(true);
         mapZoom.PrepareForMapScreenshot();
+        centerButton.gameObject.SetActive(false);
+        currentLocation.SetActive(false);
     }
 
-    public void ResetFromMapScreenshot()
+    public void PrepareForDiaryScreenshot(DiaryEntryData entry)
     {
-        mapZoom.ResetFromMapScreenshot();
+        inventoryPage.SetActive(false);
+        healthPage.SetActive(false);
+        diaryPage.SetActive(true);
+        settingsPage.SetActive(false);
+        mapPage.SetActive(false);
+        diaryPages.PrepareForDiaryScreenshot(entry);
+    }
+
+    public void ResetFromScreenshot()
+    {
+        mapZoom.ResetFromScreenshot();
+        diaryPages.ResetFromScreenshot();
         inventoryPage.SetActive(openPage == DiaryPageType.Inventory);
         healthPage.SetActive(openPage == DiaryPageType.Health);
         diaryPage.SetActive(openPage == DiaryPageType.Diary);
         mapPage.SetActive(openPage == DiaryPageType.Map);
         settingsPage.SetActive(openPage == DiaryPageType.Settings);
+        centerButton.gameObject.SetActive(true);
+        currentLocation.SetActive(true);
     }
 
     public void GeneratePDF()

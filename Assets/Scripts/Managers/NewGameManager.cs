@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
-using static DialogSystem;
 
 public enum TransporationMethod
 {
@@ -14,11 +13,17 @@ public enum TransporationMethod
     Carriage
 }
 
+public class DiaryEntryData
+{
+    public DiaryEntry entry;
+}
+
 public class Journey
 {
     public string destination;
     public TransporationMethod method;
     public int money;
+    public DiaryEntryData diaryEntry;
 }
 
 public class NewGameManager : MonoBehaviour
@@ -61,6 +66,7 @@ public class NewGameManager : MonoBehaviour
 
     // Diary entries
     private List<DiaryEntry> diaryEntries = new List<DiaryEntry>();
+    public DiaryEntry TEST_ParisEntry;
 
     // Map routes 
     public TransportationInfoTable transportationInfo { get; private set; } = new TransportationInfoTable();
@@ -474,7 +480,9 @@ public class NewGameManager : MonoBehaviour
 
     public void GeneratePDF()
     {
+        Debug.Log("Generating PDF");
         PDFBuilder builder = new PDFBuilder();
-        builder.Generate();
+        builder.Generate(new DiaryEntryData { entry = TEST_ParisEntry });
+        Debug.Log("Finished PDF generating");
     }
 }

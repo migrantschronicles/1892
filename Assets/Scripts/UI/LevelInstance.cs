@@ -88,7 +88,6 @@ public class LevelInstance : MonoBehaviour
     private IEnumerable<GameObject> currentHiddenObjects;
     private string previousScene;
     private OverlayMode overlayMode = OverlayMode.None;
-    private bool tookDiaryScreenshot = false;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -458,23 +457,16 @@ public class LevelInstance : MonoBehaviour
         backButton.gameObject.SetActive(visible);
     }
 
-    public void ConditionallyTakeDiaryEntryScreenshot()
-    { 
-        if(tookDiaryScreenshot || !diaryEntry)
-        {
-            return;
-        }
+    public Texture2D TakeDiaryScreenshot(DiaryEntryData entry)
+    {
+        ui.PrepareForDiaryScreenshot(entry);
 
         Texture2D renderedTexture = TakeScreenshot(816, 510);
 
-        // Write the texture to the disk
-        byte[] pngBytes = renderedTexture.EncodeToPNG();
-        string outputPath = Path.Combine(Application.persistentDataPath, $"{NewGameManager.Instance.currentLocation}.png");
-        File.WriteAllBytes(outputPath, pngBytes);
+        Debug.Log($"Captured diary screenshot");
+        ui.ResetFromScreenshot();
 
-        Debug.Log($"Captured diary screenshot: {outputPath}");
-
-        tookDiaryScreenshot = true;
+        return renderedTexture;
     }
 
     /**

@@ -9,7 +9,7 @@ public class TestPDFBuilder : MonoBehaviour
     void Start()
     {
         PDFBuilder builder = new PDFBuilder();
-        builder.Generate();
+        builder.Generate(null);
     }
 
     // Update is called once per frame

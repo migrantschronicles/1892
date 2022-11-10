@@ -107,6 +107,8 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private float spacing = 30;
     [SerializeField, Tooltip("The time for each character in a text animation")]
     private float timeForCharacters = 0.1f;
+    [SerializeField]
+    private float paddingBottom = 8;
 
     public AudioClip openClip;
     public AudioClip closeClip;
@@ -366,7 +368,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         currentY += rectTransform.rect.height;
         // Set the size of the scroll rect to the new height (including the new content).
         RectTransform contentTransform = content.GetComponent<RectTransform>();
-        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY);
+        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY + paddingBottom);
         // Add the spacing to the current y value, so the next new content will be placed slightly below.
         currentY += spacing;
 

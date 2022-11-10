@@ -75,8 +75,8 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
         diamond.color = npcDiamondColor;
         text.color = npcForegroundColor;
 
-        Shadow shadow = background.GetComponent<Shadow>();
-        shadow.effectDistance = new Vector2(-Mathf.Abs(shadow.effectDistance.x), shadow.effectDistance.y);
+        DropShadow shadow = background.GetComponent<DropShadow>();
+        shadow.EffectDistance = new Vector2(-Mathf.Abs(shadow.EffectDistance.x), shadow.EffectDistance.y);
     }
 
     private void SetRight()
@@ -99,8 +99,8 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
         diamond.color = playerDiamondColor;
         text.color = playerForegroundColor;
 
-        Shadow shadow = background.GetComponent<Shadow>();
-        shadow.effectDistance = new Vector2(Mathf.Abs(shadow.effectDistance.x), shadow.effectDistance.y);
+        DropShadow shadow = background.GetComponent<DropShadow>();
+        shadow.EffectDistance = new Vector2(Mathf.Abs(shadow.EffectDistance.x), shadow.EffectDistance.y);
     }
 
     private void UpdateHeight()

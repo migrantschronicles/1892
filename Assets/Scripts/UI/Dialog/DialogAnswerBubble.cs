@@ -61,7 +61,7 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 
     public DialogDecisionOption Answer { get; private set; }
 
-    private Shadow[] shadows;
+    private DropShadow[] shadows;
 
     private void Start()
     {
@@ -138,10 +138,10 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     {
         if(shadows == null || shadows.Length == 0)
         {
-            shadows = GetComponentsInChildren<Shadow>();
+            shadows = GetComponentsInChildren<DropShadow>();
         }
 
-        foreach (Shadow shadow in shadows)
+        foreach (DropShadow shadow in shadows)
         {
             shadow.enabled = isSelected || isEnabled;
         }

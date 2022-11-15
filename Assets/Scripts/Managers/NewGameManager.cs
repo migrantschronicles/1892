@@ -32,6 +32,7 @@ public class NewGameManager : MonoBehaviour
     private static bool isInitialized = false;
 
     // Game Stats
+    public bool gameRunning = true;
     public float timeSpeed = 0.1f;
     public float seconds;
     public int minutes;
@@ -55,6 +56,8 @@ public class NewGameManager : MonoBehaviour
     public Sprite traveledCityCapital;
     public Sprite currentCityCapital;
     public Sprite untraveledCityCapital;
+
+    public PopupManager popups;
 
     // Inventory
     public PlayerInventory inventory = new PlayerInventory();
@@ -127,29 +130,36 @@ public class NewGameManager : MonoBehaviour
 
     void Update() 
     {
-        if(!minuteHandle || !hourHandle) 
+        if (gameRunning)
         {
-            minuteHandle = GameObject.FindGameObjectWithTag("minutesHandle").transform;
-            hourHandle = GameObject.FindGameObjectWithTag("hoursHandle").transform;
+            if (!minuteHandle || !hourHandle)
+            {
+                minuteHandle = GameObject.FindGameObjectWithTag("minutesHandle").transform;
+                hourHandle = GameObject.FindGameObjectWithTag("hoursHandle").transform;
+            }
+
+            seconds += Time.deltaTime * timeSpeed;
+            minuteHandle.rotation = Quaternion.Euler(0, 0, minuteHandle.rotation.z - (minutes * (360 / 60)) + minuteOffset);
+            hourHandle.rotation = Quaternion.Euler(0, 0, hourHandle.rotation.z - (hour * (360 / 12) + (minutes * 0.5f)) + hourOffset);
+
+
+            if (seconds >= 60)
+            {
+                seconds = 0;
+                minutes += 1;
+            }
+
+            if (minutes >= 60)
+            {
+                hour += 1;
+                minutes = 0;
+            }
+
+            if (hour >= 10) 
+            {
+                popups.OpenEndDayPopUp();
+            }
         }
-
-        seconds += Time.deltaTime * timeSpeed;
-        minuteHandle.rotation = Quaternion.Euler(0, 0, minuteHandle.rotation.z - (minutes * (360/60)) + minuteOffset);
-        hourHandle.rotation = Quaternion.Euler(0, 0, hourHandle.rotation.z - (hour * (360 / 12) + (minutes*0.5f)) + hourOffset);
-
-
-        if (seconds >= 60) 
-        {
-            seconds = 0;
-            minutes += 1;
-        }
-
-        if (minutes >= 60) 
-        {
-            hour += 1;
-            minutes = 0;
-        }
-
     }
 
     private void Initialize()
@@ -299,7 +309,7 @@ public class NewGameManager : MonoBehaviour
         onDateChanged?.Invoke(date);
     }
 
-    public void NextDay() 
+    public void StartNewDay() 
     {
         Debug.Log("Go to next day here, via clock");
         day += 1;

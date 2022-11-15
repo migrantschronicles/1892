@@ -80,6 +80,8 @@ public class LevelInstance : MonoBehaviour
     private string defaultScene;
     [SerializeField]
     private DiaryEntry diaryEntry;
+    [SerializeField]
+    private AudioClip[] musicClips;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -88,6 +90,7 @@ public class LevelInstance : MonoBehaviour
     private IEnumerable<GameObject> currentHiddenObjects;
     private string previousScene;
     private OverlayMode overlayMode = OverlayMode.None;
+    private bool startedPlayingMusic = false;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -115,7 +118,7 @@ public class LevelInstance : MonoBehaviour
 
     private void Start()
     {
-        if(string.IsNullOrWhiteSpace(defaultScene))
+        if (string.IsNullOrWhiteSpace(defaultScene))
         {
             Debug.Log("Default scene is empty in level instance");
             return;
@@ -146,6 +149,8 @@ public class LevelInstance : MonoBehaviour
             backButton.gameObject.SetActive(false);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
             ui.SetDiaryVisible(false);
+            AudioManager.Instance.PlayMusic(musicClips);
+            startedPlayingMusic = true;
         }
     }
 
@@ -204,6 +209,11 @@ public class LevelInstance : MonoBehaviour
             {
                 ui.SetDiaryVisible(false);
                 AudioManager.Instance.PlayFX(ui.Diary.closeClip);
+                if(!startedPlayingMusic)
+                {
+                    AudioManager.Instance.PlayMusic(musicClips);
+                    startedPlayingMusic = true;
+                }
             }
 
             // Hide everything

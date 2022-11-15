@@ -29,12 +29,15 @@ public class MainMenu : MonoBehaviour
     private AudioClip closeDiaryClip;
     [SerializeField]
     private AudioClip pageClip;
+    [SerializeField]
+    private AudioClip[] musicClips;
 
     private Animator currentPage;
 
     private void Start()
     {
         Application.targetFrameRate = 30;
+        AudioManager.Instance.PlayMusic(musicClips);
     }
 
     public void OpenDiary()

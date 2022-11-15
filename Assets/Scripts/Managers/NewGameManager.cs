@@ -397,6 +397,7 @@ public class NewGameManager : MonoBehaviour
         currentLocationObject.GetComponent<TransportationButtons>().DisableTransportationOptions();
 
         // Load level
+        AudioManager.Instance.FadeOutMusic();
         SceneManager.LoadScene(sceneName: "LoadingScene");
     }
 

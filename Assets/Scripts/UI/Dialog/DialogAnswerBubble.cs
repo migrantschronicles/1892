@@ -61,6 +61,8 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 
     public DialogDecisionOption Answer { get; private set; }
 
+    private DropShadow[] shadows;
+
     private void Start()
     {
         button.onClick.AddListener(OnClick);
@@ -92,6 +94,7 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
         UpdatePosition();
         UpdateIcon();
         UpdateButton();
+        UpdateShadows();
     }
 #endif
 
@@ -131,6 +134,19 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
         icon.sprite = sprite;
     }
 
+    private void UpdateShadows()
+    {
+        if(shadows == null || shadows.Length == 0)
+        {
+            shadows = GetComponentsInChildren<DropShadow>();
+        }
+
+        foreach (DropShadow shadow in shadows)
+        {
+            shadow.enabled = isSelected || isEnabled;
+        }
+    }
+
     public void SetContent(DialogDecisionOption answer)
     {
         Answer = answer;
@@ -142,6 +158,7 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
         UpdatePosition();
         UpdateIcon();
         UpdateButton();
+        UpdateShadows();
     }
 
     public void SetText(string value)

@@ -80,6 +80,8 @@ public class LevelInstance : MonoBehaviour
     private string defaultScene;
     [SerializeField]
     private DiaryEntry diaryEntry;
+    [SerializeField]
+    private AudioClip[] musicClips;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -88,7 +90,7 @@ public class LevelInstance : MonoBehaviour
     private IEnumerable<GameObject> currentHiddenObjects;
     private string previousScene;
     private OverlayMode overlayMode = OverlayMode.None;
-    private bool tookDiaryScreenshot = false;
+    private bool startedPlayingMusic = false;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -116,7 +118,7 @@ public class LevelInstance : MonoBehaviour
 
     private void Start()
     {
-        if(string.IsNullOrWhiteSpace(defaultScene))
+        if (string.IsNullOrWhiteSpace(defaultScene))
         {
             Debug.Log("Default scene is empty in level instance");
             return;
@@ -147,6 +149,8 @@ public class LevelInstance : MonoBehaviour
             backButton.gameObject.SetActive(false);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
             ui.SetDiaryVisible(false);
+            AudioManager.Instance.PlayMusic(musicClips);
+            startedPlayingMusic = true;
         }
     }
 
@@ -205,6 +209,11 @@ public class LevelInstance : MonoBehaviour
             {
                 ui.SetDiaryVisible(false);
                 AudioManager.Instance.PlayFX(ui.Diary.closeClip);
+                if(!startedPlayingMusic)
+                {
+                    AudioManager.Instance.PlayMusic(musicClips);
+                    startedPlayingMusic = true;
+                }
             }
 
             // Hide everything
@@ -458,23 +467,16 @@ public class LevelInstance : MonoBehaviour
         backButton.gameObject.SetActive(visible);
     }
 
-    public void ConditionallyTakeDiaryEntryScreenshot()
-    { 
-        if(tookDiaryScreenshot || !diaryEntry)
-        {
-            return;
-        }
+    public Texture2D TakeDiaryScreenshot(DiaryEntryData entry)
+    {
+        ui.PrepareForDiaryScreenshot(entry);
 
         Texture2D renderedTexture = TakeScreenshot(816, 510);
 
-        // Write the texture to the disk
-        byte[] pngBytes = renderedTexture.EncodeToPNG();
-        string outputPath = Path.Combine(Application.persistentDataPath, $"{NewGameManager.Instance.currentLocation}.png");
-        File.WriteAllBytes(outputPath, pngBytes);
+        Debug.Log($"Captured diary screenshot");
+        ui.ResetFromScreenshot();
 
-        Debug.Log($"Captured diary screenshot: {outputPath}");
-
-        tookDiaryScreenshot = true;
+        return renderedTexture;
     }
 
     /**

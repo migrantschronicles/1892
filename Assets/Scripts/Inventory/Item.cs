@@ -22,6 +22,8 @@ public class Item : ScriptableObject
     public int MaxStackCount = 1;
     [Tooltip("The conditions to add if the item is added to the inventory. Gets removed if the item is removed.")]
     public string[] SetConditions;
+    [Tooltip("The category of this item")]
+    public ItemCategory category;
 
     public bool IsStackable
     {
@@ -36,6 +38,14 @@ public class Item : ScriptableObject
         get
         {
             return ghostSprite != null ? ghostSprite : sprite;
+        }
+    }
+
+    public ItemType ItemType
+    {
+        get
+        {
+            return category != null ? category.type : ItemType.Default;
         }
     }
 }

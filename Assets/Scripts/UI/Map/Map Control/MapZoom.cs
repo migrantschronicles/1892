@@ -354,7 +354,7 @@ public class MapZoom : MonoBehaviour
         }
     }
 
-    public void ResetFromMapScreenshot()
+    public void ResetFromScreenshot()
     {
         overrideZoom = -1.0f;
         rectTransform.pivot = oldPivot;

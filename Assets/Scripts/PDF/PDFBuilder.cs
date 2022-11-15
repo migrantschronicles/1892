@@ -374,7 +374,7 @@ public class PDFBuilder
         DrawPageNumber(pdf, ++pageNumber);
     }
 
-    private void DrawJourneys(IPDFPlatform pdf)
+    private void DrawJourneys(IPDFPlatform pdf, Texture2D TEST_Paris)
     {
         // Only test data
         Journey[] journeys = new Journey[] 
@@ -412,11 +412,10 @@ public class PDFBuilder
             pdf.DrawText(cityName, 94, top ? 49 : 457);
 
             // Screenshot
-            string screenshotPath = Path.Combine(Application.persistentDataPath, $"{journeys[i].destination}.png");
             RectInt screenshotRect = new RectInt(94, top ? 77 : 486, 408, 255);
-            if(File.Exists(screenshotPath))
+            if(TEST_Paris != null && journeys[i].destination == "Paris")
             {
-                pdf.DrawPNG(File.ReadAllBytes(screenshotPath), screenshotRect.x, screenshotRect.y, screenshotRect.width, screenshotRect.height);
+                pdf.DrawPNG(TEST_Paris.EncodeToPNG(), screenshotRect.x, screenshotRect.y, screenshotRect.width, screenshotRect.height);
             }
             else
             {
@@ -458,7 +457,7 @@ public class PDFBuilder
         }
     }
 
-    public void Generate()
+    public void Generate(DiaryEntryData TEST_ParisEntry)
     {
         // Responsible for generating the pdf based on the state.
         // Maybe outsource this to a thread, since it will take some time?
@@ -471,7 +470,8 @@ public class PDFBuilder
         //pdf.SetFont("AlegreyaSans-Regular.ttf");
 
         // Generate the map screenshot
-        Texture2D mapScreenshot = LevelInstance.Instance?.TakeMapScreenshot();
+        Texture2D mapScreenshot = LevelInstance.Instance ? LevelInstance.Instance.TakeMapScreenshot() : null;
+        Texture2D TEST_ParisScreenshot = TEST_ParisEntry != null && TEST_ParisEntry.entry != null ? (LevelInstance.Instance ? LevelInstance.Instance.TakeDiaryScreenshot(TEST_ParisEntry) : null) : null;
 
         // TITLE PAGE
         DrawTitlePage(pdf);
@@ -480,7 +480,7 @@ public class PDFBuilder
         DrawJourneyPage(pdf, mapScreenshot);
 
         // JOURNEYS
-        DrawJourneys(pdf);
+        DrawJourneys(pdf, TEST_ParisScreenshot);
 
         // OUTRO
         pdf.AddPage();

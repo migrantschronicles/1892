@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEditor.Localization.Plugins.XLIFF.V20;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -50,6 +51,7 @@ public class DiaryPages : MonoBehaviour
     private List<GameObject> pages = new List<GameObject>();
     private int currentDoublePageIndex = -1;
     private List<ElementAnimator> currentAnimators = new List<ElementAnimator>();
+    private List<GameObject> screenshotPages = new List<GameObject>();
 
     /**
      * @return The number of double pages. If the last page ends on the left, it returns the same number as if the last page would end on the right.
@@ -292,7 +294,6 @@ public class DiaryPages : MonoBehaviour
 
         if(takeScreenshot)
         {
-            LevelInstance.Instance.ConditionallyTakeDiaryEntryScreenshot();
             AudioManager.Instance.PlayCutTypewriter();
         }
     }
@@ -306,15 +307,44 @@ public class DiaryPages : MonoBehaviour
         {
             StartAnimator(currentAnimators[0]);
         }
-        else
-        {
-            LevelInstance.Instance.ConditionallyTakeDiaryEntryScreenshot();
-        }
     }
 
     private void StartAnimator(ElementAnimator animator)
     {
         animator.onFinished += OnAnimatorFinished;
         animator.Start();
+    }
+
+    public void PrepareForDiaryScreenshot(DiaryEntryData entry)
+    {
+        for(int i = 0; i < 2 && i < entry.entry.pages.Length; ++i)
+        {
+            DiaryPageData data = entry.entry.pages[i];
+            data.Date = "*MISSING*";
+            bool newPageIsLeft = i % 2 == 0;
+            GameObject parent = newPageIsLeft ? contentLeft : contentRight;
+            GameObject newPage = Instantiate(data.prefab, parent.transform);
+
+            foreach (DiaryPageDrawing drawing in data.drawings)
+            {
+                if (drawing.IsEnabled)
+                {
+                    AddDrawingToPage(newPage, drawing);
+                }
+            }
+
+            IDiaryPage diaryPage = newPage.GetComponent<IDiaryPage>();
+            diaryPage.SetData(data);
+            screenshotPages.Add(newPage);
+        }
+    }
+
+    public void ResetFromScreenshot()
+    {
+        foreach(GameObject page in screenshotPages)
+        {
+            Destroy(page);
+        }
+        screenshotPages.Clear();
     }
 }

@@ -17,9 +17,13 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
     [SerializeField]
     private Color playerDiamondColor = new Color(0.3764705882f, 0.2627450980f, 0.1843137255f);
     [SerializeField]
+    private Color playerForegroundColor = Color.white;
+    [SerializeField]
     private Color npcBackgroundColor = new Color(0.2666666667f, 0.2666666667f, 0.2666666667f);
     [SerializeField]
     private Color npcDiamondColor = new Color(0.3607843137f, 0.3607843137f, 0.3607843137f);
+    [SerializeField]
+    private Color npcForegroundColor = Color.white;
 
     public DialogLine Line { get; private set; }
 
@@ -69,6 +73,10 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
 
         background.color = npcBackgroundColor;
         diamond.color = npcDiamondColor;
+        text.color = npcForegroundColor;
+
+        DropShadow shadow = background.GetComponent<DropShadow>();
+        shadow.EffectDistance = new Vector2(-Mathf.Abs(shadow.EffectDistance.x), shadow.EffectDistance.y);
     }
 
     private void SetRight()
@@ -89,6 +97,10 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
 
         background.color = playerBackgroundColor;
         diamond.color = playerDiamondColor;
+        text.color = playerForegroundColor;
+
+        DropShadow shadow = background.GetComponent<DropShadow>();
+        shadow.EffectDistance = new Vector2(Mathf.Abs(shadow.EffectDistance.x), shadow.EffectDistance.y);
     }
 
     private void UpdateHeight()

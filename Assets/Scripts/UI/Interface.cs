@@ -102,8 +102,13 @@ public class Interface : MonoBehaviour
         diary.PrepareForMapScreenshot();
     }
 
+    public void PrepareForDiaryScreenshot(DiaryEntryData entry)
+    {
+        diary.PrepareForDiaryScreenshot(entry);
+    }
+
     public void ResetFromScreenshot()
     {
-        diary.ResetFromMapScreenshot();
+        diary.ResetFromScreenshot();
     }
 }

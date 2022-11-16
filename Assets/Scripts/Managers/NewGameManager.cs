@@ -35,7 +35,7 @@ public class NewGameManager : MonoBehaviour
     public List<string> visitedLocationsStr;
 
     private static bool isInitialized = false;
-
+    
     // Game Stats
     public bool gameRunning = true;
     public float timeSpeed = 0.1f;
@@ -315,6 +315,12 @@ public class NewGameManager : MonoBehaviour
         onDateChanged?.Invoke(date);
     }
 
+    public void SleepOutside() { }
+
+    public void SleepInHostel(int cost, int motherFoodAmount, int boyFoodAmount, int girlFoodAmount) {
+        money -= cost;
+        
+    }
     public void StartNewDay() 
     {
         Debug.Log("Go to next day here, via clock");

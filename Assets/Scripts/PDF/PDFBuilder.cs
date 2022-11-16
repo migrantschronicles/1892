@@ -2,8 +2,6 @@ using UnityEngine;
 using System.IO;
 using System;
 using System.Collections.Generic;
-using UnityEngine.Networking;
-using static NativePDFNamespace.NativePDF;
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
 using PdfSharp.Pdf;
 using sharpPDF;

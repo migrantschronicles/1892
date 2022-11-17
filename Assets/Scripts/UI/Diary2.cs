@@ -13,7 +13,7 @@ public enum DiaryPageType
     Settings
 }
 
-public class Diary : MonoBehaviour
+public class Diary2 : MonoBehaviour
 {
     [SerializeField]
     private GameObject inventoryPage;

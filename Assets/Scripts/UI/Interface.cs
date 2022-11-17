@@ -36,11 +36,11 @@ public class Interface : MonoBehaviour
     [SerializeField]
     private GameObject diaryButton;
     [SerializeField]
-    private Diary diary;
+    private Diary2 diary;
     [SerializeField]
     private PopupManager popupManager;
 
-    public Diary Diary { get { return diary; } }
+    public Diary2 Diary { get { return diary; } }
 
     private void Start()
     {

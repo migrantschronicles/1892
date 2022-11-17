@@ -95,7 +95,7 @@ public class LevelInstance : MonoBehaviour
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
 
-    public Diary Diary { get { return ui.Diary; } }
+    public Diary2 Diary { get { return ui.Diary; } }
 
     private void Awake()
     {

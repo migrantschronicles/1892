@@ -502,4 +502,9 @@ public class NewGameManager : MonoBehaviour
         builder.Generate(new DiaryEntryData { entry = TEST_ParisEntry });
         Debug.Log("Finished PDF generating");
     }
+
+    public void SetPaused(bool paused)
+    {
+        gameRunning = !paused;
+    }
 }

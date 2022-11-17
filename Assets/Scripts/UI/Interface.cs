@@ -37,6 +37,8 @@ public class Interface : MonoBehaviour
     private GameObject diaryButton;
     [SerializeField]
     private Diary diary;
+    [SerializeField]
+    private PopupManager popupManager;
 
     public Diary Diary { get { return diary; } }
 
@@ -110,5 +112,10 @@ public class Interface : MonoBehaviour
     public void ResetFromScreenshot()
     {
         diary.ResetFromScreenshot();
+    }
+
+    public void OpenEndDayPopUp()
+    {
+        popupManager.OpenEndDayPopUp();
     }
 }

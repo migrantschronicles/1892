@@ -462,6 +462,11 @@ public class LevelInstance : MonoBehaviour
         AudioManager.Instance.PlayFX(ui.Diary.openClip);
     }
 
+    public void OpenClock()
+    {
+        ui.OpenEndDayPopUp();
+    }
+
     public void SetBackButtonVisible(bool visible)
     {
         backButton.gameObject.SetActive(visible);

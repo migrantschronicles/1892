@@ -47,7 +47,7 @@ public class PlayerInventory
                 items.Remove(item);
                 if (item.SetConditions != null && item.SetConditions.Length > 0)
                 {
-                    NewGameManager.Instance.RemoveConditions(item.SetConditions);
+                    NewGameManager.Instance.conditions.RemoveConditions(item.SetConditions);
                 }
 
                 if(item.category)
@@ -56,7 +56,7 @@ public class PlayerInventory
                     {
                         if (item.category.SetConditions != null && item.category.SetConditions.Length > 0)
                         {
-                            NewGameManager.Instance.RemoveConditions(item.category.SetConditions);
+                            NewGameManager.Instance.conditions.RemoveConditions(item.category.SetConditions);
                         }
                     }
                 }
@@ -76,7 +76,7 @@ public class PlayerInventory
                 {
                     if (item.category.SetConditions != null && item.category.SetConditions.Length > 0)
                     {
-                        NewGameManager.Instance.AddConditions(item.category.SetConditions);
+                        NewGameManager.Instance.conditions.AddConditions(item.category.SetConditions, true);
                     }
                 }
             }
@@ -84,7 +84,7 @@ public class PlayerInventory
             items.Add(item, changedAmount);
             if(item.SetConditions != null && item.SetConditions.Length > 0)
             {
-                NewGameManager.Instance.AddConditions(item.SetConditions);
+                NewGameManager.Instance.conditions.AddConditions(item.SetConditions, true);
             }
         }
     }

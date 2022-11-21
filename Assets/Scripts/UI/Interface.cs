@@ -96,7 +96,7 @@ public class Interface : MonoBehaviour
 
     public void SetDiaryVisible(bool visible, DiaryPageType type = DiaryPageType.Inventory)
     {
-        ingameDiary.SetVisible(visible);
+        ingameDiary.SetOpened(visible);
         ///@todo
         //diary.SetVisible(visible, type);
     }

@@ -8,6 +8,8 @@ public class IngameDiary : MonoBehaviour
     private Animator diaryAnimator;
     [SerializeField]
     private Diary diary;
+    [SerializeField]
+    private DiaryContentPage defaultPage;
 
     public Diary Diary { get { return diary; } }
 
@@ -16,16 +18,16 @@ public class IngameDiary : MonoBehaviour
         diary.onDiaryStatusChanged += OnDiaryStatusChanged;
     }
 
-    private void OnDiaryStatusChanged(DiaryStatus status)
+    private void OnDiaryStatusChanged(OpenStatus status)
     {
         switch(status)
         {
-            case DiaryStatus.Opening:
+            case OpenStatus.Opening:
                 diaryAnimator.SetBool("Opened", true);
                 StartCoroutine(WaitForAnimationEvents());
                 break;
 
-            case DiaryStatus.Closing:
+            case OpenStatus.Closing:
                 diaryAnimator.SetBool("Opened", false);
                 StartCoroutine(WaitForAnimationEvents());
                 break;
@@ -34,26 +36,33 @@ public class IngameDiary : MonoBehaviour
 
     private IEnumerator WaitForAnimationEvents()
     {
-        while((diary.Status == DiaryStatus.Opening && !diaryAnimator.GetCurrentAnimatorStateInfo(0).IsName("DiaryOpened"))
-            || (diary.Status == DiaryStatus.Closing && !diaryAnimator.GetCurrentAnimatorStateInfo(0).IsName("DiaryClosed")))
+        while((diary.Status == OpenStatus.Opening && !diaryAnimator.GetCurrentAnimatorStateInfo(0).IsName("DiaryOpened"))
+            || (diary.Status == OpenStatus.Closing && !diaryAnimator.GetCurrentAnimatorStateInfo(0).IsName("DiaryClosed")))
         {
             yield return null;
         }
 
         switch(diary.Status)
         {
-            case DiaryStatus.Opening:
+            case OpenStatus.Opening:
                 diary.OnOpeningAnimationFinished();
                 break;
 
-            case DiaryStatus.Closing:
+            case OpenStatus.Closing:
                 diary.OnClosingAnimationFinished();
                 break;
         }
     }
 
-    public void SetVisible(bool visible)
+    public void SetOpened(bool opened)
     {
-        diary.SetVisible(visible);
+        if(opened)
+        {
+            diary.SetOpened(defaultPage);
+        }
+        else
+        {
+            diary.SetOpened(opened);
+        }
     }
 }

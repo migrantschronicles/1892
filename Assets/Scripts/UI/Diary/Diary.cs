@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum DiaryStatus
+public enum OpenStatus
 {
     Closed,
     Opening,
@@ -10,13 +10,17 @@ public enum DiaryStatus
     Closing
 }
 
+public delegate void OnDiaryStatusChangedEvent(OpenStatus status);
+
 public class Diary : MonoBehaviour
 {
-    public delegate void OnDiaryStatusChangedEvent(DiaryStatus status);
     public event OnDiaryStatusChangedEvent onDiaryStatusChanged;
 
-    private DiaryStatus diaryStatus;
-    public DiaryStatus Status
+    private DiaryContentPage currentPage;
+    private DiaryContentPage nextPage;
+
+    private OpenStatus diaryStatus;
+    public OpenStatus Status
     {
         get { return diaryStatus; }
         set
@@ -35,15 +39,15 @@ public class Diary : MonoBehaviour
         }
     }
 
-    public void SetVisible(bool visible)
+    public void SetOpened(bool opened)
     {
-        if(visible)
+        if(opened)
         {
             switch (Status)
             {
-                case DiaryStatus.Closed:
-                case DiaryStatus.Closing:
-                    Status = DiaryStatus.Opening;
+                case OpenStatus.Closed:
+                case OpenStatus.Closing:
+                    Status = OpenStatus.Opening;
                     break;
             }
         }
@@ -51,23 +55,69 @@ public class Diary : MonoBehaviour
         {
             switch(Status)
             {
-                case DiaryStatus.Opened:
-                case DiaryStatus.Opening:
-                    Status = DiaryStatus.Closing;
+                case OpenStatus.Opened:
+                case OpenStatus.Opening:
+                    Status = OpenStatus.Closing;
+                    if(currentPage)
+                    {
+                        currentPage.onStatusChanged += OnCurrentPageStatusChanged;
+                        currentPage.CloseToRight();
+                    }
                     break;
             }
         }
     }
 
+    public void SetOpened(DiaryContentPage page)
+    {
+        ///@todo
+        switch(Status)
+        {
+            case OpenStatus.Closed:
+                SetOpened(true);
+                nextPage = page;
+                nextPage.onStatusChanged += OnNextPageStatusChanged;
+                nextPage.OpenToLeft();
+                break;
+
+            case OpenStatus.Opened:
+                nextPage = page;
+                break;
+        }
+    }
+
     public void OnOpeningAnimationFinished()
     {
-        Debug.Assert(Status == DiaryStatus.Opening);
-        Status = DiaryStatus.Opened;
+        Debug.Assert(Status == OpenStatus.Opening);
+        Status = OpenStatus.Opened;
     }
 
     public void OnClosingAnimationFinished()
     {
-        Debug.Assert(Status == DiaryStatus.Closing);
-        Status = DiaryStatus.Closed;
+        Debug.Assert(Status == OpenStatus.Closing);
+        Status = OpenStatus.Closed;
+    }
+
+    private void OnNextPageStatusChanged(OpenStatus status)
+    {
+        if (status == OpenStatus.Opened)
+        {
+            nextPage.onStatusChanged -= OnNextPageStatusChanged;
+            if(currentPage != null)
+            {
+                // Remove callback, in case next page is opened and current page is closed at the same time.
+                currentPage.onStatusChanged -= OnCurrentPageStatusChanged;
+            }
+            currentPage = nextPage;
+        }
+    }
+
+    private void OnCurrentPageStatusChanged(OpenStatus status)
+    {
+        if(status == OpenStatus.Closed)
+        {
+            currentPage.onStatusChanged -= OnCurrentPageStatusChanged;
+            currentPage = null;
+        }
     }
 }

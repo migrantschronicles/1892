@@ -485,18 +485,18 @@ public class LevelInstance : MonoBehaviour
         //AudioManager.Instance.PlayFX(ui.Diary.openClip);
     }
 
-    private void OnDiaryStatusChanged(DiaryStatus status)
+    private void OnDiaryStatusChanged(OpenStatus status)
     {
         switch(status)
         {
-            case DiaryStatus.Opened:
+            case OpenStatus.Opened:
                 if (mode == Mode.Diary)
                 {
                     backButton.gameObject.SetActive(true);
                 }
                 break;
 
-            case DiaryStatus.Closed:
+            case OpenStatus.Closed:
                 if (mode == Mode.Diary)
                 {
                     ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);

@@ -75,11 +75,24 @@ public class NewGameManager : MonoBehaviour
     public TransportationInfoTable transportationInfo { get; private set; } = new TransportationInfoTable();
     public TextAsset transportationTableCSV;
 
-    // Global conditions
-    private static List<string> globalConditions = new List<string>();
+    // Conditions
+    public DialogConditionProvider conditions = new DialogConditionProvider();
 
     public IEnumerable<DiaryEntry> DiaryEntries { get { return diaryEntries; } }
 
+    // Quests
+    private List<Quest> mainQuests = new List<Quest>();
+    private List<Quest> sideQuests = new List<Quest>();
+    private List<Quest> finishedMainQuests = new List<Quest>();
+    private List<Quest> finishedSideQuests = new List<Quest>();
+
+    public delegate void OnQuestAddedEvent(Quest quest);
+    public event OnQuestAddedEvent onQuestAdded;
+
+    public delegate void OnQuestFinishedEvent(Quest quest);
+    public event OnQuestFinishedEvent onQuestFinished;
+
+    // Events
     public delegate void OnDiaryEntryAdded(DiaryEntry entry);
     public event OnDiaryEntryAdded onDiaryEntryAdded;
 
@@ -199,6 +212,8 @@ public class NewGameManager : MonoBehaviour
 
     private void InitAfterLoad()
     {
+        conditions.ResetLocalConditions();
+
         foreach (LocationMarker location in LevelInstance.Instance.Diary.LocationMarkerObjects)
         {
             // Re-callibrating vistedLocarions List
@@ -426,75 +441,6 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
-
-    /**
-     * Adds a condition to the list.
-     */
-    public bool AddCondition(string condition)
-    {
-        if (string.IsNullOrWhiteSpace(condition))
-        {
-            return false;
-        }
-
-        if (!globalConditions.Contains(condition))
-        {
-            globalConditions.Add(condition);
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Adds multiple conditions to the list.
-     */
-    public void AddConditions(IEnumerable<string> conditions)
-    {
-        foreach (string condition in conditions)
-        {
-            AddCondition(condition);
-        }
-    }
-
-    /**
-     * Removes a condition from the local and global list.
-     */
-    public bool RemoveCondition(string condition)
-    {
-        if (string.IsNullOrWhiteSpace(condition))
-        {
-            return false;
-        }
-
-        return globalConditions.Remove(condition);
-    }
-
-    /**
-     * Removes conditions from the local and global list.
-     */
-    public void RemoveConditions(IEnumerable<string> conditions)
-    {
-        foreach (string condition in conditions)
-        {
-            RemoveCondition(condition);
-        }
-    }
-
-    /**
-     * Checks if one condition is met.
-     * If condition is empty, it is considered to be met.
-     */
-    public bool HasCondition(string condition)
-    {
-        if (string.IsNullOrWhiteSpace(condition))
-        {
-            return true;
-        }
-
-        return globalConditions.Contains(condition);
-    }
-
     public void GeneratePDF()
     {
         Debug.Log("Generating PDF");
@@ -506,5 +452,119 @@ public class NewGameManager : MonoBehaviour
     public void SetPaused(bool paused)
     {
         gameRunning = !paused;
+    }
+
+#if UNITY_EDITOR
+    private void ValidateQuest(Quest quest)
+    {
+        if(string.IsNullOrWhiteSpace(quest.Id))
+        {
+            Debug.LogError($"{quest.name} has no id");
+        }
+
+        if(quest.Title == null || quest.Title.IsEmpty)
+        {
+            Debug.LogError($"{quest.name} has no title set");
+        }
+    }
+#endif
+
+    public bool AddQuest(Quest quest)
+    {
+#if UNITY_EDITOR
+        ValidateQuest(quest);
+#endif
+
+        if(HasQuest(quest))
+        {
+            return false;
+        }
+
+        switch(quest.Type)
+        {
+            case QuestType.MainQuest:
+                mainQuests.Add(quest);
+                break;
+
+            case QuestType.SideQuest:
+                sideQuests.Add(quest);
+                break;
+        }
+
+        OnQuestAdded(quest);
+        return true;
+    }
+
+    private void OnQuestAdded(Quest quest)
+    {
+        Debug.Log($"Quest {quest.Id} was added");
+        onQuestAdded?.Invoke(quest);
+
+        if(EvaluateQuestFinishedCondition(quest))
+        {
+            // Quest is already finished
+            FinishQuest(quest);
+        }
+        else
+        {
+            // Listen to changes to conditions.
+            conditions.AddOnConditionsChanged(quest.FinishedCondition.GetAllConditions(), OnQuestConditionsChanged, quest);
+        }
+    }
+
+    private void OnQuestConditionsChanged(object context)
+    {
+        Quest quest = (Quest)context;
+        if(EvaluateQuestFinishedCondition(quest))
+        {
+            FinishQuest(quest);
+        }
+    }
+
+    public void FinishQuest(Quest quest)
+    {
+        GetQuestList(quest.Type).Remove(quest);
+        GetQuestList(quest.Type, true).Add(quest);
+        OnQuestFinished(quest);
+    }
+
+    private void OnQuestFinished(Quest quest)
+    {
+        Debug.Log($"Quest {quest.Id} was finished");
+        onQuestFinished?.Invoke(quest);
+    }
+
+    private bool EvaluateQuestFinishedCondition(Quest quest)
+    {
+        return quest.FinishedCondition.Test();
+    }
+
+    public bool HasQuest(Quest quest, bool includeFinished = false)
+    {
+        return IsQuestActive(quest) || (includeFinished && IsQuestFinished(quest));
+    }
+
+    public bool IsQuestActive(Quest quest)
+    {
+        return GetQuestList(quest.Type).Contains(quest);
+    }
+
+    public bool IsQuestFinished(Quest quest)
+    {
+        return GetQuestList(quest.Type, true).Contains(quest);
+    }
+
+    private List<Quest> GetQuestList(QuestType type, bool finished = false)
+    {
+        switch(type)
+        {
+            case QuestType.SideQuest:
+                return finished ? finishedSideQuests : sideQuests;
+
+            case QuestType.MainQuest:
+                return finished ? finishedMainQuests : mainQuests;
+        }
+
+        return null;
     }
 }

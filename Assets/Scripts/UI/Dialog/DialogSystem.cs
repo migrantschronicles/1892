@@ -214,7 +214,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         if(currentDialog)
         {
             currentDialog.OnFinished.Invoke();
-            AddConditions(currentDialog.SetOnFinishedConditions);
+            NewGameManager.Instance.conditions.AddConditions(currentDialog.SetOnFinishedConditions);
             currentDialog = null;
         }
     }
@@ -384,7 +384,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         GameObject newLine = Instantiate(linePrefab, content.transform);
         currentBubble = newLine.GetComponent<DialogBubble>();
         currentBubble.SetContent(line);
-        AddConditions(line.SetConditions);
+        NewGameManager.Instance.conditions.AddConditions(line.SetConditions);
         OnContentAdded(newLine);
         StartTextAnimation(currentBubble, LocalizationManager.Instance.GetLocalizedString(line.Text));
         AudioManager.Instance.PlayFX(lineClip);
@@ -503,8 +503,8 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         }
 
         // Add the conditions to the list.
-        AddConditions(currentDecision.SetConditions);
-        AddConditions(bubble.Answer.SetConditions);
+        NewGameManager.Instance.conditions.AddConditions(currentDecision.SetConditions);
+        NewGameManager.Instance.conditions.AddConditions(bubble.Answer.SetConditions);
 
         // Save the y position of the first answer.
         DialogAnswerBubble firstBubble = currentAnswers[0];
@@ -621,142 +621,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         {
             Destroy(content.transform.GetChild(i).gameObject);
         }
-    }
-
-    public void AddOnConditionsChanged(IEnumerable<string> conditions, OnConditionsChanged onConditionsChanged)
-    {
-        foreach(string condition in conditions)
-        {
-            AddOnConditionChanged(condition, onConditionsChanged);
-        }
-    }
-
-    public void AddOnConditionChanged(string condition, OnConditionsChanged onConditionsChanged)
-    {
-        if(onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChanged changedEvent))
-        {
-            onConditionsChangedListeners[condition] = changedEvent + onConditionsChanged;
-        }
-        else
-        {
-            onConditionsChangedListeners.Add(condition, onConditionsChanged);
-        }
-    }
-
-    /**
-     * Adds a condition to the list.
-     * @param global True if it should be added to the global list, false for the local one.
-     */
-    public void AddCondition(string condition, bool global = false)
-    {
-        if(string.IsNullOrWhiteSpace(condition))
-        {
-            return;
-        }
-
-        bool successful = false;
-        if(global)
-        {
-            successful = NewGameManager.Instance.AddCondition(condition);
-        }
-        else
-        {
-            if(!conditions.Contains(condition))
-            {
-                conditions.Add(condition);
-                successful = true;
-            }
-        }
-
-        if(successful)
-        {
-            if(onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChanged onConditionsChanged))
-            {
-                onConditionsChanged.Invoke();
-            }
-        }
-    }
-
-    /**
-     * Adds a condition to the list.
-     */
-    public void AddCondition(SetCondition condition)
-    {
-        AddCondition(condition.Condition, condition.IsGlobal);
-    }
-
-    /**
-     * Adds multiple conditions to the list.
-     */
-    public void AddConditions(IEnumerable<SetCondition> conditions)
-    {
-        foreach(SetCondition condition in conditions)
-        {
-            AddCondition(condition);
-        }
-    }
-
-    /**
-     * Adds multiple conditions to the list.
-     */
-    public void AddConditions(IEnumerable<string> conditions, bool global)
-    {
-        foreach(string condition in conditions)
-        {
-            AddCondition(condition, global);
-        }
-    }
-
-    /**
-     * Removes a condition from the local and global list.
-     */
-    public void RemoveCondition(string condition)
-    {
-        if (string.IsNullOrWhiteSpace(condition))
-        {
-            return;
-        }
-
-        bool successful = false;
-        successful |= conditions.Remove(condition);
-        successful |= NewGameManager.Instance.RemoveCondition(condition);
-        if (successful)
-        {
-            if (onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChanged onConditionsChanged))
-            {
-                onConditionsChanged.Invoke();
-            }
-        }
-    }
-
-    /**
-     * Removes conditions from the local and global list.
-     */
-    public void RemoveConditions(IEnumerable<string> conditions)
-    {
-        foreach(string condition in conditions)
-        {
-            RemoveCondition(condition);
-        }
-    }
-
-    /**
-     * Checks if one condition is met. Does not care whether it is met globally or locally.
-     * If condition is empty, it is considered to be met.
-     */
-    public bool HasCondition(string condition)
-    {
-        if(string.IsNullOrWhiteSpace(condition))
-        {
-            return true;
-        }
-
-        if(conditions.Contains(condition))
-        {
-            return true;
-        }
-
-        return NewGameManager.Instance.HasCondition(condition);
     }
 
     public void OnPointerClick(PointerEventData eventData)

@@ -17,7 +17,7 @@ public class DialogConditionValue
 
     public bool Test()
     {
-        bool test = DialogSystem.Instance.HasCondition(Condition);
+        bool test = NewGameManager.Instance.conditions.HasCondition(Condition);
         return Not ? !test : test;
     }
 }

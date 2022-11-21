@@ -70,7 +70,6 @@ public class Diary : MonoBehaviour
 
     public void SetOpened(DiaryContentPage page)
     {
-        ///@todo
         switch(Status)
         {
             case OpenStatus.Closed:
@@ -82,7 +81,50 @@ public class Diary : MonoBehaviour
 
             case OpenStatus.Opened:
                 nextPage = page;
+                ///@todo
                 break;
+        }
+    }
+
+    public void OpenPage(DiaryContentPage page)
+    {
+        if(Status != OpenStatus.Opened || page == currentPage)
+        {
+            return;
+        }
+
+        nextPage = page;
+        nextPage.onStatusChanged += OnNextPageStatusChanged;
+        currentPage.onStatusChanged += OnCurrentPageStatusChanged;
+
+        DiaryContentPages currentPages = currentPage.ContentPages;
+        DiaryContentPages nextPages = nextPage.ContentPages;
+        bool isPageToRight = true;
+        if(currentPages != nextPages)
+        {
+            if(currentPages.DiaryMarker)
+            {
+                currentPages.DiaryMarker.SetActive(false);
+            }
+
+            int nextSiblingIndex = nextPages.transform.GetSiblingIndex();
+            int currentSiblingIndex = currentPages.transform.GetSiblingIndex();
+            if (nextSiblingIndex < currentSiblingIndex ||
+                (nextSiblingIndex == currentSiblingIndex && nextPage.transform.GetSiblingIndex() < currentPage.transform.GetSiblingIndex()))
+            {
+                isPageToRight = false;
+            }
+        }
+
+        if(isPageToRight)
+        {
+            currentPage.CloseToLeft();
+            nextPage.OpenToLeft();
+        }
+        else
+        {
+            currentPage.CloseToRight();
+            nextPage.OpenToRight();
         }
     }
 
@@ -109,6 +151,10 @@ public class Diary : MonoBehaviour
                 currentPage.onStatusChanged -= OnCurrentPageStatusChanged;
             }
             currentPage = nextPage;
+            if (currentPage.ContentPages && currentPage.ContentPages.DiaryMarker)
+            {
+                currentPage.ContentPages.DiaryMarker.SetActive(true);
+            }
         }
     }
 

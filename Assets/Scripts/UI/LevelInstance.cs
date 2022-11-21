@@ -4,6 +4,14 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
+enum Mode
+{
+    None,
+    Shop,
+    Dialog,
+    Diary
+}
+
 enum OverlayMode
 {
     None,
@@ -91,6 +99,7 @@ public class LevelInstance : MonoBehaviour
     private string previousScene;
     private OverlayMode overlayMode = OverlayMode.None;
     private bool startedPlayingMusic = false;
+    private Mode mode = Mode.None;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -200,68 +209,75 @@ public class LevelInstance : MonoBehaviour
         else
         {
             // The back button has been pressed during a dialog, in a shop, in the diary, etc.
-            if(dialogSystem.gameObject.activeSelf)
+            switch (mode)
             {
-                // If the dialog was active, notify it to clear its entries.
-                dialogSystem.OnClose();
-                AudioManager.Instance.PlayFX(dialogSystem.closeClip);
-                dialogSystem.gameObject.SetActive(false);
+                case Mode.Dialog:
+                    // If the dialog was active, notify it to clear its entries.
+                    dialogSystem.OnClose();
+                    AudioManager.Instance.PlayFX(dialogSystem.closeClip);
+                    dialogSystem.gameObject.SetActive(false);
+
+                    if (currentAdditiveScene)
+                    {
+                        // Hide the additive scene that was enabled during a dialog.
+                        currentAdditiveScene.OnActiveStatusChanged(false);
+                        currentAdditiveScene.gameObject.SetActive(false);
+                        currentAdditiveScene = null;
+                    }
+
+                    if (previousScene != null && currentScene.SceneName != previousScene)
+                    {
+                        // If the scene switched for a dialog temporarily, return to the previous scene.
+                        OpenScene(previousScene);
+                        previousScene = null;
+                    }
+
+                    if (currentHiddenObjects != null)
+                    {
+                        // Reactivate all the characters that were hidden during the dialog.
+                        foreach (GameObject go in currentHiddenObjects)
+                        {
+                            go.SetActive(true);
+                        }
+                        currentHiddenObjects = null;
+                    }
+
+                    break;
+
+                case Mode.Diary:
+                    ui.SetDiaryVisible(false);
+                    ///@todo
+                    //AudioManager.Instance.PlayFX(ui.Diary.closeClip);
+                    if (!startedPlayingMusic)
+                    {
+                        AudioManager.Instance.PlayMusic(musicClips);
+                        startedPlayingMusic = true;
+                    }
+                    break;
+
+                case Mode.Shop:
+                    // Hide the shop
+                    currentShop.gameObject.SetActive(false);
+                    AudioManager.Instance.PlayFX(currentShop.closeClip);
+                    currentShop = null;
+                    break;
             }
 
-            if(ui.Diary.gameObject.activeSelf)
-            {
-                ui.SetDiaryVisible(false);
-                ///@todo
-                //AudioManager.Instance.PlayFX(ui.Diary.closeClip);
-                if (!startedPlayingMusic)
-                {
-                    AudioManager.Instance.PlayMusic(musicClips);
-                    startedPlayingMusic = true;
-                }
-            }
-
-            // Hide everything
             backButton.gameObject.SetActive(false);
-            ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-            DisableBlur();
 
-            if (currentShop)
+            if (mode != Mode.Diary)
             {
-                // Hide the shop
-                currentShop.gameObject.SetActive(false);
-                AudioManager.Instance.PlayFX(currentShop.closeClip);
-                currentShop = null;
-            }
+                // Hide everything
+                ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
+                DisableBlur();
 
-            if (currentAdditiveScene)
-            {
-                // Hide the additive scene that was enabled during a dialog.
-                currentAdditiveScene.OnActiveStatusChanged(false);
-                currentAdditiveScene.gameObject.SetActive(false);
-                currentAdditiveScene = null;
-            }
-
-            if (previousScene != null && currentScene.SceneName != previousScene)
-            {
-                // If the scene switched for a dialog temporarily, return to the previous scene.
-                OpenScene(previousScene);
-                previousScene = null;
-            }
-
-            if (currentScene)
-            {
-                // Enable the buttons again.
-                currentScene.SetInteractablesVisible(true);
-            }
-
-            if (currentHiddenObjects != null)
-            {
-                // Reactivate all the characters that were hidden during the dialog.
-                foreach (GameObject go in currentHiddenObjects)
+                if (currentScene)
                 {
-                    go.SetActive(true);
+                    // Enable the buttons again.
+                    currentScene.SetInteractablesVisible(true);
                 }
-                currentHiddenObjects = null;
+
+                mode = Mode.None;
             }
         }
     }
@@ -451,7 +467,7 @@ public class LevelInstance : MonoBehaviour
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
         ui.SetDiaryVisible(true, type);
 
-        if (dialogSystem.gameObject.activeSelf)
+        if (mode == Mode.Dialog)
         {
             // This is an overlay (the travel decision option was selected during a dialog), so hide the dialog system.
             overlayMode = OverlayMode.Diary;
@@ -461,6 +477,10 @@ public class LevelInstance : MonoBehaviour
                 currentAdditiveScene.gameObject.SetActive(false);
             }
         }
+        else
+        {
+            mode = Mode.Diary;
+        }
 
         ///@todo
         //AudioManager.Instance.PlayFX(ui.Diary.openClip);
@@ -468,12 +488,23 @@ public class LevelInstance : MonoBehaviour
 
     private void OnDiaryOpened()
     {
+        if (mode != Mode.Diary)
+        {
+            return;
+        }
+
         backButton.gameObject.SetActive(true);
     }
 
     private void OnDiaryClosed()
     {
+        if(mode != Mode.Diary)
+        {
+            return;
+        }
 
+        ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
+        DisableBlur();
     }
 
     public void OpenClock()

@@ -112,7 +112,9 @@ public class NewGameManager : MonoBehaviour
     {
         get
         {
-            return LevelInstance.Instance.Diary.LocationMarkerObjects.First(marker => marker.LocationName == currentLocation);
+            ///@todo
+            //return LevelInstance.Instance.Diary.LocationMarkerObjects.First(marker => marker.LocationName == currentLocation);
+            return null;
         }
     }
 

@@ -95,7 +95,7 @@ public class LevelInstance : MonoBehaviour
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
 
-    public Diary2 Diary { get { return ui.Diary; } }
+    public Diary Diary { get { return ui.Diary; } }
 
     private void Awake()
     {
@@ -126,6 +126,8 @@ public class LevelInstance : MonoBehaviour
 
         backButton.onClick.AddListener(OnBack);
         blur.SetActive(false);
+        Diary.onDiaryOpened += OnDiaryOpened;
+        Diary.onDiaryClosed += OnDiaryClosed;
 
         foreach(Scene scene in scenes)
         {
@@ -175,7 +177,8 @@ public class LevelInstance : MonoBehaviour
                 case OverlayMode.Diary:
                 {
                     // The map was open, hide it.
-                    AudioManager.Instance.PlayFX(ui.Diary.closeClip);
+                    ///@todo
+                    //AudioManager.Instance.PlayFX(ui.Diary.closeClip);
                     ui.SetDiaryVisible(false);
                     break;
                 }
@@ -208,8 +211,9 @@ public class LevelInstance : MonoBehaviour
             if(ui.Diary.gameObject.activeSelf)
             {
                 ui.SetDiaryVisible(false);
-                AudioManager.Instance.PlayFX(ui.Diary.closeClip);
-                if(!startedPlayingMusic)
+                ///@todo
+                //AudioManager.Instance.PlayFX(ui.Diary.closeClip);
+                if (!startedPlayingMusic)
                 {
                     AudioManager.Instance.PlayMusic(musicClips);
                     startedPlayingMusic = true;
@@ -446,7 +450,6 @@ public class LevelInstance : MonoBehaviour
         SetBlurAfterGameObject(sceneParent);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
         ui.SetDiaryVisible(true, type);
-        backButton.gameObject.SetActive(true);
 
         if (dialogSystem.gameObject.activeSelf)
         {
@@ -459,7 +462,18 @@ public class LevelInstance : MonoBehaviour
             }
         }
 
-        AudioManager.Instance.PlayFX(ui.Diary.openClip);
+        ///@todo
+        //AudioManager.Instance.PlayFX(ui.Diary.openClip);
+    }
+
+    private void OnDiaryOpened()
+    {
+        backButton.gameObject.SetActive(true);
+    }
+
+    private void OnDiaryClosed()
+    {
+
     }
 
     public void OpenClock()

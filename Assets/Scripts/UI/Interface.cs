@@ -36,11 +36,11 @@ public class Interface : MonoBehaviour
     [SerializeField]
     private GameObject diaryButton;
     [SerializeField]
-    private Diary2 diary;
+    private Diary diary;
     [SerializeField]
     private PopupManager popupManager;
 
-    public Diary2 Diary { get { return diary; } }
+    public Diary Diary { get { return diary; } }
 
     private void Start()
     {
@@ -96,22 +96,27 @@ public class Interface : MonoBehaviour
 
     public void SetDiaryVisible(bool visible, DiaryPageType type = DiaryPageType.Inventory)
     {
-        diary.SetVisible(visible, type);
+        diary.SetVisible(visible);
+        ///@todo
+        //diary.SetVisible(visible, type);
     }
 
     public void PrepareForMapScreenshot()
     {
-        diary.PrepareForMapScreenshot();
+        ///@todo
+        //diary.PrepareForMapScreenshot();
     }
 
     public void PrepareForDiaryScreenshot(DiaryEntryData entry)
     {
-        diary.PrepareForDiaryScreenshot(entry);
+        ///@todo
+        //diary.PrepareForDiaryScreenshot(entry);
     }
 
     public void ResetFromScreenshot()
     {
-        diary.ResetFromScreenshot();
+        ///@todo
+        //diary.ResetFromScreenshot();
     }
 
     public void OpenEndDayPopUp()

@@ -4,18 +4,14 @@ using UnityEngine;
 
 public class DiaryContentPage : MonoBehaviour
 {
-    public DiaryContentPages ContentPages
-    {
-        get
-        {
-            return GetComponentInParent<DiaryContentPages>();
-        }
-    }
+    [SerializeField]
+    private bool isDoublePage = false;
 
     private Animator animator;
     private Coroutine watchAnimationCoroutine;
     public event OnDiaryStatusChangedEvent onStatusChanged;
     private OpenStatus status;
+
     public OpenStatus Status
     {
         get { return status; }
@@ -25,10 +21,24 @@ public class DiaryContentPage : MonoBehaviour
             onStatusChanged?.Invoke(status);
         }
     }
+    public DiaryContentPages ContentPages
+    {
+        get
+        {
+            return GetComponentInParent<DiaryContentPages>();
+        }
+    }
+
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        animator.SetFloat("IsDoublePage", isDoublePage ? 1.0f : 0.0f);
+    }
+
+    private void OnEnable()
+    {
+        animator.SetFloat("IsDoublePage", isDoublePage ? 1.0f : 0.0f);
     }
 
     public void OpenToLeft()

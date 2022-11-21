@@ -36,11 +36,11 @@ public class Interface : MonoBehaviour
     [SerializeField]
     private GameObject diaryButton;
     [SerializeField]
-    private Diary diary;
+    private IngameDiary ingameDiary;
     [SerializeField]
     private PopupManager popupManager;
 
-    public Diary Diary { get { return diary; } }
+    public IngameDiary IngameDiary { get { return ingameDiary; } }
 
     private void Start()
     {
@@ -96,7 +96,7 @@ public class Interface : MonoBehaviour
 
     public void SetDiaryVisible(bool visible, DiaryPageType type = DiaryPageType.Inventory)
     {
-        diary.SetVisible(visible);
+        ingameDiary.SetVisible(visible);
         ///@todo
         //diary.SetVisible(visible, type);
     }

@@ -104,7 +104,7 @@ public class LevelInstance : MonoBehaviour
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
 
-    public Diary Diary { get { return ui.Diary; } }
+    public IngameDiary IngameDiary { get { return ui.IngameDiary; } }
 
     private void Awake()
     {
@@ -135,8 +135,7 @@ public class LevelInstance : MonoBehaviour
 
         backButton.onClick.AddListener(OnBack);
         blur.SetActive(false);
-        Diary.onDiaryOpened += OnDiaryOpened;
-        Diary.onDiaryClosed += OnDiaryClosed;
+        IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
 
         foreach(Scene scene in scenes)
         {
@@ -486,25 +485,25 @@ public class LevelInstance : MonoBehaviour
         //AudioManager.Instance.PlayFX(ui.Diary.openClip);
     }
 
-    private void OnDiaryOpened()
+    private void OnDiaryStatusChanged(DiaryStatus status)
     {
-        if (mode != Mode.Diary)
+        switch(status)
         {
-            return;
+            case DiaryStatus.Opened:
+                if (mode == Mode.Diary)
+                {
+                    backButton.gameObject.SetActive(true);
+                }
+                break;
+
+            case DiaryStatus.Closed:
+                if (mode == Mode.Diary)
+                {
+                    ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
+                    DisableBlur();
+                }
+                break;
         }
-
-        backButton.gameObject.SetActive(true);
-    }
-
-    private void OnDiaryClosed()
-    {
-        if(mode != Mode.Diary)
-        {
-            return;
-        }
-
-        ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-        DisableBlur();
     }
 
     public void OpenClock()

@@ -57,6 +57,7 @@ public class DiaryPages : MonoBehaviour
         nextPageButton.onClick.AddListener(OpenNextDoublePage);
         contentLeftButton.onClick.AddListener(() => StopAnimators(true));
         contentRightButton.onClick.AddListener(() => StopAnimators(true));
+        contentPages.onActiveStatusChanged += OnContentPagesActiveStatusChanged;
     }
 
     private void Start()
@@ -76,7 +77,7 @@ public class DiaryPages : MonoBehaviour
         }
     }
 
-    public void OnVisiblityChanged(bool visible)
+    public void OnContentPagesActiveStatusChanged(bool visible)
     {
         if (visible)
         {

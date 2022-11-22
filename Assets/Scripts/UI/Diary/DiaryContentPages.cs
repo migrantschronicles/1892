@@ -9,6 +9,9 @@ public class DiaryContentPages : MonoBehaviour
     [SerializeField]
     private GameObject[] requiredObjects;
 
+    public delegate void OnActiveStatusChangedEvent(bool active);
+    public event OnActiveStatusChangedEvent onActiveStatusChanged;
+
     public DiaryMarker DiaryMarker { get { return diaryMarker; } }
 
     public DiaryContentPage CurrentPage { get; set; }
@@ -34,6 +37,8 @@ public class DiaryContentPages : MonoBehaviour
             {
                 requiredObject.SetActive(value);
             }
+
+            onActiveStatusChanged?.Invoke(value);
         }
     }
 }

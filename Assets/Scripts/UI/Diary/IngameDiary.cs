@@ -265,4 +265,9 @@ public class IngameDiary : MonoBehaviour
     {
         diary.SetMarkersClosed(false);
     }
+
+    public void Anim_StartPageAnimation()
+    {
+        diary.Anim_StartPageAnimation();
+    }
 }

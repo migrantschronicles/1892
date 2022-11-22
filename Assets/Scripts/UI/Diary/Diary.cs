@@ -88,6 +88,23 @@ public class Diary : MonoBehaviour
         Status = OpenStatus.Closed;
     }
 
+    public void Anim_StartPageAnimation()
+    {
+        // Can only happen during diary open or closing
+        switch(Status)
+        {
+            case OpenStatus.Closing:
+                currentPage.onStatusChanged += OnCurrentPageStatusChanged;
+                currentPage.CloseToRight();
+                break;
+
+            case OpenStatus.Opening:
+                nextPage.onStatusChanged += OnNextPageStatusChanged;
+                nextPage.OpenToLeft();
+                break;
+        }
+    }
+
     public void SetOpened(bool opened)
     {
         if(opened)
@@ -113,9 +130,6 @@ public class Diary : MonoBehaviour
                         {
                             currentPage.ContentPages.Active = false;
                         }
-
-                        currentPage.onStatusChanged += OnCurrentPageStatusChanged;
-                        currentPage.CloseToRight();
                     }
                     break;
             }
@@ -131,8 +145,6 @@ public class Diary : MonoBehaviour
 
         SetOpened(true);
         nextPage = page;
-        nextPage.onStatusChanged += OnNextPageStatusChanged;
-        nextPage.OpenToLeft();
     }
 
     public void SetOpened(DiaryContentPages pages)

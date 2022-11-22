@@ -152,13 +152,13 @@ public class LevelInstance : MonoBehaviour
             NewGameManager.Instance.AddDiaryEntry(diaryEntry);
             backButton.gameObject.SetActive(true);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-            ui.SetDiaryVisible(true, DiaryPageType.Diary);
+            ui.OpenDiaryImmediately(DiaryPageLink.Diary);
+            mode = Mode.Diary;
         }
         else
         {
             backButton.gameObject.SetActive(false);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-            ui.SetDiaryVisible(false);
             AudioManager.Instance.PlayMusic(musicClips);
             startedPlayingMusic = true;
         }
@@ -185,9 +185,8 @@ public class LevelInstance : MonoBehaviour
                 case OverlayMode.Diary:
                 {
                     // The map was open, hide it.
-                    ///@todo
-                    //AudioManager.Instance.PlayFX(ui.Diary.closeClip);
-                    ui.SetDiaryVisible(false);
+                    AudioManager.Instance.PlayFX(ui.IngameDiary.Diary.closeClip);
+                    ui.CloseDiaryImmediately();
                     break;
                 }
             }
@@ -244,9 +243,8 @@ public class LevelInstance : MonoBehaviour
                     break;
 
                 case Mode.Diary:
-                    ui.SetDiaryVisible(false);
-                    ///@todo
-                    //AudioManager.Instance.PlayFX(ui.Diary.closeClip);
+                    ui.SetDiaryOpened(false);
+                    AudioManager.Instance.PlayFX(ui.IngameDiary.Diary.closeClip);
                     if (!startedPlayingMusic)
                     {
                         AudioManager.Instance.PlayMusic(musicClips);
@@ -457,18 +455,18 @@ public class LevelInstance : MonoBehaviour
 
     public void OpenDiary()
     {
-        OpenDiary(DiaryPageType.Inventory);
+        OpenDiary(DiaryPageLink.Inventory);
     }
 
-    public void OpenDiary(DiaryPageType type)
+    public void OpenDiary(DiaryPageLink type)
     {
         SetBlurAfterGameObject(sceneParent);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-        ui.SetDiaryVisible(true, type);
 
         if (mode == Mode.Dialog)
         {
             // This is an overlay (the travel decision option was selected during a dialog), so hide the dialog system.
+            ui.OpenDiaryImmediately(type);
             overlayMode = OverlayMode.Diary;
             dialogSystem.gameObject.SetActive(false);
             if (currentAdditiveScene)
@@ -478,11 +476,11 @@ public class LevelInstance : MonoBehaviour
         }
         else
         {
+            ui.SetDiaryOpened(type);
             mode = Mode.Diary;
         }
 
-        ///@todo
-        //AudioManager.Instance.PlayFX(ui.Diary.openClip);
+        AudioManager.Instance.PlayFX(ui.IngameDiary.Diary.openClip);
     }
 
     private void OnDiaryStatusChanged(OpenStatus status)

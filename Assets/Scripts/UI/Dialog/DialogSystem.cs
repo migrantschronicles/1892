@@ -467,7 +467,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
 
             case AnswerType.Travel:
             {
-                LevelInstance.Instance.OpenDiary(DiaryPageType.Map);
+                LevelInstance.Instance.OpenDiary(DiaryPageLink.Map);
                 return true;
             }
         }

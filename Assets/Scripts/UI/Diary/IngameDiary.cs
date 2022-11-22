@@ -3,6 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum DiaryPageLink
+{
+    Inventory,
+    Health,
+    Diary,
+    Map,
+    Settings
+}
+
 public class IngameDiary : MonoBehaviour
 {
     [SerializeField]
@@ -13,6 +22,16 @@ public class IngameDiary : MonoBehaviour
     private DiaryContentPage defaultPage;
     [SerializeField]
     private GameObject locationMarkerParent;
+    [SerializeField]
+    private DiaryContentPages inventoryPages;
+    [SerializeField]
+    private DiaryContentPages healthPages;
+    [SerializeField]
+    private DiaryContentPages diaryPages;
+    [SerializeField]
+    private DiaryContentPages mapPages;
+    [SerializeField]
+    private DiaryContentPages settingsPages;
 
     private Dictionary<string, LocationMarker> locationMarkers;
 
@@ -56,11 +75,13 @@ public class IngameDiary : MonoBehaviour
         {
             case OpenStatus.Opening:
                 diaryAnimator.SetBool("Opened", true);
+                diaryAnimator.SetBool("ImmediatelyFix", true);
                 StartCoroutine(WaitForAnimationEvents());
                 break;
 
             case OpenStatus.Closing:
                 diaryAnimator.SetBool("Opened", false);
+                diaryAnimator.SetBool("ImmediatelyFix", false);
                 StartCoroutine(WaitForAnimationEvents());
                 break;
         }
@@ -96,6 +117,56 @@ public class IngameDiary : MonoBehaviour
         {
             diary.SetOpened(opened);
         }
+    }
+
+    private DiaryContentPages GetContentPagesFromPageLink(DiaryPageLink page)
+    {
+        DiaryContentPages pages = null;
+        switch (page)
+        {
+            case DiaryPageLink.Inventory: pages = inventoryPages; break;
+            case DiaryPageLink.Health: pages = healthPages; break;
+            case DiaryPageLink.Diary: pages = diaryPages; break;
+            case DiaryPageLink.Map: pages = mapPages; break;
+            case DiaryPageLink.Settings: pages = settingsPages; break;
+        }
+
+        return pages;
+    }
+
+    public void SetOpened(DiaryPageLink page)
+    {
+        DiaryContentPages pages = GetContentPagesFromPageLink(page);
+        diary.SetOpened(pages);
+    }
+
+    private IEnumerator SwitchKeepOpenAndOpened(bool opened)
+    {
+        // Wait 1 frame.
+        yield return null;
+
+        diaryAnimator.SetBool("ImmediatelyFix", !opened);
+        diaryAnimator.SetBool("Opened", opened);
+    }
+
+    public void OpenImmediately(DiaryPageLink page)
+    {
+        Debug.Assert(Diary.Status == OpenStatus.Closed);
+
+        diaryAnimator.SetTrigger("OpenImmediately");
+        diaryAnimator.SetBool("ImmediatelyFix", true);
+        DiaryContentPages pages = GetContentPagesFromPageLink(page);
+        diary.OpenImmediately(pages);
+        StartCoroutine(SwitchKeepOpenAndOpened(true));
+    }
+
+    public void CloseImmediately()
+    {
+        Debug.Assert(Diary.Status == OpenStatus.Opened);
+        diaryAnimator.SetTrigger("CloseImmediately");
+        diaryAnimator.SetBool("ImmediatelyFix", false);
+        StartCoroutine(SwitchKeepOpenAndOpened(false));
+        diary.CloseImmediately();
     }
 
     private void GatherLocationMarkers()

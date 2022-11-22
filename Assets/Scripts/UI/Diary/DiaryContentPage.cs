@@ -6,11 +6,21 @@ public class DiaryContentPage : MonoBehaviour
 {
     [SerializeField]
     private bool isDoublePage = false;
+    [SerializeField]
+    private GameObject leftPage;
+    [SerializeField]
+    private GameObject rightPage;
+    [SerializeField]
+    private GameObject doublePage;
 
     private Animator animator;
     private Coroutine watchAnimationCoroutine;
     public event OnDiaryStatusChangedEvent onStatusChanged;
     private OpenStatus status;
+
+    public GameObject LeftPage { get { return leftPage; } }
+    public GameObject RightPage { get { return rightPage; } }
+    public GameObject DoublePage { get { return doublePage; } }
 
     public OpenStatus Status
     {
@@ -21,6 +31,7 @@ public class DiaryContentPage : MonoBehaviour
             onStatusChanged?.Invoke(status);
         }
     }
+
     public DiaryContentPages ContentPages
     {
         get
@@ -29,6 +40,27 @@ public class DiaryContentPage : MonoBehaviour
         }
     }
 
+    /**
+     * @return True if this is the first page within the same hierarchy level 
+     */
+    public bool IsFirstPageOfContentPages
+    {
+        get
+        {
+            return transform.GetSiblingIndex() == 0;
+        }
+    }
+
+    /**
+     * @return True if this is the last page within the same hierarchy level 
+     */
+    public bool IsLastPageOfContentPages
+    {
+        get
+        {
+            return transform.GetSiblingIndex() == transform.parent.childCount - 1;
+        }
+    }
 
     private void Awake()
     {
@@ -39,6 +71,13 @@ public class DiaryContentPage : MonoBehaviour
     private void OnEnable()
     {
         animator.SetFloat("IsDoublePage", isDoublePage ? 1.0f : 0.0f);
+    }
+
+    public void OpenImmediately()
+    {
+        Debug.Assert(Status == OpenStatus.Closed);
+        animator.SetTrigger("OpenImmediately");
+        Status = OpenStatus.Opened;
     }
 
     public void OpenToLeft()
@@ -65,6 +104,12 @@ public class DiaryContentPage : MonoBehaviour
                 watchAnimationCoroutine = StartCoroutine(WatchAnimation());
                 break;
         }
+    }
+
+    public void CloseImmediately()
+    {
+        Debug.Assert(Status == OpenStatus.Opened);
+        animator.SetTrigger("CloseImmediately");
     }
 
     public void CloseToLeft()

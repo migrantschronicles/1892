@@ -16,6 +16,10 @@ public class Diary : MonoBehaviour
 {
     public event OnDiaryStatusChangedEvent onDiaryStatusChanged;
 
+    public AudioClip openClip;
+    public AudioClip closeClip;
+    public AudioClip pageClip;
+
     private DiaryContentPage currentPage;
     private DiaryContentPage nextPage;
 
@@ -28,6 +32,43 @@ public class Diary : MonoBehaviour
             diaryStatus = value;
             onDiaryStatusChanged?.Invoke(diaryStatus);
         }
+    }
+
+    public DiaryContentPage CurrentPage { get { return currentPage; } }
+
+    public void OpenImmediately(DiaryContentPages pages)
+    {
+        Debug.Assert(Status == OpenStatus.Closed);
+        currentPage = pages.CurrentPage;
+        if(currentPage == null)
+        {
+            currentPage = pages.LastPage;
+        }
+
+        if(currentPage)
+        {
+            currentPage.OpenImmediately();
+            if (currentPage.ContentPages)
+            {
+                currentPage.ContentPages.Active = true;
+            }
+        }
+
+        Status = OpenStatus.Opened;
+    }
+
+    public void CloseImmediately()
+    {
+        Debug.Assert(Status == OpenStatus.Opened);
+        // Not allowed to happen during page scrolling animation.
+        Debug.Assert(nextPage == null);
+        if (currentPage)
+        {
+            currentPage.CloseImmediately();
+            currentPage = null;
+        }
+
+        Status = OpenStatus.Closed;
     }
 
     public void SetOpened(bool opened)
@@ -51,9 +92,9 @@ public class Diary : MonoBehaviour
                     Status = OpenStatus.Closing;
                     if(currentPage)
                     {
-                        if(currentPage.ContentPages && currentPage.ContentPages.DiaryMarker)
+                        if(currentPage.ContentPages)
                         {
-                            currentPage.ContentPages.DiaryMarker.SetActive(false);
+                            currentPage.ContentPages.Active = false;
                         }
 
                         currentPage.onStatusChanged += OnCurrentPageStatusChanged;
@@ -82,6 +123,20 @@ public class Diary : MonoBehaviour
         }
     }
 
+    public void SetOpened(DiaryContentPages pages)
+    {
+        DiaryContentPage pageToOpen = pages.CurrentPage;
+        if (pageToOpen == null)
+        {
+            pageToOpen = pages.LastPage;
+        }
+
+        if(pageToOpen)
+        {
+            SetOpened(pageToOpen);
+        }
+    }
+
     public void OpenPage(DiaryContentPage page)
     {
         if(Status != OpenStatus.Opened || page == currentPage)
@@ -98,10 +153,7 @@ public class Diary : MonoBehaviour
         bool isPageToRight = true;
         if(currentPages != nextPages)
         {
-            if(currentPages.DiaryMarker)
-            {
-                currentPages.DiaryMarker.SetActive(false);
-            }
+            currentPages.Active = false;
 
             int nextSiblingIndex = nextPages.transform.GetSiblingIndex();
             int currentSiblingIndex = currentPages.transform.GetSiblingIndex();
@@ -147,9 +199,10 @@ public class Diary : MonoBehaviour
                 currentPage.onStatusChanged -= OnCurrentPageStatusChanged;
             }
             currentPage = nextPage;
-            if (currentPage.ContentPages && currentPage.ContentPages.DiaryMarker)
+            if (currentPage.ContentPages)
             {
-                currentPage.ContentPages.DiaryMarker.SetActive(true);
+                currentPage.ContentPages.Active = true;
+                currentPage.ContentPages.CurrentPage = currentPage;
             }
         }
     }
@@ -160,6 +213,56 @@ public class Diary : MonoBehaviour
         {
             currentPage.onStatusChanged -= OnCurrentPageStatusChanged;
             currentPage = null;
+        }
+    }
+
+    public bool OpenPrevPageOfContentPages()
+    {
+        if(currentPage == null || currentPage.IsFirstPageOfContentPages)
+        {
+            return false;
+        }
+
+        DiaryContentPage prevPage = currentPage.transform.parent.GetChild(currentPage.transform.GetSiblingIndex() - 1).GetComponent<DiaryContentPage>();
+        if(prevPage != null)
+        {
+            OpenPage(prevPage);
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool OpenNextPageOfContentPages()
+    {
+        if (currentPage == null || currentPage.IsLastPageOfContentPages)
+        {
+            return false;
+        }
+
+        DiaryContentPage pageAfter = currentPage.transform.parent.GetChild(currentPage.transform.GetSiblingIndex() + 1).GetComponent<DiaryContentPage>();
+        if (pageAfter != null)
+        {
+            OpenPage(pageAfter);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void OpenContentPages(DiaryContentPages pages)
+    {
+        if(pages.CurrentPage)
+        {
+            OpenPage(pages.CurrentPage);
+        }
+        else
+        {
+            DiaryContentPage lastPage = pages.LastPage;
+            if(lastPage)
+            {
+                OpenPage(lastPage);
+            }
         }
     }
 }

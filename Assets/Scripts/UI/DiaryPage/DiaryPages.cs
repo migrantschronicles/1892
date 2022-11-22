@@ -29,11 +29,7 @@ using UnityEngine.UI;
 public class DiaryPages : MonoBehaviour
 {
     [SerializeField]
-    private GameObject contentLeft;
-    [SerializeField]
-    private GameObject contentRight;
-    [SerializeField, Tooltip("True if new entries are allowed on the same double page, if the previous entry only requires the left page.")]
-    private bool allowNewEntriesOnSameDoublePage = true;
+    private GameObject contentParent;
     [SerializeField]
     private Button prevPageButton;
     [SerializeField]
@@ -46,22 +42,14 @@ public class DiaryPages : MonoBehaviour
     private AudioClip nextPageClip;
     [SerializeField]
     private AudioClip prevPageClip;
+    [SerializeField]
+    private GameObject contentPagePrefab;
+    [SerializeField]
+    private DiaryContentPages contentPages;
 
-    private List<GameObject> pages = new List<GameObject>();
-    private int currentDoublePageIndex = -1;
     private List<ElementAnimator> currentAnimators = new List<ElementAnimator>();
     private List<GameObject> screenshotPages = new List<GameObject>();
-
-    /**
-     * @return The number of double pages. If the last page ends on the left, it returns the same number as if the last page would end on the right.
-     */
-    public int DoublePageCount
-    {
-        get
-        {
-            return (pages.Count + 1) / 2;
-        }
-    }
+    private DiaryContentPage lastAddedPage;
 
     private void Awake()
     {
@@ -102,54 +90,70 @@ public class DiaryPages : MonoBehaviour
 
     private void UpdateButtons()
     {
-        prevPageButton.gameObject.SetActive(currentDoublePageIndex > 0);
-        nextPageButton.gameObject.SetActive(currentDoublePageIndex < DoublePageCount - 1);
+        DiaryContentPage currentPage = LevelInstance.Instance.IngameDiary.Diary.CurrentPage;
+        prevPageButton.gameObject.SetActive(!currentPage.IsFirstPageOfContentPages);
+        nextPageButton.gameObject.SetActive(!currentPage.IsLastPageOfContentPages);
+    }
+
+    private void CreatePageContent(DiaryPageData data, Transform parent)
+    {
+        if(!data.IsValid)
+        {
+            return;
+        }
+
+        GameObject newPageContent = Instantiate(data.prefab, parent);
+
+        foreach (DiaryPageDrawing drawing in data.drawings)
+        {
+            if (drawing.IsEnabled)
+            {
+                GameObject drawingGO = AddDrawingToPage(newPageContent, drawing);
+                currentAnimators.Add(ImageElementAnimator.FromImage(this, drawingGO.GetComponentInChildren<Image>()));
+            }
+        }
+
+        IDiaryPage diaryPage = newPageContent.GetComponent<IDiaryPage>();
+        diaryPage.SetData(data);
+        currentAnimators.AddRange(diaryPage.CreateAnimators());
     }
 
     public void AddEntry(DiaryEntry entry)
     {
         StopAnimators(false);
-
-        // Add an empty page if the previous entry ended left, but the new one should also start left.
-        bool isRight = allowNewEntriesOnSameDoublePage && !entry.startOnNewDoublePage && pages.Count % 2 != 0;
-        if(!isRight && pages.Count % 2 != 0)
+        if(lastAddedPage)
         {
-            pages.Add(null);
+            lastAddedPage.onStatusChanged -= OnDiaryContentPageStatusChanged;
+            lastAddedPage = null;
         }
 
-        int firstPageIndex = pages.Count;
         ///@todo Change this to the real date. Localize this?
         string date = Time.time.ToString();
+        entry.leftPage.Date = date;
+        entry.rightPage.Date = date;
 
-        foreach(DiaryPageData data in entry.pages)
+        GameObject newContentPageGO = Instantiate(contentPagePrefab, contentParent.transform);
+        DiaryContentPage newContentPage = newContentPageGO.GetComponent<DiaryContentPage>();
+        CreatePageContent(entry.leftPage, newContentPage.LeftPage.transform);
+        CreatePageContent(entry.rightPage, newContentPage.RightPage.transform);
+
+        lastAddedPage = newContentPage;
+        lastAddedPage.onStatusChanged += OnDiaryContentPageStatusChanged;
+
+        contentPages.CurrentPage = newContentPage;
+    }
+
+    private void OnDiaryContentPageStatusChanged(OpenStatus status)
+    {
+        if(status == OpenStatus.Opening || status == OpenStatus.Opened)
         {
-            data.Date = date;
-            bool newPageIsLeft = pages.Count % 2 == 0;
-            GameObject parent = newPageIsLeft ? contentLeft : contentRight;
-            GameObject newPage = Instantiate(data.prefab, parent.transform);
+            lastAddedPage.onStatusChanged -= OnDiaryContentPageStatusChanged;
+            lastAddedPage = null;
 
-            foreach(DiaryPageDrawing drawing in data.drawings)
+            if (currentAnimators.Count > 0)
             {
-                if(drawing.IsEnabled)
-                {
-                    GameObject drawingGO = AddDrawingToPage(newPage, drawing);
-                    currentAnimators.Add(ImageElementAnimator.FromImage(this, drawingGO.GetComponentInChildren<Image>()));
-                }
+                StartAnimator(currentAnimators[0]);
             }
-
-            IDiaryPage diaryPage = newPage.GetComponent<IDiaryPage>();
-            diaryPage.SetData(data);
-            currentAnimators.AddRange(diaryPage.CreateAnimators());
-
-            newPage.SetActive(false);
-            pages.Add(newPage);
-        }
-
-        OpenDoublePage(GetDoublePageIndexFromPageIndex(firstPageIndex));
-
-        if(currentAnimators.Count > 0)
-        {
-            StartAnimator(currentAnimators[0]);
         }
     }
 
@@ -221,53 +225,12 @@ public class DiaryPages : MonoBehaviour
         return newSketchGO;
     }
 
-    public void OpenDoublePage(int index)
-    {
-        if(!IsDoublePageIndexValid(index))
-        {
-            return;
-        }
-
-        CloseCurrentPages();
-        currentDoublePageIndex = index;
-        SetDoublePageActive(currentDoublePageIndex, true);
-        UpdateButtons();
-    }
-
-    private void CloseCurrentPages()
-    {
-        if(IsDoublePageIndexValid(currentDoublePageIndex))
-        {
-            SetDoublePageActive(currentDoublePageIndex, false);
-            currentDoublePageIndex = -1;
-        }
-    }
-
-    private void SetDoublePageActive(int index, bool active)
-    {
-        GameObject pageLeft = pages.ElementAtOrDefault(index * 2);
-        pageLeft?.SetActive(active);
-        GameObject pageRight = pages.ElementAtOrDefault(index * 2 + 1);
-        pageRight?.SetActive(active);
-    }
-
-    private bool IsDoublePageIndexValid(int index)
-    {
-        return index >= 0 && index < DoublePageCount;
-    }
-
-    private int GetDoublePageIndexFromPageIndex(int index)
-    {
-        return index / 2;
-    }
-
     public void OpenPrevDoublePage()
     {
         StopAnimators(true);
         
-        if(currentDoublePageIndex > 0)
+        if(LevelInstance.Instance.IngameDiary.Diary.OpenPrevPageOfContentPages())
         {
-            OpenDoublePage(currentDoublePageIndex - 1);
             AudioManager.Instance.PlayFX(prevPageClip);
         }
     }
@@ -276,9 +239,8 @@ public class DiaryPages : MonoBehaviour
     {
         StopAnimators(true);
 
-        if(currentDoublePageIndex < DoublePageCount - 1)
+        if(LevelInstance.Instance.IngameDiary.Diary.OpenNextPageOfContentPages())
         {
-            OpenDoublePage(currentDoublePageIndex + 1);
             AudioManager.Instance.PlayFX(nextPageClip);
         }
     }
@@ -316,6 +278,7 @@ public class DiaryPages : MonoBehaviour
 
     public void PrepareForDiaryScreenshot(DiaryEntryData entry)
     {
+        /*
         for(int i = 0; i < 2 && i < entry.entry.pages.Length; ++i)
         {
             DiaryPageData data = entry.entry.pages[i];
@@ -336,6 +299,8 @@ public class DiaryPages : MonoBehaviour
             diaryPage.SetData(data);
             screenshotPages.Add(newPage);
         }
+        */
+        ///@todo
     }
 
     public void ResetFromScreenshot()

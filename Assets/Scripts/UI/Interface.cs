@@ -94,11 +94,24 @@ public class Interface : MonoBehaviour
         diaryButton.SetActive((flags & InterfaceVisibilityFlags.DiaryButton) != 0);
     }
 
-    public void SetDiaryVisible(bool visible, DiaryPageType type = DiaryPageType.Inventory)
+    public void SetDiaryOpened(bool opened)
     {
-        ingameDiary.SetOpened(visible);
-        ///@todo
-        //diary.SetVisible(visible, type);
+        ingameDiary.SetOpened(opened);
+    }
+
+    public void SetDiaryOpened(DiaryPageLink page)
+    {
+        ingameDiary.SetOpened(page);
+    }
+
+    public void OpenDiaryImmediately(DiaryPageLink type)
+    {
+        ingameDiary.OpenImmediately(type);
+    }
+
+    public void CloseDiaryImmediately()
+    {
+        ingameDiary.CloseImmediately();
     }
 
     public void PrepareForMapScreenshot()

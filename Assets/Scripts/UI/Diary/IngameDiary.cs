@@ -32,6 +32,8 @@ public class IngameDiary : MonoBehaviour
     private DiaryContentPages mapPages;
     [SerializeField]
     private DiaryContentPages settingsPages;
+    [SerializeField]
+    private DiaryContentPages immediatelyOpenedPages;
 
     private Dictionary<string, LocationMarker> locationMarkers;
     private DiaryContentPage screenshotPrevPage;
@@ -67,6 +69,14 @@ public class IngameDiary : MonoBehaviour
         if (locationMarkers == null)
         {
             GatherLocationMarkers();
+        }
+    }
+
+    private void Start()
+    {
+        if(immediatelyOpenedPages)
+        {
+            OpenImmediately(immediatelyOpenedPages);
         }
     }
 
@@ -154,9 +164,16 @@ public class IngameDiary : MonoBehaviour
     {
         Debug.Assert(Diary.Status == OpenStatus.Closed);
 
+        DiaryContentPages pages = GetContentPagesFromPageLink(page);
+        OpenImmediately(pages);
+    }
+
+    public void OpenImmediately(DiaryContentPages pages)
+    {
+        Debug.Assert(Diary.Status == OpenStatus.Closed);
+
         diaryAnimator.SetTrigger("OpenImmediately");
         diaryAnimator.SetBool("ImmediatelyFix", true);
-        DiaryContentPages pages = GetContentPagesFromPageLink(page);
         diary.OpenImmediately(pages);
         StartCoroutine(SwitchKeepOpenAndOpened(true));
     }

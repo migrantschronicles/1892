@@ -73,6 +73,11 @@ public class Diary : MonoBehaviour
         Debug.Assert(nextPage == null);
         if (currentPage)
         {
+            if(currentPage.ContentPages)
+            {
+                currentPage.ContentPages.Active = false;
+            }
+
             currentPage.CloseImmediately();
             currentPage = null;
         }

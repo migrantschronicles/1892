@@ -356,6 +356,7 @@ public class LevelInstance : MonoBehaviour
         dialogSystem.gameObject.SetActive(true);
         backButton.gameObject.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+        mode = Mode.Dialog;
 
         if(currentScene)
         {
@@ -504,6 +505,7 @@ public class LevelInstance : MonoBehaviour
                 {
                     ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
                     DisableBlur();
+                    mode = Mode.None;
                 }
                 break;
         }

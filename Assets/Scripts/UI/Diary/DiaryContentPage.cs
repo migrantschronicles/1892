@@ -84,6 +84,7 @@ public class DiaryContentPage : MonoBehaviour
     public void OpenImmediately()
     {
         Debug.Assert(Status == OpenStatus.Closed);
+        gameObject.SetActive(true);
         animator.SetTrigger("OpenImmediately");
         Status = OpenStatus.Opened;
     }
@@ -118,6 +119,8 @@ public class DiaryContentPage : MonoBehaviour
     {
         Debug.Assert(Status == OpenStatus.Opened);
         animator.SetTrigger("CloseImmediately");
+        gameObject.SetActive(false);
+        Status = OpenStatus.Closed;
     }
 
     public void CloseToLeft()

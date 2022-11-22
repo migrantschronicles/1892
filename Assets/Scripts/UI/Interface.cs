@@ -34,11 +34,26 @@ public class Interface : MonoBehaviour
     [SerializeField]
     private GameObject clockButton;
     [SerializeField]
-    private GameObject diaryButton;
+    private IngameDiary ingameDiary;
     [SerializeField]
-    private Diary diary;
+    private PopupManager popupManager;
 
-    public Diary Diary { get { return diary; } }
+    public IngameDiary IngameDiary { get { return ingameDiary; } }
+    private bool TreatDiaryAsButton { get { return IngameDiary.Diary.Status == OpenStatus.Closed; } }
+
+    private InterfaceVisibilityFlags visibilityFlags = InterfaceVisibilityFlags.All;
+
+    private void Awake()
+    {
+        ingameDiary.gameObject.SetActive(true);
+        ingameDiary.Diary.onDiaryStatusChanged += (status) =>
+        {
+            if(status == OpenStatus.Closed)
+            {
+                ingameDiary.gameObject.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
+            }
+        };
+    }
 
     private void Start()
     {
@@ -87,28 +102,60 @@ public class Interface : MonoBehaviour
      */
     public void SetUIElementsVisible(InterfaceVisibilityFlags flags)
     {
-        locationInfo.SetActive((flags & InterfaceVisibilityFlags.StatusInfo) != 0);
-        clockButton.SetActive((flags & InterfaceVisibilityFlags.ClockButton) != 0);
-        diaryButton.SetActive((flags & InterfaceVisibilityFlags.DiaryButton) != 0);
+        visibilityFlags = flags;
+        locationInfo.SetActive((visibilityFlags & InterfaceVisibilityFlags.StatusInfo) != 0);
+        clockButton.SetActive((visibilityFlags & InterfaceVisibilityFlags.ClockButton) != 0);
+
+        if(TreatDiaryAsButton)
+        {
+            ingameDiary.gameObject.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
+        }
     }
 
-    public void SetDiaryVisible(bool visible, DiaryPageType type = DiaryPageType.Inventory)
+    public void SetDiaryOpened(bool opened)
     {
-        diary.SetVisible(visible, type);
+        if(opened)
+        {
+            ingameDiary.gameObject.SetActive(true);
+        }
+        ingameDiary.SetOpened(opened);
+    }
+
+    public void SetDiaryOpened(DiaryPageLink page)
+    {
+        ingameDiary.gameObject.SetActive(true);
+        ingameDiary.SetOpened(page);
+    }
+
+    public void OpenDiaryImmediately(DiaryPageLink type)
+    {
+        ingameDiary.gameObject.SetActive(true);
+        ingameDiary.OpenImmediately(type);
+    }
+
+    public void CloseDiaryImmediately()
+    {
+        ingameDiary.CloseImmediately();
+        ingameDiary.gameObject.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
     }
 
     public void PrepareForMapScreenshot()
     {
-        diary.PrepareForMapScreenshot();
+        ingameDiary.PrepareForMapScreenshot();
     }
 
     public void PrepareForDiaryScreenshot(DiaryEntryData entry)
     {
-        diary.PrepareForDiaryScreenshot(entry);
+        ingameDiary.PrepareForDiaryScreenshot(entry);
     }
 
     public void ResetFromScreenshot()
     {
-        diary.ResetFromScreenshot();
+        ingameDiary.ResetFromScreenshot();
+    }
+
+    public void OpenEndDayPopUp()
+    {
+        popupManager.OpenEndDayPopUp();
     }
 }

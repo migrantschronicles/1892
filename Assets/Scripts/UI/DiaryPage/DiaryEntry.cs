@@ -56,13 +56,21 @@ public class DiaryPageData
 
     // Not set in the inspector, but in DiaryPages. Can be used from DiaryPage to set the date.
     public string Date { get; set; }
+
+    public bool IsValid
+    {
+        get
+        {
+            return prefab != null;
+        }
+    }
 }
 
 [CreateAssetMenu(fileName = "NewDiaryEntry", menuName = "ScriptableObjects/DiaryEntry", order = 1)]
 public class DiaryEntry : ScriptableObject
 {
-    [Tooltip("True if the entry should start on a new double page, even if this means that there is a blank page on the previous double page.")]
-    public bool startOnNewDoublePage;
-    [Tooltip("The pages for this entry")]
-    public DiaryPageData[] pages;
+    [Tooltip("The left page for this entry")]
+    public DiaryPageData leftPage;
+    [Tooltip("The right page for this entry")]
+    public DiaryPageData rightPage;
 }

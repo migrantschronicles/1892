@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class PopupManager : MonoBehaviour
 {
 
-    private NewGameManager gameManager;
     public GameObject endDayPopup;
     public GameObject startDayHostelPopup;
     public GameObject startDayOutsidePopup;
@@ -24,13 +23,6 @@ public class PopupManager : MonoBehaviour
     public int boyFoodAmount=0;
     public int girlFoodAmount=0;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<NewGameManager>();
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -44,27 +36,27 @@ public class PopupManager : MonoBehaviour
     public void OpenEndDayPopUp() 
     {
         endDayPopup.SetActive(true);
-        gameManager.gameRunning = false;
+        NewGameManager.Instance.SetPaused(true);
     }
 
     public void OpenStartDayHostelPopUp()
     {
         startDayHostelPopup.SetActive(true);
-        gameManager.gameRunning = false;
+        NewGameManager.Instance.SetPaused(true);
     }
 
     public void OpenStartDayOutsidePopUp()
     {
         startDayOutsidePopup.SetActive(true);
-        gameManager.gameRunning = false;
+        NewGameManager.Instance.SetPaused(true);
     }
 
     public void OpenFoodDistributePopUp()
     {
         foodDistributePopup.SetActive(true);
-        gameManager.gameRunning = false;
+        NewGameManager.Instance.SetPaused(true);
 
-        foodAmount = gameManager.inventory.GetItemCategoryCount(foodCategory);
+        foodAmount = NewGameManager.Instance.inventory.GetItemCategoryCount(foodCategory);
         foodAmountText.text = foodAmount.ToString();
     }
 
@@ -82,14 +74,12 @@ public class PopupManager : MonoBehaviour
 
     public void SleepInHostelMethod() 
     {
-        gameManager.SleepInHostel(moneyToBePaid, motherFoodAmount, boyFoodAmount, girlFoodAmount);
+        NewGameManager.Instance.SleepInHostel(moneyToBePaid, motherFoodAmount, boyFoodAmount, girlFoodAmount);
     }
 
     public void OpenEndGamePopUp()
     {
         endGamePopup.SetActive(true);
-        gameManager.gameRunning = false;
+        NewGameManager.Instance.SetPaused(true);
     }
-
-
 }

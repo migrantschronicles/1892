@@ -9,11 +9,11 @@ public class ConditionallyVisible : MonoBehaviour
 
     private void Start()
     {
-        OnConditionChanged();
-        DialogSystem.Instance.AddOnConditionsChanged(condition.GetAllConditions(), OnConditionChanged);
+        OnConditionChanged(null);
+        NewGameManager.Instance.conditions.AddOnConditionsChanged(condition.GetAllConditions(), OnConditionChanged);
     }
 
-    private void OnConditionChanged()
+    private void OnConditionChanged(object context)
     {
         gameObject.SetActive(condition.Test());
     }

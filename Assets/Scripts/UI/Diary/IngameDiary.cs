@@ -255,4 +255,14 @@ public class IngameDiary : MonoBehaviour
     {
         NewGameManager.Instance.GeneratePDF();
     }
+
+    public void SetMarkersClosed()
+    {
+        diary.SetMarkersClosed(true);
+    }
+
+    public void SetMarkersOpened()
+    {
+        diary.SetMarkersClosed(false);
+    }
 }

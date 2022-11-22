@@ -16,6 +16,9 @@ public class Diary : MonoBehaviour
 {
     public event OnDiaryStatusChangedEvent onDiaryStatusChanged;
 
+    [SerializeField]
+    private DiaryMarkerPanel markerPanel;
+
     public AudioClip openClip;
     public AudioClip closeClip;
     public AudioClip pageClip;
@@ -275,5 +278,10 @@ public class Diary : MonoBehaviour
                 OpenPage(lastPage);
             }
         }
+    }
+
+    public void SetMarkersClosed(bool closed)
+    {
+        markerPanel.SetClosed(closed);
     }
 }

@@ -29,6 +29,8 @@ public class MapZoom : MonoBehaviour
     [SerializeField]
     private float initialZoomDuration = 3.0f;
     [SerializeField]
+    private float xCenterOffset = 5f;
+    [SerializeField]
     private Button centerButton;
     [SerializeField]
     private float level1Breakpoint = 0.5f;
@@ -314,8 +316,8 @@ public class MapZoom : MonoBehaviour
     }
 
     private void SetCenterToMarker(GameObject marker)
-    {
-        SetCenter(marker.GetComponent<RectTransform>().anchoredPosition);
+    { // Loai Changed this, need to find a better way
+        SetCenter(new Vector2(marker.GetComponent<RectTransform>().anchoredPosition.x-xCenterOffset, marker.GetComponent<RectTransform>().anchoredPosition.y));
     }
 
     private Vector2 GetCenter()

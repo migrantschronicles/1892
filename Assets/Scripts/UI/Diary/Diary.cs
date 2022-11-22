@@ -30,15 +30,6 @@ public class Diary : MonoBehaviour
         }
     }
 
-    public IEnumerable<LocationMarker> LocationMarkerObjects
-    {
-        get
-        {
-            ///@todo
-            return new List<LocationMarker>();
-        }
-    }
-
     public void SetOpened(bool opened)
     {
         if(opened)
@@ -60,6 +51,11 @@ public class Diary : MonoBehaviour
                     Status = OpenStatus.Closing;
                     if(currentPage)
                     {
+                        if(currentPage.ContentPages && currentPage.ContentPages.DiaryMarker)
+                        {
+                            currentPage.ContentPages.DiaryMarker.SetActive(false);
+                        }
+
                         currentPage.onStatusChanged += OnCurrentPageStatusChanged;
                         currentPage.CloseToRight();
                     }

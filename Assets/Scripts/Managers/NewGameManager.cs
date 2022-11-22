@@ -112,9 +112,7 @@ public class NewGameManager : MonoBehaviour
     {
         get
         {
-            ///@todo
-            //return LevelInstance.Instance.Diary.LocationMarkerObjects.First(marker => marker.LocationName == currentLocation);
-            return null;
+            return LevelInstance.Instance.IngameDiary.LocationMarkerObjects.First(marker => marker.LocationName == currentLocation);
         }
     }
 
@@ -216,7 +214,7 @@ public class NewGameManager : MonoBehaviour
     {
         conditions.ResetLocalConditions();
 
-        foreach (LocationMarker location in LevelInstance.Instance.IngameDiary.Diary.LocationMarkerObjects)
+        foreach (LocationMarker location in LevelInstance.Instance.IngameDiary.LocationMarkerObjects)
         {
             // Re-callibrating vistedLocarions List
             if (visitedLocationsStr.Contains(location.LocationName) || location.LocationName == currentLocation)
@@ -240,7 +238,7 @@ public class NewGameManager : MonoBehaviour
         for (int i = 0; i < visitedLocationsStr.Count; ++i)
         {
             // Updating Map Markers UI
-            LocationMarker visitedMarker = LevelInstance.Instance.IngameDiary.Diary.LocationMarkerObjects.First(marker => marker.LocationName == visitedLocationsStr[i]);
+            LocationMarker visitedMarker = LevelInstance.Instance.IngameDiary.LocationMarkerObjects.First(marker => marker.LocationName == visitedLocationsStr[i]);
             TransportationButtons transportation = visitedMarker.GetComponent<TransportationButtons>();
             bool isCapital = transportation.capital;
             if (visitedLocationsStr[i] == currentLocation)
@@ -286,7 +284,7 @@ public class NewGameManager : MonoBehaviour
 
     public void UnlockLocation(string name) 
     {
-        LocationMarker marker = LevelInstance.Instance.IngameDiary.Diary.LocationMarkerObjects.First(marker => marker.LocationName == name);
+        LocationMarker marker = LevelInstance.Instance.IngameDiary.LocationMarkerObjects.First(marker => marker.LocationName == name);
         if(marker)
         {
             marker.SetUnlocked();
@@ -308,7 +306,7 @@ public class NewGameManager : MonoBehaviour
 
     public void UnlockAllLocations() 
     {
-        foreach(LocationMarker marker in LevelInstance.Instance.IngameDiary.Diary.LocationMarkerObjects)
+        foreach(LocationMarker marker in LevelInstance.Instance.IngameDiary.LocationMarkerObjects)
         {
             marker.SetUnlocked();
         }
@@ -386,7 +384,7 @@ public class NewGameManager : MonoBehaviour
             return;
         }
 
-        LocationMarker newLocation = LevelInstance.Instance.IngameDiary.Diary.LocationMarkerObjects.First(marker => marker.LocationName == name);
+        LocationMarker newLocation = LevelInstance.Instance.IngameDiary.LocationMarkerObjects.First(marker => marker.LocationName == name);
         if (newLocation == null)
         {
             return;

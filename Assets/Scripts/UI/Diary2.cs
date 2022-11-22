@@ -4,15 +4,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum DiaryPageType
-{
-    Inventory,
-    Health,
-    Diary,
-    Map,
-    Settings
-}
-
 public class Diary2 : MonoBehaviour
 {
     [SerializeField]
@@ -47,7 +38,7 @@ public class Diary2 : MonoBehaviour
     public AudioClip pageClip;
 
     private Dictionary<string, LocationMarker> locationMarkers;
-    private DiaryPageType openPage;
+    private DiaryPageLink openPage;
 
     public Dictionary<string, LocationMarker> LocationMarkers
     {
@@ -97,11 +88,11 @@ public class Diary2 : MonoBehaviour
     private void Start()
     {
         currentLocationText.text = NewGameManager.Instance.currentLocation;
-        openPage = inventoryPage.activeSelf ? DiaryPageType.Inventory :
-            (healthPage.activeSelf ? DiaryPageType.Health :
-            (diaryPage.activeSelf ? DiaryPageType.Diary :
-            (mapPage.activeSelf ? DiaryPageType.Map :
-            DiaryPageType.Settings)));
+        openPage = inventoryPage.activeSelf ? DiaryPageLink.Inventory :
+            (healthPage.activeSelf ? DiaryPageLink.Health :
+            (diaryPage.activeSelf ? DiaryPageLink.Diary :
+            (mapPage.activeSelf ? DiaryPageLink.Map :
+            DiaryPageLink.Settings)));
     }
 
     private void GatherLocationMarkers()
@@ -121,7 +112,7 @@ public class Diary2 : MonoBehaviour
     {
         CloseAll();
         inventoryPage.SetActive(true);
-        openPage = DiaryPageType.Inventory;
+        openPage = DiaryPageLink.Inventory;
         AudioManager.Instance.PlayFX(pageClip);
     }
 
@@ -131,8 +122,8 @@ public class Diary2 : MonoBehaviour
         prevPageButton.gameObject.SetActive(true);
         nextPageButton.gameObject.SetActive(true);
         diaryPage.SetActive(true);
-        diaryPages.OnVisiblityChanged(true);
-        openPage = DiaryPageType.Diary;
+        //diaryPages.OnVisiblityChanged(true);
+        openPage = DiaryPageLink.Diary;
         AudioManager.Instance.PlayFX(pageClip);
     }
 
@@ -140,7 +131,7 @@ public class Diary2 : MonoBehaviour
     {
         CloseAll();
         healthPage.SetActive(true);
-        openPage = DiaryPageType.Health;
+        openPage = DiaryPageLink.Health;
         AudioManager.Instance.PlayFX(pageClip);
     }
 
@@ -148,7 +139,7 @@ public class Diary2 : MonoBehaviour
     {
         CloseAll();
         settingsPage.SetActive(true);
-        openPage = DiaryPageType.Settings;
+        openPage = DiaryPageLink.Settings;
         AudioManager.Instance.PlayFX(pageClip);
     }
 
@@ -156,19 +147,19 @@ public class Diary2 : MonoBehaviour
     {
         CloseAll();
         mapPage.SetActive(true);
-        openPage = DiaryPageType.Map;
+        openPage = DiaryPageLink.Map;
         AudioManager.Instance.PlayFX(pageClip);
     }
 
-    public void OpenPage(DiaryPageType page)
+    public void OpenPage(DiaryPageLink page)
     {
         switch(page)
         {
-            case DiaryPageType.Inventory: OpenInventoryPage(); break;
-            case DiaryPageType.Health: OpenHealthPage(); break;
-            case DiaryPageType.Map: OpenMapPage(); break;
-            case DiaryPageType.Diary: OpenDiaryPage(); break;
-            case DiaryPageType.Settings: OpenSettingsPage(); break;
+            case DiaryPageLink.Inventory: OpenInventoryPage(); break;
+            case DiaryPageLink.Health: OpenHealthPage(); break;
+            case DiaryPageLink.Map: OpenMapPage(); break;
+            case DiaryPageLink.Diary: OpenDiaryPage(); break;
+            case DiaryPageLink.Settings: OpenSettingsPage(); break;
         }
     }
 
@@ -179,12 +170,12 @@ public class Diary2 : MonoBehaviour
         mapPage.SetActive(false);
         settingsPage.SetActive(false);
         diaryPage.SetActive(false);
-        diaryPages.OnVisiblityChanged(false);
+        //diaryPages.OnVisiblityChanged(false);
         prevPageButton.gameObject.SetActive(false);
         nextPageButton.gameObject.SetActive(false);
     }
 
-    public void SetVisible(bool visible, DiaryPageType page = DiaryPageType.Inventory)
+    public void SetVisible(bool visible, DiaryPageLink page = DiaryPageLink.Inventory)
     {
         if(visible)
         {
@@ -224,11 +215,11 @@ public class Diary2 : MonoBehaviour
     {
         mapZoom.ResetFromScreenshot();
         diaryPages.ResetFromScreenshot();
-        inventoryPage.SetActive(openPage == DiaryPageType.Inventory);
-        healthPage.SetActive(openPage == DiaryPageType.Health);
-        diaryPage.SetActive(openPage == DiaryPageType.Diary);
-        mapPage.SetActive(openPage == DiaryPageType.Map);
-        settingsPage.SetActive(openPage == DiaryPageType.Settings);
+        inventoryPage.SetActive(openPage == DiaryPageLink.Inventory);
+        healthPage.SetActive(openPage == DiaryPageLink.Health);
+        diaryPage.SetActive(openPage == DiaryPageLink.Diary);
+        mapPage.SetActive(openPage == DiaryPageLink.Map);
+        settingsPage.SetActive(openPage == DiaryPageLink.Settings);
         centerButton.gameObject.SetActive(true);
         currentLocation.SetActive(true);
     }

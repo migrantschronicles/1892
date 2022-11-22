@@ -36,6 +36,15 @@ public class Diary : MonoBehaviour
 
     public DiaryContentPage CurrentPage { get { return currentPage; } }
 
+    public bool IsAnimationInProgress
+    {
+        get
+        {
+            return !(Status == OpenStatus.Opened || Status == OpenStatus.Closed) || (nextPage != null) ||
+                (CurrentPage != null && currentPage.IsAnimationInProgress);
+        }
+    }
+
     public void OpenImmediately(DiaryContentPages pages)
     {
         Debug.Assert(Status == OpenStatus.Closed);
@@ -139,12 +148,7 @@ public class Diary : MonoBehaviour
 
     public bool OpenPage(DiaryContentPage page)
     {
-        if(Status != OpenStatus.Opened || page == currentPage)
-        {
-            return false;
-        }
-
-        if(nextPage != null || currentPage == null || currentPage.Status != OpenStatus.Opened)
+        if(Status != OpenStatus.Opened || page == currentPage || IsAnimationInProgress)
         {
             // Don't allow page switch during animation
             return false;

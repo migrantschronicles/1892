@@ -22,6 +22,14 @@ public class DiaryContentPage : MonoBehaviour
     public GameObject RightPage { get { return rightPage; } }
     public GameObject DoublePage { get { return doublePage; } }
 
+    public bool IsAnimationInProgress
+    {
+        get
+        {
+            return !(Status == OpenStatus.Opened || Status == OpenStatus.Closed);
+        }
+    }
+
     public OpenStatus Status
     {
         get { return status; }

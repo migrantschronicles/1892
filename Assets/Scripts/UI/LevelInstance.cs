@@ -243,6 +243,11 @@ public class LevelInstance : MonoBehaviour
                     break;
 
                 case Mode.Diary:
+                    if(ui.IngameDiary.Diary.IsAnimationInProgress)
+                    {
+                        return;
+                    }
+
                     ui.SetDiaryOpened(false);
                     AudioManager.Instance.PlayFX(ui.IngameDiary.Diary.closeClip);
                     if (!startedPlayingMusic)

@@ -141,7 +141,17 @@ public class DiaryPages : MonoBehaviour
         lastAddedPage = newContentPage;
         lastAddedPage.onStatusChanged += OnDiaryContentPageStatusChanged;
 
-        contentPages.CurrentPage = newContentPage;
+        DiaryContentPage currentPage = LevelInstance.Instance.IngameDiary.Diary.CurrentPage;
+        if (currentPage && currentPage.ContentPages == contentPages)
+        {
+            // The diary is already opened.
+            OnDiaryContentPageStatusChanged(OpenStatus.Opened);
+        }
+        else
+        {
+            // Set the current page of the diary content pages so that the new page is opened the next time that the diary entries are opened.
+            contentPages.CurrentPage = newContentPage;
+        }
     }
 
     private void OnDiaryContentPageStatusChanged(OpenStatus status)

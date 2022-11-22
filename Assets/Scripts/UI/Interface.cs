@@ -42,6 +42,11 @@ public class Interface : MonoBehaviour
 
     public IngameDiary IngameDiary { get { return ingameDiary; } }
 
+    private void Awake()
+    {
+        ingameDiary.gameObject.SetActive(true);
+    }
+
     private void Start()
     {
         NewGameManager.Instance.onDateChanged += OnDateChanged;
@@ -52,8 +57,6 @@ public class Interface : MonoBehaviour
         OnFoodChanged(NewGameManager.Instance.food);
         OnDateChanged(NewGameManager.Instance.date);
         OnLocationChanged(NewGameManager.Instance.currentLocation);
-
-        ingameDiary.gameObject.SetActive(true);
     }
 
     private void OnDestroy()

@@ -12,6 +12,8 @@ public class DiaryContentPages : MonoBehaviour
     public delegate void OnActiveStatusChangedEvent(bool active);
     public event OnActiveStatusChangedEvent onActiveStatusChanged;
 
+    private bool isActive = false;
+
     public DiaryMarker DiaryMarker { get { return diaryMarker; } }
 
     public DiaryContentPage CurrentPage { get; set; }
@@ -26,19 +28,28 @@ public class DiaryContentPages : MonoBehaviour
 
     public bool Active
     {
+        get { return isActive; }
         set
         {
-            if(diaryMarker != null)
+            ActiveSilent = value;
+            onActiveStatusChanged?.Invoke(value);
+        }
+    }
+
+    public bool ActiveSilent
+    {
+        set
+        {
+            isActive = value;
+            if (diaryMarker != null)
             {
                 diaryMarker.SetActive(value);
             }
 
-            foreach(GameObject requiredObject in requiredObjects)
+            foreach (GameObject requiredObject in requiredObjects)
             {
                 requiredObject.SetActive(value);
             }
-
-            onActiveStatusChanged?.Invoke(value);
         }
     }
 }

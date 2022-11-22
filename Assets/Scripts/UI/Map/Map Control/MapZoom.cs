@@ -110,12 +110,16 @@ public class MapZoom : MonoBehaviour
 
     public bool IsMapScreenshotInProgress { get { return overrideZoom >= 0.0f; } }
 
+    private void Awake()
+    {
+        scrollRect = GetComponentInParent<ScrollRect>();
+        rectTransform = GetComponent<RectTransform>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        scrollRect = GetComponentInParent<ScrollRect>();
         originalScale = transform.localScale;
-        rectTransform = GetComponent<RectTransform>();
         initialZoomTarget = Mathf.Clamp(initialZoomTarget, minZoom, maxZoom);
         SetZoom(Mathf.Clamp(initialZoom, minZoom, maxZoom), rectTransform.TransformPoint(rectTransform.rect.center));
         centerButton.onClick.AddListener(OnCenterMap);

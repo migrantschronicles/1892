@@ -121,20 +121,15 @@ public class Diary : MonoBehaviour
 
     public void SetOpened(DiaryContentPage page)
     {
-        switch(Status)
+        if(Status != OpenStatus.Closed)
         {
-            case OpenStatus.Closed:
-                SetOpened(true);
-                nextPage = page;
-                nextPage.onStatusChanged += OnNextPageStatusChanged;
-                nextPage.OpenToLeft();
-                break;
-
-            case OpenStatus.Opened:
-                nextPage = page;
-                ///@todo
-                break;
+            return;
         }
+
+        SetOpened(true);
+        nextPage = page;
+        nextPage.onStatusChanged += OnNextPageStatusChanged;
+        nextPage.OpenToLeft();
     }
 
     public void SetOpened(DiaryContentPages pages)

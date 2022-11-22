@@ -34,6 +34,7 @@ public class IngameDiary : MonoBehaviour
     private DiaryContentPages settingsPages;
 
     private Dictionary<string, LocationMarker> locationMarkers;
+    private DiaryContentPage screenshotPrevPage;
 
     public Diary Diary { get { return diary; } }
 
@@ -180,5 +181,78 @@ public class IngameDiary : MonoBehaviour
                 locationMarkers.Add(marker.LocationName, marker);
             }
         }
+    }
+
+    public void PrepareForMapScreenshot()
+    {
+        screenshotPrevPage = diary.CurrentPage;
+        if(diary.CurrentPage)
+        {
+            diary.CurrentPage.gameObject.SetActive(false);
+            if(diary.CurrentPage.ContentPages)
+            {
+                diary.CurrentPage.ContentPages.ActiveSilent = false;
+            }
+        }
+
+        mapPages.LastPage.gameObject.SetActive(true);
+        mapPages.ActiveSilent = true;
+        mapPages.GetComponentInChildren<MapZoom>().PrepareForMapScreenshot();
+        mapPages.LastPage.GetComponent<MapPage>().PrepareForMapScreenshot();
+    }
+
+    public void PrepareForDiaryScreenshot(DiaryEntryData data)
+    {
+        screenshotPrevPage = diary.CurrentPage;
+        if (diary.CurrentPage)
+        {
+            diary.CurrentPage.gameObject.SetActive(false);
+            if (diary.CurrentPage.ContentPages)
+            {
+                diary.CurrentPage.ContentPages.ActiveSilent = false;
+            }
+        }
+
+        diaryPages.ActiveSilent = true;
+        diaryPages.GetComponentInChildren<DiaryPages>().PrepareForDiaryScreenshot(data);
+    }
+
+    public void ResetFromScreenshot()
+    {
+        if(mapPages.Active)
+        {
+            mapPages.GetComponentInChildren<MapZoom>().ResetFromScreenshot();
+            mapPages.LastPage.GetComponent<MapPage>().ResetFromScreenshot();
+            mapPages.LastPage.gameObject.SetActive(false);
+            mapPages.ActiveSilent = false;
+        }
+
+        if(diaryPages.Active)
+        {
+            diaryPages.GetComponentInChildren<DiaryPages>().ResetFromScreenshot();
+            diaryPages.ActiveSilent = false;
+        }
+
+        if(screenshotPrevPage)
+        {
+            Debug.Log(screenshotPrevPage);
+            screenshotPrevPage.gameObject.SetActive(true);
+            screenshotPrevPage.GetComponent<Animator>().SetTrigger("OpenImmediately");
+            if(screenshotPrevPage.ContentPages)
+            {
+                screenshotPrevPage.ContentPages.ActiveSilent = true;
+            }
+
+            screenshotPrevPage = null;
+        }
+        else
+        {
+            Debug.Log("NULL");
+        }
+    }
+
+    public void GeneratePDF()
+    {
+        NewGameManager.Instance.GeneratePDF();
     }
 }

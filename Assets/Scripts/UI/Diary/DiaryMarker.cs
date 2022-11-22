@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum DiaryMarkerState
+{
+    Default,
+    Closed,
+    Active
+}
+
 public class DiaryMarker : MonoBehaviour
 {
     [SerializeField]
@@ -16,6 +23,14 @@ public class DiaryMarker : MonoBehaviour
     private bool active = false;
     private Image image;
     private RectTransform rectTransform;
+
+    public DiaryMarkerState State
+    {
+        get
+        {
+            return closed ? DiaryMarkerState.Closed : (active ? DiaryMarkerState.Active : DiaryMarkerState.Default);
+        }
+    }
 
     private void Awake()
     {

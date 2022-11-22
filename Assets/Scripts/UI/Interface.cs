@@ -141,20 +141,17 @@ public class Interface : MonoBehaviour
 
     public void PrepareForMapScreenshot()
     {
-        ///@todo
-        //diary.PrepareForMapScreenshot();
+        ingameDiary.PrepareForMapScreenshot();
     }
 
     public void PrepareForDiaryScreenshot(DiaryEntryData entry)
     {
-        ///@todo
-        //diary.PrepareForDiaryScreenshot(entry);
+        ingameDiary.PrepareForDiaryScreenshot(entry);
     }
 
     public void ResetFromScreenshot()
     {
-        ///@todo
-        //diary.ResetFromScreenshot();
+        ingameDiary.ResetFromScreenshot();
     }
 
     public void OpenEndDayPopUp()

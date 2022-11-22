@@ -52,6 +52,8 @@ public class Interface : MonoBehaviour
         OnFoodChanged(NewGameManager.Instance.food);
         OnDateChanged(NewGameManager.Instance.date);
         OnLocationChanged(NewGameManager.Instance.currentLocation);
+
+        ingameDiary.gameObject.SetActive(true);
     }
 
     private void OnDestroy()

@@ -4,15 +4,30 @@ using UnityEngine;
 
 public class QuestsPanel : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private GameObject entryPrefab;
+
+    private List<QuestEntry> quests = new List<QuestEntry>();
+
+    public void OnQuestAdded(Quest quest)
     {
-        
+        GameObject newEntryGO = Instantiate(entryPrefab, transform);
+        QuestEntry newEntry = newEntryGO.GetComponent<QuestEntry>();
+        newEntry.Quest = quest;
+        quests.Add(newEntry);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnQuestFinished(Quest quest)
     {
-        
+        foreach(QuestEntry entry in quests)
+        {
+            if(entry.Quest == quest)
+            {
+                entry.MarkFinished();
+                return;
+            }
+        }
+
+        Debug.Assert(false);
     }
 }

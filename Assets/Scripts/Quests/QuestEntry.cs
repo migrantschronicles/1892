@@ -1,18 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class QuestEntry : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private Color finishedForegroundColor = Color.black;
+
+    private Quest quest;
+    public Quest Quest
     {
-        
+        get {  return quest; }
+        set
+        {
+            quest = value;
+            titleText.text = LocalizationManager.Instance.GetLocalizedString(quest.Title);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private Text titleText;
+
+    private void Awake()
     {
-        
+        titleText = GetComponent<Text>();
+    }
+
+    public void MarkFinished()
+    {
+        titleText.color = finishedForegroundColor;
     }
 }

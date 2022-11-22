@@ -86,11 +86,20 @@ public class NewGameManager : MonoBehaviour
     private List<Quest> finishedMainQuests = new List<Quest>();
     private List<Quest> finishedSideQuests = new List<Quest>();
 
+    public IEnumerable<Quest> MainQuests { get { return mainQuests; } } 
+    public IEnumerable<Quest> SideQuests { get { return sideQuests; } }
+    public IEnumerable<Quest> FinishedMainQuests { get { return finishedMainQuests; } }
+    public IEnumerable<Quest> FinishedSideQuests { get { return finishedSideQuests; } }
+    public IEnumerable<Quest> MainQuestsIncludingFinished { get { return mainQuests.Concat(finishedMainQuests); } }
+    public IEnumerable<Quest> SideQuestsIncludingFinished { get { return sideQuests.Concat(finishedSideQuests); } }
+
     public delegate void OnQuestAddedEvent(Quest quest);
     public event OnQuestAddedEvent onQuestAdded;
 
     public delegate void OnQuestFinishedEvent(Quest quest);
     public event OnQuestFinishedEvent onQuestFinished;
+
+    public Quest TEST_Quest;
 
     // Events
     public delegate void OnDiaryEntryAdded(DiaryEntry entry);
@@ -144,6 +153,11 @@ public class NewGameManager : MonoBehaviour
         if (!isInitialized)
         {
             Initialize();
+
+            if(TEST_Quest)
+            {
+                AddQuest(TEST_Quest);
+            }
         }
     }
 
@@ -497,7 +511,6 @@ public class NewGameManager : MonoBehaviour
 
     private void OnQuestAdded(Quest quest)
     {
-        Debug.Log($"Quest {quest.Id} was added");
         onQuestAdded?.Invoke(quest);
 
         if(EvaluateQuestFinishedCondition(quest))
@@ -530,7 +543,6 @@ public class NewGameManager : MonoBehaviour
 
     private void OnQuestFinished(Quest quest)
     {
-        Debug.Log($"Quest {quest.Id} was finished");
         onQuestFinished?.Invoke(quest);
     }
 

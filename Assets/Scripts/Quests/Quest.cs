@@ -25,7 +25,6 @@ public class Quest : ScriptableObject
 
     public string Id { get { return id; } }
     public LocalizedString Title { get { return title; } }
-    public string LocalizedTitle { get { return LocalizationManager.Instance.GetLocalizedString(title); } }
     public IEnumerable<SetCondition> SetFinishedConditions { get { return setFinishedConditions; } }
     public DialogCondition FinishedCondition { get { return finishedCondition; } }
     public QuestType Type { get { return type; } }

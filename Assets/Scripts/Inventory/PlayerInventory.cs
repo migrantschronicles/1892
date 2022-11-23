@@ -21,6 +21,8 @@ public class PlayerInventory
 
     public IEnumerable<KeyValuePair<Item, int>> Items { get { return items; } }
 
+    public bool IsEmpty { get { return items.Count == 0; } }
+
     public void Initialize()
     {
         foreach(Item item in startItems)

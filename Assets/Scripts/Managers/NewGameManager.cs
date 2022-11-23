@@ -605,10 +605,31 @@ public class NewGameManager : MonoBehaviour
         return null;
     }
 
+    /**
+     * Steals items from the inventory.
+     *
+     * The number of items stolen is set randomly and controlled by stolenAmountRange and stolenAmountProbabilityCurve.
+     * stolenAmountRange sets the range of number of items that can be stolen.
+     * If stolenAmountProbabilityCurve is not set or empty, a random number in the stolenAmountRange (inclusive) is chosen.
+     * You can control the probabilities of each number in the range by setting up the stolenAmountProbabilityCurve:
+     * For each valid number in the range, the curve is evaluated, and the y-value is considered the probability weight.
+     * If you don't want a specific number to be chosen, set that y-value to 0.
+     * If you e.g. want a specific number to be more likely to be chosen, set that y-value to a higher value than others.
+     * If you want all numbers to have the same probability, set the y-value of all numbers in the range to an equal value (not 0).
+     * 
+     * Money counts as an item in this case and can be stolen only once.
+     * You can set the probability weight (that money is stolen) with moneyStolenProbabilityWeight.
+     * If money is stolen, you can control the amount of money that is stolen.
+     * Like stolenAmountRange and stolenAmountProbabilityCurve, you can set the range and probability weights of each
+     * valid amount number that can be stolen with moneyStolenAmountRange and moneyStolenProbabilityCurve.
+     * 
+     * @return A list of stolen items (are removed from inventory).
+     */
     public List<StolenItemInfo> StealItems()
     {
         List<StolenItemInfo> stolenItems = new List<StolenItemInfo>();
-        float weight = moneyStolenProbabilityWeight;
+        bool canStealMoney = money > 0;
+        float weight = canStealMoney ? moneyStolenProbabilityWeight : 0;
         foreach(KeyValuePair<Item, int> item in inventory.Items)
         {
             weight += item.Key.stolenProbabilityWeight * item.Value;
@@ -618,15 +639,16 @@ public class NewGameManager : MonoBehaviour
         int stolenAmount = 0;
         if(stolenAmountProbabilityCurve != null && stolenAmountProbabilityCurve.length > 0)
         {
+            // If the curve is set, choose a random amount with the given probabilities.
             float amountWeight = 0.0f;
-            for (int i = stolenAmountRange.x; i < stolenAmountRange.y; ++i)
+            for (int i = stolenAmountRange.x; i <= stolenAmountRange.y; ++i)
             {
                 float currentAmountWeight = stolenAmountProbabilityCurve.Evaluate(i);
                 amountWeight += currentAmountWeight;
             }
 
             float randomAmountWeight = Random.value * amountWeight;
-            for (int i = stolenAmountRange.x; i < stolenAmountRange.y; ++i)
+            for (int i = stolenAmountRange.x; i <= stolenAmountRange.y; ++i)
             {
                 randomAmountWeight -= stolenAmountProbabilityCurve.Evaluate(i);
                 if (randomAmountWeight <= 0.0f)
@@ -642,36 +664,46 @@ public class NewGameManager : MonoBehaviour
         }
 
         bool wasMoneyStolen = false;
-        for(int i = 0; i < stolenAmount; ++i)
+        for(int i = 0; i < stolenAmount && !inventory.IsEmpty; ++i)
         {
             float randomWeight = Random.value * weight;
 
             // Check money
-            if(!wasMoneyStolen)
+            if(!wasMoneyStolen && canStealMoney)
             {
                 randomWeight -= moneyStolenProbabilityWeight;
                 if (randomWeight <= 0.0f)
                 {
                     // Money is stolen
                     int stolenMoneyAmount = 0;
-                    float amountWeight = 0.0f;
-                    for (int j = moneyStolenAmountRange.x; j < moneyStolenAmountRange.y; ++j)
+                    if(moneyStolenProbabilityCurve != null && moneyStolenProbabilityCurve.length > 0)
                     {
-                        float currentAmountWeight = moneyStolenProbabilityCurve.Evaluate(j);
-                        amountWeight += currentAmountWeight;
-                    }
-
-                    float randomAmountWeight = Random.value * amountWeight;
-                    for (int j = moneyStolenAmountRange.x; j < moneyStolenAmountRange.y; ++j)
-                    {
-                        randomAmountWeight -= moneyStolenProbabilityCurve.Evaluate(j);
-                        if (randomAmountWeight <= 0.0f)
+                        float amountWeight = 0.0f;
+                        for (int j = moneyStolenAmountRange.x; j <= moneyStolenAmountRange.y; ++j)
                         {
-                            stolenMoneyAmount = j;
-                            break;
+                            float currentAmountWeight = moneyStolenProbabilityCurve.Evaluate(j);
+                            amountWeight += currentAmountWeight;
+                        }
+
+                        float randomAmountWeight = Random.value * amountWeight;
+                        for (int j = moneyStolenAmountRange.x; j <= moneyStolenAmountRange.y; ++j)
+                        {
+                            randomAmountWeight -= moneyStolenProbabilityCurve.Evaluate(j);
+                            if (randomAmountWeight <= 0.0f)
+                            {
+                                stolenMoneyAmount = j;
+                                break;
+                            }
                         }
                     }
+                    else
+                    {
+                        stolenMoneyAmount = Mathf.RoundToInt((Random.value * ((float)moneyStolenAmountRange.y - moneyStolenAmountRange.x)) 
+                            + moneyStolenAmountRange.x);
+                    }
 
+                    stolenMoneyAmount = Mathf.Min(stolenMoneyAmount, money);
+                    SetMoney(money - stolenMoneyAmount);
                     StolenItemInfo info = new StolenItemInfo { type = StolenItemType.Money, money = stolenMoneyAmount };
                     stolenItems.Add(info);
 
@@ -684,10 +716,12 @@ public class NewGameManager : MonoBehaviour
 
             foreach (KeyValuePair<Item, int> item in inventory.Items)
             {
-                weight -= item.Key.stolenProbabilityWeight * item.Value;
-                if(weight <= 0.0f)
+                randomWeight -= item.Key.stolenProbabilityWeight * item.Value;
+                if(randomWeight <= 0.0f)
                 {
                     // One of those items is stolen, it does not matter which one
+                    inventory.RemoveItem(item.Key);
+                    weight -= item.Key.stolenProbabilityWeight;
                     StolenItemInfo info = new StolenItemInfo { type = StolenItemType.Item, item = item.Key };
                     stolenItems.Add(info);
                     break;

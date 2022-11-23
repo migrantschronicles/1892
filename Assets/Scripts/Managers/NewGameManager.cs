@@ -26,6 +26,19 @@ public class Journey
     public DiaryEntryData diaryEntry;
 }
 
+public enum StolenItemType
+{
+    Item,
+    Money
+}
+
+public class StolenItemInfo
+{
+    public StolenItemType type;
+    public Item item;
+    public int money;
+}
+
 public class NewGameManager : MonoBehaviour
 {
 
@@ -100,6 +113,18 @@ public class NewGameManager : MonoBehaviour
     public event OnQuestFinishedEvent onQuestFinished;
 
     public Quest TEST_Quest;
+
+    // Stealing
+    [Tooltip("The probability (weight) that money can be stolen")]
+    public float moneyStolenProbabilityWeight = 5.0f;
+    [Tooltip("The probability (weight) of each amount of money within the range to be stolen")]
+    public AnimationCurve moneyStolenProbabilityCurve;
+    [Tooltip("The range of money that can be stolen")]
+    public Vector2Int moneyStolenAmountRange;
+    [Tooltip("The probability (weight) of each amount of stolen items to be actually stolen")]
+    public AnimationCurve stolenAmountProbabilityCurve;
+    [Tooltip("The range of item amount that can be stolen")]
+    public Vector2Int stolenAmountRange;
 
     // Events
     public delegate void OnDiaryEntryAdded(DiaryEntry entry);
@@ -578,5 +603,98 @@ public class NewGameManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public List<StolenItemInfo> StealItems()
+    {
+        List<StolenItemInfo> stolenItems = new List<StolenItemInfo>();
+        float weight = moneyStolenProbabilityWeight;
+        foreach(KeyValuePair<Item, int> item in inventory.Items)
+        {
+            weight += item.Key.stolenProbabilityWeight * item.Value;
+        }
+
+        // Calculate amount
+        int stolenAmount = 0;
+        if(stolenAmountProbabilityCurve != null && stolenAmountProbabilityCurve.length > 0)
+        {
+            float amountWeight = 0.0f;
+            for (int i = stolenAmountRange.x; i < stolenAmountRange.y; ++i)
+            {
+                float currentAmountWeight = stolenAmountProbabilityCurve.Evaluate(i);
+                amountWeight += currentAmountWeight;
+            }
+
+            float randomAmountWeight = Random.value * amountWeight;
+            for (int i = stolenAmountRange.x; i < stolenAmountRange.y; ++i)
+            {
+                randomAmountWeight -= stolenAmountProbabilityCurve.Evaluate(i);
+                if (randomAmountWeight <= 0.0f)
+                {
+                    stolenAmount = i;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            stolenAmount = Mathf.RoundToInt((Random.value * ((float)stolenAmountRange.y - stolenAmountRange.x)) + stolenAmountRange.x);
+        }
+
+        bool wasMoneyStolen = false;
+        for(int i = 0; i < stolenAmount; ++i)
+        {
+            float randomWeight = Random.value * weight;
+
+            // Check money
+            if(!wasMoneyStolen)
+            {
+                randomWeight -= moneyStolenProbabilityWeight;
+                if (randomWeight <= 0.0f)
+                {
+                    // Money is stolen
+                    int stolenMoneyAmount = 0;
+                    float amountWeight = 0.0f;
+                    for (int j = moneyStolenAmountRange.x; j < moneyStolenAmountRange.y; ++j)
+                    {
+                        float currentAmountWeight = moneyStolenProbabilityCurve.Evaluate(j);
+                        amountWeight += currentAmountWeight;
+                    }
+
+                    float randomAmountWeight = Random.value * amountWeight;
+                    for (int j = moneyStolenAmountRange.x; j < moneyStolenAmountRange.y; ++j)
+                    {
+                        randomAmountWeight -= moneyStolenProbabilityCurve.Evaluate(j);
+                        if (randomAmountWeight <= 0.0f)
+                        {
+                            stolenMoneyAmount = j;
+                            break;
+                        }
+                    }
+
+                    StolenItemInfo info = new StolenItemInfo { type = StolenItemType.Money, money = stolenMoneyAmount };
+                    stolenItems.Add(info);
+
+                    // Money should not be stolen again.
+                    weight -= moneyStolenProbabilityWeight;
+                    wasMoneyStolen = true;
+                    continue;
+                }
+            }
+
+            foreach (KeyValuePair<Item, int> item in inventory.Items)
+            {
+                weight -= item.Key.stolenProbabilityWeight * item.Value;
+                if(weight <= 0.0f)
+                {
+                    // One of those items is stolen, it does not matter which one
+                    StolenItemInfo info = new StolenItemInfo { type = StolenItemType.Item, item = item.Key };
+                    stolenItems.Add(info);
+                    break;
+                }
+            }
+        }
+
+        return stolenItems;
     }
 }

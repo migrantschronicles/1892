@@ -24,6 +24,9 @@ public class Item : ScriptableObject
     public string[] SetConditions;
     [Tooltip("The category of this item")]
     public ItemCategory category;
+    [Tooltip("The probability (weight) to be stolen. If an item should not be able to be stolen set it to 0." +
+        "If one item has a higher change to be stolen set it to a higher value than others")]
+    public float stolenProbabilityWeight = 1.0f;
 
     public bool IsStackable
     {

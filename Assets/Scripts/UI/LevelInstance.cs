@@ -435,6 +435,10 @@ public class LevelInstance : MonoBehaviour
                 currentAdditiveScene.gameObject.SetActive(false);
             }
         }
+        else
+        {
+            mode = Mode.Shop;
+        }
 
         AudioManager.Instance.PlayFX(shop.openClip);
     }

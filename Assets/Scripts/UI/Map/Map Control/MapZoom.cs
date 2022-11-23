@@ -116,6 +116,7 @@ public class MapZoom : MonoBehaviour
     {
         scrollRect = GetComponentInParent<ScrollRect>();
         rectTransform = GetComponent<RectTransform>();
+        LevelInstance.Instance.IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
     }
 
     // Start is called before the first frame update
@@ -264,8 +265,37 @@ public class MapZoom : MonoBehaviour
 
     public void ResetInitialZoom()
     {
-        autoZoomCurrentTime = 0.0f;
-        autoZoomStart = initialZoomStart;
+        // GetComponentInParent does not work because it does not include inactive game objects
+        DiaryContentPage page = GetComponentsInParent<DiaryContentPage>(true)[0];
+        if(page.Status == OpenStatus.Opened)
+        {
+            OnPageStatusChanged(OpenStatus.Opened);
+        }
+        else
+        {
+            page.onStatusChanged += OnPageStatusChanged;
+            SetZoomAtCenter(autoZoomStart);
+        }
+    }
+
+    private void OnPageStatusChanged(OpenStatus status)
+    {
+        if(status == OpenStatus.Opened)
+        {
+            DiaryContentPage page = GetComponentInParent<DiaryContentPage>();
+            page.onStatusChanged -= OnPageStatusChanged;
+            autoZoomCurrentTime = 0.0f;
+            autoZoomStart = initialZoomStart;
+        }
+    }
+
+    private void OnDiaryStatusChanged(OpenStatus status)
+    {
+        Debug.Log(status);
+        if(status == OpenStatus.Opening)
+        {
+            ResetInitialZoom();
+        }
     }
 
     private void OnCenterMap()

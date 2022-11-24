@@ -46,6 +46,7 @@ public class Shop : MonoBehaviour
     private Dictionary<Item, int> transferChanges = new Dictionary<Item, int>();
     private InventorySlot selectedItem;
     private bool selectedItemIsInLuggage = false;
+    private Dictionary<Item, int> basketItems = new Dictionary<Item, int>();
 
     private bool MeetsRequiredItems
     {
@@ -85,7 +86,7 @@ public class Shop : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         Basket.onSlotClicked.AddListener(OnBasketItemClicked);
         Luggage.onSlotClicked.AddListener(OnLuggageItemClicked);
@@ -96,13 +97,47 @@ public class Shop : MonoBehaviour
         Basket.SetBagCount(1);
         Luggage.SetBagCount(3);
 
-        Basket.ResetItems(ShopItems);
-        Luggage.ResetItems(NewGameManager.Instance.inventory.Items);
-
+        Basket.onItemAmountChanged += OnBasketItemAmountChanged;
         Luggage.onItemAmountChanged += OnLuggageItemAmountChanged;
 
+        foreach(Item item in ShopItems)
+        {
+            OnBasketItemAmountChanged(item, 1);
+        }
+    }
+
+    private void Start()
+    {
         UpdateDynamics();
         SetSelectedItem(null);
+    }
+
+    private void OnBasketItemAmountChanged(Item item, int amount)
+    {
+        if(basketItems.TryGetValue(item, out int currentAmount))
+        {
+            int newAmount = currentAmount + amount;
+            Debug.Assert(newAmount >= 0);
+            if(newAmount <= 0)
+            {
+                basketItems.Remove(item);
+            }
+            else
+            {
+                basketItems[item] = newAmount;
+            }
+        }
+        else
+        {
+            Debug.Assert(amount > 0);
+            basketItems.Add(item, amount);
+        }
+    }
+
+    public void OnOpened()
+    {
+        Basket.ResetItems(basketItems);
+        Luggage.ResetItems(NewGameManager.Instance.inventory.Items);
     }
 
     private void OnTransferLeft()

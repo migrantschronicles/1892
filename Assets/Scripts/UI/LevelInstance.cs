@@ -440,6 +440,7 @@ public class LevelInstance : MonoBehaviour
             mode = Mode.Shop;
         }
 
+        currentShop.OnOpened();
         AudioManager.Instance.PlayFX(shop.openClip);
     }
 

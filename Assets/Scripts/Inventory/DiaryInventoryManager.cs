@@ -25,6 +25,13 @@ public class DiaryInventoryManager : InventoryManager
         bag2.onRemoveItem += OnRemoveItem;
         SetBagCount(3);
         ResetItems(NewGameManager.Instance.inventory.Items);
+        LevelInstance.Instance.IngameDiary.Diary.onDiaryStatusChanged += (status) =>
+        {
+            if (status == OpenStatus.Opening)
+            {
+                ResetItems(NewGameManager.Instance.inventory.Items);
+            }
+        };
     }
 
     public override void SetBagCount(int newBagCount)

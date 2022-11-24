@@ -25,6 +25,8 @@ public class InventorySlot : MonoBehaviour
     private Image image;
     /// Value is updated to Amount if not ghost. If ghost, value represents the Amount + added during ghost, Amount still represents amount in inventory.
     private int ghostAmount = 0;
+    private bool isSelected = false;
+    private bool isGhostMode = false;
 
     public int ChangedAmount
     {
@@ -89,11 +91,10 @@ public class InventorySlot : MonoBehaviour
         Y = y;
         Width = width;
         Height = height;
-        image.sprite = ghost ? item.GhostSprite : item.sprite;
+        isGhostMode = ghost;
         TryAddAmount(ghost);
-        amountText.color = ghost ? ghostTextColor : defaultTextColor;
-
         UpdateAmountText();
+        UpdateVisuals();
     }
 
     public bool IsAt(int x, int y)
@@ -133,8 +134,8 @@ public class InventorySlot : MonoBehaviour
 
     public void EnableGhostMode()
     {
-        image.sprite = Item.GhostSprite;
-        amountText.color = ghostTextColor;
+        isGhostMode = true;
+        UpdateVisuals();
     }
 
     public InventoryGhostChange ApplyGhostMode()
@@ -149,10 +150,10 @@ public class InventorySlot : MonoBehaviour
             change = InventoryGhostChange.Amount;
         }
 
+        isGhostMode = false;
         Amount = ghostAmount;
         UpdateAmountText();
-        amountText.color = defaultTextColor;
-        image.sprite = Item.sprite;
+        UpdateVisuals();
 
         return change;
     }
@@ -166,10 +167,10 @@ public class InventorySlot : MonoBehaviour
         }
 
         // Reset the displayed amount.
+        isGhostMode = false;
         ghostAmount = Amount;
         UpdateAmountText();
-        amountText.color = defaultTextColor;
-        image.sprite = Item.sprite;
+        UpdateVisuals();
 
         return change;
     }
@@ -177,5 +178,18 @@ public class InventorySlot : MonoBehaviour
     public void OnSlotClicked()
     {
         OnClicked.Invoke(this);
+    }
+
+    public void SetSelected(bool selected)
+    {
+        isSelected = selected;
+        UpdateVisuals();
+    }
+
+    private void UpdateVisuals()
+    {
+        bool defaultVisuals = !(isSelected || isGhostMode);
+        image.sprite = defaultVisuals ? Item.sprite : Item.GhostSprite;
+        amountText.color = defaultVisuals ? defaultTextColor : ghostTextColor;
     }
 }

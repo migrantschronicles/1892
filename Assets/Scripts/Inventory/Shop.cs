@@ -11,15 +11,15 @@ public class Shop : MonoBehaviour
     [SerializeField]
     private ScrollableInventoryManager Luggage;
     [SerializeField]
-    private Button AcceptButton;
+    private Button tradeButton;
     [SerializeField]
-    private Button CancelButton;
-    [SerializeField]
-    private GameObject arrowLeft;
-    [SerializeField]
-    private GameObject arrowRight;
+    private Text descriptionText;
     [SerializeField]
     private Text moneyText;
+    [SerializeField]
+    private Button transferLeftButton;
+    [SerializeField]
+    private Button transferRightButton;
     [SerializeField]
     private Item[] ShopItems;
     [SerializeField]
@@ -44,6 +44,8 @@ public class Shop : MonoBehaviour
     /// The changes during a transfer.
     /// Positive values mean from basket to luggage, negative values mean from luggage to basket.
     private Dictionary<Item, int> transferChanges = new Dictionary<Item, int>();
+    private InventorySlot selectedItem;
+    private bool selectedItemIsInLuggage = false;
 
     private bool MeetsRequiredItems
     {
@@ -87,8 +89,9 @@ public class Shop : MonoBehaviour
     {
         Basket.onSlotClicked.AddListener(OnBasketItemClicked);
         Luggage.onSlotClicked.AddListener(OnLuggageItemClicked);
-        arrowLeft.SetActive(false);
-        arrowRight.SetActive(false);
+        tradeButton.onClick.AddListener(AcceptTransfer);
+        transferLeftButton.onClick.AddListener(OnTransferLeft);
+        transferRightButton.onClick.AddListener(OnTransferRight);
 
         Basket.SetBagCount(1);
         Luggage.SetBagCount(3);
@@ -99,33 +102,77 @@ public class Shop : MonoBehaviour
         Luggage.onItemAmountChanged += OnLuggageItemAmountChanged;
 
         UpdateDynamics();
+        SetSelectedItem(null);
     }
 
-    private void OnBasketItemClicked(InventorySlot slot)
+    private void OnTransferLeft()
     {
-        ConditionallyStartTransfer();
-        if(Luggage.TryAddItem(slot.Item))
+        if(!selectedItem || !selectedItemIsInLuggage)
         {
-            if(!Basket.TryRemoveItemAt(slot.X, slot.Y))
-            {
-                Debug.Log("Item added to luggage could not be removed from basket");
-            }
-
-            LogTransferChange(slot.Item, 1);
+            return;
         }
-    }
 
-    private void OnLuggageItemClicked(InventorySlot slot)
-    {
         ConditionallyStartTransfer();
-        if(Basket.TryAddItem(slot.Item))
+        if (Basket.TryAddItem(selectedItem.Item))
         {
-            if(!Luggage.TryRemoveItemAt(slot.X, slot.Y))
+            if (!Luggage.TryRemoveItemAt(selectedItem.X, selectedItem.Y))
             {
                 Debug.Log("Item added to basket could not be removed from luggage");
             }
 
-            LogTransferChange(slot.Item, -1);
+            LogTransferChange(selectedItem.Item, -1);
+            SetSelectedItem(null);
+        }
+    }
+
+    private void OnTransferRight()
+    {
+        if(!selectedItem || selectedItemIsInLuggage)
+        {
+            return;
+        }
+
+        ConditionallyStartTransfer();
+        if (Luggage.TryAddItem(selectedItem.Item))
+        {
+            if (!Basket.TryRemoveItemAt(selectedItem.X, selectedItem.Y))
+            {
+                Debug.Log("Item added to luggage could not be removed from basket");
+            }
+
+            LogTransferChange(selectedItem.Item, 1);
+            SetSelectedItem(null);
+        }
+    }
+
+    private void OnBasketItemClicked(InventorySlot slot)
+    {
+        SetSelectedItem(slot);
+        selectedItemIsInLuggage = false;
+    }
+
+    private void OnLuggageItemClicked(InventorySlot slot)
+    {
+        SetSelectedItem(slot);
+        selectedItemIsInLuggage = true;
+    }
+
+    private void SetSelectedItem(InventorySlot slot)
+    {
+        if(selectedItem)
+        {
+            selectedItem.SetSelected(false);
+        }
+
+        selectedItem = slot;
+        if(selectedItem)
+        {
+            descriptionText.text = LocalizationManager.Instance.GetLocalizedString(selectedItem.Item.Description);
+            selectedItem.SetSelected(true);
+        }
+        else
+        {
+            descriptionText.text = "";
         }
     }
 
@@ -154,18 +201,16 @@ public class Shop : MonoBehaviour
     private void UpdateDynamics()
     {
         // Arrows
-        bool hasPositiveValues = transferChanges.Values.Any((value) => value > 0);
-        bool hasNegativeValues = transferChanges.Values.Any((value) => value < 0);
-        arrowLeft.SetActive(hasNegativeValues);
-        arrowRight.SetActive(hasPositiveValues);
+        //bool hasPositiveValues = transferChanges.Values.Any((value) => value > 0);
+        //bool hasNegativeValues = transferChanges.Values.Any((value) => value < 0);
 
         // Money
         int price = CalculatePrice();
         moneyText.text = price.ToString();
-        moneyText.gameObject.SetActive(price != 0 && !freeShop);
+        moneyText.gameObject.SetActive(!freeShop);
 
         // Accept Button
-        AcceptButton.enabled = CanAccept;
+        tradeButton.enabled = CanAccept;
 
         // Back button
         LevelInstance.Instance.SetBackButtonVisible(CanClose);
@@ -188,20 +233,16 @@ public class Shop : MonoBehaviour
             transferInProgress = true;
             Basket.EnableGhostMode();
             Luggage.EnableGhostMode();
-            AcceptButton.gameObject.SetActive(true);
-            AcceptButton.enabled = true;
-            CancelButton.gameObject.SetActive(true);
-            AcceptButton.onClick.AddListener(AcceptTransfer);
-            CancelButton.onClick.AddListener(CancelTransfer);
         }
     }
 
     private void StopTransfer()
     {
-        AcceptButton.onClick.RemoveListener(AcceptTransfer);
-        CancelButton.onClick.RemoveListener(CancelTransfer);
-        AcceptButton.gameObject.SetActive(false);
-        CancelButton.gameObject.SetActive(false);
+        if(selectedItem != null)
+        {
+            SetSelectedItem(null);
+        }
+
         transferChanges.Clear();
         UpdateDynamics();
         transferInProgress = false;

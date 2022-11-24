@@ -58,7 +58,7 @@ public class DiaryInventoryManager : InventoryManager
     {
         if(selectedSlot)
         {
-            selectedSlot.CancelGhostMode();
+            selectedSlot.SetSelected(false);
             selectedSlot = null;
         }
 
@@ -67,7 +67,7 @@ public class DiaryInventoryManager : InventoryManager
         descriptionText.text = description;
 
         selectedSlot = slot;
-        selectedSlot.EnableGhostMode();
+        selectedSlot.SetSelected(true);
     }
 
     private void OnRemoveItem(DiaryInventoryContainer container)
@@ -99,7 +99,7 @@ public class DiaryInventoryManager : InventoryManager
             if(GetInventorySlotAt(selectedSlot.X, selectedSlot.Y) == selectedSlot)
             {
                 // The item amount was decreased.
-                selectedSlot.EnableGhostMode();
+                selectedSlot.SetSelected(true);
             }
             else
             {

@@ -21,6 +21,7 @@ public class InventorySlot : MonoBehaviour
     public int Width { get; private set; }
     public int Height { get; private set; }
     public int Amount { get; private set; }
+    public InventoryManager Manager { get; set; }
 
     private Image image;
     /// Value is updated to Amount if not ghost. If ghost, value represents the Amount + added during ghost, Amount still represents amount in inventory.

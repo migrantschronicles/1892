@@ -264,6 +264,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &6300526870785553640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4263827654865270275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.24732348, g: 0.7735849, b: 0.21529014, a: 1}
+  m_EffectDistance: {x: 8, y: -8}
+  m_UseGraphicAlpha: 1
 --- !u!1 &6760710453765076426
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,6 +351,7 @@ MonoBehaviour:
   enabledBagButtonColor: {r: 1, g: 1, b: 1, a: 1}
   bagImage: {fileID: 0}
   bagImages: []
+  outline: {fileID: 6300526870785553640}
 --- !u!1001 &7421640814491911113
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -433,6 +449,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eb17c7731c07f164ea314c91e68c3d66, type: 3}
+--- !u!1 &4263827654865270275 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6760710453765076426, guid: eb17c7731c07f164ea314c91e68c3d66, type: 3}
+  m_PrefabInstance: {fileID: 7421640814491911113}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &7805355628472400446 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 769208890744486391, guid: eb17c7731c07f164ea314c91e68c3d66, type: 3}
@@ -443,7 +464,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3272493731785433935, guid: eb17c7731c07f164ea314c91e68c3d66, type: 3}
   m_PrefabInstance: {fileID: 7421640814491911113}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4263827654865270275}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f318f720aa0dcaa44b47ef4d336d4b6e, type: 3}

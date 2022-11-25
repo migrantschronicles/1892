@@ -45,6 +45,8 @@ public class Shop : MonoBehaviour
     private InventorySlot selectedItem;
     private bool selectedItemIsInLuggage = false;
     private Dictionary<Item, int> basketItems = new Dictionary<Item, int>();
+    
+    public ScrollableInventoryManager HighlightedInventoryManager { get; private set; }
 
     private bool MeetsRequiredItems
     {
@@ -97,6 +99,10 @@ public class Shop : MonoBehaviour
 
         Basket.onItemAmountChanged += OnBasketItemAmountChanged;
         Luggage.onItemAmountChanged += OnLuggageItemAmountChanged;
+        Basket.onPointerEnter += OnPointerEnter;
+        Basket.onPointerExit += OnPointerExit;
+        Luggage.onPointerEnter += OnPointerEnter;
+        Luggage.onPointerExit += OnPointerExit;
 
         foreach(Item item in ShopItems)
         {
@@ -335,5 +341,55 @@ public class Shop : MonoBehaviour
     private void OnLuggageItemAmountChanged(Item item, int changedAmount)
     {
         NewGameManager.Instance.inventory.OnItemAmountChanged(item, changedAmount);
+    }
+
+    private void OnPointerEnter(ScrollableInventoryManager manager)
+    {
+        HighlightedInventoryManager = manager;
+    }
+
+    private void OnPointerExit(ScrollableInventoryManager manager)
+    {
+        if(HighlightedInventoryManager == manager)
+        {
+            HighlightedInventoryManager = null;
+        }
+    }
+
+    public bool OnItemDragged(DraggedItem item)
+    {
+
+        return false;
+    }
+
+    public void OnBeginDrag(DraggedItem item)
+    {
+        SetSelectedItem(item.Slot.InventorySlot);
+    }
+
+    public void OnDrag(DraggedItem item)
+    { 
+    }
+
+    public void OnEndDrag(DraggedItem item)
+    {
+        if(item.IsValidTransfer)
+        {
+            ConditionallyStartTransfer();
+
+            ScrollableInventoryManager sourceManager = item.Slot.InventoryManager;
+            ScrollableInventoryManager targetManager = item.TargetManager;
+            if (targetManager.TryAddItem(item.Slot.InventorySlot.Item))
+            {
+                if (!sourceManager.TryRemoveItemAt(item.Slot.InventorySlot.X, item.Slot.InventorySlot.Y))
+                {
+                    Debug.Log("Item added to target could not be removed from source");
+                }
+
+                int change = sourceManager == Basket ? 1 : -1;
+                LogTransferChange(item.Slot.InventorySlot.Item, change);
+                SetSelectedItem(null);
+            }
+        }
     }
 }

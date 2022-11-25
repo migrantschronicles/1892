@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public enum InventoryGhostChange
 {
@@ -378,6 +379,7 @@ public abstract class InventoryManager : MonoBehaviour
     {
         GameObject inventorySlotObject = Instantiate(ItemSlotPrefab);
         InventorySlot inventorySlot = inventorySlotObject.GetComponent<InventorySlot>();
+        inventorySlot.Manager = this;
         inventorySlot.OnClicked.AddListener((slot) =>
         {
             OnSlotClicked(slot);

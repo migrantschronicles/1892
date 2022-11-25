@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 enum Mode
@@ -90,6 +91,8 @@ public class LevelInstance : MonoBehaviour
     private DiaryEntry diaryEntry;
     [SerializeField]
     private AudioClip[] musicClips;
+    [SerializeField]
+    private GameObject draggedItemPrefab;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -100,11 +103,14 @@ public class LevelInstance : MonoBehaviour
     private OverlayMode overlayMode = OverlayMode.None;
     private bool startedPlayingMusic = false;
     private Mode mode = Mode.None;
+    private DraggedItem draggedItem;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
 
     public IngameDiary IngameDiary { get { return ui.IngameDiary; } }
+    public bool IsDragging { get { return draggedItem != null; } }
+    public Shop CurrentShop { get { return currentShop; } }
 
     private void Awake()
     {
@@ -177,6 +183,7 @@ public class LevelInstance : MonoBehaviour
                 {
                     // A shop was open, so deactivate it.
                     currentShop.gameObject.SetActive(false);
+                    currentShop.OnClosed();
                     AudioManager.Instance.PlayFX(currentShop.closeClip);
                     currentShop = null;
                     break;
@@ -260,6 +267,7 @@ public class LevelInstance : MonoBehaviour
                 case Mode.Shop:
                     // Hide the shop
                     currentShop.gameObject.SetActive(false);
+                    currentShop.OnClosed();
                     AudioManager.Instance.PlayFX(currentShop.closeClip);
                     currentShop = null;
                     break;
@@ -435,7 +443,12 @@ public class LevelInstance : MonoBehaviour
                 currentAdditiveScene.gameObject.SetActive(false);
             }
         }
+        else
+        {
+            mode = Mode.Shop;
+        }
 
+        currentShop.OnOpened();
         AudioManager.Instance.PlayFX(shop.openClip);
     }
 
@@ -625,5 +638,30 @@ public class LevelInstance : MonoBehaviour
         backButton.gameObject.SetActive(wasBackButtonVisible);
 
         return renderedTexture;
+    }
+
+    public void OnBeginDrag(PointerEventData data, ShopInventorySlot slot)
+    {
+        Debug.Assert(!IsDragging);
+        draggedItem = Instantiate(draggedItemPrefab, transform).GetComponent<DraggedItem>();
+        draggedItem.Slot = slot;
+        draggedItem.OnBeginDrag(data);
+        currentShop.OnBeginDrag(draggedItem);
+    }
+
+    public void OnDrag(PointerEventData data)
+    {
+        Debug.Assert(IsDragging);
+        draggedItem.OnDrag(data);
+        currentShop.OnDrag(draggedItem);
+    }
+
+    public void OnEndDrag(PointerEventData data)
+    {
+        Debug.Assert(IsDragging);
+        draggedItem.OnEndDrag(data);
+        currentShop.OnEndDrag(draggedItem);
+        Destroy(draggedItem.gameObject);
+        draggedItem = null;
     }
 }

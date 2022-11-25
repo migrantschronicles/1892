@@ -28,9 +28,9 @@ public class InventoryContainer : MonoBehaviour
     {
         RectTransform rectTransform0 = (RectTransform)SlotsParent.transform.GetChild(0);
         RectTransform rectTransform1 = (RectTransform)SlotsParent.transform.GetChild(1);
-        float scaledWidth = rectTransform1.position.x - rectTransform0.position.x;
-        float unscaledWidth = scaledWidth / rectTransform0.lossyScale.x;
-        return unscaledWidth - rectTransform0.rect.width;
+        float distance = rectTransform1.anchoredPosition.x - rectTransform0.anchoredPosition.x;
+        float margin = distance - rectTransform0.rect.width;
+        return margin;
     }
 
     public void AttachSlot(InventorySlot slot, int x, int y)

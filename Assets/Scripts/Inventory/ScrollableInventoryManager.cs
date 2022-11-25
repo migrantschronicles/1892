@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ScrollableInventoryManager : InventoryManager
+public class ScrollableInventoryManager : InventoryManager, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField]
     private InventoryContainer container;
@@ -19,8 +20,27 @@ public class ScrollableInventoryManager : InventoryManager
     private Image bagImage;
     [SerializeField]
     private Sprite[] bagImages;
+    [SerializeField]
+    private Outline outline;
+
+    public delegate void OnPointerEnterEvent(ScrollableInventoryManager manager);
+    public event OnPointerEnterEvent onPointerEnter;
+
+    public delegate void OnPointerExitEvent(ScrollableInventoryManager manager);
+    public event OnPointerExitEvent onPointerExit;
 
     private int currentBagIndex = 0;
+    private bool isHighlighted = false;
+
+    public bool IsHighlighted
+    {
+        get { return isHighlighted; }
+        set
+        {
+            isHighlighted = value;
+            outline.enabled = isHighlighted;
+        }
+    }
 
     private bool CanScrollUp
     {
@@ -41,6 +61,7 @@ public class ScrollableInventoryManager : InventoryManager
     protected override void Start()
     {
         base.Start();
+        IsHighlighted = false;
         bagUpButton.onClick.AddListener(OnBagUpClicked);
         bagDownButton.onClick.AddListener(OnBagDownClicked);
     }
@@ -118,5 +139,15 @@ public class ScrollableInventoryManager : InventoryManager
     protected override InventoryContainer GetContainer(int bagIndex)
     {
         return container;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        onPointerEnter?.Invoke(this);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        onPointerExit?.Invoke(this);
     }
 }

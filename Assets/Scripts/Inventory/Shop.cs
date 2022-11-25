@@ -11,15 +11,15 @@ public class Shop : MonoBehaviour
     [SerializeField]
     private ScrollableInventoryManager Luggage;
     [SerializeField]
-    private Button AcceptButton;
+    private Button tradeButton;
     [SerializeField]
-    private Button CancelButton;
-    [SerializeField]
-    private GameObject arrowLeft;
-    [SerializeField]
-    private GameObject arrowRight;
+    private Text descriptionText;
     [SerializeField]
     private Text moneyText;
+    [SerializeField]
+    private Button transferLeftButton;
+    [SerializeField]
+    private Button transferRightButton;
     [SerializeField]
     private Item[] ShopItems;
     [SerializeField]
@@ -29,8 +29,6 @@ public class Shop : MonoBehaviour
 
     public AudioClip openClip;
     public AudioClip closeClip;
-    [Tooltip("The transfer is cancelled")]
-    public AudioClip cancelTransferClip;
     [Tooltip("The transfer is accepted, no money is spent nor received")]
     public AudioClip acceptTransferClip;
     [Tooltip("The user wanted to accept the transfer, but does not have enough money")]
@@ -44,6 +42,11 @@ public class Shop : MonoBehaviour
     /// The changes during a transfer.
     /// Positive values mean from basket to luggage, negative values mean from luggage to basket.
     private Dictionary<Item, int> transferChanges = new Dictionary<Item, int>();
+    private InventorySlot selectedItem;
+    private bool selectedItemIsInLuggage = false;
+    private Dictionary<Item, int> basketItems = new Dictionary<Item, int>();
+    
+    public ScrollableInventoryManager HighlightedInventoryManager { get; private set; }
 
     private bool MeetsRequiredItems
     {
@@ -65,7 +68,7 @@ public class Shop : MonoBehaviour
     {
         get
         {
-            return transferChanges.Count == 0 && MeetsRequiredItems;
+            return MeetsRequiredItems;
         }
     }
 
@@ -83,49 +86,137 @@ public class Shop : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         Basket.onSlotClicked.AddListener(OnBasketItemClicked);
         Luggage.onSlotClicked.AddListener(OnLuggageItemClicked);
-        arrowLeft.SetActive(false);
-        arrowRight.SetActive(false);
+        tradeButton.onClick.AddListener(AcceptTransfer);
+        transferLeftButton.onClick.AddListener(OnTransferLeft);
+        transferRightButton.onClick.AddListener(OnTransferRight);
 
         Basket.SetBagCount(1);
         Luggage.SetBagCount(3);
 
-        Basket.ResetItems(ShopItems);
-        Luggage.ResetItems(NewGameManager.Instance.inventory.Items);
-
+        Basket.onItemAmountChanged += OnBasketItemAmountChanged;
         Luggage.onItemAmountChanged += OnLuggageItemAmountChanged;
+        Basket.onPointerEnter += OnPointerEnter;
+        Basket.onPointerExit += OnPointerExit;
+        Luggage.onPointerEnter += OnPointerEnter;
+        Luggage.onPointerExit += OnPointerExit;
 
-        UpdateDynamics();
-    }
-
-    private void OnBasketItemClicked(InventorySlot slot)
-    {
-        ConditionallyStartTransfer();
-        if(Luggage.TryAddItem(slot.Item))
+        foreach(Item item in ShopItems)
         {
-            if(!Basket.TryRemoveItemAt(slot.X, slot.Y))
-            {
-                Debug.Log("Item added to luggage could not be removed from basket");
-            }
-
-            LogTransferChange(slot.Item, 1);
+            OnBasketItemAmountChanged(item, 1);
         }
     }
 
-    private void OnLuggageItemClicked(InventorySlot slot)
+    private void Start()
     {
-        ConditionallyStartTransfer();
-        if(Basket.TryAddItem(slot.Item))
+        UpdateDynamics();
+        SetSelectedItem(null);
+    }
+
+    private void OnBasketItemAmountChanged(Item item, int amount)
+    {
+        if(basketItems.TryGetValue(item, out int currentAmount))
         {
-            if(!Luggage.TryRemoveItemAt(slot.X, slot.Y))
+            int newAmount = currentAmount + amount;
+            Debug.Assert(newAmount >= 0);
+            if(newAmount <= 0)
+            {
+                basketItems.Remove(item);
+            }
+            else
+            {
+                basketItems[item] = newAmount;
+            }
+        }
+        else
+        {
+            Debug.Assert(amount > 0);
+            basketItems.Add(item, amount);
+        }
+    }
+
+    public void OnOpened()
+    {
+        Basket.ResetItems(basketItems);
+        Luggage.ResetItems(NewGameManager.Instance.inventory.Items);
+    }
+
+    public void OnClosed()
+    {
+        CancelTransfer();
+    }
+
+    private void OnTransferLeft()
+    {
+        if(!selectedItem || !selectedItemIsInLuggage)
+        {
+            return;
+        }
+
+        ConditionallyStartTransfer();
+        if (Basket.TryAddItem(selectedItem.Item))
+        {
+            if (!Luggage.TryRemoveItemAt(selectedItem.X, selectedItem.Y))
             {
                 Debug.Log("Item added to basket could not be removed from luggage");
             }
 
-            LogTransferChange(slot.Item, -1);
+            LogTransferChange(selectedItem.Item, -1);
+            SetSelectedItem(null);
+        }
+    }
+
+    private void OnTransferRight()
+    {
+        if(!selectedItem || selectedItemIsInLuggage)
+        {
+            return;
+        }
+
+        ConditionallyStartTransfer();
+        if (Luggage.TryAddItem(selectedItem.Item))
+        {
+            if (!Basket.TryRemoveItemAt(selectedItem.X, selectedItem.Y))
+            {
+                Debug.Log("Item added to luggage could not be removed from basket");
+            }
+
+            LogTransferChange(selectedItem.Item, 1);
+            SetSelectedItem(null);
+        }
+    }
+
+    private void OnBasketItemClicked(InventorySlot slot)
+    {
+        SetSelectedItem(slot);
+        selectedItemIsInLuggage = false;
+    }
+
+    private void OnLuggageItemClicked(InventorySlot slot)
+    {
+        SetSelectedItem(slot);
+        selectedItemIsInLuggage = true;
+    }
+
+    private void SetSelectedItem(InventorySlot slot)
+    {
+        if(selectedItem)
+        {
+            selectedItem.SetSelected(false);
+        }
+
+        selectedItem = slot;
+        if(selectedItem)
+        {
+            descriptionText.text = LocalizationManager.Instance.GetLocalizedString(selectedItem.Item.Description);
+            selectedItem.SetSelected(true);
+        }
+        else
+        {
+            descriptionText.text = "";
         }
     }
 
@@ -154,18 +245,16 @@ public class Shop : MonoBehaviour
     private void UpdateDynamics()
     {
         // Arrows
-        bool hasPositiveValues = transferChanges.Values.Any((value) => value > 0);
-        bool hasNegativeValues = transferChanges.Values.Any((value) => value < 0);
-        arrowLeft.SetActive(hasNegativeValues);
-        arrowRight.SetActive(hasPositiveValues);
+        //bool hasPositiveValues = transferChanges.Values.Any((value) => value > 0);
+        //bool hasNegativeValues = transferChanges.Values.Any((value) => value < 0);
 
         // Money
         int price = CalculatePrice();
         moneyText.text = price.ToString();
-        moneyText.gameObject.SetActive(price != 0 && !freeShop);
+        moneyText.gameObject.SetActive(!freeShop);
 
         // Accept Button
-        AcceptButton.enabled = CanAccept;
+        tradeButton.enabled = CanAccept;
 
         // Back button
         LevelInstance.Instance.SetBackButtonVisible(CanClose);
@@ -188,20 +277,16 @@ public class Shop : MonoBehaviour
             transferInProgress = true;
             Basket.EnableGhostMode();
             Luggage.EnableGhostMode();
-            AcceptButton.gameObject.SetActive(true);
-            AcceptButton.enabled = true;
-            CancelButton.gameObject.SetActive(true);
-            AcceptButton.onClick.AddListener(AcceptTransfer);
-            CancelButton.onClick.AddListener(CancelTransfer);
         }
     }
 
     private void StopTransfer()
     {
-        AcceptButton.onClick.RemoveListener(AcceptTransfer);
-        CancelButton.onClick.RemoveListener(CancelTransfer);
-        AcceptButton.gameObject.SetActive(false);
-        CancelButton.gameObject.SetActive(false);
+        if(selectedItem != null)
+        {
+            SetSelectedItem(null);
+        }
+
         transferChanges.Clear();
         UpdateDynamics();
         transferInProgress = false;
@@ -245,14 +330,66 @@ public class Shop : MonoBehaviour
 
     private void CancelTransfer()
     {
-        Basket.CancelGhostMode();
-        Luggage.CancelGhostMode();
-        StopTransfer();
-        AudioManager.Instance.PlayFX(cancelTransferClip);
+        if(transferInProgress)
+        {
+            Basket.CancelGhostMode();
+            Luggage.CancelGhostMode();
+            StopTransfer();
+        }
     }
 
     private void OnLuggageItemAmountChanged(Item item, int changedAmount)
     {
         NewGameManager.Instance.inventory.OnItemAmountChanged(item, changedAmount);
+    }
+
+    private void OnPointerEnter(ScrollableInventoryManager manager)
+    {
+        HighlightedInventoryManager = manager;
+    }
+
+    private void OnPointerExit(ScrollableInventoryManager manager)
+    {
+        if(HighlightedInventoryManager == manager)
+        {
+            HighlightedInventoryManager = null;
+        }
+    }
+
+    public bool OnItemDragged(DraggedItem item)
+    {
+
+        return false;
+    }
+
+    public void OnBeginDrag(DraggedItem item)
+    {
+        SetSelectedItem(item.Slot.InventorySlot);
+    }
+
+    public void OnDrag(DraggedItem item)
+    { 
+    }
+
+    public void OnEndDrag(DraggedItem item)
+    {
+        if(item.IsValidTransfer)
+        {
+            ConditionallyStartTransfer();
+
+            ScrollableInventoryManager sourceManager = item.Slot.InventoryManager;
+            ScrollableInventoryManager targetManager = item.TargetManager;
+            if (targetManager.TryAddItem(item.Slot.InventorySlot.Item))
+            {
+                if (!sourceManager.TryRemoveItemAt(item.Slot.InventorySlot.X, item.Slot.InventorySlot.Y))
+                {
+                    Debug.Log("Item added to target could not be removed from source");
+                }
+
+                int change = sourceManager == Basket ? 1 : -1;
+                LogTransferChange(item.Slot.InventorySlot.Item, change);
+                SetSelectedItem(null);
+            }
+        }
     }
 }

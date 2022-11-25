@@ -177,6 +177,7 @@ public class LevelInstance : MonoBehaviour
                 {
                     // A shop was open, so deactivate it.
                     currentShop.gameObject.SetActive(false);
+                    currentShop.OnClosed();
                     AudioManager.Instance.PlayFX(currentShop.closeClip);
                     currentShop = null;
                     break;
@@ -260,6 +261,7 @@ public class LevelInstance : MonoBehaviour
                 case Mode.Shop:
                     // Hide the shop
                     currentShop.gameObject.SetActive(false);
+                    currentShop.OnClosed();
                     AudioManager.Instance.PlayFX(currentShop.closeClip);
                     currentShop = null;
                     break;

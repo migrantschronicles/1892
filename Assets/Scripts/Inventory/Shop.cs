@@ -29,8 +29,6 @@ public class Shop : MonoBehaviour
 
     public AudioClip openClip;
     public AudioClip closeClip;
-    [Tooltip("The transfer is cancelled")]
-    public AudioClip cancelTransferClip;
     [Tooltip("The transfer is accepted, no money is spent nor received")]
     public AudioClip acceptTransferClip;
     [Tooltip("The user wanted to accept the transfer, but does not have enough money")]
@@ -68,7 +66,7 @@ public class Shop : MonoBehaviour
     {
         get
         {
-            return transferChanges.Count == 0 && MeetsRequiredItems;
+            return MeetsRequiredItems;
         }
     }
 
@@ -138,6 +136,11 @@ public class Shop : MonoBehaviour
     {
         Basket.ResetItems(basketItems);
         Luggage.ResetItems(NewGameManager.Instance.inventory.Items);
+    }
+
+    public void OnClosed()
+    {
+        CancelTransfer();
     }
 
     private void OnTransferLeft()
@@ -321,10 +324,12 @@ public class Shop : MonoBehaviour
 
     private void CancelTransfer()
     {
-        Basket.CancelGhostMode();
-        Luggage.CancelGhostMode();
-        StopTransfer();
-        AudioManager.Instance.PlayFX(cancelTransferClip);
+        if(transferInProgress)
+        {
+            Basket.CancelGhostMode();
+            Luggage.CancelGhostMode();
+            StopTransfer();
+        }
     }
 
     private void OnLuggageItemAmountChanged(Item item, int changedAmount)

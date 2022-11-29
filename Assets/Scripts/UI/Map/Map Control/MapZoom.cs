@@ -42,6 +42,8 @@ public class MapZoom : MonoBehaviour
     private Vector3 mapScreenshotScale = new Vector3(0.8f, 0.8f);
     [SerializeField]
     private Vector2 mapScreenshotPivot = new Vector2(0.5f, 0.5f);
+    [SerializeField]
+    private Vector2 normalizedCenterAdjustment = new Vector2(-7.0f, 0.0f);
 
     private float zoomLevel = 1.0f;
     private Vector2 originalScale;
@@ -342,12 +344,12 @@ public class MapZoom : MonoBehaviour
         // The size minus how much the viewport can go.
         Vector2 boundedSize = rectTransform.rect.size - normalizedViewportSize;
         // Set the normalized position
-        scrollRect.normalizedPosition = normalizedPosition / boundedSize + new Vector2(0.5f, 0.5f);
+        scrollRect.normalizedPosition = (normalizedPosition + normalizedCenterAdjustment) / boundedSize + new Vector2(0.5f, 0.5f);
     }
 
     private void SetCenterToMarker(GameObject marker)
-    { // Loai Changed this, need to find a better way
-        SetCenter(new Vector2(marker.GetComponent<RectTransform>().anchoredPosition.x-xCenterOffset, marker.GetComponent<RectTransform>().anchoredPosition.y));
+    {
+        SetCenter(marker.GetComponent<RectTransform>().anchoredPosition);
     }
 
     private Vector2 GetCenter()

@@ -377,6 +377,10 @@ MonoBehaviour:
   ShopItems: []
   shopRequiresItem: {fileID: 0}
   freeShop: 0
+  tradeInfo: {fileID: 2210813709985462246}
+  defaultTradeInfoColor: {r: 0.82, g: 0.8, b: 0.78, a: 1}
+  gainTradeInfoColor: {r: 0.61, g: 0.65, b: 0.47, a: 1}
+  looseTradeInfoColor: {r: 0.78, g: 0.38, b: 0.27, a: 1}
   openClip: {fileID: 8300000, guid: 7b83d17747b9ca54386b0d53566cded3, type: 3}
   closeClip: {fileID: 8300000, guid: d737383ed29a1ba48ad950e0fac7b088, type: 3}
   acceptTransferClip: {fileID: 8300000, guid: 0199a2da5194c5a48af6b7e8212d9f07, type: 3}
@@ -1314,10 +1318,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 895457170083177226, guid: cbfe0e60e5dcc3a4da67f8ebf0d3c920, type: 3}
-      propertyPath: bagImage
-      value: 
-      objectReference: {fileID: 290108709462913582}
-    - target: {fileID: 895457170083177226, guid: cbfe0e60e5dcc3a4da67f8ebf0d3c920, type: 3}
       propertyPath: ItemSlotPrefab
       value: 
       objectReference: {fileID: 6405074009167761267, guid: ab3214de3a6be704ea353b1370f1db4d, type: 3}
@@ -1479,17 +1479,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 769208890744486391, guid: cbfe0e60e5dcc3a4da67f8ebf0d3c920, type: 3}
   m_PrefabInstance: {fileID: 1851624203983472053}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &290108709462913582 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2140588828455073691, guid: cbfe0e60e5dcc3a4da67f8ebf0d3c920, type: 3}
-  m_PrefabInstance: {fileID: 1851624203983472053}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &6004674075879980765
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1639,6 +1628,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cbfe0e60e5dcc3a4da67f8ebf0d3c920, type: 3}
+--- !u!224 &6482971431343163178 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 769208890744486391, guid: cbfe0e60e5dcc3a4da67f8ebf0d3c920, type: 3}
+  m_PrefabInstance: {fileID: 6004674075879980765}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &6861707712476011991 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 895457170083177226, guid: cbfe0e60e5dcc3a4da67f8ebf0d3c920, type: 3}
@@ -1650,8 +1644,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 420a5030371f8b242ae43cf6880e1417, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &6482971431343163178 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 769208890744486391, guid: cbfe0e60e5dcc3a4da67f8ebf0d3c920, type: 3}
-  m_PrefabInstance: {fileID: 6004674075879980765}
-  m_PrefabAsset: {fileID: 0}

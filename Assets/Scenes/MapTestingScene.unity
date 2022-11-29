@@ -725,6 +725,21 @@ MonoBehaviour:
   TEST_ParisEntry: {fileID: 0}
   transportationTableCSV: {fileID: 0}
   TEST_Quest: {fileID: 0}
+  moneyStolenProbabilityWeight: 5
+  moneyStolenProbabilityCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  moneyStolenAmountRange: {x: 0, y: 0}
+  stolenAmountProbabilityCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  stolenAmountRange: {x: 0, y: 0}
 --- !u!4 &1464975254
 Transform:
   m_ObjectHideFlags: 0
@@ -930,6 +945,10 @@ PrefabInstance:
     - target: {fileID: 3643648166136869614, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3643648166224611161, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3643648166528579221, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
       propertyPath: m_IsActive

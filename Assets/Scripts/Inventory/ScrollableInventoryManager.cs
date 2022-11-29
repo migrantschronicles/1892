@@ -20,8 +20,6 @@ public class ScrollableInventoryManager : InventoryManager, IPointerEnterHandler
     private Image bagImage;
     [SerializeField]
     private Sprite[] bagImages;
-    [SerializeField]
-    private Outline outline;
 
     public delegate void OnPointerEnterEvent(ScrollableInventoryManager manager);
     public event OnPointerEnterEvent onPointerEnter;
@@ -31,6 +29,7 @@ public class ScrollableInventoryManager : InventoryManager, IPointerEnterHandler
 
     private int currentBagIndex = 0;
     private bool isHighlighted = false;
+    private Material bagMaterial;
 
     public bool IsHighlighted
     {
@@ -38,7 +37,7 @@ public class ScrollableInventoryManager : InventoryManager, IPointerEnterHandler
         set
         {
             isHighlighted = value;
-            outline.enabled = isHighlighted;
+            bagMaterial.SetFloat("_OutlineEnabled", isHighlighted ? 1.0f : 0.0f);
         }
     }
 
@@ -60,6 +59,8 @@ public class ScrollableInventoryManager : InventoryManager, IPointerEnterHandler
 
     protected override void Start()
     {
+        bagMaterial = Instantiate(bagImage.material);
+        bagImage.material = bagMaterial;
         base.Start();
         IsHighlighted = false;
         bagUpButton.onClick.AddListener(OnBagUpClicked);

@@ -28,6 +28,7 @@ public class InventorySlot : MonoBehaviour
     private int ghostAmount = 0;
     private bool isSelected = false;
     private bool isGhostMode = false;
+    private Material material;
 
     public int ChangedAmount
     {
@@ -40,6 +41,8 @@ public class InventorySlot : MonoBehaviour
     private void Awake()
     {
         image = GetComponent<Image>();
+        material = Instantiate(image.material);
+        image.material = material;
     }
 
     private bool TryAddAmount(bool ghost)
@@ -93,6 +96,7 @@ public class InventorySlot : MonoBehaviour
         Width = width;
         Height = height;
         isGhostMode = ghost;
+        image.sprite = item.sprite;
         TryAddAmount(ghost);
         UpdateAmountText();
         UpdateVisuals();
@@ -190,7 +194,15 @@ public class InventorySlot : MonoBehaviour
     private void UpdateVisuals()
     {
         bool defaultVisuals = !(isSelected || isGhostMode);
-        image.sprite = defaultVisuals ? Item.sprite : Item.GhostSprite;
+        if(defaultVisuals)
+        {
+            material.SetFloat("_OutlineEnabled", 0.0f);
+        }
+        else
+        {
+            material.SetFloat("_OutlineColorIndex", isSelected ? 1 : 0);
+            material.SetFloat("_OutlineEnabled", 1.0f);
+        }
         amountText.color = defaultVisuals ? defaultTextColor : ghostTextColor;
     }
 }

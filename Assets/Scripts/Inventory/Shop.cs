@@ -26,6 +26,14 @@ public class Shop : MonoBehaviour
     private Item shopRequiresItem;
     [SerializeField, Tooltip("True if this is a shop where transfering items does not cost anything (shops during dialogs)")]
     private bool freeShop;
+    [SerializeField]
+    private Image tradeInfo;
+    [SerializeField]
+    private Color defaultTradeInfoColor = new Color(0.82f, 0.8f, 0.78f, 1f);
+    [SerializeField]
+    private Color gainTradeInfoColor = new Color(0.61f, 0.65f, 0.47f, 1f);
+    [SerializeField]
+    private Color looseTradeInfoColor = new Color(0.78f, 0.38f, 0.27f, 1f);
 
     public AudioClip openClip;
     public AudioClip closeClip;
@@ -252,6 +260,7 @@ public class Shop : MonoBehaviour
         int price = CalculatePrice();
         moneyText.text = price.ToString();
         moneyText.gameObject.SetActive(!freeShop);
+        tradeInfo.color = price == 0 ? defaultTradeInfoColor : (price > 0 ? looseTradeInfoColor : gainTradeInfoColor);
 
         // Accept Button
         tradeButton.enabled = CanAccept;

@@ -79,6 +79,7 @@ public class NewGameManager : MonoBehaviour
 
     // Inventory
     public PlayerInventory inventory = new PlayerInventory();
+    public ItemCategory foodCategory;
 
     // Diary entries
     private List<DiaryEntry> diaryEntries = new List<DiaryEntry>();
@@ -369,11 +370,17 @@ public class NewGameManager : MonoBehaviour
         onDateChanged?.Invoke(date);
     }
 
-    public void SleepOutside() { }
+    public void SleepOutside() {
+        
+    }
 
     public void SleepInHostel(int cost, int motherFoodAmount, int boyFoodAmount, int girlFoodAmount) {
         money -= cost;
-        
+        // Need to apply health changes on characters.
+
+
+        int totalFoodUsed = motherFoodAmount + boyFoodAmount + girlFoodAmount;
+        inventory.RemoveItemCategory(foodCategory, totalFoodUsed);
     }
     public void StartNewDay() 
     {
@@ -387,6 +394,8 @@ public class NewGameManager : MonoBehaviour
         hour = 0;
         minutes = 0;
     }
+
+
 
     // I commented this as it gave me errors - L
     /*private void SetTime(float newTime)

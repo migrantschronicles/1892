@@ -12,18 +12,23 @@ public class PopupManager : MonoBehaviour
     public GameObject foodDistributePopup;
     public GameObject endGamePopup;
     public GameObject nightTransition;
+    public float nightTime = 3f;
 
 
-    
+
     public ItemCategory foodCategory;
     private int foodAmount;
     public Text foodAmountText;
     private int moneyToBePaid = 10;
     public Text moneyText;
+    public Text stolenItemsText;
+    public GameObject nonStolenItemsTXT; // Represents the text GO
+    public GameObject stolenItemsTXT; // Represents the text GO
 
     public int motherFoodAmount=0;
     public int boyFoodAmount=0;
     public int girlFoodAmount=0;
+    public int purchasedFoodAmount = 0;
 
     public GameObject motherFood;
     public GameObject boyFood;
@@ -42,14 +47,34 @@ public class PopupManager : MonoBehaviour
         }
     }
 
+    public void CloseAllPopups() 
+    {
+        endDayPopup.SetActive(false);
+        startDayHostelPopup.SetActive(false);
+        startDayOutsidePopup.SetActive(false);
+        foodDistributePopup.SetActive(false);
+        endGamePopup.SetActive(false);
+
+        // Reset Food distribution 
+        motherFood.SetActive(false);
+        boyFood.SetActive(false);
+        girlFood.SetActive(false);
+        motherFoodAmount = 0;
+        boyFoodAmount = 0;
+        girlFoodAmount = 0;
+        purchasedFoodAmount = 0;
+    }
+
     public void OpenEndDayPopUp() 
     {
+        CloseAllPopups();
         endDayPopup.SetActive(true);
         NewGameManager.Instance.SetPaused(true);
     }
 
     public void OpenStartDayHostelPopUp()
     {
+        CloseAllPopups();
         startDayHostelPopup.SetActive(true);
         NewGameManager.Instance.SetPaused(true);
     }
@@ -62,6 +87,7 @@ public class PopupManager : MonoBehaviour
 
     public void OpenStartDayOutsidePopUp()
     {
+        CloseAllPopups();
         startDayOutsidePopup.SetActive(true);
         NewGameManager.Instance.SetPaused(true);
     }
@@ -74,6 +100,7 @@ public class PopupManager : MonoBehaviour
 
     public void OpenFoodDistributePopUp()
     {
+        CloseAllPopups();
         foodDistributePopup.SetActive(true);
         NewGameManager.Instance.SetPaused(true);
 
@@ -85,6 +112,7 @@ public class PopupManager : MonoBehaviour
     {
         foodAmount++;
         moneyToBePaid += 5;
+        purchasedFoodAmount++;
     }
 
     public void DeductFood()
@@ -92,6 +120,7 @@ public class PopupManager : MonoBehaviour
         if (foodAmount != 0) { 
             foodAmount--;
             moneyToBePaid -= 5;
+            purchasedFoodAmount--;
         }
     }
 
@@ -152,14 +181,14 @@ public class PopupManager : MonoBehaviour
 
     public void SleepInHostelMethod() 
     {
-        NewGameManager.Instance.SleepInHostel(moneyToBePaid, motherFoodAmount, boyFoodAmount, girlFoodAmount);
-        SleepFadeIn();
+        NewGameManager.Instance.SleepInHostel(moneyToBePaid,  purchasedFoodAmount ,motherFoodAmount, boyFoodAmount, girlFoodAmount);
+        StartCoroutine(SleepHostelTransition());
     }
 
     public void SleepOutsideMethod()
     {
         NewGameManager.Instance.SleepOutside();// motherFoodAmount, boyFoodAmount, girlFoodAmount);
-        SleepFadeIn();
+        StartCoroutine(SleepOutsideTransition());
     }
 
     public void OpenEndGamePopUp()
@@ -168,13 +197,60 @@ public class PopupManager : MonoBehaviour
         NewGameManager.Instance.SetPaused(true);
     }
 
-    public void SleepFadeIn() 
+    IEnumerator SleepOutsideTransition() 
     {
         nightTransition.SetActive(true);
-        /*while (nightTransition.GetComponent<Image>().color.a != 255) 
+        // Implement all changes needed based on Sleeping outside
+        List<StolenItemInfo> stolenItems = NewGameManager.Instance.StealItems();
+        NewGameManager.Instance.StartNewDay();
+        CloseAllPopups();
+        OpenStartDayOutsidePopUp();
+        // Update stolen text info
+        string stolenItemsStr = "";
+        if (stolenItems.Count != 0)
         {
-            nightTransition.GetComponent<Image>().color.a += 0.01f;
-        }*/
+            for (int i = 0; i < stolenItems.Count; i++)
+            {
 
+                if (stolenItems[i].type == StolenItemType.Money)
+                {
+                    stolenItemsStr += stolenItems[i].money + "x francs";
+                }
+                else
+                {
+                    stolenItemsStr += LocalizationManager.Instance.GetLocalizedString(stolenItems[i].item.Name);
+                }
+
+                if (i != stolenItems.Count - 1) { stolenItemsStr += ", "; }
+
+            }
+            stolenItemsText.text = stolenItemsStr;
+
+            stolenItemsTXT.SetActive(true);
+            nonStolenItemsTXT.SetActive(false);
+        }
+        else 
+        {
+            stolenItemsTXT.SetActive(false);
+            nonStolenItemsTXT.SetActive(true);
+        }
+
+        // Need to update clock to new time visually.
+        //
+        yield return new WaitForSeconds(nightTime);
+        nightTransition.SetActive(false);
+    }
+
+    IEnumerator SleepHostelTransition()
+    {
+        nightTransition.SetActive(true);
+        // Implement all changes needed based on Sleeping outside
+        NewGameManager.Instance.StartNewDay();
+        CloseAllPopups();
+        OpenStartDayHostelPopUp();
+        // Need to update clock to new time visually.
+        //
+        yield return new WaitForSeconds(nightTime);
+        nightTransition.SetActive(false);
     }
 }

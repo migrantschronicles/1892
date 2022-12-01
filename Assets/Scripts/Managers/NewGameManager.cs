@@ -57,10 +57,7 @@ public class NewGameManager : MonoBehaviour
     public int hour;
     public int day = 0;
 
-    public Transform hourHandle;
-    public Transform minuteHandle;
-    public float minuteOffset = 13.193f;
-    public float hourOffset = 101.601f;
+    
 
     public int food;
     public int money;
@@ -80,6 +77,7 @@ public class NewGameManager : MonoBehaviour
     // Inventory
     public PlayerInventory inventory = new PlayerInventory();
     public ItemCategory foodCategory;
+    public Item foodItem;
 
     // Diary entries
     private List<DiaryEntry> diaryEntries = new List<DiaryEntry>();
@@ -106,6 +104,9 @@ public class NewGameManager : MonoBehaviour
     public IEnumerable<Quest> FinishedSideQuests { get { return finishedSideQuests; } }
     public IEnumerable<Quest> MainQuestsIncludingFinished { get { return mainQuests.Concat(finishedMainQuests); } }
     public IEnumerable<Quest> SideQuestsIncludingFinished { get { return sideQuests.Concat(finishedSideQuests); } }
+
+    public delegate void OnTimeChangedEvent(int hour, int minutes);
+    public event OnTimeChangedEvent onTimeChanged;
 
     public delegate void OnQuestAddedEvent(Quest quest);
     public event OnQuestAddedEvent onQuestAdded;
@@ -191,34 +192,34 @@ public class NewGameManager : MonoBehaviour
     {
         if (gameRunning)
         {
-            if (!minuteHandle || !hourHandle)
-            {
-                minuteHandle = GameObject.FindGameObjectWithTag("minutesHandle").transform;
-                hourHandle = GameObject.FindGameObjectWithTag("hoursHandle").transform;
-            }
-
-            seconds += Time.deltaTime * timeSpeed;
-            minuteHandle.rotation = Quaternion.Euler(0, 0, minuteHandle.rotation.z - (minutes * (360 / 60)) + minuteOffset);
-            hourHandle.rotation = Quaternion.Euler(0, 0, hourHandle.rotation.z - (hour * (360 / 12) + (minutes * 0.5f)) + hourOffset);
-
-
-            if (seconds >= 60)
-            {
-                seconds = 0;
-                minutes += 1;
-            }
-
-            if (minutes >= 60)
-            {
-                hour += 1;
-                minutes = 0;
-            }
-
-            if (hour >= 10) 
-            {
-                popups.OpenEndDayPopUp();
-            }
+            UpdateTime();
         }
+    }
+
+    private void UpdateTime() 
+    {
+
+        seconds += Time.deltaTime * timeSpeed;
+
+
+        if (seconds >= 60)
+        {
+            seconds = 0;
+            minutes += 1;
+        }
+
+        if (minutes >= 60)
+        {
+            hour += 1;
+            minutes = 0;
+        }
+
+        if (hour >= 10)
+        {
+            popups.OpenEndDayPopUp();
+        }
+
+        onTimeChanged?.Invoke(hour, minutes);
     }
 
     private void Initialize()
@@ -374,28 +375,41 @@ public class NewGameManager : MonoBehaviour
         
     }
 
-    public void SleepInHostel(int cost, int motherFoodAmount, int boyFoodAmount, int girlFoodAmount) {
+    public void SleepInHostel(int cost,int purchasedFoodAmount, int motherFoodAmount, int boyFoodAmount, int girlFoodAmount) {
         money -= cost;
-        // Need to apply health changes on characters.
 
 
         int totalFoodUsed = motherFoodAmount + boyFoodAmount + girlFoodAmount;
-        inventory.RemoveItemCategory(foodCategory, totalFoodUsed);
+        int remainingFood = totalFoodUsed - purchasedFoodAmount;
+
+        if (totalFoodUsed != 0) { } // Apply health
+
+        if (totalFoodUsed - purchasedFoodAmount > 0)
+        {
+            inventory.RemoveItemCategory(foodCategory, totalFoodUsed-purchasedFoodAmount);
+        }
+        if(purchasedFoodAmount - totalFoodUsed > 0) 
+        {
+            inventory.AddItem(foodItem, purchasedFoodAmount - totalFoodUsed);
+        }
     }
+    
     public void StartNewDay() 
     {
         Debug.Log("Go to next day here, via clock");
-        day += 1;
+        day++;
         SetMorningTime();
     }
 
     public void SetMorningTime() 
     {
+        seconds = 0;
         hour = 0;
         minutes = 0;
+        onTimeChanged?.Invoke(hour, minutes);
     }
 
-
+    
 
     // I commented this as it gave me errors - L
     /*private void SetTime(float newTime)

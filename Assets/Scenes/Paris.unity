@@ -2405,20 +2405,12 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8720536988842980654, guid: 362309e3c74ad9b4a92152b048b2bd31, type: 3}
-      propertyPath: SetConditions.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8720536988842980654, guid: 362309e3c74ad9b4a92152b048b2bd31, type: 3}
       propertyPath: Text.m_TableEntryReference.m_KeyId
       value: 375622439473152
       objectReference: {fileID: 0}
     - target: {fileID: 8720536988842980654, guid: 362309e3c74ad9b4a92152b048b2bd31, type: 3}
       propertyPath: EnabledCondition.Children.Array.size
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8720536988842980654, guid: 362309e3c74ad9b4a92152b048b2bd31, type: 3}
-      propertyPath: SetConditions.Array.data[0].Condition
-      value: cholera_given_food
       objectReference: {fileID: 0}
     - target: {fileID: 8720536988842980654, guid: 362309e3c74ad9b4a92152b048b2bd31, type: 3}
       propertyPath: Text.m_TableReference.m_TableCollectionName
@@ -2924,6 +2916,22 @@ PrefabInstance:
       propertyPath: shopRequiresItem
       value: 
       objectReference: {fileID: 11400000, guid: d0da3f17cbf50b4489fad218310ebd38, type: 2}
+    - target: {fileID: 3088906268953208436, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
+      propertyPath: acceptableItem.type
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3088906268953208436, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
+      propertyPath: acceptableItem.category
+      value: 
+      objectReference: {fileID: 11400000, guid: 5be223bfefe0c634e8939e07736e02f5, type: 2}
+    - target: {fileID: 3088906268953208436, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
+      propertyPath: acceptableItem.setConditions.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3088906268953208436, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
+      propertyPath: acceptableItem.setConditions.Array.data[0].Condition
+      value: cholera_given_food
+      objectReference: {fileID: 0}
     - target: {fileID: 8247026515280812583, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4596,6 +4604,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1766047649}
     m_Modifications:
+    - target: {fileID: 304859994160581173, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1011960336168767627, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
       propertyPath: m_Name
       value: Shop
@@ -5523,6 +5535,10 @@ PrefabInstance:
       propertyPath: defaultScene
       value: main
       objectReference: {fileID: 0}
+    - target: {fileID: 7809717630117988412, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: TEST_Quest
+      value: 
+      objectReference: {fileID: 11400000, guid: 6aa189c5d3997ae44a6e232281975898, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
 --- !u!224 &1563785861 stripped

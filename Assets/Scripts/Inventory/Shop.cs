@@ -4,6 +4,22 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum AcceptableItemType
+{
+    None,
+    Item,
+    ItemCategory
+}
+
+[System.Serializable]
+public class AcceptableItem
+{
+    public AcceptableItemType type = AcceptableItemType.None;
+    public Item item;
+    public ItemCategory category;
+    public SetCondition[] setConditions;
+}
+
 public class Shop : MonoBehaviour
 {
     [SerializeField]
@@ -22,8 +38,8 @@ public class Shop : MonoBehaviour
     private Button transferRightButton;
     [SerializeField]
     private Item[] ShopItems;
-    [SerializeField]
-    private Item shopRequiresItem;
+    [SerializeField, Tooltip("The item that the shop accepts from the player. Only works if freeShop is true.")]
+    private AcceptableItem acceptableItem;
     [SerializeField, Tooltip("True if this is a shop where transfering items does not cost anything (shops during dialogs)")]
     private bool freeShop;
     [SerializeField]
@@ -53,44 +69,33 @@ public class Shop : MonoBehaviour
     private InventorySlot selectedItem;
     private bool selectedItemIsInLuggage = false;
     private Dictionary<Item, int> basketItems = new Dictionary<Item, int>();
+
+    public delegate void OnTradeAcceptedEvent();
+    public event OnTradeAcceptedEvent onTradeAccepted;
     
     public ScrollableInventoryManager HighlightedInventoryManager { get; private set; }
-
-    private bool MeetsRequiredItems
-    {
-        get
-        {
-            if(shopRequiresItem)
-            {
-                if(!Basket.HasItem(shopRequiresItem))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-    }
-
-    private bool CanClose
-    {
-        get
-        {
-            return MeetsRequiredItems;
-        }
-    }
+    private bool OnlyAcceptsItem { get { return freeShop; } }
+    private bool CanClose { get { return !freeShop; } }
 
     private bool CanAccept
     {
         get
         {
-            if(freeShop)
+            if(freeShop || OnlyAcceptsItem)
             {
-                return true;
+                return HasAcceptableItem();
             }
 
             int price = CalculatePrice();
             return (price < 0 || NewGameManager.Instance.money >= price);
+        }
+    }
+
+    public IEnumerable<SetCondition> AcceptableItemSetConditions
+    {
+        get
+        {
+            return OnlyAcceptsItem && HasAcceptableItem() ? acceptableItem.setConditions : new SetCondition[0];
         }
     }
 
@@ -164,16 +169,19 @@ public class Shop : MonoBehaviour
             return;
         }
 
-        ConditionallyStartTransfer();
-        if (Basket.TryAddItem(selectedItem.Item))
+        if(CanTransferItem(selectedItem.Item, Basket))
         {
-            if (!Luggage.TryRemoveItemAt(selectedItem.X, selectedItem.Y))
+            ConditionallyStartTransfer();
+            if (Basket.TryAddItem(selectedItem.Item))
             {
-                Debug.Log("Item added to basket could not be removed from luggage");
-            }
+                if (!Luggage.TryRemoveItemAt(selectedItem.X, selectedItem.Y))
+                {
+                    Debug.Log("Item added to basket could not be removed from luggage");
+                }
 
-            LogTransferChange(selectedItem.Item, -1);
-            SetSelectedItem(null);
+                LogTransferChange(selectedItem.Item, -1);
+                SetSelectedItem(null);
+            }
         }
     }
 
@@ -184,16 +192,19 @@ public class Shop : MonoBehaviour
             return;
         }
 
-        ConditionallyStartTransfer();
-        if (Luggage.TryAddItem(selectedItem.Item))
+        if(CanTransferItem(selectedItem.Item, Luggage))
         {
-            if (!Basket.TryRemoveItemAt(selectedItem.X, selectedItem.Y))
+            ConditionallyStartTransfer();
+            if (Luggage.TryAddItem(selectedItem.Item))
             {
-                Debug.Log("Item added to luggage could not be removed from basket");
-            }
+                if (!Basket.TryRemoveItemAt(selectedItem.X, selectedItem.Y))
+                {
+                    Debug.Log("Item added to luggage could not be removed from basket");
+                }
 
-            LogTransferChange(selectedItem.Item, 1);
-            SetSelectedItem(null);
+                LogTransferChange(selectedItem.Item, 1);
+                SetSelectedItem(null);
+            }
         }
     }
 
@@ -335,6 +346,8 @@ public class Shop : MonoBehaviour
         Basket.ApplyGhostMode();
         Luggage.ApplyGhostMode();
         StopTransfer();
+
+        onTradeAccepted?.Invoke();
     }
 
     private void CancelTransfer()
@@ -367,7 +380,6 @@ public class Shop : MonoBehaviour
 
     public bool OnItemDragged(DraggedItem item)
     {
-
         return false;
     }
 
@@ -384,21 +396,130 @@ public class Shop : MonoBehaviour
     {
         if(item.IsValidTransfer)
         {
-            ConditionallyStartTransfer();
-
             ScrollableInventoryManager sourceManager = item.Slot.InventoryManager;
             ScrollableInventoryManager targetManager = item.TargetManager;
-            if (targetManager.TryAddItem(item.Slot.InventorySlot.Item))
+            if(CanTransferItem(item.Slot.InventorySlot.Item, targetManager))
             {
-                if (!sourceManager.TryRemoveItemAt(item.Slot.InventorySlot.X, item.Slot.InventorySlot.Y))
-                {
-                    Debug.Log("Item added to target could not be removed from source");
-                }
+                ConditionallyStartTransfer();
 
-                int change = sourceManager == Basket ? 1 : -1;
-                LogTransferChange(item.Slot.InventorySlot.Item, change);
-                SetSelectedItem(null);
+                if (targetManager.TryAddItem(item.Slot.InventorySlot.Item))
+                {
+                    if (!sourceManager.TryRemoveItemAt(item.Slot.InventorySlot.X, item.Slot.InventorySlot.Y))
+                    {
+                        Debug.Log("Item added to target could not be removed from source");
+                    }
+
+                    int change = sourceManager == Basket ? 1 : -1;
+                    LogTransferChange(item.Slot.InventorySlot.Item, change);
+                    SetSelectedItem(null);
+                }
             }
         }
+    }
+
+    private bool CanTransferItem(Item item, ScrollableInventoryManager targetManager)
+    {
+        if(targetManager == Basket)
+        {
+            if(OnlyAcceptsItem)
+            {
+                switch(acceptableItem.type)
+                {
+                    case AcceptableItemType.None:
+                        return false;
+
+                    case AcceptableItemType.Item:
+                        if(!acceptableItem.item || acceptableItem.item != item)
+                        {
+                            return false;
+                        }
+                        break;
+
+                    case AcceptableItemType.ItemCategory:
+                        if(!acceptableItem.category || acceptableItem.category != item.category)
+                        {
+                            return false;
+                        }
+                        break;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private bool HasAcceptableItem()
+    {
+        if(OnlyAcceptsItem)
+        {
+            switch(acceptableItem.type)
+            {
+                case AcceptableItemType.None:
+                    return true;
+
+                case AcceptableItemType.Item:
+                    if(!acceptableItem.item)
+                    {
+                        return true;
+                    }
+                    break;
+
+                case AcceptableItemType.ItemCategory:
+                    if(!acceptableItem.category)
+                    {
+                        return true;
+                    }
+                    break;
+            }
+
+            foreach(KeyValuePair<Item, int> item in basketItems)
+            { 
+                switch(acceptableItem.type)
+                {
+                    case AcceptableItemType.Item:
+                        if(item.Key == acceptableItem.item)
+                        {
+                            return true;
+                        }
+                        break;
+
+                    case AcceptableItemType.ItemCategory:
+                        if(item.Key.category == acceptableItem.category)
+                        {
+                            return true;
+                        }
+                        break;
+                }
+            }
+
+            foreach(KeyValuePair<Item, int> item in transferChanges)
+            {
+                if(item.Value >= 0)
+                {
+                    continue; 
+                }
+
+                switch (acceptableItem.type)
+                {
+                    case AcceptableItemType.Item:
+                        if (item.Key == acceptableItem.item)
+                        {
+                            return true;
+                        }
+                        break;
+
+                    case AcceptableItemType.ItemCategory:
+                        if (item.Key.category == acceptableItem.category)
+                        {
+                            return true;
+                        }
+                        break;
+                }
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }

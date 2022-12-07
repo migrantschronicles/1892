@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using System.Globalization;
 
 public enum InterfaceVisibilityFlags
 {
@@ -87,9 +89,11 @@ public class Interface : MonoBehaviour
         foodText.text = food.ToString();
     }
 
-    private void OnDateChanged(string date)
+    private void OnDateChanged(DateTime date)
     {
-        dateText.text = date;
+        DateTimeFormatInfo dateFormat = CultureInfo.CurrentCulture.DateTimeFormat;
+        string dateStr = date.ToString(dateFormat.ShortDatePattern);
+        dateText.text = dateStr;
     }
 
     private void OnLocationChanged(string location)

@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using System.Globalization;
+using System;
 
 public enum TransporationMethod
 {
@@ -61,7 +63,9 @@ public class NewGameManager : MonoBehaviour
 
     public int food;
     public int money;
-    public string date;
+    // Date
+    public DateTime date = new DateTime(1892, 6, 21);
+    public string dateStr;
 
     // UI 
     public Sprite traveledCityMarker;
@@ -138,7 +142,7 @@ public class NewGameManager : MonoBehaviour
     public delegate void OnMoneyChangedDelegate(int money);
     public event OnMoneyChangedDelegate onMoneyChanged;
 
-    public delegate void OnDateChangedDelegate(string date);
+    public delegate void OnDateChangedDelegate(DateTime date);
     public event OnDateChangedDelegate onDateChanged;
 
     //public delegate void OnTimeChangedDelegate(float time);
@@ -365,9 +369,11 @@ public class NewGameManager : MonoBehaviour
         onMoneyChanged?.Invoke(money);
     }
 
-    private void SetDate(string newDate)
+    private void SetDate(DateTime newDate)
     {
+        DateTimeFormatInfo dateFormat = CultureInfo.CurrentCulture.DateTimeFormat;
         date = newDate;
+        dateStr = date.ToString(dateFormat.ShortDatePattern);
         onDateChanged?.Invoke(date);
     }
 
@@ -398,6 +404,7 @@ public class NewGameManager : MonoBehaviour
     {
         Debug.Log("Go to next day here, via clock");
         day++;
+        SetDate(date.AddDays(1));
         SetMorningTime();
     }
 
@@ -670,7 +677,7 @@ public class NewGameManager : MonoBehaviour
                 amountWeight += currentAmountWeight;
             }
 
-            float randomAmountWeight = Random.value * amountWeight;
+            float randomAmountWeight = UnityEngine.Random.value * amountWeight;
             for (int i = stolenAmountRange.x; i <= stolenAmountRange.y; ++i)
             {
                 randomAmountWeight -= stolenAmountProbabilityCurve.Evaluate(i);
@@ -683,13 +690,13 @@ public class NewGameManager : MonoBehaviour
         }
         else
         {
-            stolenAmount = Mathf.RoundToInt((Random.value * ((float)stolenAmountRange.y - stolenAmountRange.x)) + stolenAmountRange.x);
+            stolenAmount = Mathf.RoundToInt((UnityEngine.Random.value * ((float)stolenAmountRange.y - stolenAmountRange.x)) + stolenAmountRange.x);
         }
 
         bool wasMoneyStolen = false;
         for(int i = 0; i < stolenAmount && !inventory.IsEmpty; ++i)
         {
-            float randomWeight = Random.value * weight;
+            float randomWeight = UnityEngine.Random.value * weight;
 
             // Check money
             if(!wasMoneyStolen && canStealMoney)
@@ -708,7 +715,7 @@ public class NewGameManager : MonoBehaviour
                             amountWeight += currentAmountWeight;
                         }
 
-                        float randomAmountWeight = Random.value * amountWeight;
+                        float randomAmountWeight = UnityEngine.Random.value * amountWeight;
                         for (int j = moneyStolenAmountRange.x; j <= moneyStolenAmountRange.y; ++j)
                         {
                             randomAmountWeight -= moneyStolenProbabilityCurve.Evaluate(j);
@@ -721,7 +728,7 @@ public class NewGameManager : MonoBehaviour
                     }
                     else
                     {
-                        stolenMoneyAmount = Mathf.RoundToInt((Random.value * ((float)moneyStolenAmountRange.y - moneyStolenAmountRange.x)) 
+                        stolenMoneyAmount = Mathf.RoundToInt((UnityEngine.Random.value * ((float)moneyStolenAmountRange.y - moneyStolenAmountRange.x)) 
                             + moneyStolenAmountRange.x);
                     }
 

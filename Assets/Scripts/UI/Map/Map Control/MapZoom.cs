@@ -29,8 +29,6 @@ public class MapZoom : MonoBehaviour
     [SerializeField]
     private float initialZoomDuration = 3.0f;
     [SerializeField]
-    private float xCenterOffset = 5f;
-    [SerializeField]
     private Button centerButton;
     [SerializeField]
     private float level1Breakpoint = 0.5f;

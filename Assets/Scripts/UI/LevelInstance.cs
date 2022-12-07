@@ -182,6 +182,7 @@ public class LevelInstance : MonoBehaviour
                 case OverlayMode.Shop:
                 {
                     // A shop was open, so deactivate it.
+                    currentShop.onTradeAccepted -= OnTradeAccepted;
                     currentShop.gameObject.SetActive(false);
                     currentShop.OnClosed();
                     AudioManager.Instance.PlayFX(currentShop.closeClip);
@@ -205,6 +206,7 @@ public class LevelInstance : MonoBehaviour
                 currentAdditiveScene.gameObject.SetActive(true);
             }
 
+            SetBackButtonVisible(true);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
             SetBlurAfterGameObject(currentScene.gameObject);
             overlayMode = OverlayMode.None;
@@ -442,6 +444,8 @@ public class LevelInstance : MonoBehaviour
             {
                 currentAdditiveScene.gameObject.SetActive(false);
             }
+
+            currentShop.onTradeAccepted += OnTradeAccepted;
         }
         else
         {
@@ -450,6 +454,14 @@ public class LevelInstance : MonoBehaviour
 
         currentShop.OnOpened();
         AudioManager.Instance.PlayFX(shop.openClip);
+    }
+
+    private void OnTradeAccepted()
+    {
+        IEnumerable<SetCondition> setConditions = currentShop.AcceptableItemSetConditions;
+        NewGameManager.Instance.conditions.AddConditions(setConditions);
+
+        OnBack();
     }
 
     private void SetBlurAfterGameObject(GameObject previous)

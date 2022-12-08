@@ -21,7 +21,7 @@ public class Scene : MonoBehaviour
 
     public void OnActiveStatusChanged(bool active)
     {
-        if(active)
+        if(active && interactables)
         {
             interactables.SetActive(true);
         }
@@ -29,6 +29,9 @@ public class Scene : MonoBehaviour
 
     public void SetInteractablesVisible(bool visible)
     {
-        interactables.SetActive(visible);
+        if(interactables)
+        {
+            interactables.SetActive(visible);
+        }
     }
 }

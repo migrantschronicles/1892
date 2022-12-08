@@ -78,6 +78,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject sceneParent;
     [SerializeField]
+    private GameObject foregroundSceneParent;
+    [SerializeField]
     private Button backButton;
     [SerializeField]
     private DialogSystem dialogSystem;
@@ -93,6 +95,8 @@ public class LevelInstance : MonoBehaviour
     private AudioClip[] musicClips;
     [SerializeField]
     private GameObject draggedItemPrefab;
+    [SerializeField]
+    private GameObject sceneInteractables;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -120,6 +124,15 @@ public class LevelInstance : MonoBehaviour
         for (int i = 0; i < sceneParent.transform.childCount; ++i)
         {
             Scene scene = sceneParent.transform.GetChild(i).GetComponent<Scene>();
+            if (scene != null)
+            {
+                scenes.Add(scene);
+            }
+        }
+
+        for (int i = 0; i < foregroundSceneParent.transform.childCount; ++i)
+        {
+            Scene scene = foregroundSceneParent.transform.GetChild(i).GetComponent<Scene>();
             if (scene != null)
             {
                 scenes.Add(scene);
@@ -154,7 +167,7 @@ public class LevelInstance : MonoBehaviour
         dialogSystem.gameObject.SetActive(false);
         if (diaryEntry)
         {
-            SetBlurAfterGameObject(sceneParent);
+            blur.SetActive(true);
             NewGameManager.Instance.AddDiaryEntry(diaryEntry);
             backButton.gameObject.SetActive(true);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
@@ -208,7 +221,7 @@ public class LevelInstance : MonoBehaviour
 
             SetBackButtonVisible(true);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-            SetBlurAfterGameObject(currentScene.gameObject);
+            blur.SetActive(true);
             overlayMode = OverlayMode.None;
             dialogSystem.gameObject.SetActive(true);
             dialogSystem.OnOverlayClosed();
@@ -281,13 +294,10 @@ public class LevelInstance : MonoBehaviour
             {
                 // Hide everything
                 ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-                DisableBlur();
+                blur.SetActive(false);
 
-                if (currentScene)
-                {
-                    // Enable the buttons again.
-                    currentScene.SetInteractablesVisible(true);
-                }
+                // Enable the buttons again.
+                sceneInteractables.SetActive(true);
 
                 mode = Mode.None;
             }
@@ -367,12 +377,8 @@ public class LevelInstance : MonoBehaviour
         backButton.gameObject.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
         mode = Mode.Dialog;
-
-        if(currentScene)
-        {
-            currentScene.SetInteractablesVisible(false);
-            SetBlurAfterGameObject(currentScene.gameObject);
-        }
+        sceneInteractables.SetActive(false);
+        blur.SetActive(true);
     }
 
     public void StartDialog(GameObject dialogParent)
@@ -428,12 +434,8 @@ public class LevelInstance : MonoBehaviour
         currentShop.gameObject.SetActive(true);
         backButton.gameObject.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.StatusInfo);
-
-        if(currentScene)
-        {
-            currentScene.SetInteractablesVisible(false);
-            SetBlurInFrontOfGameObject(shop.gameObject);
-        }
+        sceneInteractables.SetActive(false);
+        blur.SetActive(true);
 
         if(dialogSystem.gameObject.activeSelf)
         {
@@ -464,26 +466,6 @@ public class LevelInstance : MonoBehaviour
         OnBack();
     }
 
-    private void SetBlurAfterGameObject(GameObject previous)
-    {
-        blur.transform.SetParent(previous.transform.parent, false);
-        blur.transform.SetSiblingIndex(previous.transform.GetSiblingIndex() + 1);
-        blur.SetActive(true);
-    }
-
-    private void SetBlurInFrontOfGameObject(GameObject next)
-    {
-        blur.transform.SetParent(next.transform.parent, false);
-        blur.transform.SetSiblingIndex(next.transform.GetSiblingIndex());
-        blur.SetActive(true);
-    }
-
-    private void DisableBlur()
-    {
-        blur.transform.SetParent(transform);
-        blur.SetActive(false);
-    }
-
     public void OpenDiary()
     {
         OpenDiary(DiaryPageLink.Inventory);
@@ -491,7 +473,7 @@ public class LevelInstance : MonoBehaviour
 
     public void OpenDiary(DiaryPageLink type)
     {
-        SetBlurAfterGameObject(sceneParent);
+        blur.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
 
         if (mode == Mode.Dialog)
@@ -509,6 +491,7 @@ public class LevelInstance : MonoBehaviour
         {
             ui.SetDiaryOpened(type);
             mode = Mode.Diary;
+            sceneInteractables.SetActive(false);
         }
 
         AudioManager.Instance.PlayFX(ui.IngameDiary.Diary.openClip);
@@ -529,7 +512,8 @@ public class LevelInstance : MonoBehaviour
                 if (mode == Mode.Diary)
                 {
                     ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-                    DisableBlur();
+                    blur.SetActive(false);
+                    sceneInteractables.SetActive(true);
                     mode = Mode.None;
                 }
                 break;

@@ -23,22 +23,27 @@ enum OverlayMode
 /**
  * A prefab to add to each level as the root for every ui element.
  * This is so that new elements like the new game manager can be easily added and existing elements can be easily changed across levels.
- * If automatically switches scenes, shows/hides the back button, interactables etc.
+ * It automatically switches scenes, shows/hides the back button, interactables etc.
  * 
  * If you create a new scene, this is the only prefab you need to add as a root game object in the hierarchy.
- * Everything else is inside of this level instance prefab.
+ * Everything else is inside of this level instance prefab. 
+ * Also you need to delete any preexising cameras, since a camera is included in the prefab.
  * 
  * In the prefab, there is a parent game object "Scenes".
- * Here you can add the prefab "Scene". This represents one scene, e.g. there could be one main scene and one closeup scene.
- * Each scene contains everything that appears in that scene, i.e. background images, characters, buttons, but only in that scene.
+ * Here you can add the prefab "Scene". This represents one scene, e.g. there could be one street scene and one ticket stand scene.
+ * Each scene contains everything that appears in that scene, i.e. background images, characters, but only in that scene.
  * In the scene (the script of the Scene prefab) you should add the scene name (how you identify the scene).
  * Then you can add all your backgrounds / characters / art to the Background, Middleground and Foreground game objects.
- * These should contain all static (non-interactable) elements of the scene.
- * In the Interactives object, you can add all of the buttons for the scene (DialogButton / ShopButton).
- * The Interactives automatically hide when a dialog is started or a shop is opened.
+ * These should contain all non-interactable elements of the scene like characters, houses etc.
  * You can add a SceneElementSelector anywhere in Background, Middleground or Foreground.
  * In the SceneElementSelector, you can set the condition under which the childs of the selector should be visible,
  * so you can hide elements based on a condition (e.g. some people are only there if the ship is there).
+ * Probably all scenes have interactable buttons (dialog buttons / shop button).
+ * For that there is a SceneInteractables parent game object in the Canvas GO.
+ * You can add the prefab SceneInteractables to that parent game object, which contains all your buttons for the scene.
+ * In the Interactables object, you can add all of the buttons for the scene (DialogButton / ShopButton).
+ * Then you need to assign the SceneInteractables instance to the Scene component of the scene.
+ * The Interactables automatically hide when a dialog is started or a shop is opened.
  * 
  * In the LevelInstance object, you can now set the default scene (the main scene).
  * 
@@ -53,27 +58,30 @@ enum OverlayMode
  * This is different from the Scene Button in that it will return to the previous scene after the dialog is closed.
  * Also, the blur gets added to the new scene.
  * If the field stays empty, the current scene stays.
- * In the Button::OnClick, you should add one callback: 
- * It should call LevelInstance.StartDialog with the dialog button as a parameter.
- * This automatically takes care of showing / hiding everything and the dialog starts.
+ * The dialog button automatically opens the dialog on click.
  * It also adds a blur to the background.
- * If you want to have characters on the left and right during a dialog, create a new scene (after the scene your dialog is in),
- * and add the characters to it (basically everything you want above the blur).
+ * If you want to have characters on the left and right during a dialog, create a new foreground scene.
+ * Instantiate the prefab ForegroundScene in the ForegroundScenes game object of the LevelInstance.
+ * You can add your characters to the Left and Right children that will appear to the left and right of the dialog.
+ * The children of Left and Right are visible above the blur.
+ * Important: Set the Layer to Foreground of each gameobject (sprite) you add to Left and Right, otherwise they will not be visible.
  * Then go to the dialog button and set the AdditiveSceneName to the name of the new scene.
  * This is the scene that will be displayed on top of the blur.
  * If you want e.g. the characters that are involved in the dialog to disappear, you can add them to the DialogButton::HideObjects.
  * The objects in this list are hidden when the dialog starts and shown again when the dialog stops, so you can
  * hide characters that are in the additive scene anyway.
- * 
- * @todo set FOREGROUND LAYER IN FOREground objects
+ * You can specify when the button is visible in the ConditionallyVisible component.
+ * Also you can (and should) position the button on top of the character with the PositionOnSprite component.
+ * If you don't, the button may not be where you place it in the editor, depending on the aspect ratio and resolution.
+ * To place it on top of the character, specify the sprite and set the normalized position (0.5/0.5 sets it in the middle, 1/1 on the top right of the sprite).
  * 
  * ADD A SHOP
- * If you have a shop on a scene, you can add the prefab Shop to the scene it appears on.
- * You can add a ShopButton prefab to the Interactives game object of the scene it should appear on.
+ * If you have a shop on a scene, you can add the prefab Shop to the Overlays parent game object in the Canvas object of the LevelInstance.
+ * This applies for scene shops and shops during dialogs.
+ * You can add a ShopButton prefab to the SceneInteractables game object of the scene it should appear on.
  * To open the shop, you need to select the shop you want to open in the ShopButton script on the ShopButton.
+ * Also set the sprite and normalized position in the PositionOnSprite component to place it on top of the shop.
  * The level instance takes care of showing / hiding everything.
- * If this is a shop for the dialog (for a Quest / Items decision option), it should be placed in the Overlays game object.
- * Otherwise, it can be placed in the scene where it is used.
  */
 public class LevelInstance : MonoBehaviour
 {

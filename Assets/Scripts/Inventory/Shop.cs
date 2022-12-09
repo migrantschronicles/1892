@@ -20,6 +20,20 @@ public class AcceptableItem
     public SetCondition[] setConditions;
 }
 
+/**
+ * A shop. Can be a shop in the scene or a shop during a dialog.
+ * Needs to be added to the LevelInstance > Canvas > Overlays game object.
+ * Specify the items the shop has in the ShopItems.
+ * 
+ * DIALOG SHOP
+ * If this is a shop to trade during a dialog (the player can give people things / accept gifts from people), set the FreeShop option.
+ * This tells the shop that every trade is free and does neither cost nor gain money.
+ * If it's a free shop, you can specify what items the shop (other person) can receive from the player in AcceptableItem.
+ * If you set the Type to None, the player cannot give the other person anything, only receive items.
+ * If you set the Type to Item, you can specify a specific item that the player can give to the person.
+ * If you set the Type to ItemCategory, you can specify an item category that the player can give to the person.
+ * If the player gives at least one item of the specified Item / ItemCategory, it sets the conditions that you can specify in SetConditions.
+ */
 public class Shop : MonoBehaviour
 {
     [SerializeField]

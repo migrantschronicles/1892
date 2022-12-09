@@ -97,6 +97,8 @@ public class LevelInstance : MonoBehaviour
     private GameObject draggedItemPrefab;
     [SerializeField]
     private GameObject sceneInteractables;
+    [SerializeField]
+    private Canvas canvas;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -639,7 +641,7 @@ public class LevelInstance : MonoBehaviour
     public void OnBeginDrag(PointerEventData data, ShopInventorySlot slot)
     {
         Debug.Assert(!IsDragging);
-        draggedItem = Instantiate(draggedItemPrefab, transform).GetComponent<DraggedItem>();
+        draggedItem = Instantiate(draggedItemPrefab, canvas.transform).GetComponent<DraggedItem>();
         draggedItem.Slot = slot;
         draggedItem.OnBeginDrag(data);
         currentShop.OnBeginDrag(draggedItem);

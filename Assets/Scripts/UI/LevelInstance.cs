@@ -51,6 +51,8 @@ enum OverlayMode
  * This is a prefab to switch the scene on click.
  * You can add it to the level (to the interactables of the scene) and set the Scene Name property in the Scene Button script.
  * Now if you press the button, the scene switches to the new scene.
+ * To place it in the same position as it will appear later, no matter the aspect ratio, you can specify the background sprite as the sprite
+ * in the PositionOnSprite component and set the normalized position to the normalized position on the background sprite you want the button to be.
  * 
  * ADD A DIALOG BUTTON
  * If you add a dialog button, you can set the scene name the dialog should start in in the DialogButton script.

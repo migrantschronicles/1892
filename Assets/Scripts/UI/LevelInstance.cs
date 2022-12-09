@@ -65,6 +65,8 @@ enum OverlayMode
  * The objects in this list are hidden when the dialog starts and shown again when the dialog stops, so you can
  * hide characters that are in the additive scene anyway.
  * 
+ * @todo set FOREGROUND LAYER IN FOREground objects
+ * 
  * ADD A SHOP
  * If you have a shop on a scene, you can add the prefab Shop to the scene it appears on.
  * You can add a ShopButton prefab to the Interactives game object of the scene it should appear on.
@@ -117,6 +119,8 @@ public class LevelInstance : MonoBehaviour
     public IngameDiary IngameDiary { get { return ui.IngameDiary; } }
     public bool IsDragging { get { return draggedItem != null; } }
     public Shop CurrentShop { get { return currentShop; } }
+    public Canvas Canvas { get { return canvas; } }
+    public RectTransform CanvasRect { get { return canvas.GetComponent<RectTransform>(); } }
 
     private void Awake()
     {

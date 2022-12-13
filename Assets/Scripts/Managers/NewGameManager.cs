@@ -758,7 +758,7 @@ public class NewGameManager : MonoBehaviour
                 }
             }
         }
-
+        Debug.Log(stolenItems);
         return stolenItems;
     }
 }

@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Rendering.Universal;
 
 enum Mode
 {
@@ -111,6 +112,10 @@ public class LevelInstance : MonoBehaviour
     private GameObject sceneInteractables;
     [SerializeField]
     private Canvas canvas;
+    [SerializeField]
+    private Camera mainCamera;
+    [SerializeField]
+    private Camera uiCamera;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -580,15 +585,21 @@ public class LevelInstance : MonoBehaviour
         bool wasBackButtonVisible = backButton.gameObject.activeSelf;
         backButton.gameObject.SetActive(false);
 
-        // Set the canvas to render the ui as well
-        Canvas canvas = GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceCamera;
-        canvas.worldCamera = Camera.main;
+        // Prepare: Render main and ui separately, not as overlay
+        var mainCameraData = mainCamera.GetUniversalAdditionalCameraData();
+        mainCameraData.cameraStack.Remove(uiCamera);
+        var uiCameraData = uiCamera.GetUniversalAdditionalCameraData();
+        uiCameraData.renderType = CameraRenderType.Base;
 
         // Render the camera view to a new render texture
-        RenderTexture screenTexture = new RenderTexture(Screen.width, Screen.height, 16);
-        Camera.main.targetTexture = screenTexture;
-        Camera.main.Render();
+        RenderTexture mainTexture = new RenderTexture(Screen.width, Screen.height, 16);
+        mainCamera.targetTexture = mainTexture;
+        mainCamera.Render();
+
+        // Render the ui
+        RenderTexture uiTexture = new RenderTexture(Screen.width, Screen.height, 16);
+        uiCamera.targetTexture = uiTexture;
+        uiCamera.Render();
 
         // Set the output size and adjust the image size that is actually rendered (same aspect ratio of screen).
         int targetWidth = outputWidth;
@@ -610,7 +621,7 @@ public class LevelInstance : MonoBehaviour
         // Resize the screen texture to the new target size
         RenderTexture resizedTexture = new RenderTexture(targetWidth, targetHeight, 16);
         RenderTexture.active = resizedTexture;
-        Graphics.Blit(screenTexture, resizedTexture);
+        Graphics.Blit(mainTexture, resizedTexture);
 
         // Read the render texture into a texture.
         Texture2D renderedTexture = new Texture2D(outputWidth, outputHeight);
@@ -638,13 +649,42 @@ public class LevelInstance : MonoBehaviour
             renderedTexture.SetPixels(renderedTextureColors);
         }
         renderedTexture.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), destX, destY);
-        RenderTexture.active = null;
 
+        // Resize the ui texture to the new target size
+        Graphics.Blit(uiTexture, resizedTexture);
+
+        // Read the ui texture into a texture.
+        Texture2D renderedUITexture = new Texture2D(outputWidth, outputHeight);
+        if (!Mathf.Approximately(sourceAspect, outputAspect))
+        {
+            // Fill the background transparent
+            Color[] renderedTextureColors = renderedUITexture.GetPixels();
+            Color backgroundColor = new Color(0, 0, 0, 0);
+            for (int i = 0; i < renderedTextureColors.Length; ++i)
+            {
+                renderedTextureColors[i] = backgroundColor;
+            }
+            renderedUITexture.SetPixels(renderedTextureColors);
+        }
+        renderedUITexture.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), destX, destY);
+        
+        // Blend the textures
+        Color[] mainColors = renderedTexture.GetPixels();
+        Color[] uiColors = renderedUITexture.GetPixels();
+        for(int i = 0; i < mainColors.Length; ++i)
+        {
+            mainColors[i] = Color.Lerp(mainColors[i], uiColors[i], uiColors[i].a);
+        }
+        renderedTexture.SetPixels(mainColors);
+        
         // Cleanup
-        Camera.main.targetTexture = null;
-        canvas.worldCamera = null;
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        screenTexture.Release();
+        RenderTexture.active = null;
+        mainCamera.targetTexture = null;
+        uiCamera.targetTexture = null;
+        mainTexture.Release();
+        uiTexture.Release();
+        uiCameraData.renderType = CameraRenderType.Overlay;
+        mainCameraData.cameraStack.Add(uiCamera);
 
         // Show ui elements again
         backButton.gameObject.SetActive(wasBackButtonVisible);

@@ -698,6 +698,7 @@ public class LevelInstance : MonoBehaviour
         Debug.Assert(!IsDragging);
         draggedItem = Instantiate(draggedItemPrefab, canvas.transform).GetComponent<DraggedItem>();
         draggedItem.Slot = slot;
+        draggedItem.Shop = currentShop;
         draggedItem.OnBeginDrag(data);
         currentShop.OnBeginDrag(draggedItem);
     }

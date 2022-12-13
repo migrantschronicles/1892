@@ -431,7 +431,7 @@ public class Shop : MonoBehaviour
         }
     }
 
-    private bool CanTransferItem(Item item, ScrollableInventoryManager targetManager)
+    public bool CanTransferItem(Item item, ScrollableInventoryManager targetManager)
     {
         if(targetManager == Basket)
         {

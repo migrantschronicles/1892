@@ -193,6 +193,7 @@ public class LevelInstance : MonoBehaviour
             backButton.gameObject.SetActive(true);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
             ui.OpenDiaryImmediately(DiaryPageLink.Diary);
+            sceneInteractables.SetActive(false);
             mode = Mode.Diary;
         }
         else

@@ -203,6 +203,7 @@ class MobilePDFPlatform : IPDFPlatform
     public void DrawPNG(string relativePath, int x, int y, int width, int height)
     {
         string fullPath = Path.Combine(Application.streamingAssetsPath, relativePath);
+#if UNITY_ANDROID
         UnityWebRequest loadingRequest = UnityWebRequest.Get(fullPath);
         loadingRequest.SendWebRequest();
         while (!loadingRequest.isDone)
@@ -218,6 +219,17 @@ class MobilePDFPlatform : IPDFPlatform
         {
             Debug.Log("Failed to load image " + fullPath);
         }
+#elif UNITY_IOS
+        byte[] data = File.ReadAllBytes(fullPath);
+        if(data)
+        {
+            DrawPNG(data, x, y, width, height);
+        }
+        else
+        {
+            Debug.Log("Failed to load image " + fullPath);
+        }
+#endif
     }
 
     public void DrawPNG(byte[] pngBytes, int x, int y, int width, int height)

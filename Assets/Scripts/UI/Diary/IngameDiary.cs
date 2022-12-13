@@ -252,7 +252,6 @@ public class IngameDiary : MonoBehaviour
 
         if(screenshotPrevPage)
         {
-            Debug.Log(screenshotPrevPage);
             screenshotPrevPage.gameObject.SetActive(true);
             screenshotPrevPage.GetComponent<Animator>().SetTrigger("OpenImmediately");
             if(screenshotPrevPage.ContentPages)

@@ -25,6 +25,8 @@ public class DraggedItem : MonoBehaviour
         }
     }
 
+    public Shop Shop { get; set; }
+
     public bool IsValidTransfer
     {
         get
@@ -48,13 +50,14 @@ public class DraggedItem : MonoBehaviour
         ScrollableInventoryManager highlightedManager = currentShop ? currentShop.HighlightedInventoryManager : null;
         if(lastHighlightedManager && lastHighlightedManager != highlightedManager)
         {
-            lastHighlightedManager.IsHighlighted = false;
+            lastHighlightedManager.HighlightedMode = InventoryManagerHighlightedMode.None;
             lastHighlightedManager = null;
         }
 
         if(highlightedManager && highlightedManager != lastHighlightedManager && highlightedManager != slot.InventoryManager)
         {
-            highlightedManager.IsHighlighted = true;
+            bool valid = Shop.CanTransferItem(slot.InventorySlot.Item, highlightedManager);
+            highlightedManager.HighlightedMode = valid ? InventoryManagerHighlightedMode.Valid : InventoryManagerHighlightedMode.Invalid;
             lastHighlightedManager = highlightedManager;
         }
     }
@@ -73,7 +76,7 @@ public class DraggedItem : MonoBehaviour
     {
         if(lastHighlightedManager)
         {
-            lastHighlightedManager.IsHighlighted = false;
+            lastHighlightedManager.HighlightedMode = InventoryManagerHighlightedMode.None;
         }
     }
 }

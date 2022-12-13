@@ -227,10 +227,10 @@ public class MapZoom : MonoBehaviour
         parentSize.Scale(parentRect.localScale);
         if (size.x > parentSize.x && size.y > parentSize.y)
         {
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, zoomPoint, null, out Vector2 p2))
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, zoomPoint, Camera.main, out Vector2 p2))
             {
                 Vector2 pivotP = rectTransform.pivot * rectTransform.rect.size;
-                Vector2 p3 = (Vector2)p2 + pivotP;
+                Vector2 p3 = p2 + pivotP;
                 Vector2 newPivot = p3 / rectTransform.rect.size;
                 newPivot.x = Mathf.Clamp01(newPivot.x);
                 newPivot.y = Mathf.Clamp01(newPivot.y);

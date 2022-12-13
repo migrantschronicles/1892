@@ -283,7 +283,7 @@ public class Shop : MonoBehaviour
 
         // Money
         int price = CalculatePrice();
-        moneyText.text = price.ToString();
+        moneyText.text = (-price).ToString();
         moneyText.gameObject.SetActive(!freeShop);
         tradeInfo.color = price == 0 ? defaultTradeInfoColor : (price > 0 ? looseTradeInfoColor : gainTradeInfoColor);
 

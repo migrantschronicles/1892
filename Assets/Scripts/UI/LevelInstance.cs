@@ -490,7 +490,7 @@ public class LevelInstance : MonoBehaviour
 
     public void OpenDiary()
     {
-        OpenDiary(DiaryPageLink.Inventory);
+        OpenDiary(DiaryPageLink.Map);
     }
 
     public void OpenDiary(DiaryPageLink type)

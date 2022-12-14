@@ -97,7 +97,7 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private DialogSystem dialogSystem;
     [SerializeField]
-    private GameObject blur;
+    private Blur blur;
     [SerializeField]
     private Interface ui;
     [SerializeField]
@@ -116,6 +116,8 @@ public class LevelInstance : MonoBehaviour
     private Camera mainCamera;
     [SerializeField]
     private Camera uiCamera;
+    [SerializeField]
+    private float EndOfDayFadeTime = 20.0f;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -127,6 +129,7 @@ public class LevelInstance : MonoBehaviour
     private bool startedPlayingMusic = false;
     private Mode mode = Mode.None;
     private DraggedItem draggedItem;
+    private bool isEndOfDayFade = false;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -163,6 +166,8 @@ public class LevelInstance : MonoBehaviour
         // Set the frame rate limit to 30 fps.
         // This should suffice for mobile, 60 fps should not be needed.
         Application.targetFrameRate = 30;
+
+        NewGameManager.Instance.onTimeChanged += OnTimeChanged;
     }
 
     private void Start()
@@ -174,7 +179,7 @@ public class LevelInstance : MonoBehaviour
         }
 
         backButton.onClick.AddListener(OnBack);
-        blur.SetActive(false);
+        blur.SetEnabled(false);
         IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
 
         foreach(Scene scene in scenes)
@@ -188,7 +193,7 @@ public class LevelInstance : MonoBehaviour
         dialogSystem.gameObject.SetActive(false);
         if (diaryEntry)
         {
-            blur.SetActive(true);
+            blur.SetEnabled(true);
             NewGameManager.Instance.AddDiaryEntry(diaryEntry);
             backButton.gameObject.SetActive(true);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
@@ -243,7 +248,7 @@ public class LevelInstance : MonoBehaviour
 
             SetBackButtonVisible(true);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-            blur.SetActive(true);
+            blur.SetEnabled(true);
             overlayMode = OverlayMode.None;
             dialogSystem.gameObject.SetActive(true);
             dialogSystem.OnOverlayClosed();
@@ -316,13 +321,65 @@ public class LevelInstance : MonoBehaviour
             {
                 // Hide everything
                 ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-                blur.SetActive(false);
+                blur.SetEnabled(false);
 
                 // Enable the buttons again.
                 sceneInteractables.SetActive(true);
 
                 mode = Mode.None;
+                UpdateEndOfDayFade();
             }
+        }
+    }
+
+    private void OnTimeChanged(int hour, int minute)
+    {
+        if(isEndOfDayFade)
+        {
+            if (NewGameManager.Instance.RemainingTime > EndOfDayFadeTime)
+            {
+                // Time was reset -> new day
+                isEndOfDayFade = false;
+                UpdateEndOfDayFade();
+            }
+            else if(NewGameManager.Instance.RemainingTime == 0)
+            {
+                // Reset blur.
+                ///@todo Change this when blur is enabled for popups
+                isEndOfDayFade = false;
+                //blur.SetEnabled(true);
+                blur.SetEnabled(false);
+            }
+            else
+            {
+                UpdateEndOfDayFade();
+            }
+        }
+        else
+        {
+            if (NewGameManager.Instance.RemainingTime <= EndOfDayFadeTime)
+            {
+                // Start fading to end of day.
+                isEndOfDayFade = true;
+                UpdateEndOfDayFade();
+            }
+        }
+    }
+
+    private void UpdateEndOfDayFade()
+    {
+        if(mode != Mode.None)
+        {
+            blur.SetEnabled(true);
+        }
+        else if (isEndOfDayFade)
+        {
+            float amount = 1.0f - Mathf.Clamp01(NewGameManager.Instance.RemainingTime / EndOfDayFadeTime);
+            blur.SetFadeAmount(amount);
+        }
+        else
+        {
+            blur.SetEnabled(false);
         }
     }
 
@@ -400,7 +457,7 @@ public class LevelInstance : MonoBehaviour
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
         mode = Mode.Dialog;
         sceneInteractables.SetActive(false);
-        blur.SetActive(true);
+        blur.SetEnabled(true);
     }
 
     public void StartDialog(GameObject dialogParent)
@@ -457,9 +514,9 @@ public class LevelInstance : MonoBehaviour
         backButton.gameObject.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.StatusInfo);
         sceneInteractables.SetActive(false);
-        blur.SetActive(true);
+        blur.SetEnabled(true);
 
-        if(dialogSystem.gameObject.activeSelf)
+        if (dialogSystem.gameObject.activeSelf)
         {
             // This is an overlay (a shop was opened during a dialog (the corresponding decision option was selected), so hide the dialog).
             overlayMode = OverlayMode.Shop;
@@ -495,7 +552,7 @@ public class LevelInstance : MonoBehaviour
 
     public void OpenDiary(DiaryPageLink type)
     {
-        blur.SetActive(true);
+        blur.SetEnabled(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
 
         if (mode == Mode.Dialog)
@@ -534,9 +591,10 @@ public class LevelInstance : MonoBehaviour
                 if (mode == Mode.Diary)
                 {
                     ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-                    blur.SetActive(false);
+                    blur.SetEnabled(false);
                     sceneInteractables.SetActive(true);
                     mode = Mode.None;
+                    UpdateEndOfDayFade();
                 }
                 break;
         }

@@ -539,6 +539,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3551177975640580539}
   - component: {fileID: 8774083401587209303}
+  - component: {fileID: 409080419363300366}
   m_Layer: 0
   m_Name: Global Volume
   m_TagString: Untagged
@@ -578,6 +579,18 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 588351aebb0132e4d94c66ce81dc9591, type: 2}
+--- !u!114 &409080419363300366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4157261294060784625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5cce517c28dc7f4088b6674e8d9bd6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4236349788545650055
 GameObject:
   m_ObjectHideFlags: 0
@@ -1063,7 +1076,7 @@ MonoBehaviour:
   foregroundSceneParent: {fileID: 3646635035931143036}
   backButton: {fileID: 1923004301047999426}
   dialogSystem: {fileID: 9087721476993750823}
-  blur: {fileID: 4157261294060784625}
+  blur: {fileID: 409080419363300366}
   ui: {fileID: 6980961830404351579}
   defaultScene: 
   diaryEntry: {fileID: 0}
@@ -1076,6 +1089,7 @@ MonoBehaviour:
   canvas: {fileID: 200043334867591330}
   mainCamera: {fileID: 4291454847014932785}
   uiCamera: {fileID: 364117719863441050}
+  EndOfDayFadeTime: 20
 --- !u!1 &5734062120769337426
 GameObject:
   m_ObjectHideFlags: 0

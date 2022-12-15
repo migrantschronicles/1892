@@ -198,6 +198,8 @@ class MobilePDFPlatform : IPDFPlatform
     {
         byte[] data = pdf.GetDocumentData();
         File.WriteAllBytes(outputPath, data);
+        NativeFilePicker.Permission permission = NativeFilePicker.ExportFile(outputPath, (success) => Debug.Log("PDF Exported: " + success));
+        Debug.Log("PDF Export Permission: " + permission);
     }
 
     public void DrawPNG(string relativePath, int x, int y, int width, int height)
@@ -502,10 +504,10 @@ public class PDFBuilder
     private string GenerateFilePath()
     {
 #if DEBUG
-        return $"{OutputPath}/MigrantsChronicles.pdf";
+        return Path.Combine(OutputPath, "MigrantsChronicles.pdf");
 #else
         DateTime time = DateTime.Now;
-        return $"{OutputPath}/MigrantsChronicles-{time.Year}-{time.Month}-{time.Day}-{time.Hour}-{time.Minute}.pdf";
+        return Path.Combine(OutputPath, $"MigrantsChronicles-{time.Year}-{time.Month}-{time.Day}-{time.Hour}-{time.Minute}.pdf");
 #endif
     }
 }

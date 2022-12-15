@@ -223,7 +223,7 @@ class MobilePDFPlatform : IPDFPlatform
         }
 #elif UNITY_IOS
         byte[] data = File.ReadAllBytes(fullPath);
-        if(data)
+        if(data != null)
         {
             DrawPNG(data, x, y, width, height);
         }

@@ -291,7 +291,6 @@ public class MapZoom : MonoBehaviour
 
     private void OnDiaryStatusChanged(OpenStatus status)
     {
-        Debug.Log(status);
         if(status == OpenStatus.Opening)
         {
             ResetInitialZoom();

@@ -200,6 +200,7 @@ public class LevelInstance : MonoBehaviour
             ui.OpenDiaryImmediately(DiaryPageLink.Diary);
             sceneInteractables.SetActive(false);
             mode = Mode.Diary;
+            NewGameManager.Instance.SetPaused(true);
         }
         else
         {
@@ -327,6 +328,7 @@ public class LevelInstance : MonoBehaviour
                 sceneInteractables.SetActive(true);
 
                 mode = Mode.None;
+                NewGameManager.Instance.SetPaused(false);
                 UpdateEndOfDayFade();
             }
         }
@@ -458,6 +460,7 @@ public class LevelInstance : MonoBehaviour
         mode = Mode.Dialog;
         sceneInteractables.SetActive(false);
         blur.SetEnabled(true);
+        NewGameManager.Instance.SetPaused(true);
     }
 
     public void StartDialog(GameObject dialogParent)
@@ -531,6 +534,7 @@ public class LevelInstance : MonoBehaviour
         else
         {
             mode = Mode.Shop;
+            NewGameManager.Instance.SetPaused(true);
         }
 
         currentShop.OnOpened();
@@ -571,6 +575,7 @@ public class LevelInstance : MonoBehaviour
             ui.SetDiaryOpened(type);
             mode = Mode.Diary;
             sceneInteractables.SetActive(false);
+            NewGameManager.Instance.SetPaused(true);
         }
 
         AudioManager.Instance.PlayFX(ui.IngameDiary.Diary.openClip);
@@ -594,6 +599,7 @@ public class LevelInstance : MonoBehaviour
                     blur.SetEnabled(false);
                     sceneInteractables.SetActive(true);
                     mode = Mode.None;
+                    NewGameManager.Instance.SetPaused(false);
                     UpdateEndOfDayFade();
                 }
                 break;

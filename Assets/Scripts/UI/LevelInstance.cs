@@ -166,8 +166,6 @@ public class LevelInstance : MonoBehaviour
         // Set the frame rate limit to 30 fps.
         // This should suffice for mobile, 60 fps should not be needed.
         Application.targetFrameRate = 30;
-
-        NewGameManager.Instance.onTimeChanged += OnTimeChanged;
     }
 
     private void Start()
@@ -178,6 +176,7 @@ public class LevelInstance : MonoBehaviour
             return;
         }
 
+        NewGameManager.Instance.onTimeChanged += OnTimeChanged;
         backButton.onClick.AddListener(OnBack);
         blur.SetEnabled(false);
         IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;

@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Rendering.Universal;
 
 enum Mode
 {
@@ -96,7 +97,7 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private DialogSystem dialogSystem;
     [SerializeField]
-    private GameObject blur;
+    private Blur blur;
     [SerializeField]
     private Interface ui;
     [SerializeField]
@@ -111,6 +112,12 @@ public class LevelInstance : MonoBehaviour
     private GameObject sceneInteractables;
     [SerializeField]
     private Canvas canvas;
+    [SerializeField]
+    private Camera mainCamera;
+    [SerializeField]
+    private Camera uiCamera;
+    [SerializeField]
+    private float EndOfDayFadeTime = 20.0f;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -122,6 +129,7 @@ public class LevelInstance : MonoBehaviour
     private bool startedPlayingMusic = false;
     private Mode mode = Mode.None;
     private DraggedItem draggedItem;
+    private bool isEndOfDayFade = false;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -158,6 +166,8 @@ public class LevelInstance : MonoBehaviour
         // Set the frame rate limit to 30 fps.
         // This should suffice for mobile, 60 fps should not be needed.
         Application.targetFrameRate = 30;
+
+        NewGameManager.Instance.onTimeChanged += OnTimeChanged;
     }
 
     private void Start()
@@ -169,7 +179,7 @@ public class LevelInstance : MonoBehaviour
         }
 
         backButton.onClick.AddListener(OnBack);
-        blur.SetActive(false);
+        blur.SetEnabled(false);
         IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
 
         foreach(Scene scene in scenes)
@@ -183,12 +193,14 @@ public class LevelInstance : MonoBehaviour
         dialogSystem.gameObject.SetActive(false);
         if (diaryEntry)
         {
-            blur.SetActive(true);
+            blur.SetEnabled(true);
             NewGameManager.Instance.AddDiaryEntry(diaryEntry);
             backButton.gameObject.SetActive(true);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
             ui.OpenDiaryImmediately(DiaryPageLink.Diary);
+            sceneInteractables.SetActive(false);
             mode = Mode.Diary;
+            NewGameManager.Instance.SetPaused(true);
         }
         else
         {
@@ -237,7 +249,7 @@ public class LevelInstance : MonoBehaviour
 
             SetBackButtonVisible(true);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-            blur.SetActive(true);
+            blur.SetEnabled(true);
             overlayMode = OverlayMode.None;
             dialogSystem.gameObject.SetActive(true);
             dialogSystem.OnOverlayClosed();
@@ -310,13 +322,66 @@ public class LevelInstance : MonoBehaviour
             {
                 // Hide everything
                 ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-                blur.SetActive(false);
+                blur.SetEnabled(false);
 
                 // Enable the buttons again.
                 sceneInteractables.SetActive(true);
 
                 mode = Mode.None;
+                NewGameManager.Instance.SetPaused(false);
+                UpdateEndOfDayFade();
             }
+        }
+    }
+
+    private void OnTimeChanged(int hour, int minute)
+    {
+        if(isEndOfDayFade)
+        {
+            if (NewGameManager.Instance.RemainingTime > EndOfDayFadeTime)
+            {
+                // Time was reset -> new day
+                isEndOfDayFade = false;
+                UpdateEndOfDayFade();
+            }
+            else if(NewGameManager.Instance.RemainingTime == 0)
+            {
+                // Reset blur.
+                ///@todo Change this when blur is enabled for popups
+                isEndOfDayFade = false;
+                //blur.SetEnabled(true);
+                blur.SetEnabled(false);
+            }
+            else
+            {
+                UpdateEndOfDayFade();
+            }
+        }
+        else
+        {
+            if (NewGameManager.Instance.RemainingTime <= EndOfDayFadeTime)
+            {
+                // Start fading to end of day.
+                isEndOfDayFade = true;
+                UpdateEndOfDayFade();
+            }
+        }
+    }
+
+    private void UpdateEndOfDayFade()
+    {
+        if(mode != Mode.None)
+        {
+            blur.SetEnabled(true);
+        }
+        else if (isEndOfDayFade)
+        {
+            float amount = 1.0f - Mathf.Clamp01(NewGameManager.Instance.RemainingTime / EndOfDayFadeTime);
+            blur.SetFadeAmount(amount);
+        }
+        else
+        {
+            blur.SetEnabled(false);
         }
     }
 
@@ -394,7 +459,8 @@ public class LevelInstance : MonoBehaviour
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
         mode = Mode.Dialog;
         sceneInteractables.SetActive(false);
-        blur.SetActive(true);
+        blur.SetEnabled(true);
+        NewGameManager.Instance.SetPaused(true);
     }
 
     public void StartDialog(GameObject dialogParent)
@@ -451,9 +517,9 @@ public class LevelInstance : MonoBehaviour
         backButton.gameObject.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.StatusInfo);
         sceneInteractables.SetActive(false);
-        blur.SetActive(true);
+        blur.SetEnabled(true);
 
-        if(dialogSystem.gameObject.activeSelf)
+        if (dialogSystem.gameObject.activeSelf)
         {
             // This is an overlay (a shop was opened during a dialog (the corresponding decision option was selected), so hide the dialog).
             overlayMode = OverlayMode.Shop;
@@ -468,6 +534,7 @@ public class LevelInstance : MonoBehaviour
         else
         {
             mode = Mode.Shop;
+            NewGameManager.Instance.SetPaused(true);
         }
 
         currentShop.OnOpened();
@@ -484,12 +551,12 @@ public class LevelInstance : MonoBehaviour
 
     public void OpenDiary()
     {
-        OpenDiary(DiaryPageLink.Inventory);
+        OpenDiary(DiaryPageLink.Map);
     }
 
     public void OpenDiary(DiaryPageLink type)
     {
-        blur.SetActive(true);
+        blur.SetEnabled(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
 
         if (mode == Mode.Dialog)
@@ -508,6 +575,7 @@ public class LevelInstance : MonoBehaviour
             ui.SetDiaryOpened(type);
             mode = Mode.Diary;
             sceneInteractables.SetActive(false);
+            NewGameManager.Instance.SetPaused(true);
         }
 
         AudioManager.Instance.PlayFX(ui.IngameDiary.Diary.openClip);
@@ -528,9 +596,11 @@ public class LevelInstance : MonoBehaviour
                 if (mode == Mode.Diary)
                 {
                     ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-                    blur.SetActive(false);
+                    blur.SetEnabled(false);
                     sceneInteractables.SetActive(true);
                     mode = Mode.None;
+                    NewGameManager.Instance.SetPaused(false);
+                    UpdateEndOfDayFade();
                 }
                 break;
         }
@@ -580,15 +650,21 @@ public class LevelInstance : MonoBehaviour
         bool wasBackButtonVisible = backButton.gameObject.activeSelf;
         backButton.gameObject.SetActive(false);
 
-        // Set the canvas to render the ui as well
-        Canvas canvas = GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceCamera;
-        canvas.worldCamera = Camera.main;
+        // Prepare: Render main and ui separately, not as overlay
+        var mainCameraData = mainCamera.GetUniversalAdditionalCameraData();
+        mainCameraData.cameraStack.Remove(uiCamera);
+        var uiCameraData = uiCamera.GetUniversalAdditionalCameraData();
+        uiCameraData.renderType = CameraRenderType.Base;
 
         // Render the camera view to a new render texture
-        RenderTexture screenTexture = new RenderTexture(Screen.width, Screen.height, 16);
-        Camera.main.targetTexture = screenTexture;
-        Camera.main.Render();
+        RenderTexture mainTexture = new RenderTexture(Screen.width, Screen.height, 16);
+        mainCamera.targetTexture = mainTexture;
+        mainCamera.Render();
+
+        // Render the ui
+        RenderTexture uiTexture = new RenderTexture(Screen.width, Screen.height, 16);
+        uiCamera.targetTexture = uiTexture;
+        uiCamera.Render();
 
         // Set the output size and adjust the image size that is actually rendered (same aspect ratio of screen).
         int targetWidth = outputWidth;
@@ -610,7 +686,7 @@ public class LevelInstance : MonoBehaviour
         // Resize the screen texture to the new target size
         RenderTexture resizedTexture = new RenderTexture(targetWidth, targetHeight, 16);
         RenderTexture.active = resizedTexture;
-        Graphics.Blit(screenTexture, resizedTexture);
+        Graphics.Blit(mainTexture, resizedTexture);
 
         // Read the render texture into a texture.
         Texture2D renderedTexture = new Texture2D(outputWidth, outputHeight);
@@ -638,13 +714,42 @@ public class LevelInstance : MonoBehaviour
             renderedTexture.SetPixels(renderedTextureColors);
         }
         renderedTexture.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), destX, destY);
-        RenderTexture.active = null;
 
+        // Resize the ui texture to the new target size
+        Graphics.Blit(uiTexture, resizedTexture);
+
+        // Read the ui texture into a texture.
+        Texture2D renderedUITexture = new Texture2D(outputWidth, outputHeight);
+        if (!Mathf.Approximately(sourceAspect, outputAspect))
+        {
+            // Fill the background transparent
+            Color[] renderedTextureColors = renderedUITexture.GetPixels();
+            Color backgroundColor = new Color(0, 0, 0, 0);
+            for (int i = 0; i < renderedTextureColors.Length; ++i)
+            {
+                renderedTextureColors[i] = backgroundColor;
+            }
+            renderedUITexture.SetPixels(renderedTextureColors);
+        }
+        renderedUITexture.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), destX, destY);
+        
+        // Blend the textures
+        Color[] mainColors = renderedTexture.GetPixels();
+        Color[] uiColors = renderedUITexture.GetPixels();
+        for(int i = 0; i < mainColors.Length; ++i)
+        {
+            mainColors[i] = Color.Lerp(mainColors[i], uiColors[i], uiColors[i].a);
+        }
+        renderedTexture.SetPixels(mainColors);
+        
         // Cleanup
-        Camera.main.targetTexture = null;
-        canvas.worldCamera = null;
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        screenTexture.Release();
+        RenderTexture.active = null;
+        mainCamera.targetTexture = null;
+        uiCamera.targetTexture = null;
+        mainTexture.Release();
+        uiTexture.Release();
+        uiCameraData.renderType = CameraRenderType.Overlay;
+        mainCameraData.cameraStack.Add(uiCamera);
 
         // Show ui elements again
         backButton.gameObject.SetActive(wasBackButtonVisible);
@@ -657,6 +762,7 @@ public class LevelInstance : MonoBehaviour
         Debug.Assert(!IsDragging);
         draggedItem = Instantiate(draggedItemPrefab, canvas.transform).GetComponent<DraggedItem>();
         draggedItem.Slot = slot;
+        draggedItem.Shop = currentShop;
         draggedItem.OnBeginDrag(data);
         currentShop.OnBeginDrag(draggedItem);
     }

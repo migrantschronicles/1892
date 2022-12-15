@@ -4,6 +4,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+public enum InventoryManagerHighlightedMode
+{
+    None,
+    Valid,
+    Invalid
+}
+
 public class ScrollableInventoryManager : InventoryManager, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField]
@@ -28,16 +35,17 @@ public class ScrollableInventoryManager : InventoryManager, IPointerEnterHandler
     public event OnPointerExitEvent onPointerExit;
 
     private int currentBagIndex = 0;
-    private bool isHighlighted = false;
+    private InventoryManagerHighlightedMode highlightedMode = InventoryManagerHighlightedMode.None;
     private Material bagMaterial;
 
-    public bool IsHighlighted
+    public InventoryManagerHighlightedMode HighlightedMode
     {
-        get { return isHighlighted; }
+        get { return highlightedMode; }
         set
         {
-            isHighlighted = value;
-            bagMaterial.SetFloat("_OutlineEnabled", isHighlighted ? 1.0f : 0.0f);
+            highlightedMode = value;
+            bagMaterial.SetFloat("_OutlineEnabled", highlightedMode != InventoryManagerHighlightedMode.None ? 1.0f : 0.0f);
+            bagMaterial.SetFloat("_OutlineColorIndex", highlightedMode == InventoryManagerHighlightedMode.Invalid ? 1.0f : 0.0f);
         }
     }
 
@@ -62,7 +70,7 @@ public class ScrollableInventoryManager : InventoryManager, IPointerEnterHandler
         bagMaterial = Instantiate(bagImage.material);
         bagImage.material = bagMaterial;
         base.Start();
-        IsHighlighted = false;
+        HighlightedMode = InventoryManagerHighlightedMode.None;
         bagUpButton.onClick.AddListener(OnBagUpClicked);
         bagDownButton.onClick.AddListener(OnBagDownClicked);
     }

@@ -54,6 +54,7 @@ public class NewGameManager : MonoBehaviour
     // Game Stats
     public bool gameRunning = true;
     public float timeSpeed = 0.1f;
+    public int hoursPerDay = 10;
     public float seconds;
     public int minutes;
     public int hour;
@@ -158,6 +159,22 @@ public class NewGameManager : MonoBehaviour
 
     public static NewGameManager Instance { get; private set; }
 
+    /**
+     * @return The remaining time (in seconds in real time) of the day.
+     */
+    public float RemainingTime
+    {
+        get
+        {
+            if(hour >= hoursPerDay)
+            {
+                return 0.0f;
+            }
+
+            return (((hoursPerDay - 1) - hour) * 3600 + (60 - minutes) * 60 + (60 - seconds)) / timeSpeed;
+        }
+    }
+
     void Awake()
     {
         if (Instance == null)
@@ -218,7 +235,7 @@ public class NewGameManager : MonoBehaviour
             minutes = 0;
         }
 
-        if (hour >= 10)
+        if (hour >= hoursPerDay)
         {
             popups.OpenEndDayPopUp();
         }

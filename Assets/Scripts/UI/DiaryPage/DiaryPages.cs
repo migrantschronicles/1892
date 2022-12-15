@@ -299,18 +299,26 @@ public class DiaryPages : MonoBehaviour
 
     public void PrepareForDiaryScreenshot(DiaryEntryData entry)
     {
-        GameObject newContentPageGO = Instantiate(contentPagePrefab, contentParent.transform);
-        DiaryContentPage newContentPage = newContentPageGO.GetComponent<DiaryContentPage>();
-        CreatePageContent(entry.entry.leftPage, newContentPage.LeftPage.transform, false);
-        CreatePageContent(entry.entry.rightPage, newContentPage.RightPage.transform, false);
-        screenshotPage = newContentPage;
+        if(entry != null)
+        {
+            GameObject newContentPageGO = Instantiate(contentPagePrefab, contentParent.transform);
+            DiaryContentPage newContentPage = newContentPageGO.GetComponent<DiaryContentPage>();
+            CreatePageContent(entry.entry.leftPage, newContentPage.LeftPage.transform, false);
+            CreatePageContent(entry.entry.rightPage, newContentPage.RightPage.transform, false);
+            screenshotPage = newContentPage;
+        }
+
         nextPageButton.gameObject.SetActive(false);
         prevPageButton.gameObject.SetActive(false);
     }
 
     public void ResetFromScreenshot()
     {
-        Destroy(screenshotPage);
+        if(screenshotPage)
+        {
+            Destroy(screenshotPage);
+        }
+
         UpdateButtons();
     }
 }

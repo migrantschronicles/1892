@@ -140,6 +140,10 @@ public class LevelInstance : MonoBehaviour
     public Shop CurrentShop { get { return currentShop; } }
     public Canvas Canvas { get { return canvas; } }
     public RectTransform CanvasRect { get { return canvas.GetComponent<RectTransform>(); } }
+    public Scene CurrentScene { get { return currentScene; } }
+
+    public delegate void OnSceneChangedEvent(Scene scene);
+    public event OnSceneChangedEvent onSceneChanged;
 
     private void Awake()
     {
@@ -411,6 +415,8 @@ public class LevelInstance : MonoBehaviour
         currentScene = scene;
         currentScene.gameObject.SetActive(true);
         currentScene.OnActiveStatusChanged(true);
+
+        onSceneChanged?.Invoke(currentScene);
     }
 
     private void OnDialogStarted()

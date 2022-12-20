@@ -12,6 +12,8 @@ public class Scene : MonoBehaviour
     private PlayableCharacterSpawn characterSpawn;
 
     public string SceneName { get { return sceneName; } }
+    public GameObject SpawnedCharacter { get { return characterSpawn.SpawnedCharacter; } }
+    public GameObject Interactables { get { return interactables; } }
 
     private void Start()
     {

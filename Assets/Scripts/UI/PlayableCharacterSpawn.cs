@@ -8,17 +8,17 @@ public class PlayableCharacterSpawn : MonoBehaviour
     [SerializeField, Tooltip("The name of the prefab to spawn, or leave empty for default.")]
     private string prefabName;
 
-    private GameObject spawnedCharacter;
+    public GameObject SpawnedCharacter { get; private set; }
 
     public bool TrySpawn()
     {
-        if(!spawnedCharacter)
+        if(!SpawnedCharacter)
         {
             PlayableCharacterData data = NewGameManager.Instance.PlayableCharacterData;
             SceneCharacterPrefab scenePrefab = data.scenePrefabs.First((prefab) => prefab.name == prefabName);
             if (scenePrefab != null)
             {
-                spawnedCharacter = Instantiate(scenePrefab.prefab, transform);
+                SpawnedCharacter = Instantiate(scenePrefab.prefab, transform);
                 return true;
             }
         }
@@ -28,9 +28,9 @@ public class PlayableCharacterSpawn : MonoBehaviour
 
     public void SetCharactersVisible(bool visible)
     {
-        if(spawnedCharacter)
+        if(SpawnedCharacter)
         {
-            spawnedCharacter.SetActive(visible);
+            SpawnedCharacter.SetActive(visible);
         }
     }
 }

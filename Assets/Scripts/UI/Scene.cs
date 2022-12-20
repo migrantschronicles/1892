@@ -8,6 +8,8 @@ public class Scene : MonoBehaviour
     private GameObject interactables;
     [SerializeField]
     private string sceneName;
+    [SerializeField]
+    private PlayableCharacterSpawn characterSpawn;
 
     public string SceneName { get { return sceneName; } }
 
@@ -17,6 +19,11 @@ public class Scene : MonoBehaviour
         {
             Debug.LogError("Scene name is empty in: " + name);
         }
+
+        if(characterSpawn == null)
+        {
+            Debug.LogError("No character spawn is set in: " + name);
+        }
     }
 
     public void OnActiveStatusChanged(bool active)
@@ -25,13 +32,10 @@ public class Scene : MonoBehaviour
         {
             interactables.SetActive(active);
         }
-    }
 
-    public void SetInteractablesVisible(bool visible)
-    {
-        if(interactables)
+        if(active && characterSpawn)
         {
-            interactables.SetActive(visible);
+            characterSpawn.TrySpawn();
         }
     }
 }

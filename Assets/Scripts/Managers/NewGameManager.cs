@@ -149,6 +149,9 @@ public class NewGameManager : MonoBehaviour
     //public delegate void OnTimeChangedDelegate(float time);
     //public event OnTimeChangedDelegate onTimeChanged;
 
+    public PlayableCharacterData TEST_PlayableCharacter;
+    public PlayableCharacterData PlayableCharacterData { get { return TEST_PlayableCharacter; } }
+
     public LocationMarker CurrentLocationObject
     {
         get

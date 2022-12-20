@@ -38,4 +38,9 @@ public class Scene : MonoBehaviour
             characterSpawn.TrySpawn();
         }
     }
+
+    public void SetPlayableCharacterVisible(bool visible)
+    {
+        characterSpawn.SetCharactersVisible(visible);
+    }
 }

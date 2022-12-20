@@ -25,4 +25,12 @@ public class PlayableCharacterSpawn : MonoBehaviour
 
         return false;
     }
+
+    public void SetCharactersVisible(bool visible)
+    {
+        if(spawnedCharacter)
+        {
+            spawnedCharacter.SetActive(visible);
+        }
+    }
 }

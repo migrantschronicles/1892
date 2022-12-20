@@ -9,14 +9,14 @@ public class DialogButton : MonoBehaviour
     private Button dialogButton;
     [SerializeField, Tooltip("The scene to open for this dialog, or leave empty for current scene")]
     private string sceneName;
-    [SerializeField, Tooltip("The scene which should be layered on top of the blur (the characters left and right)")]
-    private string additiveSceneName;
     [SerializeField, Tooltip("The characters involved in the scene (basically everything you want to disappear when the dialog starts).")]
     private GameObject[] hideObjects;
+    [SerializeField, Tooltip("The prefab that will be instantiated on the left side of the dialog.")]
+    private GameObject dialogPrefab;
 
     public string SceneName { get { return sceneName; } }
-    public string AdditiveSceneName { get { return additiveSceneName; } }
     public IEnumerable<GameObject> HideObjects { get { return hideObjects; } }
+    public GameObject DialogPrefab { get { return dialogPrefab; } }
 
 #if UNITY_EDITOR
     private void Validate()
@@ -39,12 +39,9 @@ public class DialogButton : MonoBehaviour
             }
         }
 
-        if(!string.IsNullOrWhiteSpace(additiveSceneName))
+        if(dialogPrefab == null)
         {
-            if(!LevelInstance.Instance.HasScene(additiveSceneName))
-            {
-                DialogSystem.LogValidateError($"The additive scene '{additiveSceneName}' does not exist", gameObject);
-            }
+            DialogSystem.LogValidateError($"The dialog prefab was not set", gameObject);
         }
     }
 #endif

@@ -423,6 +423,7 @@ public class NewGameManager : MonoBehaviour
         day++;
         SetDate(date.AddDays(1));
         SetMorningTime();
+        Handheld.Vibrate();
     }
 
     public void SetMorningTime() 

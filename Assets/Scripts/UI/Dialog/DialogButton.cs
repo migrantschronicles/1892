@@ -13,10 +13,13 @@ public class DialogButton : MonoBehaviour
     private GameObject[] hideObjects;
     [SerializeField, Tooltip("The prefab that will be instantiated on the left side of the dialog.")]
     private GameObject dialogPrefab;
+    [SerializeField, Tooltip("The language of the dialoges")]
+    private DialogLanguage language = DialogLanguage.Native;
 
     public string SceneName { get { return sceneName; } }
     public IEnumerable<GameObject> HideObjects { get { return hideObjects; } }
     public GameObject DialogPrefab { get { return dialogPrefab; } }
+    public DialogLanguage Language { get { return language; } }
 
 #if UNITY_EDITOR
     private void Validate()

@@ -112,11 +112,10 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newHeight);
     }
 
-    public void SetContent(DialogLine line)
+    public void SetContent(DialogLine line, string content)
     {
         Line = line;
-        // No need to add callback when the language changed, since the language can't change during a dialog.
-        text.text = LocalizationManager.Instance.GetLocalizedString(line.Text);
+        text.text = content;
         isLeft = line.IsLeft;
 
         UpdateHeight();

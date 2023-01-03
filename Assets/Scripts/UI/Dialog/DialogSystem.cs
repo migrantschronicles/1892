@@ -4,6 +4,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+public enum DialogLanguage
+{
+    Native,
+    English,
+    Italian
+}
+
 /**
  * The dialog system that controls the dialogs in one level. 
  * This is attached to the scroll view and exists once per level (does not use DontDestroyOnLoad).
@@ -119,6 +126,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private List<string> conditions = new List<string>();
 
     private Dialog currentDialog;
+    private DialogLanguage currentDialogLanguage = DialogLanguage.Native;
     private DialogElement currentElement;
     private DialogBubble currentBubble;
     private DialogDecision currentDecision;
@@ -151,9 +159,9 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
      * Goes through each child of the parent and plays the first dialog that meets its conditions.
      * The parent only should have Dialogs as children.
      */
-    public void StartDialog(GameObject parent)
+    public void StartDialog(GameObject parent, DialogLanguage language)
     {
-        StartDialog(parent, false);
+        StartDialog(parent, language, false);
     }
 
     /**
@@ -162,7 +170,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
      * The parent only should have Dialogs as children.
      * @param additive If true, adds the dialog below the existing dialog bubbles. If false, clears all existing dialog bubbles.
      */
-    public void StartDialog(GameObject parent, bool additive)
+    public void StartDialog(GameObject parent, DialogLanguage language, bool additive)
     {
         Activate();
         for (int i = 0; i < parent.transform.childCount; ++i)
@@ -170,6 +178,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
             Dialog dialog = parent.transform.GetChild(i).GetComponent<Dialog>();
             if(dialog.Condition.Test())
             {
+                currentDialogLanguage = language;
                 StartDialog(dialog, additive);
                 return;
             }
@@ -379,14 +388,27 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         contentTransform.anchoredPosition = new Vector2(contentTransform.anchoredPosition.x, newY);
     }
 
+    private string ConditionallyEstrangeLine(DialogLine line)
+    {
+        string text = LocalizationManager.Instance.GetLocalizedString(line.Text);
+        if(line.IsLeft && !NewGameManager.Instance.UnderstandsDialogLanguage(currentDialogLanguage))
+        {
+            // Estrange the text
+            text = NewGameManager.Instance.EstrangeText(text);
+        }
+
+        return text;
+    }
+
     private void ProcessLine(DialogLine line)
     {
         GameObject newLine = Instantiate(linePrefab, content.transform);
         currentBubble = newLine.GetComponent<DialogBubble>();
-        currentBubble.SetContent(line);
+        string text = ConditionallyEstrangeLine(line);
+        currentBubble.SetContent(line, text);
         NewGameManager.Instance.conditions.AddConditions(line.SetConditions);
         OnContentAdded(newLine);
-        StartTextAnimation(currentBubble, LocalizationManager.Instance.GetLocalizedString(line.Text));
+        StartTextAnimation(currentBubble, text);
         AudioManager.Instance.PlayFX(lineClip);
 
         if(IsLastLine(line))

@@ -430,15 +430,9 @@ public class LevelInstance : MonoBehaviour
         NewGameManager.Instance.SetPaused(true);
     }
 
-    public void StartDialog(GameObject dialogParent)
+    public void StartDialog(GameObject dialogParent, DialogLanguage language)
     {
-        dialogSystem.StartDialog(dialogParent);
-        OnDialogStarted();
-    }
-
-    public void StartDialog(Dialog dialog)
-    {
-        dialogSystem.StartDialog(dialog);
+        dialogSystem.StartDialog(dialogParent, language);
         OnDialogStarted();
     }
 
@@ -457,7 +451,7 @@ public class LevelInstance : MonoBehaviour
             go.SetActive(false);
         }
 
-        StartDialog(button.gameObject);
+        StartDialog(button.gameObject, button.Language);
 
         // Set foreground scene
         foregroundScene.SetCharacters(button.DialogPrefab, NewGameManager.Instance.PlayableCharacterData.dialogPrefab);

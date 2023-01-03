@@ -133,6 +133,12 @@ public class NewGameManager : MonoBehaviour
     [Tooltip("The range of item amount that can be stolen")]
     public Vector2Int stolenAmountRange;
 
+    // Dialog languages
+    [Tooltip("A random amount of this range of words is omitted when estranging the text")]
+    public Vector2Int estrangeWordsOmitCount = new Vector2Int(1, 5);
+    [Tooltip("The probability that words from the start will be omitted")]
+    public float omitWordsFromStartProbability = 0.5f;
+
     // Events
     public delegate void OnDiaryEntryAdded(DiaryEntry entry);
     public event OnDiaryEntryAdded onDiaryEntryAdded;
@@ -781,5 +787,68 @@ public class NewGameManager : MonoBehaviour
         }
         Debug.Log(stolenItems);
         return stolenItems;
+    }
+
+    /**
+     * @return True if the player character understands the language (e.g. is native or has dictionary).
+     */
+    public bool UnderstandsDialogLanguage(DialogLanguage language)
+    {
+        switch(language)
+        {
+            case DialogLanguage.Native:
+                return true;
+
+            case DialogLanguage.English:
+                return conditions.HasCondition("english");
+
+            case DialogLanguage.Italian:
+                return conditions.HasCondition("italian");
+        }
+
+        return false;
+    }
+
+    /**
+     * Estranges some text (e.g. Hello this is a test -> ... this ...).
+     * Is implemented here in case there are differences between the playable characters.
+     */
+    public string EstrangeText(string text)
+    {
+        string[] parts = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        string result = "";
+
+        int omitWords = 0;
+        if(UnityEngine.Random.value < omitWordsFromStartProbability)
+        {
+            omitWords = UnityEngine.Random.Range(estrangeWordsOmitCount.x, estrangeWordsOmitCount.y);
+            result += "...";
+        }
+
+        for(int i = 0; i < parts.Length; ++i)
+        {
+            if(omitWords > 0)
+            {
+                --omitWords;
+                continue;
+            }
+            else
+            {
+                if(result.Length > 0)
+                {
+                    result += " ";
+                }
+
+                result += parts[i];
+                omitWords = UnityEngine.Random.Range(estrangeWordsOmitCount.x, estrangeWordsOmitCount.y);
+
+                if(i < parts.Length - 1)
+                {
+                    result += " ...";
+                }
+            }
+        }
+
+        return result;
     }
 }

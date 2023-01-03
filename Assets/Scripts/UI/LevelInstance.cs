@@ -45,6 +45,11 @@ enum OverlayMode
  * In the Interactables object, you can add all of the buttons for the scene (DialogButton / ShopButton).
  * Then you need to assign the SceneInteractables instance to the Scene component of the scene.
  * The Interactables automatically hide when a dialog is started or a shop is opened.
+ * To add the playable character to the scene, add a PlayableCharacterSpawn to the scene (probably in the Middleground),
+ * and set the CharacterSpawn in the Scene component. This automatically spawns the currently selected character.
+ * You can have multiple different prefabs for your playable characters (e.g. the family has multiple arrangements of childs).
+ * Add these prefabs to the PlayableCharacterData with a name, and in the PlayableCharacterSpawn you can set the name of the
+ * prefab / arrangement you want to spawn in this scene.
  * 
  * In the LevelInstance object, you can now set the default scene (the main scene).
  * 
@@ -63,13 +68,10 @@ enum OverlayMode
  * If the field stays empty, the current scene stays.
  * The dialog button automatically opens the dialog on click.
  * It also adds a blur to the background.
- * If you want to have characters on the left and right during a dialog, create a new foreground scene.
- * Instantiate the prefab ForegroundScene in the ForegroundScenes game object of the LevelInstance.
- * You can add your characters to the Left and Right children that will appear to the left and right of the dialog.
- * The children of Left and Right are visible above the blur.
- * Important: Set the Layer to Foreground of each gameobject (sprite) you add to Left and Right, otherwise they will not be visible.
- * Then go to the dialog button and set the AdditiveSceneName to the name of the new scene.
- * This is the scene that will be displayed on top of the blur.
+ * To have your characters on the left and right of the dialog, it is important that you set DialogPrefab of the DialogButton.
+ * This is the prefab that will be automatically spawned on the left of the dialog (the NPC).
+ * The playable character is automatically spawned to the right of the dialog.
+ * Also add the sprite of the character you are talking to to the HideObjects.
  * If you want e.g. the characters that are involved in the dialog to disappear, you can add them to the DialogButton::HideObjects.
  * The objects in this list are hidden when the dialog starts and shown again when the dialog stops, so you can
  * hide characters that are in the additive scene anyway.
@@ -91,7 +93,7 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject sceneParent;
     [SerializeField]
-    private GameObject foregroundSceneParent;
+    private ForegroundScene foregroundScene;
     [SerializeField]
     private Button backButton;
     [SerializeField]
@@ -122,7 +124,6 @@ public class LevelInstance : MonoBehaviour
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
     private Shop currentShop;
-    private Scene currentAdditiveScene = null;
     private IEnumerable<GameObject> currentHiddenObjects;
     private string previousScene;
     private OverlayMode overlayMode = OverlayMode.None;
@@ -139,6 +140,10 @@ public class LevelInstance : MonoBehaviour
     public Shop CurrentShop { get { return currentShop; } }
     public Canvas Canvas { get { return canvas; } }
     public RectTransform CanvasRect { get { return canvas.GetComponent<RectTransform>(); } }
+    public Scene CurrentScene { get { return currentScene; } }
+
+    public delegate void OnSceneChangedEvent(Scene scene);
+    public event OnSceneChangedEvent onSceneChanged;
 
     private void Awake()
     {
@@ -148,15 +153,6 @@ public class LevelInstance : MonoBehaviour
         for (int i = 0; i < sceneParent.transform.childCount; ++i)
         {
             Scene scene = sceneParent.transform.GetChild(i).GetComponent<Scene>();
-            if (scene != null)
-            {
-                scenes.Add(scene);
-            }
-        }
-
-        for (int i = 0; i < foregroundSceneParent.transform.childCount; ++i)
-        {
-            Scene scene = foregroundSceneParent.transform.GetChild(i).GetComponent<Scene>();
             if (scene != null)
             {
                 scenes.Add(scene);
@@ -187,6 +183,7 @@ public class LevelInstance : MonoBehaviour
             scene.gameObject.SetActive(false);
         }
 
+        foregroundScene.gameObject.SetActive(false);
         OpenScene(defaultScene);
 
         dialogSystem.gameObject.SetActive(false);
@@ -240,18 +237,13 @@ public class LevelInstance : MonoBehaviour
             }
 
             // Readd all the necessary elements for the dialog
-
-            if(currentAdditiveScene)
-            {
-                currentAdditiveScene.gameObject.SetActive(true);
-            }
-
             SetBackButtonVisible(true);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
             blur.SetEnabled(true);
             overlayMode = OverlayMode.None;
             dialogSystem.gameObject.SetActive(true);
             dialogSystem.OnOverlayClosed();
+            foregroundScene.gameObject.SetActive(true);
         }
         else
         {
@@ -263,14 +255,7 @@ public class LevelInstance : MonoBehaviour
                     dialogSystem.OnClose();
                     AudioManager.Instance.PlayFX(dialogSystem.closeClip);
                     dialogSystem.gameObject.SetActive(false);
-
-                    if (currentAdditiveScene)
-                    {
-                        // Hide the additive scene that was enabled during a dialog.
-                        currentAdditiveScene.OnActiveStatusChanged(false);
-                        currentAdditiveScene.gameObject.SetActive(false);
-                        currentAdditiveScene = null;
-                    }
+                    foregroundScene.gameObject.SetActive(false);
 
                     if (previousScene != null && currentScene.SceneName != previousScene)
                     {
@@ -279,6 +264,7 @@ public class LevelInstance : MonoBehaviour
                         previousScene = null;
                     }
 
+                    currentScene.SetPlayableCharacterVisible(true);
                     if (currentHiddenObjects != null)
                     {
                         // Reactivate all the characters that were hidden during the dialog.
@@ -429,26 +415,8 @@ public class LevelInstance : MonoBehaviour
         currentScene = scene;
         currentScene.gameObject.SetActive(true);
         currentScene.OnActiveStatusChanged(true);
-    }
 
-    public void OpenSceneAdditive(string sceneName)
-    {
-        Scene scene = GetScene(sceneName);
-        if(scene == null)
-        {
-            Debug.LogError($"Scene \"{sceneName}\" could not be found");
-            return;
-        }
-
-        if(currentAdditiveScene)
-        {
-            currentAdditiveScene.OnActiveStatusChanged(false);
-            currentAdditiveScene.gameObject.SetActive(false);
-        }
-
-        currentAdditiveScene = scene;
-        currentAdditiveScene.gameObject.SetActive(true);
-        currentAdditiveScene.OnActiveStatusChanged(true);
+        onSceneChanged?.Invoke(currentScene);
     }
 
     private void OnDialogStarted()
@@ -482,6 +450,7 @@ public class LevelInstance : MonoBehaviour
             OpenScene(button.SceneName);
         }
 
+        currentScene.SetPlayableCharacterVisible(false);
         currentHiddenObjects = button.HideObjects;
         foreach(GameObject go in currentHiddenObjects)
         {
@@ -490,10 +459,9 @@ public class LevelInstance : MonoBehaviour
 
         StartDialog(button.gameObject);
 
-        if(!string.IsNullOrWhiteSpace(button.AdditiveSceneName))
-        {
-            OpenSceneAdditive(button.AdditiveSceneName);
-        }
+        // Set foreground scene
+        foregroundScene.SetCharacters(button.DialogPrefab, NewGameManager.Instance.PlayableCharacterData.dialogPrefab);
+        foregroundScene.gameObject.SetActive(true);
 
         AudioManager.Instance.PlayFX(dialogSystem.openClip);
     }
@@ -523,10 +491,7 @@ public class LevelInstance : MonoBehaviour
             // This is an overlay (a shop was opened during a dialog (the corresponding decision option was selected), so hide the dialog).
             overlayMode = OverlayMode.Shop;
             dialogSystem.gameObject.SetActive(false);
-            if(currentAdditiveScene)
-            {
-                currentAdditiveScene.gameObject.SetActive(false);
-            }
+            foregroundScene.gameObject.SetActive(false);
 
             currentShop.onTradeAccepted += OnTradeAccepted;
         }
@@ -564,10 +529,7 @@ public class LevelInstance : MonoBehaviour
             ui.OpenDiaryImmediately(type);
             overlayMode = OverlayMode.Diary;
             dialogSystem.gameObject.SetActive(false);
-            if (currentAdditiveScene)
-            {
-                currentAdditiveScene.gameObject.SetActive(false);
-            }
+            foregroundScene.gameObject.SetActive(false);
         }
         else
         {

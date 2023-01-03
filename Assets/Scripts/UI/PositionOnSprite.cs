@@ -4,8 +4,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PositionOnSpriteMode
+{
+    Sprite,
+    PlayableCharacter
+}
+
 public class PositionOnSprite : MonoBehaviour
 {
+    [SerializeField]
+    private PositionOnSpriteMode mode = PositionOnSpriteMode.Sprite;
     [SerializeField]
     private SpriteRenderer sprite;
     [SerializeField]
@@ -27,7 +35,43 @@ public class PositionOnSprite : MonoBehaviour
 
     private void Start()
     {
-        UpdatePosition();
+        switch(mode)
+        {
+            case PositionOnSpriteMode.Sprite:
+                UpdatePosition();
+                break;
+
+            case PositionOnSpriteMode.PlayableCharacter:
+                LevelInstance.Instance.onSceneChanged += OnSceneChanged;
+                if(LevelInstance.Instance.CurrentScene)
+                {
+                    OnSceneChanged(LevelInstance.Instance.CurrentScene);
+                }
+                break;
+        }
+    }
+    
+    private bool IsInSceneInteractables(Scene scene)
+    {
+        Transform parent = transform.parent;
+        while(parent != null)
+        {
+            if(parent.gameObject == scene.Interactables)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void OnSceneChanged(Scene scene)
+    {
+        if(scene && IsInSceneInteractables(scene))
+        {
+            LevelInstance.Instance.onSceneChanged -= OnSceneChanged;
+            UpdatePosition();
+        }
     }
 
 #if UNITY_EDITOR && UPDATE_POSITION_IN_EDITOR
@@ -44,17 +88,54 @@ public class PositionOnSprite : MonoBehaviour
 
     private void UpdatePosition()
     {
-        if(sprite)
+        switch(mode)
         {
-            Vector2 minAnchoredPosition = WorldToAnchoredPosition(sprite.bounds.min);
-            Vector2 maxAnchoredPosition = WorldToAnchoredPosition(sprite.bounds.max);
-            Vector2 interpolatedPosition = new Vector2(
-                Mathf.Lerp(minAnchoredPosition.x, maxAnchoredPosition.x, normalizedPosition.x),
-                Mathf.Lerp(minAnchoredPosition.y, maxAnchoredPosition.y, normalizedPosition.y)
-                );
+            case PositionOnSpriteMode.Sprite:
+            {
+                if (sprite)
+                {
+                    UpdatePositionToBounds(sprite.bounds);
+                }
+                break;
+            }
 
-            rectTransform.anchoredPosition = interpolatedPosition;
+            case PositionOnSpriteMode.PlayableCharacter:
+            {
+                GameObject spawnedCharacter = LevelInstance.Instance.CurrentScene.SpawnedCharacter;
+                SpriteRenderer[] renderers = spawnedCharacter.GetComponentsInChildren<SpriteRenderer>(true);
+                Bounds? bounds = null;
+                foreach(SpriteRenderer renderer in renderers)
+                {
+                    if(bounds != null)
+                    {
+                        bounds.Value.Encapsulate(renderer.bounds);
+                    }
+                    else
+                    {
+                        bounds = renderer.bounds;
+                    }
+                }
+
+                if(bounds != null)
+                {
+                    UpdatePositionToBounds(bounds.Value);
+                }
+
+                break;
+            }
         }
+    }
+
+    private void UpdatePositionToBounds(Bounds bounds)
+    {
+        Vector2 minAnchoredPosition = WorldToAnchoredPosition(bounds.min);
+        Vector2 maxAnchoredPosition = WorldToAnchoredPosition(bounds.max);
+        Vector2 interpolatedPosition = new Vector2(
+            Mathf.Lerp(minAnchoredPosition.x, maxAnchoredPosition.x, normalizedPosition.x),
+            Mathf.Lerp(minAnchoredPosition.y, maxAnchoredPosition.y, normalizedPosition.y)
+            );
+
+        rectTransform.anchoredPosition = interpolatedPosition;
     }
 
     private Vector2 WorldToAnchoredPosition(Vector2 worldPosition)

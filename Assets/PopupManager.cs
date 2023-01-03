@@ -9,8 +9,10 @@ public class PopupManager : MonoBehaviour
     public GameObject endDayPopup;
     public GameObject startDayHostelPopup;
     public GameObject startDayOutsidePopup;
-    public GameObject foodDistributePopup;
+    public GameObject foodDistributePopupHostel;
+    public GameObject foodDistributePopupOutside;
     public GameObject endGamePopup;
+    public GameObject backBTNEndDay;
     public GameObject nightTransition;
     public float nightTime = 3f;
 
@@ -18,8 +20,9 @@ public class PopupManager : MonoBehaviour
 
     public ItemCategory foodCategory;
     private int foodAmount;
-    public Text foodAmountText;
-    private int moneyToBePaid = 10;
+    public Text foodAmountTextHostel;
+    public Text foodAmountTextOutside;
+    private int moneyToBePaid = 0;
     public Text moneyText;
     public Text stolenItemsText;
     public GameObject nonStolenItemsTXT; // Represents the text GO
@@ -30,35 +33,55 @@ public class PopupManager : MonoBehaviour
     public int girlFoodAmount=0;
     public int purchasedFoodAmount = 0;
 
-    public GameObject motherFood;
-    public GameObject boyFood;
-    public GameObject girlFood;
+    public GameObject motherFoodHostel; // Food icon for mother in Hostel
+    public GameObject boyFoodHostel; // Food icon for boy in Hostel
+    public GameObject girlFoodHostel; // Food icon for girl in Hostel
+    public GameObject motherFoodOutside; // Food icon for mother in Outside
+    public GameObject boyFoodOutside; // Food icon for boy in Outside
+    public GameObject girlFoodOutside; // Food icon for girl in Outside
     public GameObject deductFoodBTN;
     public GameObject addFoodBTN;
+
 
 
     // Update is called once per frame
     void Update()
     {
-        if (foodDistributePopup.activeSelf == true)
+        if(endDayPopup.activeSelf == true && NewGameManager.Instance.hour < NewGameManager.Instance.hoursPerDay) 
         {
-            foodAmountText.text = foodAmount.ToString();
+            backBTNEndDay.SetActive(true);
+        }
+        else { backBTNEndDay.SetActive(false); }
+
+        if (foodDistributePopupHostel.activeSelf == true)
+        {
+            foodAmountTextHostel.text = foodAmount.ToString();
             moneyText.text = moneyToBePaid.ToString();
+        }
+
+        if (foodDistributePopupOutside.activeSelf == true)
+        {
+            foodAmountTextOutside.text = foodAmount.ToString();
         }
     }
 
     public void CloseAllPopups() 
     {
+        backBTNEndDay.SetActive(false);
         endDayPopup.SetActive(false);
         startDayHostelPopup.SetActive(false);
         startDayOutsidePopup.SetActive(false);
-        foodDistributePopup.SetActive(false);
+        foodDistributePopupHostel.SetActive(false);
+        foodDistributePopupOutside.SetActive(false);
         endGamePopup.SetActive(false);
 
         // Reset Food distribution 
-        motherFood.SetActive(false);
-        boyFood.SetActive(false);
-        girlFood.SetActive(false);
+        motherFoodHostel.SetActive(false);
+        boyFoodHostel.SetActive(false);
+        girlFoodHostel.SetActive(false);
+        motherFoodOutside.SetActive(false);
+        boyFoodOutside.SetActive(false);
+        girlFoodOutside.SetActive(false);
         motherFoodAmount = 0;
         boyFoodAmount = 0;
         girlFoodAmount = 0;
@@ -98,14 +121,24 @@ public class PopupManager : MonoBehaviour
         NewGameManager.Instance.SetPaused(false);
     }
 
-    public void OpenFoodDistributePopUp()
+    public void OpenFoodDistributePopUpHostel()
     {
         CloseAllPopups();
-        foodDistributePopup.SetActive(true);
+        foodDistributePopupHostel.SetActive(true);
         NewGameManager.Instance.SetPaused(true);
-
+        moneyToBePaid = 10;
         foodAmount = NewGameManager.Instance.inventory.GetItemCategoryCount(foodCategory);
-        foodAmountText.text = foodAmount.ToString();
+        foodAmountTextHostel.text = foodAmount.ToString();
+    }
+
+    public void OpenFoodDistributePopUpOutside()
+    {
+        CloseAllPopups();
+        foodDistributePopupOutside.SetActive(true);
+        NewGameManager.Instance.SetPaused(true);
+        moneyToBePaid = 0;
+        foodAmount = NewGameManager.Instance.inventory.GetItemCategoryCount(foodCategory);
+        foodAmountTextOutside.text = foodAmount.ToString();
     }
 
     public void AddFood() 
@@ -128,17 +161,22 @@ public class PopupManager : MonoBehaviour
     {
         
         if(foodAmount>0 && motherFoodAmount == 0) { 
-            motherFood.SetActive(true);
+            motherFoodHostel.SetActive(true);
+            motherFoodOutside.SetActive(true);
             motherFoodAmount++;
             foodAmount--;
-            foodAmountText.text = foodAmount.ToString();
+            foodAmountTextHostel.text = foodAmount.ToString();
+            foodAmountTextOutside.text = foodAmount.ToString();
+
         }
         else if(motherFoodAmount != 0)
         {
-            motherFood.SetActive(false);
+            motherFoodHostel.SetActive(false);
+            motherFoodOutside.SetActive(false);
             motherFoodAmount--;
             foodAmount++;
-            foodAmountText.text = foodAmount.ToString();
+            foodAmountTextHostel.text = foodAmount.ToString();
+            foodAmountTextOutside.text = foodAmount.ToString();
         }
     }
 
@@ -146,17 +184,21 @@ public class PopupManager : MonoBehaviour
     {
         if (foodAmount > 0 && boyFoodAmount == 0)
         {
-            boyFood.SetActive(true);
+            boyFoodHostel.SetActive(true);
+            boyFoodOutside.SetActive(true);
             boyFoodAmount++;
             foodAmount--;
-            foodAmountText.text = foodAmount.ToString();
+            foodAmountTextHostel.text = foodAmount.ToString();
+            foodAmountTextOutside.text = foodAmount.ToString();
         }
         else if(boyFoodAmount != 0)
         {
-            boyFood.SetActive(false);
+            boyFoodHostel.SetActive(false);
+            boyFoodOutside.SetActive(false);
             boyFoodAmount--;
             foodAmount++;
-            foodAmountText.text = foodAmount.ToString();
+            foodAmountTextHostel.text = foodAmount.ToString();
+            foodAmountTextOutside.text = foodAmount.ToString();
         }
     }
 
@@ -164,17 +206,21 @@ public class PopupManager : MonoBehaviour
     {
         if (foodAmount > 0 && girlFoodAmount == 0)
         {
-            girlFood.SetActive(true);
+            girlFoodHostel.SetActive(true);
+            girlFoodOutside.SetActive(true);
             girlFoodAmount++;
             foodAmount--;
-            foodAmountText.text = foodAmount.ToString();
+            foodAmountTextHostel.text = foodAmount.ToString();
+            foodAmountTextOutside.text = foodAmount.ToString();
         }
         else if (girlFoodAmount != 0)
         {
-            girlFood.SetActive(false);
+            girlFoodHostel.SetActive(false);
+            girlFoodOutside.SetActive(false);
             girlFoodAmount--;
             foodAmount++;
-            foodAmountText.text = foodAmount.ToString();
+            foodAmountTextHostel.text = foodAmount.ToString();
+            foodAmountTextOutside.text = foodAmount.ToString();
         }
     }
 
@@ -187,7 +233,7 @@ public class PopupManager : MonoBehaviour
 
     public void SleepOutsideMethod()
     {
-        NewGameManager.Instance.SleepOutside();// motherFoodAmount, boyFoodAmount, girlFoodAmount);
+        NewGameManager.Instance.SleepOutside(motherFoodAmount, boyFoodAmount, girlFoodAmount);
         StartCoroutine(SleepOutsideTransition());
     }
 

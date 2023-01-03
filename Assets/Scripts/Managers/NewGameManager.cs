@@ -247,6 +247,7 @@ public class NewGameManager : MonoBehaviour
         if (hour >= hoursPerDay)
         {
             popups.OpenEndDayPopUp();
+            popups.backBTNEndDay.SetActive(false);
         }
 
         onTimeChanged?.Invoke(hour, minutes);
@@ -403,8 +404,13 @@ public class NewGameManager : MonoBehaviour
         onDateChanged?.Invoke(date);
     }
 
-    public void SleepOutside() {
-        
+    public void SleepOutside(int motherFoodAmount, int boyFoodAmount, int girlFoodAmount) {
+        int totalFoodUsed = motherFoodAmount + boyFoodAmount + girlFoodAmount;
+
+        if (totalFoodUsed != 0) { 
+            // Apply Health
+            inventory.RemoveItemCategory(foodCategory, totalFoodUsed);
+        }
     }
 
     public void SleepInHostel(int cost,int purchasedFoodAmount, int motherFoodAmount, int boyFoodAmount, int girlFoodAmount) {

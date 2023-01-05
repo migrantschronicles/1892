@@ -155,6 +155,9 @@ public class NewGameManager : MonoBehaviour
     public delegate void OnDateChangedDelegate(DateTime date);
     public event OnDateChangedDelegate onDateChanged;
 
+    public delegate void OnNewDayDelegate();
+    public event OnNewDayDelegate onNewDay;
+
     //public delegate void OnTimeChangedDelegate(float time);
     //public event OnTimeChangedDelegate onTimeChanged;
 
@@ -456,6 +459,7 @@ public class NewGameManager : MonoBehaviour
     {
         Debug.Log("Go to next day here, via clock");
         day++;
+        onNewDay?.Invoke();
         SetDate(date.AddDays(1));
         SetMorningTime();
         Vibrate();

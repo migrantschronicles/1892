@@ -1,7 +1,32 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
+/**
+ * Stores conditions that are used in various systems.
+ * Conditions are basically only a string, and you can set a condition (add it to a list) and check whether that condition exists (is in the list).
+ * 
+ * There are special conditions you can use for retrieving health information. These conditions need to start with 'health:'.
+ * Then you can optionally specify for which person you want to retrieve health information. These are currently supported:
+ *      * 'main:': The main protagonist (e.g. Elis as the mother of the family)
+ *      * 'side:': The side character(s) (e.g. Mattis and Mreis of the family)
+ * Then you can specify which key you want to check for. These are currently supported:
+ *      * 'dayswithoutenoughfood': How many days the character(s) did not have enough food in a row
+ * After that (depending on the key) you can add a comparison. These are currently supported:
+ *      * '=': Only makes sense for single protagonist queries
+ *      * '!=': Only makes sense for single protagonist queries
+ *      * '<'
+ *      * '<='
+ *      * '>'
+ *      * '>='
+ * Examples of a health condition:
+ *      * 'health:dayswithoutenoughfood>2': Checks if any protagonist did not have enough food for more than 2 days
+ *      * 'health:main:dayswithoutenoughfood=2': Checks if the main protagonist did not have enough food for exactly 2 days
+ *      * 'health:side:dayswithoutenoughfood<=2': Checks if any of the side characters did not have enough food for less than 2 days
+ * Warning: It is expected that you don't have errors in the condition and follow exactly the rules, i.e. no whitespaces, nothing other than expected.
+ */
 public class DialogConditionProvider
 {
     class OnConditionsChangedEventData
@@ -134,12 +159,119 @@ public class DialogConditionProvider
         }
     }
 
+    enum Operation
+    {
+        None,
+        Equals,
+        NotEquals,
+        Greater,
+        GreaterEqual,
+        Less,
+        LessEqual
+    }
+
+    private void SplitOperation(string condition, out string key, out Operation operation, out string value)
+    {
+        key = condition;
+        operation = Operation.None;
+        value = "";
+        for(int i = 0; i < condition.Length; i++)
+        {
+            switch(condition[i])
+            {
+                case '<':
+                    key = condition[..i];
+                    operation = Operation.Less;
+                    break;
+
+                case '>':
+                    key = condition[..i];
+                    operation = Operation.Greater;
+                    break;
+
+                case '=':
+                    switch(operation)
+                    {
+                        case Operation.Greater: operation = Operation.GreaterEqual; break;
+                        case Operation.Less: operation = Operation.LessEqual; break;
+                        case Operation.None: operation = Operation.Equals; break;
+                    }
+                    break;
+
+                case '!':
+                    key = condition[..i];
+                    operation = Operation.NotEquals;
+                    break;
+
+                default:
+                    if(operation != Operation.None)
+                    {
+                        value = condition[i..];
+                        return;
+                    }
+                    break;
+            }
+        }
+    }
+
+    private bool Compare(int key, Operation operation, int value)
+    {
+        switch(operation)
+        {
+            case Operation.Equals: return key == value;
+            case Operation.NotEquals: return key != value;
+            case Operation.Greater: return key > value;
+            case Operation.Less: return key < value;
+            case Operation.GreaterEqual: return key >= value;
+            case Operation.LessEqual: return key <= value;
+        }
+
+        return false;
+    }
+
+    private bool HasHealthCondition(string condition)
+    {
+        IEnumerable<CharacterHealthStatus> affectedCharacters = NewGameManager.Instance.healthStatus.Characters;
+
+        // Filter by character
+        if(condition.StartsWith("main:", StringComparison.OrdinalIgnoreCase))
+        {
+            condition = condition.Substring(5);
+            affectedCharacters = affectedCharacters.Where(status => status.CharacterData.isMainProtagonist);
+        }
+        else if(condition.StartsWith("side:", StringComparison.OrdinalIgnoreCase))
+        {
+            condition = condition.Substring(5);
+            affectedCharacters = affectedCharacters.Where(status => !status.CharacterData.isMainProtagonist);
+        }
+
+        SplitOperation(condition, out string key, out Operation operation, out string value);
+
+        if(key.Equals("dayswithoutenoughfood", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach(CharacterHealthStatus status in affectedCharacters)
+            {
+                if (Compare(status.HungryStatus.DaysWithoutEnoughFood, operation, int.Parse(value)))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Checks if one condition is met. Does not care whether it is met globally or locally.
      * If condition is empty, it is considered to be met.
      */
     public bool HasCondition(string condition)
     {
+        if(condition.StartsWith("health:"))
+        {
+            return HasHealthCondition(condition[7..]);
+        }
+
         if (string.IsNullOrWhiteSpace(condition))
         {
             return true;

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class EndOfDayHealthData
@@ -41,6 +42,7 @@ public class CharacterHealthStatus
     private HealthStatus_Hungry hungryStatus = new HealthStatus_Hungry();
 
     public CharacterHealthData CharacterData { get; private set; }
+    public HealthStatus_Hungry HungryStatus { get { return hungryStatus; } }
 
     public void Init(CharacterHealthData characterData)
     {
@@ -56,6 +58,9 @@ public class CharacterHealthStatus
 public class HealthStatus
 {
     private List<CharacterHealthStatus> characters = new List<CharacterHealthStatus>();
+    private int dialogsStartedToday = 0;
+
+    public IEnumerable<CharacterHealthStatus> Characters { get { return characters; } }
 
     public void Init(IEnumerable<CharacterHealthData> characterData)
     {
@@ -95,10 +100,45 @@ public class HealthStatus
                 }
             }
         }
+
+        // Reset the number of dialogs
+        dialogsStartedToday = 0;
     }
 
     private CharacterHealthStatus GetHealthStatus(string name)
     {
         return characters.Find(status => status.CharacterData.name == name);
+    }
+
+    public CharacterHealthData TryStartDialog()
+    {
+        ++dialogsStartedToday;
+
+        // Go through the characters and find one that is hungry for 2 days or more.
+        CharacterHealthStatus responsibleCharacter = null;
+        foreach(CharacterHealthStatus status in characters)
+        {
+            // Check if the characters didn't have food for 2 days.
+            if(status.HungryStatus.DaysWithoutEnoughFood >= 2)
+            {
+                // If the main character is hungry for more than 2 days, we want to display him as the reason, even if a child is hungry too.
+                if(responsibleCharacter == null || !responsibleCharacter.CharacterData.isMainProtagonist)
+                {
+                    responsibleCharacter = status;
+                }
+            }
+        }
+
+        // If responsibleCharacter is not null, it means that at least one character is hungry for more than 2 days, so the player can only start 2 dialogs.
+        if(responsibleCharacter != null)
+        {
+            if(dialogsStartedToday > 2)
+            {
+                return responsibleCharacter.CharacterData;
+            }
+        }
+
+        // No character is hungry for more than 2 days or the player has started less than 2 dialogs.
+        return null;
     }
 }

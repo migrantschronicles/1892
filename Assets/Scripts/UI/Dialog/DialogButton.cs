@@ -16,6 +16,8 @@ public class DialogButton : MonoBehaviour
     [SerializeField, Tooltip("The language of the dialoges")]
     private DialogLanguage language = DialogLanguage.Native;
 
+    private bool savedCanStartToday = false;
+
     public string SceneName { get { return sceneName; } }
     public IEnumerable<GameObject> HideObjects { get { return hideObjects; } }
     public GameObject DialogPrefab { get { return dialogPrefab; } }
@@ -59,6 +61,29 @@ public class DialogButton : MonoBehaviour
 
     private void OnStartDialog()
     {
-        LevelInstance.Instance.StartDialog(this);
+        CharacterHealthData responsibleCharacter = null;
+        if (!savedCanStartToday)
+        {
+            responsibleCharacter = NewGameManager.Instance.healthStatus.TryStartDialog();
+        }
+
+        if(responsibleCharacter == null)
+        {
+            // The dialog can be started normally.
+            savedCanStartToday = true;
+            NewGameManager.Instance.onNewDay += OnNewDay;
+            LevelInstance.Instance.StartDialog(this);
+        }
+        else
+        {
+            // One character is too hungry to start the dialog.
+            LevelInstance.Instance.StartTooHungryDialog(this, responsibleCharacter);
+        }
+    }
+    
+    private void OnNewDay()
+    {
+        savedCanStartToday = false;
+        NewGameManager.Instance.onNewDay -= OnNewDay;
     }
 }

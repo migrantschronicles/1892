@@ -471,6 +471,11 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
                 ProcessNextElement();
             }
         }
+        else
+        {
+            // Go to the next element.
+            ProcessNextElement();
+        }
     }
 
     /**

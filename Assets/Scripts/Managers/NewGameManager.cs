@@ -458,7 +458,7 @@ public class NewGameManager : MonoBehaviour
         day++;
         SetDate(date.AddDays(1));
         SetMorningTime();
-        Handheld.Vibrate();
+        Vibrate();
     }
 
     public void SetMorningTime() 
@@ -469,7 +469,12 @@ public class NewGameManager : MonoBehaviour
         onTimeChanged?.Invoke(hour, minutes);
     }
 
-    
+    public static void Vibrate()
+    {
+#if UNITY_ANDROID || UNITY_IOS
+        Handheld.Vibrate();
+#endif
+    }
 
     // I commented this as it gave me errors - L
     /*private void SetTime(float newTime)

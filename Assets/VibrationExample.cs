@@ -7,6 +7,6 @@ public class VibrationExample : MonoBehaviour
     public void Vibrate()
     {
         Debug.Log(Application.isMobilePlatform);
-        Handheld.Vibrate();
+        NewGameManager.Vibrate();
     }
 }

@@ -26,7 +26,7 @@ public class WarningPage : MonoBehaviour
     private void OnStartGame()
     {
         AudioManager.Instance.FadeOutMusic();
-        SceneManager.LoadScene("Pfaffenthal");
+        SceneManager.LoadScene("Paris");
     }
 
     public void OpenMoreInfo()

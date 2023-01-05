@@ -11,6 +11,15 @@ public class SceneCharacterPrefab
     public string name;
 }
 
+[System.Serializable]
+public class CharacterHealthData
+{
+    [Tooltip("The name that will be displayed")]
+    public string name;
+    [Tooltip("Whether this is the main protagonist")]
+    public bool isMainProtagonist;
+}
+
 /**
  * This is the data for a playable character (e.g. the family, in this case multiple).
  * You can set the conditions that will be set globally if this character is selected in the main menu.
@@ -32,4 +41,6 @@ public class PlayableCharacterData : ScriptableObject
     public GameObject dialogPrefab;
     [Tooltip("The prefabs that will be instantiated into the scene.")]
     public SceneCharacterPrefab[] scenePrefabs;
+    [Tooltip("The data about the characters")]
+    public CharacterHealthData[] characterData;
 }

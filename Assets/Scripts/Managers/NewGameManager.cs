@@ -139,6 +139,9 @@ public class NewGameManager : MonoBehaviour
     [Tooltip("The probability that words from the start will be omitted")]
     public float omitWordsFromStartProbability = 0.5f;
 
+    // Health
+    public HealthStatus healthStatus = new HealthStatus();
+
     // Events
     public delegate void OnDiaryEntryAdded(DiaryEntry entry);
     public event OnDiaryEntryAdded onDiaryEntryAdded;
@@ -277,6 +280,7 @@ public class NewGameManager : MonoBehaviour
         SetMorningTime();
 
         transportationInfo.Initialize(transportationTableCSV);
+        healthStatus.Init(PlayableCharacterData.characterData);
 
         InitAfterLoad();
         isInitialized = true;
@@ -411,6 +415,14 @@ public class NewGameManager : MonoBehaviour
             // Apply Health
             inventory.RemoveItemCategory(foodCategory, totalFoodUsed);
         }
+
+        ///@todo Should be passed as a parameter
+        healthStatus.OnEndOfDay(new EndOfDayHealthData[]
+        {
+            new EndOfDayHealthData { name = "Elis", foodAmount = motherFoodAmount },
+            new EndOfDayHealthData { name = "Mreis", foodAmount = girlFoodAmount },
+            new EndOfDayHealthData { name = "Mattis", foodAmount = boyFoodAmount }
+        });
     }
 
     public void SleepInHostel(int cost,int purchasedFoodAmount, int motherFoodAmount, int boyFoodAmount, int girlFoodAmount) {
@@ -430,6 +442,14 @@ public class NewGameManager : MonoBehaviour
         {
             inventory.AddItem(foodItem, purchasedFoodAmount - totalFoodUsed);
         }
+
+        ///@todo Should be passed as a parameter
+        healthStatus.OnEndOfDay(new EndOfDayHealthData[]
+        {
+            new EndOfDayHealthData { name = "Elis", foodAmount = motherFoodAmount },
+            new EndOfDayHealthData { name = "Mreis", foodAmount = girlFoodAmount },
+            new EndOfDayHealthData { name = "Mattis", foodAmount = boyFoodAmount }
+        });
     }
     
     public void StartNewDay() 

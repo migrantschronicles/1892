@@ -15,6 +15,8 @@ public class DialogButton : MonoBehaviour
     private GameObject dialogPrefab;
     [SerializeField, Tooltip("The language of the dialoges")]
     private DialogLanguage language = DialogLanguage.Native;
+    [SerializeField, Tooltip("True if the dialog can start even if the main protagonist is sick (for family members)")]
+    private bool canStartEvenIfSick = false;
 
     private bool savedCanStartToday = false;
 
@@ -67,8 +69,8 @@ public class DialogButton : MonoBehaviour
             return;
         }
 
-        ProtagonistData responsibleCharacter = null;
-        responsibleCharacter = NewGameManager.Instance.HealthStatus.TryStartDialog();
+        ProtagonistHealthData responsibleCharacter = null;
+        responsibleCharacter = NewGameManager.Instance.HealthStatus.TryStartDialog(canStartEvenIfSick);
 
         if(responsibleCharacter == null)
         {
@@ -79,8 +81,17 @@ public class DialogButton : MonoBehaviour
         }
         else
         {
-            // One character is too hungry to start the dialog.
-            LevelInstance.Instance.StartTooHungryDialog(this, responsibleCharacter);
+            // One character is too hungry to start the dialog or the main character is sick.
+            if(responsibleCharacter.CholeraStatus.IsSick && !canStartEvenIfSick)
+            {
+                // The dialog can't be started because the main character is sick.
+                LevelInstance.Instance.StartSickDialog(this);
+            }
+            else
+            {
+                // The dialog can't be started because one family member is too hungry.
+                LevelInstance.Instance.StartTooHungryDialog(this, responsibleCharacter.CharacterData);
+            }
         }
     }
     

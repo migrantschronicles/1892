@@ -888,4 +888,10 @@ public class NewGameManager : MonoBehaviour
 
         return result;
     }
+
+    public void OnProtagonistDied(ProtagonistData protagonist)
+    {
+        Debug.Log($"{protagonist.name} died");
+        ///@todo
+    }
 }

@@ -122,6 +122,8 @@ public class LevelInstance : MonoBehaviour
     private float EndOfDayFadeTime = 20.0f;
     [SerializeField]
     private Dialog tooHungryDialog;
+    [SerializeField]
+    private Dialog sickDialog;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -470,6 +472,13 @@ public class LevelInstance : MonoBehaviour
     {
         PrepareDialog(button);
         dialogSystem.StartDialog(tooHungryDialog, responsibleCharacter.name);
+        OnDialogStarted();
+    }
+
+    public void StartSickDialog(DialogButton button)
+    {
+        PrepareDialog(button);
+        dialogSystem.StartDialog(sickDialog);
         OnDialogStarted();
     }
 

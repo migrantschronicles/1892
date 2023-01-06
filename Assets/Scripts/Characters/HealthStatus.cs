@@ -28,6 +28,12 @@ public class HealthStatus_Hungry
     {
         // Every day the character needs the double amount plus one for this day.
         requiredFoodAmount = requiredFoodAmount * 2 + 1;
+        if(healthData.CholeraStatus.IsSick)
+        {
+            // Sick people need double food amount
+            requiredFoodAmount *= 2;
+        }
+
         // Subtract the amount of food the character has received today.
         requiredFoodAmount = Mathf.Max(0, requiredFoodAmount - receivedFoodAmount);
 
@@ -66,8 +72,76 @@ public class HealthStatus_Homesickness
 
     public void AddValue(float change)
     {
-        Debug.Log($"Homesickness: {value} + {change} = {Mathf.Clamp(value + change, 1, 10)}");
         value = Mathf.Clamp(value + change, 1, 10);
+    }
+}
+
+public class HealthStatus_Cholera
+{
+    enum CholeraStatus
+    {
+        Healthy,
+        Exposed,
+        Sick
+    }
+
+    private static readonly float CHANCE_TO_GET_SICK = 0.1f;
+    private static readonly float DAYS_AFTER_EXPOSED_TO_GET_SICK = 2;
+    private static readonly float CHANCE_TO_HEAL = 0.1f;
+
+    private CholeraStatus status = CholeraStatus.Healthy;
+    private int daysSinceExposed = 0;
+    private int daysSick = 0;
+
+    public int DaysSick { get { return daysSick; } }
+    public bool IsSick { get { return status == CholeraStatus.Sick; } }
+    public bool IsExposed { get { return status == CholeraStatus.Exposed; } }
+
+    public void OnExposed()
+    {
+        switch(status)
+        {
+            case CholeraStatus.Healthy:
+                // Set the status to exposed.
+                daysSinceExposed = 0;
+                status = CholeraStatus.Exposed;
+                break;
+        }
+
+        // Cannot get sick if already exposed / sick.
+    }
+
+    public void OnEndOfDay()
+    {
+        switch(status)
+        {
+            case CholeraStatus.Exposed:
+                if(++daysSinceExposed >= DAYS_AFTER_EXPOSED_TO_GET_SICK)
+                {
+                    daysSinceExposed = 0;
+                    if (UnityEngine.Random.value < CHANCE_TO_GET_SICK)
+                    {
+                        // The character was exposed and is now actually sick
+                        status = CholeraStatus.Sick;
+                    }
+                    else
+                    {
+                        // The character was exposed but did not get sick
+                        status = CholeraStatus.Healthy;
+                    }
+                }
+                break;
+
+            case CholeraStatus.Sick:
+                ++daysSick;
+                if(UnityEngine.Random.value < CHANCE_TO_HEAL)
+                {
+                    // The character healed.
+                    status = CholeraStatus.Healthy;
+                    daysSick = 0;
+                }
+                break;
+        }
     }
 }
 
@@ -76,10 +150,12 @@ public class ProtagonistHealthData
     private HealthStatus healthStatus;
     private HealthStatus_Hungry hungryStatus;
     private HealthStatus_Homesickness homesicknessStatus = new HealthStatus_Homesickness();
+    private HealthStatus_Cholera choleraStatus = new HealthStatus_Cholera();
 
     public ProtagonistData CharacterData { get; private set; }
     public HealthStatus_Hungry HungryStatus { get { return hungryStatus; } }
     public HealthStatus_Homesickness HomesickessStatus { get { return homesicknessStatus; } }
+    public HealthStatus_Cholera CholeraStatus { get { return choleraStatus; } }
 
     public ProtagonistHealthData(HealthStatus status)
     {
@@ -96,6 +172,7 @@ public class ProtagonistHealthData
     {
         hungryStatus.OnEndOfDay(healthData != null ? healthData.foodAmount : 0);
         homesicknessStatus.OnEndOfDay();
+        CholeraStatus.OnEndOfDay();
     }
 
     public void OnDayWithoutEnoughFood(int daysWithoutEnoughFood)
@@ -175,6 +252,24 @@ public class HealthStatus : MonoBehaviour
 
         // Reset the number of dialogs
         dialogsStartedToday = 0;
+
+        // Check if any character has cholera for more than 5 days (=> dead)
+        foreach(ProtagonistHealthData status in characters)
+        {
+            if(status.CholeraStatus.DaysSick >= 5)
+            {
+                // A protagonist died from cholera.
+                NewGameManager.Instance.OnProtagonistDied(status.CharacterData);
+                // Does not matter if more than one protagonist died.
+                break;
+            }
+        }
+
+        // Debug
+        foreach(ProtagonistHealthData status in characters)
+        {
+            status.CholeraStatus.OnExposed();
+        }
     }
 
     private ProtagonistHealthData GetHealthStatus(string name)
@@ -182,8 +277,27 @@ public class HealthStatus : MonoBehaviour
         return characters.Find(status => status.CharacterData.name == name);
     }
 
-    public ProtagonistData TryStartDialog()
+    private ProtagonistHealthData GetMainHealthStatus()
     {
+        return characters.Find(status => status.CharacterData.isMainProtagonist);
+    }
+
+    /**
+     * Called when the player tries to start a dialog.
+     * If you are able to start a dialog, this returns null.
+     * If you can't start a dialog, this returns the reason.
+     */
+    public ProtagonistHealthData TryStartDialog(bool canStartEvenIfSick)
+    {
+        // Check first if the main protagonist is sick
+        ProtagonistHealthData mainProtagonist = GetMainHealthStatus();
+        if(mainProtagonist.CholeraStatus.IsSick && !canStartEvenIfSick)
+        {
+            // The main protagonist is sick and the dialog can't start even if sick.
+            return mainProtagonist;
+        }
+
+        // The main protagonist is health or the dialog is for a family member (can start even if sick).
         ++dialogsStartedToday;
 
         // Go through the characters and find one that is hungry for 2 days or more.
@@ -206,7 +320,7 @@ public class HealthStatus : MonoBehaviour
         {
             if(dialogsStartedToday > 2)
             {
-                return responsibleCharacter.CharacterData;
+                return responsibleCharacter;
             }
         }
 
@@ -240,5 +354,21 @@ public class HealthStatus : MonoBehaviour
     public void OnDialogDecision()
     {
         AddHomesicknessValue(-homesicknessDecisionDecrease);
+    }
+
+    /**
+     * @todo Hook this up
+     * @return True if the protagonists can travel, false otherwise.
+     */
+    public bool CanTravel()
+    {
+        ProtagonistHealthData protagonist = GetMainHealthStatus();
+        if(protagonist.CholeraStatus.IsSick)
+        {
+            // If the main protagonist is sick, you can't travel.
+            return false;
+        }
+
+        return true;
     }
 }

@@ -505,6 +505,12 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
                 LevelInstance.Instance.OpenDiary(DiaryPageLink.Map);
                 return true;
             }
+
+            case AnswerType.MoneyExchange:
+            {
+                NewGameManager.Instance.SetCurrency(decisionOption.targetCurrency);
+                return false;
+            }
         }
 
         return false;

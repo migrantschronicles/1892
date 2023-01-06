@@ -9,7 +9,8 @@ public enum AnswerType
     Talking,
     Quest,
     Travel,
-    Items
+    Items,
+    MoneyExchange
 }
 
 public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
@@ -58,6 +59,8 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     private Sprite travelIcon;
     [SerializeField]
     private Sprite itemsIcon;
+    [SerializeField]
+    private Sprite moneyExchangeIcon;
 
     public DialogDecisionOption Answer { get; private set; }
 
@@ -129,6 +132,7 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
             case AnswerType.Quest: sprite = questIcon; break;
             case AnswerType.Travel: sprite = travelIcon; break;
             case AnswerType.Items: sprite = itemsIcon; break;
+            case AnswerType.MoneyExchange: sprite = moneyExchangeIcon; break;
         }
 
         icon.sprite = sprite;

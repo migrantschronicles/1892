@@ -19,6 +19,8 @@ public class DialogDecisionOption : DialogElement
     public bool autoTriggerAction = true;
     [Tooltip("The shop to open for Quest and Items answer types")]
     public Shop shop;
+    [Tooltip("The target currency (for MoneyExchange answer types)")]
+    public Currency targetCurrency;
 
     public DialogDecisionOption()
     {

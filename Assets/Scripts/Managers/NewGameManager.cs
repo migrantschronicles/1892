@@ -41,6 +41,12 @@ public class StolenItemInfo
     public int money;
 }
 
+public enum Currency
+{
+    Franc,
+    Dollar
+}
+
 public class NewGameManager : MonoBehaviour
 {
 
@@ -141,6 +147,11 @@ public class NewGameManager : MonoBehaviour
 
     // Health
     public HealthStatus HealthStatus { get { return GetComponent<HealthStatus>(); } }
+
+    // Currency
+    public Currency CurrentCurrency { get; private set; } = Currency.Franc;
+    public delegate void OnCurrencyChangedEvent(Currency currency);
+    public event OnCurrencyChangedEvent onCurrencyChanged;
 
     // Events
     public delegate void OnDiaryEntryAdded(DiaryEntry entry);
@@ -893,5 +904,14 @@ public class NewGameManager : MonoBehaviour
     {
         Debug.Log($"{protagonist.name} died");
         ///@todo
+    }
+
+    public void SetCurrency(Currency currency)
+    {
+        if(currency != CurrentCurrency)
+        {
+            CurrentCurrency = currency;
+            onCurrencyChanged?.Invoke(CurrentCurrency);
+        }
     }
 }

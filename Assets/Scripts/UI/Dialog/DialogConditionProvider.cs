@@ -13,9 +13,12 @@ using UnityEngine;
  *      * 'main:': The main protagonist (e.g. Elis as the mother of the family)
  *      * 'side:': The side character(s) (e.g. Mattis and Mreis of the family)
  * Then you can specify which key you want to check for. These are currently supported:
- *      * 'dayswithoutenoughfood': How many days the character(s) did not have enough food in a row
- *      * 'homesickness': How homesick a character is (1-10, least homesick - most homesick)
- * After that (depending on the key) you can add a comparison. These are currently supported:
+ *      * 'dayswithoutenoughfood' [int]: How many days the character(s) did not have enough food in a row
+ *      * 'homesickness' [float]: How homesick a character is (1-10, least homesick - most homesick)
+ *      * 'exposed' [bool]: If the character was exposed to cholera, but is not sick yet.
+ *      * 'sick' [bool]: If the character is sick of cholera.
+ *      * 'dayssick' [int]: The number of days that the character is sick.
+ * After that (for int and float keys) you can add a comparison. These are currently supported:
  *      * '=': Only makes sense for single protagonist queries
  *      * '!=': Only makes sense for single protagonist queries
  *      * '<'
@@ -278,6 +281,36 @@ public class DialogConditionProvider
             foreach(ProtagonistHealthData status in affectedCharacters)
             {
                 if(Compare(status.HomesickessStatus.Value, operation, float.Parse(value)))
+                {
+                    return true;
+                }
+            }
+        }
+        else if(key.Equals("exposed", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach(ProtagonistHealthData status in affectedCharacters)
+            {
+                if(status.CholeraStatus.IsExposed)
+                {
+                    return true;
+                }
+            }
+        }
+        else if(key.Equals("sick", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach(ProtagonistHealthData status in affectedCharacters)
+            {
+                if(status.CholeraStatus.IsSick)
+                {
+                    return true;
+                }
+            }
+        }
+        else if(key.Equals("dayssick", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach(ProtagonistHealthData status in affectedCharacters)
+            {
+                if(Compare(status.CholeraStatus.DaysSick, operation, int.Parse(value)))
                 {
                     return true;
                 }

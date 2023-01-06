@@ -231,7 +231,7 @@ public class DialogConditionProvider
 
     private bool HasHealthCondition(string condition)
     {
-        IEnumerable<CharacterHealthStatus> affectedCharacters = NewGameManager.Instance.healthStatus.Characters;
+        IEnumerable<ProtagonistHealthData> affectedCharacters = NewGameManager.Instance.HealthStatus.Characters;
 
         // Filter by character
         if(condition.StartsWith("main:", StringComparison.OrdinalIgnoreCase))
@@ -249,7 +249,7 @@ public class DialogConditionProvider
 
         if(key.Equals("dayswithoutenoughfood", StringComparison.OrdinalIgnoreCase))
         {
-            foreach(CharacterHealthStatus status in affectedCharacters)
+            foreach(ProtagonistHealthData status in affectedCharacters)
             {
                 if (Compare(status.HungryStatus.DaysWithoutEnoughFood, operation, int.Parse(value)))
                 {

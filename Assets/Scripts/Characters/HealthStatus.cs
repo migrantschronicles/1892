@@ -13,9 +13,15 @@ public class EndOfDayHealthData
 
 public class HealthStatus_Hungry
 {
+    private ProtagonistHealthData healthData;
     private int requiredFoodAmount = 0;
     
     public int DaysWithoutEnoughFood { get; private set; }
+
+    public HealthStatus_Hungry(ProtagonistHealthData data)
+    {
+        healthData = data;
+    }
 
     public void OnEndOfDay(int receivedFoodAmount)
     {
@@ -33,18 +39,54 @@ public class HealthStatus_Hungry
         {
             // The character has not received enough food for the day or to refeed the missing food amounts from the last days.
             ++DaysWithoutEnoughFood;
+            // Notify the health data to increase homesickness
+            healthData.OnDayWithoutEnoughFood(DaysWithoutEnoughFood);
         }
     }
 }
 
-public class CharacterHealthStatus
+public class HealthStatus_Homesickness
 {
-    private HealthStatus_Hungry hungryStatus = new HealthStatus_Hungry();
+    private float value = 1.0f;
+    private int daysSinceLastDecrease = 0;
+    
+    public float Value { get { return value; } }
+    public int ValueInt { get { return Mathf.FloorToInt(value); } }
 
-    public CharacterHealthData CharacterData { get; private set; }
+    public void OnEndOfDay()
+    {
+        if(++daysSinceLastDecrease >= 5)
+        {
+            // Every 5 days, homesickness is decreased by 1.
+            AddValue(-1);
+            daysSinceLastDecrease = 0;
+        }
+    }
+
+    public void AddValue(float change)
+    {
+        Debug.Log($"Homesickness: {value} + {change} = {Mathf.Clamp(value + change, 1, 10)}");
+        value = Mathf.Clamp(value + change, 1, 10);
+    }
+}
+
+public class ProtagonistHealthData
+{
+    private HealthStatus healthStatus;
+    private HealthStatus_Hungry hungryStatus;
+    private HealthStatus_Homesickness homesicknessStatus = new HealthStatus_Homesickness();
+
+    public ProtagonistData CharacterData { get; private set; }
     public HealthStatus_Hungry HungryStatus { get { return hungryStatus; } }
+    public HealthStatus_Homesickness HomesickessStatus { get { return homesicknessStatus; } }
 
-    public void Init(CharacterHealthData characterData)
+    public ProtagonistHealthData(HealthStatus status)
+    {
+        healthStatus = status;
+        hungryStatus = new HealthStatus_Hungry(this);
+    }
+
+    public void Init(ProtagonistData characterData)
     {
         CharacterData = characterData;
     }
@@ -52,21 +94,40 @@ public class CharacterHealthStatus
     public void OnEndOfDay(EndOfDayHealthData healthData)
     {
         hungryStatus.OnEndOfDay(healthData != null ? healthData.foodAmount : 0);
+        homesicknessStatus.OnEndOfDay();
+    }
+
+    public void OnDayWithoutEnoughFood(int daysWithoutEnoughFood)
+    {
+        if(daysWithoutEnoughFood >= 2)
+        {
+            // If the character does not have enough food and is hungry, increase the homesickness.
+            homesicknessStatus.AddValue(healthStatus.HomesicknessHungryIncrease);
+        }
     }
 }
 
-public class HealthStatus
+public class HealthStatus : MonoBehaviour
 {
-    private List<CharacterHealthStatus> characters = new List<CharacterHealthStatus>();
+    [SerializeField, Tooltip("How much homesickness will increase for every day without enough food (starting from the 2. day)")]
+    private float homesicknessHungryIncrease = 0.5f;
+
+    private List<ProtagonistHealthData> characters = new List<ProtagonistHealthData>();
     private int dialogsStartedToday = 0;
 
-    public IEnumerable<CharacterHealthStatus> Characters { get { return characters; } }
+    public IEnumerable<ProtagonistHealthData> Characters { get { return characters; } }
+    public float HomesicknessHungryIncrease { get { return homesicknessHungryIncrease; } }
 
-    public void Init(IEnumerable<CharacterHealthData> characterData)
+    private void Start()
     {
-        foreach(CharacterHealthData character in characterData)
+        Init(NewGameManager.Instance.PlayableCharacterData.protagonistData);
+    }
+
+    public void Init(IEnumerable<ProtagonistData> characterData)
+    {
+        foreach(ProtagonistData character in characterData)
         {
-            CharacterHealthStatus status = new CharacterHealthStatus();
+            ProtagonistHealthData status = new ProtagonistHealthData(this);
             status.Init(character);
             characters.Add(status);
         }
@@ -78,7 +139,7 @@ public class HealthStatus
         List<string> handledCharacters = new List<string>();
         foreach(EndOfDayHealthData healthData in data)
         {
-            CharacterHealthStatus status = GetHealthStatus(healthData.name);
+            ProtagonistHealthData status = GetHealthStatus(healthData.name);
             if(status == null)
             {
                 Debug.LogError($"Character {healthData.name} does not exist in OnEndOfDay");
@@ -92,7 +153,7 @@ public class HealthStatus
         if(handledCharacters.Count < characters.Count)
         {
             // Go through every status that may not have received food.
-            foreach(CharacterHealthStatus status in characters)
+            foreach(ProtagonistHealthData status in characters)
             {
                 if(!handledCharacters.Contains(status.CharacterData.name))
                 {
@@ -105,18 +166,18 @@ public class HealthStatus
         dialogsStartedToday = 0;
     }
 
-    private CharacterHealthStatus GetHealthStatus(string name)
+    private ProtagonistHealthData GetHealthStatus(string name)
     {
         return characters.Find(status => status.CharacterData.name == name);
     }
 
-    public CharacterHealthData TryStartDialog()
+    public ProtagonistData TryStartDialog()
     {
         ++dialogsStartedToday;
 
         // Go through the characters and find one that is hungry for 2 days or more.
-        CharacterHealthStatus responsibleCharacter = null;
-        foreach(CharacterHealthStatus status in characters)
+        ProtagonistHealthData responsibleCharacter = null;
+        foreach(ProtagonistHealthData status in characters)
         {
             // Check if the characters didn't have food for 2 days.
             if(status.HungryStatus.DaysWithoutEnoughFood >= 2)

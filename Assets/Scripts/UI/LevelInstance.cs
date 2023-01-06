@@ -466,7 +466,7 @@ public class LevelInstance : MonoBehaviour
         StartDialog(button.gameObject, button.Language);
     }
 
-    public void StartTooHungryDialog(DialogButton button, CharacterHealthData responsibleCharacter)
+    public void StartTooHungryDialog(DialogButton button, ProtagonistData responsibleCharacter)
     {
         PrepareDialog(button);
         dialogSystem.StartDialog(tooHungryDialog, responsibleCharacter.name);

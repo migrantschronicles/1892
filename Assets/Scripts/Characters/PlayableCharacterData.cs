@@ -12,7 +12,7 @@ public class SceneCharacterPrefab
 }
 
 [System.Serializable]
-public class CharacterHealthData
+public class ProtagonistData
 {
     [Tooltip("The name that will be displayed")]
     public string name;
@@ -42,5 +42,5 @@ public class PlayableCharacterData : ScriptableObject
     [Tooltip("The prefabs that will be instantiated into the scene.")]
     public SceneCharacterPrefab[] scenePrefabs;
     [Tooltip("The data about the characters")]
-    public CharacterHealthData[] characterData;
+    public ProtagonistData[] protagonistData;
 }

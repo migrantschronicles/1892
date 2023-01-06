@@ -67,8 +67,8 @@ public class DialogButton : MonoBehaviour
             return;
         }
 
-        CharacterHealthData responsibleCharacter = null;
-        responsibleCharacter = NewGameManager.Instance.healthStatus.TryStartDialog();
+        ProtagonistData responsibleCharacter = null;
+        responsibleCharacter = NewGameManager.Instance.HealthStatus.TryStartDialog();
 
         if(responsibleCharacter == null)
         {

@@ -120,6 +120,10 @@ public class LevelInstance : MonoBehaviour
     private Camera uiCamera;
     [SerializeField]
     private float EndOfDayFadeTime = 20.0f;
+    [SerializeField]
+    private Dialog tooHungryDialog;
+    [SerializeField]
+    private Dialog sickDialog;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -436,9 +440,9 @@ public class LevelInstance : MonoBehaviour
         OnDialogStarted();
     }
 
-    public void StartDialog(DialogButton button)
+    private void PrepareDialog(DialogButton button)
     {
-        if(!string.IsNullOrWhiteSpace(button.SceneName))
+        if (!string.IsNullOrWhiteSpace(button.SceneName))
         {
             previousScene = currentScene?.SceneName;
             OpenScene(button.SceneName);
@@ -446,18 +450,36 @@ public class LevelInstance : MonoBehaviour
 
         currentScene.SetPlayableCharacterVisible(false);
         currentHiddenObjects = button.HideObjects;
-        foreach(GameObject go in currentHiddenObjects)
+        foreach (GameObject go in currentHiddenObjects)
         {
             go.SetActive(false);
         }
-
-        StartDialog(button.gameObject, button.Language);
 
         // Set foreground scene
         foregroundScene.SetCharacters(button.DialogPrefab, NewGameManager.Instance.PlayableCharacterData.dialogPrefab);
         foregroundScene.gameObject.SetActive(true);
 
         AudioManager.Instance.PlayFX(dialogSystem.openClip);
+    }
+
+    public void StartDialog(DialogButton button)
+    {
+        PrepareDialog(button);
+        StartDialog(button.gameObject, button.Language);
+    }
+
+    public void StartTooHungryDialog(DialogButton button, ProtagonistData responsibleCharacter)
+    {
+        PrepareDialog(button);
+        dialogSystem.StartDialog(tooHungryDialog, responsibleCharacter.name);
+        OnDialogStarted();
+    }
+
+    public void StartSickDialog(DialogButton button)
+    {
+        PrepareDialog(button);
+        dialogSystem.StartDialog(sickDialog);
+        OnDialogStarted();
     }
 
     public void OpenShop(Shop shop)

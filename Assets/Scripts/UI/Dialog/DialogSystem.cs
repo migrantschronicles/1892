@@ -123,8 +123,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     public AudioClip decisionOptionClip;
 
     private GameObject content;
-    private List<string> conditions = new List<string>();
-
     private Dialog currentDialog;
     private DialogLanguage currentDialogLanguage = DialogLanguage.Native;
     private DialogElement currentElement;
@@ -135,6 +133,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private List<DialogAnswerBubble> currentAnswers = new List<DialogAnswerBubble>();
     private List<ElementAnimator> currentAnimators = new List<ElementAnimator>();
     private Dictionary<string, OnConditionsChanged> onConditionsChangedListeners = new Dictionary<string, OnConditionsChanged>();
+    private object[] additionalLocalizationArgs = null;
 
     private void Awake()
     {
@@ -183,6 +182,12 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
                 return;
             }
         }
+    }
+
+    public void StartDialog(Dialog dialog, params object[] args)
+    {
+        additionalLocalizationArgs = args;
+        StartDialog(dialog);
     }
 
     /**
@@ -390,7 +395,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
 
     private string ConditionallyEstrangeLine(DialogLine line)
     {
-        string text = LocalizationManager.Instance.GetLocalizedString(line.Text);
+        string text = LocalizationManager.Instance.GetLocalizedString(line.Text, additionalLocalizationArgs);
         if(line.IsLeft && !NewGameManager.Instance.UnderstandsDialogLanguage(currentDialogLanguage))
         {
             // Estrange the text
@@ -410,6 +415,9 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         OnContentAdded(newLine);
         StartTextAnimation(currentBubble, text);
         AudioManager.Instance.PlayFX(lineClip);
+
+        // Notify the health system
+        NewGameManager.Instance.HealthStatus.OnDialogLine(line);
 
         if(IsLastLine(line))
         {
@@ -559,6 +567,9 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         RectTransform contentTransform = content.GetComponent<RectTransform>();
         contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY);
         currentY += spacing;
+
+        // Notify the health system
+        NewGameManager.Instance.HealthStatus.OnDialogDecision();
 
         bool continueDialog = true;
         // Check if the decision option wants to trigger its action.

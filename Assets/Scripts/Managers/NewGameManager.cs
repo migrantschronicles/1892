@@ -139,6 +139,9 @@ public class NewGameManager : MonoBehaviour
     [Tooltip("The probability that words from the start will be omitted")]
     public float omitWordsFromStartProbability = 0.5f;
 
+    // Health
+    public HealthStatus HealthStatus { get { return GetComponent<HealthStatus>(); } }
+
     // Events
     public delegate void OnDiaryEntryAdded(DiaryEntry entry);
     public event OnDiaryEntryAdded onDiaryEntryAdded;
@@ -151,6 +154,9 @@ public class NewGameManager : MonoBehaviour
 
     public delegate void OnDateChangedDelegate(DateTime date);
     public event OnDateChangedDelegate onDateChanged;
+
+    public delegate void OnNewDayDelegate();
+    public event OnNewDayDelegate onNewDay;
 
     //public delegate void OnTimeChangedDelegate(float time);
     //public event OnTimeChangedDelegate onTimeChanged;
@@ -411,6 +417,14 @@ public class NewGameManager : MonoBehaviour
             // Apply Health
             inventory.RemoveItemCategory(foodCategory, totalFoodUsed);
         }
+
+        ///@todo Should be passed as a parameter
+        HealthStatus.OnEndOfDay(new EndOfDayHealthData[]
+        {
+            new EndOfDayHealthData { name = "Elis", foodAmount = motherFoodAmount },
+            new EndOfDayHealthData { name = "Mreis", foodAmount = girlFoodAmount },
+            new EndOfDayHealthData { name = "Mattis", foodAmount = boyFoodAmount }
+        });
     }
 
     public void SleepInHostel(int cost,int purchasedFoodAmount, int motherFoodAmount, int boyFoodAmount, int girlFoodAmount) {
@@ -430,12 +444,21 @@ public class NewGameManager : MonoBehaviour
         {
             inventory.AddItem(foodItem, purchasedFoodAmount - totalFoodUsed);
         }
+
+        ///@todo Should be passed as a parameter
+        HealthStatus.OnEndOfDay(new EndOfDayHealthData[]
+        {
+            new EndOfDayHealthData { name = "Elis", foodAmount = motherFoodAmount },
+            new EndOfDayHealthData { name = "Mreis", foodAmount = girlFoodAmount },
+            new EndOfDayHealthData { name = "Mattis", foodAmount = boyFoodAmount }
+        });
     }
     
     public void StartNewDay() 
     {
         Debug.Log("Go to next day here, via clock");
         day++;
+        onNewDay?.Invoke();
         SetDate(date.AddDays(1));
         SetMorningTime();
         Vibrate();
@@ -796,7 +819,10 @@ public class NewGameManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log(stolenItems);
+
+        // Notify the health status.
+        HealthStatus.OnItemsStolen(stolenItems.Count);
+
         return stolenItems;
     }
 
@@ -861,5 +887,11 @@ public class NewGameManager : MonoBehaviour
         }
 
         return result;
+    }
+
+    public void OnProtagonistDied(ProtagonistData protagonist)
+    {
+        Debug.Log($"{protagonist.name} died");
+        ///@todo
     }
 }

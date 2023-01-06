@@ -326,6 +326,20 @@ public class Shop : MonoBehaviour
         transferInProgress = false;
     }
 
+    private int GetItemsBoughtCount()
+    {
+        int count = 0;
+        foreach(var item in transferChanges)
+        {
+            if(item.Value > 0)
+            {
+                ++count;
+            }
+        }
+
+        return count;
+    }
+
     private void AcceptTransfer()
     {
         if(!freeShop)
@@ -338,6 +352,8 @@ public class Shop : MonoBehaviour
             }
 
             NewGameManager.Instance.SetMoney(NewGameManager.Instance.money - price);
+            // Notify the health status.
+            NewGameManager.Instance.HealthStatus.OnItemsBought(GetItemsBoughtCount());
 
             if(price > 0)
             {

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7430646057224914511}
   - component: {fileID: 6468859767798026066}
+  - component: {fileID: 7944783083826979776}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: GameManager
@@ -94,12 +95,29 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  moneyStolenAmountRange: {x: 0, y: 0}
+  moneyStolenAmountRange: {x: 1, y: 10}
   stolenAmountProbabilityCurve:
     serializedVersion: 2
     m_Curve: []
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  stolenAmountRange: {x: 0, y: 0}
+  stolenAmountRange: {x: 0, y: 3}
+  estrangeWordsOmitCount: {x: 1, y: 5}
+  omitWordsFromStartProbability: 0.5
   TEST_PlayableCharacter: {fileID: 11400000, guid: 06247e9eea8436c489da4ca965f60ad8, type: 2}
+--- !u!114 &7944783083826979776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f18e80dedd3f194cb98183a528500c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  homesicknessHungryIncrease: 0.5
+  homesicknessItemStolenIncrease: 0.3
+  homesicknessItemBoughtDecrease: 0.3

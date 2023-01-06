@@ -61,11 +61,14 @@ public class DialogButton : MonoBehaviour
 
     private void OnStartDialog()
     {
-        CharacterHealthData responsibleCharacter = null;
-        if (!savedCanStartToday)
+        if(savedCanStartToday)
         {
-            responsibleCharacter = NewGameManager.Instance.healthStatus.TryStartDialog();
+            LevelInstance.Instance.StartDialog(this);
+            return;
         }
+
+        CharacterHealthData responsibleCharacter = null;
+        responsibleCharacter = NewGameManager.Instance.healthStatus.TryStartDialog();
 
         if(responsibleCharacter == null)
         {

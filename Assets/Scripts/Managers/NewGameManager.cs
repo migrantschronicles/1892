@@ -819,7 +819,10 @@ public class NewGameManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log(stolenItems);
+
+        // Notify the health status.
+        HealthStatus.OnItemsStolen(stolenItems.Count);
+
         return stolenItems;
     }
 

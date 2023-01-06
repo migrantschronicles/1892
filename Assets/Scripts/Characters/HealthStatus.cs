@@ -111,6 +111,10 @@ public class HealthStatus : MonoBehaviour
 {
     [SerializeField, Tooltip("How much homesickness will increase for every day without enough food (starting from the 2. day)")]
     private float homesicknessHungryIncrease = 0.5f;
+    [SerializeField, Tooltip("How much homesickness will increase for every item that was stolen")]
+    private float homesicknessItemStolenIncrease = 0.3f;
+    [SerializeField, Tooltip("How much homesickness will decrease for every item bought")]
+    private float homesicknessItemBoughtDecrease = 0.3f;
 
     private List<ProtagonistHealthData> characters = new List<ProtagonistHealthData>();
     private int dialogsStartedToday = 0;
@@ -201,5 +205,21 @@ public class HealthStatus : MonoBehaviour
 
         // No character is hungry for more than 2 days or the player has started less than 2 dialogs.
         return null;
+    }
+
+    public void OnItemsStolen(int count = 1)
+    {
+        foreach(ProtagonistHealthData healthData in characters)
+        {
+            healthData.HomesickessStatus.AddValue(homesicknessItemStolenIncrease * count);
+        }
+    }
+
+    public void OnItemsBought(int count = 1)
+    {
+        foreach (ProtagonistHealthData healthData in characters)
+        {
+            healthData.HomesickessStatus.AddValue(-homesicknessItemBoughtDecrease * count);
+        }
     }
 }

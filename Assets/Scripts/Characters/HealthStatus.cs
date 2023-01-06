@@ -264,12 +264,6 @@ public class HealthStatus : MonoBehaviour
                 break;
             }
         }
-
-        // Debug
-        foreach(ProtagonistHealthData status in characters)
-        {
-            status.CholeraStatus.OnExposed();
-        }
     }
 
     private ProtagonistHealthData GetHealthStatus(string name)

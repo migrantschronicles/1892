@@ -14,6 +14,7 @@ using UnityEngine;
  *      * 'side:': The side character(s) (e.g. Mattis and Mreis of the family)
  * Then you can specify which key you want to check for. These are currently supported:
  *      * 'dayswithoutenoughfood': How many days the character(s) did not have enough food in a row
+ *      * 'homesickness': How homesick a character is (1-10, least homesick - most homesick)
  * After that (depending on the key) you can add a comparison. These are currently supported:
  *      * '=': Only makes sense for single protagonist queries
  *      * '!=': Only makes sense for single protagonist queries
@@ -229,6 +230,21 @@ public class DialogConditionProvider
         return false;
     }
 
+    private bool Compare(float key, Operation operation, float value)
+    {
+        switch (operation)
+        {
+            case Operation.Equals: return key == value;
+            case Operation.NotEquals: return key != value;
+            case Operation.Greater: return key > value;
+            case Operation.Less: return key < value;
+            case Operation.GreaterEqual: return key >= value;
+            case Operation.LessEqual: return key <= value;
+        }
+
+        return false;
+    }
+
     private bool HasHealthCondition(string condition)
     {
         IEnumerable<ProtagonistHealthData> affectedCharacters = NewGameManager.Instance.HealthStatus.Characters;
@@ -252,6 +268,16 @@ public class DialogConditionProvider
             foreach(ProtagonistHealthData status in affectedCharacters)
             {
                 if (Compare(status.HungryStatus.DaysWithoutEnoughFood, operation, int.Parse(value)))
+                {
+                    return true;
+                }
+            }
+        }
+        else if(key.Equals("homesickness", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach(ProtagonistHealthData status in affectedCharacters)
+            {
+                if(Compare(status.HomesickessStatus.Value, operation, float.Parse(value)))
                 {
                     return true;
                 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
 
 public class EndOfDayHealthData
@@ -115,6 +116,12 @@ public class HealthStatus : MonoBehaviour
     private float homesicknessItemStolenIncrease = 0.3f;
     [SerializeField, Tooltip("How much homesickness will decrease for every item bought")]
     private float homesicknessItemBoughtDecrease = 0.3f;
+    [SerializeField, Tooltip("How much homesickness will decrease for every line the other person says")]
+    private float homesicknessLeftLineDecrease = 0.025f;
+    [SerializeField, Tooltip("How much homesickness will decrease for every line the protagonist says")]
+    private float homesicknessRightLineDecrease = 0.025f;
+    [SerializeField, Tooltip("How much homesickness will decrease for every decision option taken")]
+    private float homesicknessDecisionDecrease = 0.025f;
 
     private List<ProtagonistHealthData> characters = new List<ProtagonistHealthData>();
     private int dialogsStartedToday = 0;
@@ -207,19 +214,31 @@ public class HealthStatus : MonoBehaviour
         return null;
     }
 
+    private void AddHomesicknessValue(float value)
+    {
+        foreach (ProtagonistHealthData healthData in characters)
+        {
+            healthData.HomesickessStatus.AddValue(value);
+        }
+    }
+
     public void OnItemsStolen(int count = 1)
     {
-        foreach(ProtagonistHealthData healthData in characters)
-        {
-            healthData.HomesickessStatus.AddValue(homesicknessItemStolenIncrease * count);
-        }
+        AddHomesicknessValue(homesicknessItemStolenIncrease * count);
     }
 
     public void OnItemsBought(int count = 1)
     {
-        foreach (ProtagonistHealthData healthData in characters)
-        {
-            healthData.HomesickessStatus.AddValue(-homesicknessItemBoughtDecrease * count);
-        }
+        AddHomesicknessValue(-homesicknessItemBoughtDecrease * count);
+    }
+
+    public void OnDialogLine(DialogLine line)
+    {
+        AddHomesicknessValue(line.IsLeft ? -homesicknessLeftLineDecrease : -homesicknessRightLineDecrease);
+    }
+
+    public void OnDialogDecision()
+    {
+        AddHomesicknessValue(-homesicknessDecisionDecrease);
     }
 }

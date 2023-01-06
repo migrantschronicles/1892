@@ -416,6 +416,9 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         StartTextAnimation(currentBubble, text);
         AudioManager.Instance.PlayFX(lineClip);
 
+        // Notify the health system
+        NewGameManager.Instance.HealthStatus.OnDialogLine(line);
+
         if(IsLastLine(line))
         {
             OnDialogFinished();
@@ -564,6 +567,9 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         RectTransform contentTransform = content.GetComponent<RectTransform>();
         contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY);
         currentY += spacing;
+
+        // Notify the health system
+        NewGameManager.Instance.HealthStatus.OnDialogDecision();
 
         bool continueDialog = true;
         // Check if the decision option wants to trigger its action.

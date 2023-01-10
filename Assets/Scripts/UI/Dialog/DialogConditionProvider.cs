@@ -352,7 +352,7 @@ public class DialogConditionProvider
         }
         else if(condition.StartsWith("game:"))
         {
-            return HasGameCondition(condition[5...]);
+            return HasGameCondition(condition[5..]);
         }
 
         if (string.IsNullOrWhiteSpace(condition))

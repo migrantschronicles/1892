@@ -16,6 +16,12 @@ public class ShipMovement : MonoBehaviour
     private float originalZ = -1.0f;
     private float zoomValue = 1.0f;
 
+    public delegate void OnZoomValueChangedEvent(float zoomValue);
+    public event OnZoomValueChangedEvent onZoomValueChanged;
+
+    public Vector2 ZoomBounds { get { return zoomBounds; } }
+    public float ZoomValue { get { return zoomValue; } }
+
 #if UNITY_EDITOR
     [SerializeField]
     private float mouseSpeedMultiplier = 0.1f;
@@ -119,6 +125,7 @@ public class ShipMovement : MonoBehaviour
         zoomValue = ApplyZoomBounds(zoomValue + delta);
         float perspectiveZoomValue = ApplyPerspectiveZoom(zoomValue);
         LevelInstance.Instance.MainCamera.orthographicSize = perspectiveZoomValue * originalZ;
+        onZoomValueChanged?.Invoke(zoomValue);
     }
 
     private float ApplyZoomBounds(float value)

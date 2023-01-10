@@ -132,6 +132,8 @@ public class LevelInstance : MonoBehaviour
     private Dialog sickDialog;
     [SerializeField]
     private LevelInstanceMode levelMode = LevelInstanceMode.Default;
+    [SerializeField]
+    private GameObject roomButtonPrefab;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -143,6 +145,7 @@ public class LevelInstance : MonoBehaviour
     private Mode mode = Mode.None;
     private DraggedItem draggedItem;
     private bool isEndOfDayFade = false;
+    private Room currentRoom;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -155,6 +158,19 @@ public class LevelInstance : MonoBehaviour
     public Scene CurrentScene { get { return currentScene; } }
     public LevelInstanceMode LevelMode { get { return levelMode; } }
     public Camera MainCamera { get { return mainCamera; } }
+    public PlayableCharacterSpawn PlayableCharacterSpawn
+    {
+        get
+        {
+            switch(levelMode)
+            {
+                case LevelInstanceMode.Default: return currentScene ? currentScene.PlayableCharacterSpawn : null;
+                case LevelInstanceMode.Ship: return currentRoom ? currentRoom.PlayableCharacterSpawn : null;
+            }
+
+            return null;
+        }
+    }
 
     public delegate void OnSceneChangedEvent(Scene scene);
     public event OnSceneChangedEvent onSceneChanged;
@@ -193,15 +209,21 @@ public class LevelInstance : MonoBehaviour
         foregroundScene.gameObject.SetActive(false);
         dialogSystem.gameObject.SetActive(false);
 
-        if(levelMode == LevelInstanceMode.Default)
-        {
-            foreach (Scene scene in scenes)
-            {
-                scene.OnActiveStatusChanged(false);
-                scene.gameObject.SetActive(false);
-            }
+        switch(levelMode)
+        { 
+            case LevelInstanceMode.Default:
+                foreach (Scene scene in scenes)
+                {
+                    scene.OnActiveStatusChanged(false);
+                    scene.gameObject.SetActive(false);
+                }
 
-            OpenScene(defaultScene);
+                OpenScene(defaultScene);
+                break;
+
+            case LevelInstanceMode.Ship:
+                OpenScene(scenes[0]);
+                break;
         }
 
         if (diaryEntry)
@@ -281,7 +303,7 @@ public class LevelInstance : MonoBehaviour
                         previousScene = null;
                     }
 
-                    currentScene.SetPlayableCharacterVisible(true);
+                    PlayableCharacterSpawn.SetCharactersVisible(true);
                     if (currentHiddenObjects != null)
                     {
                         // Reactivate all the characters that were hidden during the dialog.
@@ -423,7 +445,12 @@ public class LevelInstance : MonoBehaviour
             }
         }
 
-        if(currentScene)
+        OpenScene(scene);
+    }
+
+    public void OpenScene(Scene scene)
+    {
+        if (currentScene)
         {
             currentScene.OnActiveStatusChanged(false);
             currentScene.gameObject.SetActive(false);
@@ -434,6 +461,7 @@ public class LevelInstance : MonoBehaviour
         currentScene.OnActiveStatusChanged(true);
 
         onSceneChanged?.Invoke(currentScene);
+
     }
 
     private void OnDialogStarted()
@@ -461,7 +489,7 @@ public class LevelInstance : MonoBehaviour
             OpenScene(button.SceneName);
         }
 
-        currentScene.SetPlayableCharacterVisible(false);
+        PlayableCharacterSpawn.SetCharactersVisible(false);
         currentHiddenObjects = button.HideObjects;
         foreach (GameObject go in currentHiddenObjects)
         {
@@ -771,5 +799,27 @@ public class LevelInstance : MonoBehaviour
         currentShop.OnEndDrag(draggedItem);
         Destroy(draggedItem.gameObject);
         draggedItem = null;
+    }
+
+    public void InstantiateRoomButton(Room room)
+    {
+        GameObject roomButtonGO = Instantiate(roomButtonPrefab, sceneInteractables.transform);
+        RoomButton roomButton = roomButtonGO.GetComponent<RoomButton>();
+        roomButton.Room = room;
+        room.RoomButton = roomButton;
+    }
+
+    public void GoToRoom(Room room)
+    {
+        if(currentRoom)
+        {
+            currentRoom.SetVisited(false);
+        }
+
+        currentRoom = room;
+        if(currentRoom)
+        {
+            currentRoom.SetVisited(true);
+        }
     }
 }

@@ -7,7 +7,8 @@ using UnityEngine;
 public enum PositionOnSpriteMode
 {
     Sprite,
-    PlayableCharacter
+    PlayableCharacter,
+    WorldObject
 }
 
 public class PositionOnSprite : MonoBehaviour
@@ -18,8 +19,15 @@ public class PositionOnSprite : MonoBehaviour
     private SpriteRenderer sprite;
     [SerializeField]
     private Vector2 normalizedPosition = new Vector2(0.5f, 0.5f);
+    [SerializeField]
+    private GameObject worldObject;
 
     private RectTransform rectTransform;
+
+    public PositionOnSpriteMode Mode { get { return mode; } set { mode = value; } }
+    public SpriteRenderer Sprite { get { return sprite; } set { sprite = value; } }
+    public Vector2 NormalizedPosition { get { return normalizedPosition; } set { normalizedPosition = value; } }
+    public GameObject WorldObject { get { return worldObject; } set { worldObject = value; } }
 
 #if UNITY_EDITOR && UPDATE_POSITION_IN_EDITOR
     private Vector2Int lastResolution;
@@ -47,6 +55,10 @@ public class PositionOnSprite : MonoBehaviour
                 {
                     OnSceneChanged(LevelInstance.Instance.CurrentScene);
                 }
+                break;
+
+            case PositionOnSpriteMode.WorldObject:
+                UpdatePosition();
                 break;
         }
     }
@@ -86,7 +98,7 @@ public class PositionOnSprite : MonoBehaviour
     }
 #endif
 
-    private void UpdatePosition()
+    public void UpdatePosition()
     {
         switch(mode)
         {
@@ -101,26 +113,39 @@ public class PositionOnSprite : MonoBehaviour
 
             case PositionOnSpriteMode.PlayableCharacter:
             {
-                GameObject spawnedCharacter = LevelInstance.Instance.CurrentScene.SpawnedCharacter;
-                SpriteRenderer[] renderers = spawnedCharacter.GetComponentsInChildren<SpriteRenderer>(true);
-                Bounds? bounds = null;
-                foreach(SpriteRenderer renderer in renderers)
+                ///@todo For the ship, expose the PlayableCharacterSpawn
+                if (LevelInstance.Instance.CurrentScene && IsInSceneInteractables(LevelInstance.Instance.CurrentScene))
                 {
-                    if(bounds != null)
+                    GameObject spawnedCharacter = LevelInstance.Instance.CurrentScene.SpawnedCharacter;
+                    SpriteRenderer[] renderers = spawnedCharacter.GetComponentsInChildren<SpriteRenderer>(true);
+                    Bounds? bounds = null;
+                    foreach (SpriteRenderer renderer in renderers)
                     {
-                        bounds.Value.Encapsulate(renderer.bounds);
+                        if (bounds != null)
+                        {
+                            bounds.Value.Encapsulate(renderer.bounds);
+                        }
+                        else
+                        {
+                            bounds = renderer.bounds;
+                        }
                     }
-                    else
+
+                    if (bounds != null)
                     {
-                        bounds = renderer.bounds;
+                        UpdatePositionToBounds(bounds.Value);
                     }
                 }
 
-                if(bounds != null)
-                {
-                    UpdatePositionToBounds(bounds.Value);
-                }
+                break;
+            }
 
+            case PositionOnSpriteMode.WorldObject:
+            {
+                if(worldObject)
+                {
+                    UpdatePositionToWorldPosition(worldObject.transform.position);
+                }
                 break;
             }
         }
@@ -140,7 +165,17 @@ public class PositionOnSprite : MonoBehaviour
 
     private Vector2 WorldToAnchoredPosition(Vector2 worldPosition)
     {
-        Vector2 anchoredPosition = LevelInstance.Instance.CanvasRect.InverseTransformPoint(worldPosition);
-        return anchoredPosition;
+        //https://answers.unity.com/questions/799616/unity-46-beta-19-how-to-convert-from-world-space-t.html
+        Vector2 viewportPosition = LevelInstance.Instance.MainCamera.WorldToViewportPoint(worldPosition);
+        Vector2 screenPosition = new Vector2(
+            ((viewportPosition.x * LevelInstance.Instance.CanvasRect.sizeDelta.x) - (LevelInstance.Instance.CanvasRect.sizeDelta.x * 0.5f)),
+            ((viewportPosition.y * LevelInstance.Instance.CanvasRect.sizeDelta.y) - (LevelInstance.Instance.CanvasRect.sizeDelta.y * 0.5f))
+        );
+        return screenPosition;
+    }
+
+    private void UpdatePositionToWorldPosition(Vector3 worldPosition)
+    {
+        rectTransform.anchoredPosition = WorldToAnchoredPosition(worldPosition);
     }
 }

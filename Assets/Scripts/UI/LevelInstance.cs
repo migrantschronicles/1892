@@ -21,6 +21,12 @@ enum OverlayMode
     Diary
 }
 
+public enum LevelInstanceMode
+{
+    Default,
+    Ship
+}
+
 /**
  * A prefab to add to each level as the root for every ui element.
  * This is so that new elements like the new game manager can be easily added and existing elements can be easily changed across levels.
@@ -124,6 +130,8 @@ public class LevelInstance : MonoBehaviour
     private Dialog tooHungryDialog;
     [SerializeField]
     private Dialog sickDialog;
+    [SerializeField]
+    private LevelInstanceMode levelMode = LevelInstanceMode.Default;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -145,6 +153,8 @@ public class LevelInstance : MonoBehaviour
     public Canvas Canvas { get { return canvas; } }
     public RectTransform CanvasRect { get { return canvas.GetComponent<RectTransform>(); } }
     public Scene CurrentScene { get { return currentScene; } }
+    public LevelInstanceMode LevelMode { get { return levelMode; } }
+    public Camera MainCamera { get { return mainCamera; } }
 
     public delegate void OnSceneChangedEvent(Scene scene);
     public event OnSceneChangedEvent onSceneChanged;
@@ -170,7 +180,7 @@ public class LevelInstance : MonoBehaviour
 
     private void Start()
     {
-        if (string.IsNullOrWhiteSpace(defaultScene))
+        if (string.IsNullOrWhiteSpace(defaultScene) && levelMode == LevelInstanceMode.Default)
         {
             Debug.Log("Default scene is empty in level instance");
             return;
@@ -180,17 +190,20 @@ public class LevelInstance : MonoBehaviour
         backButton.onClick.AddListener(OnBack);
         blur.SetEnabled(false);
         IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
+        foregroundScene.gameObject.SetActive(false);
+        dialogSystem.gameObject.SetActive(false);
 
-        foreach(Scene scene in scenes)
+        if(levelMode == LevelInstanceMode.Default)
         {
-            scene.OnActiveStatusChanged(false);
-            scene.gameObject.SetActive(false);
+            foreach (Scene scene in scenes)
+            {
+                scene.OnActiveStatusChanged(false);
+                scene.gameObject.SetActive(false);
+            }
+
+            OpenScene(defaultScene);
         }
 
-        foregroundScene.gameObject.SetActive(false);
-        OpenScene(defaultScene);
-
-        dialogSystem.gameObject.SetActive(false);
         if (diaryEntry)
         {
             blur.SetEnabled(true);

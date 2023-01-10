@@ -17,14 +17,17 @@ public class Scene : MonoBehaviour
 
     private void Start()
     {
-        if (string.IsNullOrWhiteSpace(sceneName))
+        if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Default)
         {
-            Debug.LogError("Scene name is empty in: " + name);
-        }
+            if (string.IsNullOrWhiteSpace(sceneName))
+            {
+                Debug.LogError("Scene name is empty in: " + name);
+            }
 
-        if(characterSpawn == null)
-        {
-            Debug.LogError("No character spawn is set in: " + name);
+            if (characterSpawn == null)
+            {
+                Debug.LogError("No character spawn is set in: " + name);
+            }
         }
     }
 

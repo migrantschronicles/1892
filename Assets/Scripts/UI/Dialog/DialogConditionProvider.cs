@@ -29,6 +29,14 @@ using UnityEngine;
  *      * 'health:dayswithoutenoughfood>2': Checks if any protagonist did not have enough food for more than 2 days
  *      * 'health:main:dayswithoutenoughfood=2': Checks if the main protagonist did not have enough food for exactly 2 days
  *      * 'health:side:dayswithoutenoughfood<=2': Checks if any of the side characters did not have enough food for less than 2 days
+ *      
+ * There are also special conditions for game stats. These conditions need to start with 'game:'.
+ * Then you can specify which key you want to check for. These are currently supported:
+ *      * 'daysincity' [int]: How many consecutive days the player spent in the current city (or the ship).
+ * After that (for int and float keys) you can add a comparison. The same comparisons are supported as the health conditions.  
+ * Examples of a game condition:
+ *      * 'game:daysincity>2': Checks if the player has spent more than 2 days in the current city / on the ship.
+ *      
  * Warning: It is expected that you don't have errors in the condition and follow exactly the rules, i.e. no whitespaces, nothing other than expected.
  */
 public class DialogConditionProvider
@@ -320,6 +328,18 @@ public class DialogConditionProvider
         return false;
     }
 
+    private bool HasGameCondition(string condition)
+    {
+        SplitOperation(condition, out string key, out Operation operation, out string value);
+
+        if(key.Equals("daysincity", StringComparison.OrdinalIgnoreCase))
+        {
+            return Compare(NewGameManager.Instance.DaysInCity, operation, int.Parse(value));
+        }
+
+        return false;
+    }
+
     /**
      * Checks if one condition is met. Does not care whether it is met globally or locally.
      * If condition is empty, it is considered to be met.
@@ -329,6 +349,10 @@ public class DialogConditionProvider
         if(condition.StartsWith("health:"))
         {
             return HasHealthCondition(condition[7..]);
+        }
+        else if(condition.StartsWith("game:"))
+        {
+            return HasGameCondition(condition[5...]);
         }
 
         if (string.IsNullOrWhiteSpace(condition))

@@ -35,6 +35,7 @@ public enum DialogLanguage
  * An empty condition is considered to be true.
  * You can negate each condition so that it only plays if the condition is not met.
  * E.g. If you do not want to play a dialog, add one condition with an empty string and enable Not.
+ * Refer to the documentation of DialogConditionProvider for more information.
  * 
  * DIALOG ELEMENT
  * There are multiple elements that can be added to the hierarchy: Dialog, DialogLine, DialogDecision, DialogDecisionOption, DialogRedirector and DialogSelector.

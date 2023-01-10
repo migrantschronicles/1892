@@ -148,6 +148,9 @@ public class NewGameManager : MonoBehaviour
     // Health
     public HealthStatus HealthStatus { get { return GetComponent<HealthStatus>(); } }
 
+    // Stats
+    public int DaysInCity { get; private set; }
+
     // Currency
     public Currency CurrentCurrency { get; private set; } = Currency.Franc;
     public delegate void OnCurrencyChangedEvent(Currency currency);
@@ -469,6 +472,7 @@ public class NewGameManager : MonoBehaviour
     {
         Debug.Log("Go to next day here, via clock");
         day++;
+        ++DaysInCity;
         onNewDay?.Invoke();
         SetDate(date.AddDays(1));
         SetMorningTime();
@@ -516,6 +520,7 @@ public class NewGameManager : MonoBehaviour
         SetFood(food - foodNeeded);
         SetMoney(money - moneyNeeded);
         //SetTime(time + timeNeeded); // Have to uncomment this later on when time is fixed - L
+        DaysInCity = 0;
 
         Debug.Log("Starting to head down to " + name + " by " + method);
         LocationMarker currentLocationObject = CurrentLocationObject;

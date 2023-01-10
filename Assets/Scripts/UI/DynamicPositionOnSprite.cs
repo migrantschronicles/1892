@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Updates the position and scale every frame. Only needed for the ship, since the camera is moving there.
+ */
 [RequireComponent(typeof(PositionOnSprite))]
 public class DynamicPositionOnSprite : MonoBehaviour
 {

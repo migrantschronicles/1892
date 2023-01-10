@@ -93,6 +93,13 @@ public enum LevelInstanceMode
  * To open the shop, you need to select the shop you want to open in the ShopButton script on the ShopButton.
  * Also set the sprite and normalized position in the PositionOnSprite component to place it on top of the shop.
  * The level instance takes care of showing / hiding everything.
+ * 
+ * ---------------------------
+ * SHIP
+ * For the ship, the LevelInstanceMode is set to Ship.
+ * The level instance should only have one scene, where all the rooms go into.
+ * See the documentation of Room for more information.
+ * Other than that, you can add elements as usual, so shops, dialogs etc, just make sure to use the buttons with _Ship ending.
  */
 public class LevelInstance : MonoBehaviour
 {

@@ -175,6 +175,9 @@ public class LevelInstance : MonoBehaviour
     public delegate void OnSceneChangedEvent(Scene scene);
     public event OnSceneChangedEvent onSceneChanged;
 
+    public delegate void OnPlayableCharacterSpawnChangedEvent(PlayableCharacterSpawn spawn);
+    public event OnPlayableCharacterSpawnChangedEvent onPlayableCharacterSpawnChanged;
+
     private void Awake()
     {
         instance = this;
@@ -461,7 +464,11 @@ public class LevelInstance : MonoBehaviour
         currentScene.OnActiveStatusChanged(true);
 
         onSceneChanged?.Invoke(currentScene);
-
+        if(scene.PlayableCharacterSpawn != null)
+        {
+            // If it's a normal scene, broadcast the event. If it's a ship, this is null.
+            onPlayableCharacterSpawnChanged?.Invoke(currentScene.PlayableCharacterSpawn);
+        }
     }
 
     private void OnDialogStarted()
@@ -820,6 +827,7 @@ public class LevelInstance : MonoBehaviour
         if(currentRoom)
         {
             currentRoom.SetVisited(true);
+            onPlayableCharacterSpawnChanged?.Invoke(currentRoom.PlayableCharacterSpawn);
         }
     }
 }

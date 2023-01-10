@@ -50,10 +50,10 @@ public class PositionOnSprite : MonoBehaviour
                 break;
 
             case PositionOnSpriteMode.PlayableCharacter:
-                LevelInstance.Instance.onSceneChanged += OnSceneChanged;
-                if(LevelInstance.Instance.CurrentScene)
+                LevelInstance.Instance.onPlayableCharacterSpawnChanged += OnPlayableCharacterSpawnChanged;
+                if(LevelInstance.Instance.PlayableCharacterSpawn)
                 {
-                    OnSceneChanged(LevelInstance.Instance.CurrentScene);
+                    OnPlayableCharacterSpawnChanged(LevelInstance.Instance.PlayableCharacterSpawn);
                 }
                 break;
 
@@ -68,7 +68,8 @@ public class PositionOnSprite : MonoBehaviour
         Transform parent = transform.parent;
         while(parent != null)
         {
-            if(parent.gameObject == scene.Interactables)
+            // On the ship, Interactables is null for the scene.
+            if(!scene.Interactables || parent.gameObject == scene.Interactables)
             {
                 return true;
             }
@@ -77,11 +78,14 @@ public class PositionOnSprite : MonoBehaviour
         return false;
     }
 
-    private void OnSceneChanged(Scene scene)
+    private void OnPlayableCharacterSpawnChanged(PlayableCharacterSpawn spawn)
     {
-        if(scene && IsInSceneInteractables(scene))
+        // Check if it's the scene we are in.
+        // If it's a normal level (not Ship), this button could be on a scene which is not the currently opened,
+        // so wait until it's the correct one.
+        // On a ship, this will always be true.
+        if(LevelInstance.Instance.CurrentScene && IsInSceneInteractables(LevelInstance.Instance.CurrentScene))
         {
-            LevelInstance.Instance.onSceneChanged -= OnSceneChanged;
             UpdatePosition();
         }
     }
@@ -113,10 +117,9 @@ public class PositionOnSprite : MonoBehaviour
 
             case PositionOnSpriteMode.PlayableCharacter:
             {
-                ///@todo For the ship, expose the PlayableCharacterSpawn
                 if (LevelInstance.Instance.CurrentScene && IsInSceneInteractables(LevelInstance.Instance.CurrentScene))
                 {
-                    GameObject spawnedCharacter = LevelInstance.Instance.CurrentScene.SpawnedCharacter;
+                    GameObject spawnedCharacter = LevelInstance.Instance.PlayableCharacterSpawn.SpawnedCharacter;
                     SpriteRenderer[] renderers = spawnedCharacter.GetComponentsInChildren<SpriteRenderer>(true);
                     Bounds? bounds = null;
                     foreach (SpriteRenderer renderer in renderers)

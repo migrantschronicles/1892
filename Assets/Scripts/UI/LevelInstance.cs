@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
 
-enum Mode
+public enum Mode
 {
     None,
     Shop,
@@ -171,6 +171,7 @@ public class LevelInstance : MonoBehaviour
             return null;
         }
     }
+    public Mode Mode { get { return mode; } }
 
     public delegate void OnSceneChangedEvent(Scene scene);
     public event OnSceneChangedEvent onSceneChanged;

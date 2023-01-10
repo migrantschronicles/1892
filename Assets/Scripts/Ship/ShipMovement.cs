@@ -38,64 +38,67 @@ public class ShipMovement : MonoBehaviour
 
     private void Update()
     {
-        if(Input.touchCount > 0)
+        if(LevelInstance.Instance.Mode == Mode.None)
         {
-            if (Input.touchCount == 1)
+            if (Input.touchCount > 0)
             {
-                // If there is only one touch, move the camera.
-                Touch t0 = Input.GetTouch(0);
-                // Normalize it to viewport 0..1
-                Vector2 delta = NormalizeTouchPoint(t0.deltaPosition);
-                // Scale with zoom level.
-                delta *= Mathf.Abs(LevelInstance.Instance.MainCamera.orthographicSize);
-                // Scale differently in x / y
-                delta.y /= Screen.width / Screen.height;
-                // Move
-                Move(-delta * moveMultiplier);
-            }
-            else if(Input.touchCount == 2)
-            {
-                // If there are 2 touches, zoom.
-                Touch t0 = Input.GetTouch(0);
-                Touch t1 = Input.GetTouch(1);
-
-                Vector2 t0Pos = NormalizeTouchPoint(t0.position);
-                Vector2 t1Pos = NormalizeTouchPoint(t1.position);
-                Vector2 t0Prev = NormalizeTouchPoint(t0.position - t0.deltaPosition);
-                Vector2 t1Prev = NormalizeTouchPoint(t1.position - t1.deltaPosition);
-
-                float prevTouchDistance = Vector2.Distance(t0Prev, t1Prev);
-                float touchDistance = Vector2.Distance(t0Pos, t1Pos);
-                float deltaDistance = prevTouchDistance - touchDistance;
-                ZoomToViewportCenter(deltaDistance * zoomMultiplier );
-            }
-        }
-#if UNITY_EDITOR
-        else
-        {
-            if(Input.GetMouseButton(0))
-            {
-                if (!Input.GetMouseButtonDown(0))
+                if (Input.touchCount == 1)
                 {
-                    // Move based on lastMousePosition
-                    Vector2 deltaPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y) - lastMousePosition;
-                    Move(-deltaPosition * mouseSpeedMultiplier);
+                    // If there is only one touch, move the camera.
+                    Touch t0 = Input.GetTouch(0);
+                    // Normalize it to viewport 0..1
+                    Vector2 delta = NormalizeTouchPoint(t0.deltaPosition);
+                    // Scale with zoom level.
+                    delta *= Mathf.Abs(LevelInstance.Instance.MainCamera.orthographicSize);
+                    // Scale differently in x / y
+                    delta.y /= Screen.width / Screen.height;
+                    // Move
+                    Move(-delta * moveMultiplier);
                 }
+                else if (Input.touchCount == 2)
+                {
+                    // If there are 2 touches, zoom.
+                    Touch t0 = Input.GetTouch(0);
+                    Touch t1 = Input.GetTouch(1);
 
-                // Update the last mouse position
-                lastMousePosition = Input.mousePosition;
+                    Vector2 t0Pos = NormalizeTouchPoint(t0.position);
+                    Vector2 t1Pos = NormalizeTouchPoint(t1.position);
+                    Vector2 t0Prev = NormalizeTouchPoint(t0.position - t0.deltaPosition);
+                    Vector2 t1Prev = NormalizeTouchPoint(t1.position - t1.deltaPosition);
+
+                    float prevTouchDistance = Vector2.Distance(t0Prev, t1Prev);
+                    float touchDistance = Vector2.Distance(t0Pos, t1Pos);
+                    float deltaDistance = prevTouchDistance - touchDistance;
+                    ZoomToViewportCenter(deltaDistance * zoomMultiplier);
+                }
             }
+#if UNITY_EDITOR
             else
             {
-                // If the mouse wheel was used, zoom.
-                float mouseScroll = Input.mouseScrollDelta.y;
-                if (!Mathf.Approximately(mouseScroll, 0.0f))
+                if (Input.GetMouseButton(0))
                 {
-                    ZoomToViewportCenter(-mouseScroll * mouseZoomMultiplier);
+                    if (!Input.GetMouseButtonDown(0))
+                    {
+                        // Move based on lastMousePosition
+                        Vector2 deltaPosition = new Vector2(Input.mousePosition.x, Input.mousePosition.y) - lastMousePosition;
+                        Move(-deltaPosition * mouseSpeedMultiplier);
+                    }
+
+                    // Update the last mouse position
+                    lastMousePosition = Input.mousePosition;
+                }
+                else
+                {
+                    // If the mouse wheel was used, zoom.
+                    float mouseScroll = Input.mouseScrollDelta.y;
+                    if (!Mathf.Approximately(mouseScroll, 0.0f))
+                    {
+                        ZoomToViewportCenter(-mouseScroll * mouseZoomMultiplier);
+                    }
                 }
             }
-        }
 #endif
+        }
     }
 
     private Vector2 NormalizeTouchPoint(Vector2 position)

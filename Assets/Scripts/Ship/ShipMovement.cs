@@ -25,12 +25,15 @@ public class ShipMovement : MonoBehaviour
     private float autoZoomStartValue = 40.0f;
     [SerializeField]
     private float autoZoomSmoothTime = 3.0f;
+    [SerializeField]
+    private float zoomToTargetSmoothTime = 2.0f;
 
     private float originalZ = -1.0f;
     private float zoomValue = 1.0f;
     private MovementMode movementMode = MovementMode.Default;
     private Camera updatedCamera;
-    private float autoZoomVelocity = 0.0f;
+    private float zoomVelocity = 0.0f;
+    private Vector3 moveVelocity = Vector3.zero;
 
     public delegate void OnZoomValueChangedEvent(float zoomValue);
     public event OnZoomValueChangedEvent onZoomValueChanged;
@@ -68,13 +71,7 @@ public class ShipMovement : MonoBehaviour
             {
                 if(!CheckTouchInterruption())
                 {
-                    float current = Mathf.Sqrt(updatedCamera.orthographicSize);
-                    float target = Mathf.Sqrt(defaultZoomValue * originalZ);
-                    float newValue = Mathf.SmoothDamp(current, target, ref autoZoomVelocity, autoZoomSmoothTime);
-                    float newOrthographicSize = newValue * newValue;
-                    updatedCamera.orthographicSize = newOrthographicSize;
-                    zoomValue = newOrthographicSize / originalZ;
-                    if (Mathf.Abs(newValue - target) < 0.01f)
+                    if(ZoomToLocation(Vector3.zero, defaultZoomValue * originalZ, ref zoomVelocity, autoZoomSmoothTime, ref moveVelocity))
                     {
                         movementMode = MovementMode.Default;
                     }
@@ -82,7 +79,43 @@ public class ShipMovement : MonoBehaviour
 
                 break;
             }
+
+            case MovementMode.ZoomToTarget:
+            {
+                if(!CheckTouchInterruption())
+                {
+                    PlayableCharacterSpawn spawn = LevelInstance.Instance.PlayableCharacterSpawn;
+                    if(spawn && spawn.SpawnedCharacter)
+                    {
+                        if(ZoomToLocation(spawn.SpawnedCharacter.transform.position, defaultZoomValue * originalZ, ref zoomVelocity, 
+                            zoomToTargetSmoothTime, ref moveVelocity))
+                        {
+                            movementMode = MovementMode.Default;
+                        }
+                    }
+                }
+                break;
+            }
         }
+    }
+
+    private bool ZoomToLocation(Vector3 location, float targetSize, ref float velocity, float smoothTime, ref Vector3 moveVelocity)
+    {
+        float currentZoom = Mathf.Sqrt(updatedCamera.orthographicSize);
+        float targetZoom = Mathf.Sqrt(targetSize);
+        float newZoom = Mathf.SmoothDamp(currentZoom, targetZoom, ref velocity, smoothTime);
+        float newOrthographicSize = newZoom * newZoom;
+        updatedCamera.orthographicSize = newOrthographicSize;
+        zoomValue = newOrthographicSize / originalZ;
+
+        Vector3 currentPosition = updatedCamera.transform.position;
+        Vector3 targetPosition = new Vector3(location.x, location.y, currentPosition.z);
+        Vector3 newPosition = Vector3.SmoothDamp(currentPosition, targetPosition, ref moveVelocity, smoothTime);
+        updatedCamera.transform.position = newPosition;
+
+        onZoomValueChanged?.Invoke(zoomValue);
+
+        return Mathf.Abs(newZoom - targetZoom) < 0.01f && Vector3.Distance(newPosition, targetPosition) < 0.01f;
     }
 
     private bool CheckTouchInterruption()
@@ -189,6 +222,13 @@ public class ShipMovement : MonoBehaviour
         }
 
         movementMode = mode;
+        zoomVelocity = 0.0f;
+        moveVelocity = Vector3.zero;
+    }
+
+    public void ZoomToTarget()
+    {
+        SetMovementMode(MovementMode.ZoomToTarget);
     }
 
     private Vector2 NormalizeTouchPoint(Vector2 position)

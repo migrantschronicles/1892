@@ -8,6 +8,7 @@ public class ShipMovement : MonoBehaviour
     {
         Default,
         AutoZoom,
+        ZoomToPlayer,
         ZoomToTarget
     }
 
@@ -34,6 +35,7 @@ public class ShipMovement : MonoBehaviour
     private Camera updatedCamera;
     private float zoomVelocity = 0.0f;
     private Vector3 moveVelocity = Vector3.zero;
+    private Vector3 targetPosition;
 
     public delegate void OnZoomValueChangedEvent(float zoomValue);
     public event OnZoomValueChangedEvent onZoomValueChanged;
@@ -80,7 +82,7 @@ public class ShipMovement : MonoBehaviour
                 break;
             }
 
-            case MovementMode.ZoomToTarget:
+            case MovementMode.ZoomToPlayer:
             {
                 if(!CheckTouchInterruption())
                 {
@@ -92,6 +94,19 @@ public class ShipMovement : MonoBehaviour
                         {
                             movementMode = MovementMode.Default;
                         }
+                    }
+                }
+                break;
+            }
+
+            case MovementMode.ZoomToTarget:
+            {
+                if (!CheckTouchInterruption())
+                {
+                    if (ZoomToLocation(targetPosition, defaultZoomValue * originalZ, ref zoomVelocity,
+                        zoomToTargetSmoothTime, ref moveVelocity))
+                    {
+                        movementMode = MovementMode.Default;
                     }
                 }
                 break;
@@ -226,9 +241,15 @@ public class ShipMovement : MonoBehaviour
         moveVelocity = Vector3.zero;
     }
 
-    public void ZoomToTarget()
+    public void ZoomToTarget(Vector3 target)
     {
+        targetPosition = target;
         SetMovementMode(MovementMode.ZoomToTarget);
+    }
+
+    public void ZoomToPlayer()
+    {
+        SetMovementMode(MovementMode.ZoomToPlayer);
     }
 
     private Vector2 NormalizeTouchPoint(Vector2 position)

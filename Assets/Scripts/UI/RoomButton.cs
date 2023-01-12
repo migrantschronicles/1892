@@ -49,7 +49,13 @@ public class RoomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private void Start()
     {
         Button button = GetComponent<Button>();
-        button.onClick.AddListener(() => LevelInstance.Instance.GoToRoom(Room));
+        button.onClick.AddListener(OnClick);
+    }
+
+    private void OnClick()
+    {
+        LevelInstance.Instance.GoToRoom(Room);
+        LevelInstance.Instance.GetComponent<ShipMovement>().ZoomToTarget(Room.transform.position);
     }
 
     public void OnPointerDown(PointerEventData eventData)

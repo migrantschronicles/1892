@@ -117,11 +117,18 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private float timeForCharacters = 0.1f;
     [SerializeField]
     private float paddingBottom = 8;
+    [SerializeField, Tooltip("Whether the talk animation should be played only once or the whole time a dialog bubble is active")]
+    private bool talkOnce;
 
     public AudioClip openClip;
     public AudioClip closeClip;
     public AudioClip lineClip;
     public AudioClip decisionOptionClip;
+
+    public delegate void OnDialogLineEvent(DialogLine line);
+    public event OnDialogLineEvent onDialogLine;
+    public delegate void OnDialogDecisionEvent(DialogDecision decision);
+    public event OnDialogDecisionEvent onDialogDecision;
 
     private GameObject content;
     private Dialog currentDialog;
@@ -420,6 +427,9 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         // Notify the health system
         NewGameManager.Instance.HealthStatus.OnDialogLine(line);
 
+        // Broadcast
+        onDialogLine?.Invoke(line);
+
         if(IsLastLine(line))
         {
             OnDialogFinished();
@@ -449,6 +459,8 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
                 }
             }
         }
+
+        onDialogDecision?.Invoke(decision);
     }
 
     private void ProcessRedirector(DialogRedirector redirector)

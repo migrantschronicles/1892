@@ -12,7 +12,9 @@ public class ForegroundScene : MonoBehaviour
     private Transform right;
 
     private GameObject leftCharacter;
+    private IAnimationController leftAnimController;
     private GameObject rightCharacter;
+    private IAnimationController rightAnimController;
 
     private void Start()
     {
@@ -40,11 +42,11 @@ public class ForegroundScene : MonoBehaviour
 
     public void SetCharacters(GameObject leftPrefab, GameObject rightPrefab)
     {
-        UpdateCharacter(ref leftCharacter, leftPrefab, left);
-        UpdateCharacter(ref rightCharacter, rightPrefab, right);
+        UpdateCharacter(ref leftCharacter, ref leftAnimController, leftPrefab, left);
+        UpdateCharacter(ref rightCharacter, ref rightAnimController, rightPrefab, right);
     }
 
-    private void UpdateCharacter(ref GameObject character, GameObject prefab, Transform parent)
+    private void UpdateCharacter(ref GameObject character, ref IAnimationController animController, GameObject prefab, Transform parent)
     {
         if(character != prefab)
         {
@@ -58,6 +60,7 @@ public class ForegroundScene : MonoBehaviour
             {
                 character = Instantiate(prefab, parent);
                 SetLayer(character, LayerMask.NameToLayer("Foreground"));
+                animController = character.GetComponent<IAnimationController>();
             }
         }
     }
@@ -68,6 +71,32 @@ public class ForegroundScene : MonoBehaviour
         for(int i = 0; i < go.transform.childCount; ++i)
         {
             SetLayer(go.transform.GetChild(i).gameObject, layer);
+        }
+    }
+
+    public void OnDialogLine(DialogLine line)
+    {
+        if(line.IsLeft)
+        {
+            if(leftAnimController)
+            {
+                leftAnimController.TalkIfNotTalking();
+            }
+        }
+        else
+        {
+            if(rightAnimController)
+            {
+                rightAnimController.TalkIfNotTalking();
+            }
+        }
+    }
+
+    public void OnDialogDecision(DialogDecision decision)
+    {
+        if(rightAnimController)
+        {
+            rightAnimController.TalkIfNotTalking();
         }
     }
 }

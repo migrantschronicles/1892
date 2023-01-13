@@ -17,8 +17,6 @@ public class ProtagonistAnimationController : IAnimationController
     [SerializeField]
     private string protagonistName;
     [SerializeField]
-    private float neutralSpeed = 1.0f;
-    [SerializeField]
     private float angrySpeed = 1.0f;
     [SerializeField]
     private float happySpeed = 1.0f;
@@ -50,7 +48,6 @@ public class ProtagonistAnimationController : IAnimationController
     private void OnEnable()
     {
         GetAnimator().SetInteger("State", (int)state);
-        GetAnimator().SetFloat("NeutralSpeed", neutralSpeed);
         GetAnimator().SetFloat("AngrySpeed", angrySpeed);
         GetAnimator().SetFloat("HappySpeed", happySpeed);
         GetAnimator().SetFloat("HungrySpeed", hungrySpeed);

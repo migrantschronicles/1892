@@ -16,6 +16,18 @@ public class ProtagonistAnimationController : IAnimationController
 {
     [SerializeField]
     private string protagonistName;
+    [SerializeField]
+    private float neutralSpeed = 1.0f;
+    [SerializeField]
+    private float angrySpeed = 1.0f;
+    [SerializeField]
+    private float happySpeed = 1.0f;
+    [SerializeField]
+    private float hungrySpeed = 1.0f;
+    [SerializeField]
+    private float sadSpeed = 1.0f;
+    [SerializeField]
+    private float sickSpeed = 1.0f;
 
     private ProtagonistAnimState state = ProtagonistAnimState.Neutral;
 
@@ -38,6 +50,12 @@ public class ProtagonistAnimationController : IAnimationController
     private void OnEnable()
     {
         GetAnimator().SetInteger("State", (int)state);
+        GetAnimator().SetFloat("NeutralSpeed", neutralSpeed);
+        GetAnimator().SetFloat("AngrySpeed", angrySpeed);
+        GetAnimator().SetFloat("HappySpeed", happySpeed);
+        GetAnimator().SetFloat("HungrySpeed", hungrySpeed);
+        GetAnimator().SetFloat("SadSpeed", sadSpeed);
+        GetAnimator().SetFloat("SickSpeed", sickSpeed);
     }
 
     private void OnHealthChanged(ProtagonistHealthData healthData)

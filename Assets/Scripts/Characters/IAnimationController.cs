@@ -4,28 +4,33 @@ using UnityEngine;
 
 public abstract class IAnimationController : MonoBehaviour
 {
-    protected Animator animator;
-
-    private void Awake()
-    {
-        animator = GetComponentInChildren<Animator>();
-    }
+    private Animator animator;
 
     public void SetIsTalking(bool isTalking)
     {
-        animator.SetBool("IsTalking", isTalking);
+        GetAnimator().SetBool("IsTalking", isTalking);
     }
 
     public void Talk()
     {
-        animator.SetTrigger("Talk");
+        GetAnimator().SetTrigger("Talk");
     }
 
     public void TalkIfNotTalking()
     {
-        if(!animator.GetBool("Talk"))
+        if(!GetAnimator().GetBool("Talk"))
         {
             Talk();
         }
+    }
+
+    protected Animator GetAnimator()
+    {
+        if(!animator)
+        {
+            animator = GetComponentInChildren<Animator>();
+        }
+
+        return animator;
     }
 }

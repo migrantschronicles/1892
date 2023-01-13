@@ -23,8 +23,15 @@ public enum DialogLanguage
  * DIALOG BUTTON
  * This is a prefab you can drag into the world which can trigger a dialog.
  * The dialog data for this specific person should be a child of this button.
- * You can set a condition and the dialog button will only be enabled if the conditions are met.
+ * You can set a condition and the dialog button will only be enabled if the conditions are met (in the ConditionallyVisible component).
  * You can use this e.g. to hide a dialog button after you have talked to a person, so you can't talk to him again.
+ * You can also set a dialog language for people that are talking in different languages and you need to buy a dictionary to be able to understand them.
+ * You can hide objects when a dialog of this dialog button is played from the scene.
+ * You can use this to hide e.g. the person you're talking to, so he is not visible anymore in the background (because you see him on the left side
+ * of the dialog above the blur).
+ * You have to set the dialog prefab that is used to display the npc you're talking to on the left side of the screen (this should be one of Assets/Characters).
+ * The prefab will be instatiated above the blur once you start the dialog.
+ * See the documentation in LevelInstance > Add a dialog button for more information.
  * 
  * CONDITIONS
  * A condition is a string (could be any string you choose).

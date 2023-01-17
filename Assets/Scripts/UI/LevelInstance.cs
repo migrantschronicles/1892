@@ -219,6 +219,8 @@ public class LevelInstance : MonoBehaviour
         IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
         foregroundScene.gameObject.SetActive(false);
         dialogSystem.gameObject.SetActive(false);
+        dialogSystem.onDialogLine += OnDialogLine;
+        dialogSystem.onDialogDecision += OnDialogDecision;
 
         switch(levelMode)
         { 
@@ -484,7 +486,6 @@ public class LevelInstance : MonoBehaviour
         dialogSystem.gameObject.SetActive(true);
         backButton.gameObject.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-        mode = Mode.Dialog;
         sceneInteractables.SetActive(false);
         blur.SetEnabled(true);
         NewGameManager.Instance.SetPaused(true);
@@ -504,6 +505,7 @@ public class LevelInstance : MonoBehaviour
             OpenScene(button.SceneName);
         }
 
+        mode = Mode.Dialog;
         PlayableCharacterSpawn.SetCharactersVisible(false);
         currentHiddenObjects = button.HideObjects;
         foreach (GameObject go in currentHiddenObjects)
@@ -836,6 +838,22 @@ public class LevelInstance : MonoBehaviour
         {
             currentRoom.SetVisited(true);
             onPlayableCharacterSpawnChanged?.Invoke(currentRoom.PlayableCharacterSpawn);
+        }
+    }
+
+    private void OnDialogLine(DialogLine line)
+    {
+        if(mode == Mode.Dialog && overlayMode == OverlayMode.None)
+        {
+            foregroundScene.OnDialogLine(line);
+        }
+    }
+
+    private void OnDialogDecision(DialogDecision decision)
+    {
+        if(mode == Mode.Dialog && overlayMode == OverlayMode.None)
+        {
+            foregroundScene.OnDialogDecision(decision);
         }
     }
 }

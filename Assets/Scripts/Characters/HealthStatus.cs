@@ -157,6 +157,9 @@ public class ProtagonistHealthData
     public HealthStatus_Homesickness HomesickessStatus { get { return homesicknessStatus; } }
     public HealthStatus_Cholera CholeraStatus { get { return choleraStatus; } }
 
+    public delegate void OnHealthChangedEvent(ProtagonistHealthData data);
+    public event OnHealthChangedEvent onHealthChanged;
+
     public ProtagonistHealthData(HealthStatus status)
     {
         healthStatus = status;
@@ -173,6 +176,7 @@ public class ProtagonistHealthData
         hungryStatus.OnEndOfDay(healthData != null ? healthData.foodAmount : 0);
         homesicknessStatus.OnEndOfDay();
         CholeraStatus.OnEndOfDay();
+        onHealthChanged?.Invoke(this);
     }
 
     public void OnDayWithoutEnoughFood(int daysWithoutEnoughFood)
@@ -182,6 +186,12 @@ public class ProtagonistHealthData
             // If the character does not have enough food and is hungry, increase the homesickness.
             homesicknessStatus.AddValue(healthStatus.HomesicknessHungryIncrease);
         }
+    }
+
+    public void AddHomesicknessValue(float value)
+    {
+        HomesickessStatus.AddValue(value);
+        onHealthChanged?.Invoke(this);
     }
 }
 
@@ -266,7 +276,7 @@ public class HealthStatus : MonoBehaviour
         }
     }
 
-    private ProtagonistHealthData GetHealthStatus(string name)
+    public ProtagonistHealthData GetHealthStatus(string name)
     {
         return characters.Find(status => status.CharacterData.name == name);
     }
@@ -326,7 +336,7 @@ public class HealthStatus : MonoBehaviour
     {
         foreach (ProtagonistHealthData healthData in characters)
         {
-            healthData.HomesickessStatus.AddValue(value);
+            healthData.AddHomesicknessValue(value);
         }
     }
 

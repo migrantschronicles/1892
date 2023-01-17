@@ -23,8 +23,15 @@ public enum DialogLanguage
  * DIALOG BUTTON
  * This is a prefab you can drag into the world which can trigger a dialog.
  * The dialog data for this specific person should be a child of this button.
- * You can set a condition and the dialog button will only be enabled if the conditions are met.
+ * You can set a condition and the dialog button will only be enabled if the conditions are met (in the ConditionallyVisible component).
  * You can use this e.g. to hide a dialog button after you have talked to a person, so you can't talk to him again.
+ * You can also set a dialog language for people that are talking in different languages and you need to buy a dictionary to be able to understand them.
+ * You can hide objects when a dialog of this dialog button is played from the scene.
+ * You can use this to hide e.g. the person you're talking to, so he is not visible anymore in the background (because you see him on the left side
+ * of the dialog above the blur).
+ * You have to set the dialog prefab that is used to display the npc you're talking to on the left side of the screen (this should be one of Assets/Characters).
+ * The prefab will be instatiated above the blur once you start the dialog.
+ * See the documentation in LevelInstance > Add a dialog button for more information.
  * 
  * CONDITIONS
  * A condition is a string (could be any string you choose).
@@ -117,11 +124,18 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     private float timeForCharacters = 0.1f;
     [SerializeField]
     private float paddingBottom = 8;
+    [SerializeField, Tooltip("Whether the talk animation should be played only once or the whole time a dialog bubble is active")]
+    private bool talkOnce;
 
     public AudioClip openClip;
     public AudioClip closeClip;
     public AudioClip lineClip;
     public AudioClip decisionOptionClip;
+
+    public delegate void OnDialogLineEvent(DialogLine line);
+    public event OnDialogLineEvent onDialogLine;
+    public delegate void OnDialogDecisionEvent(DialogDecision decision);
+    public event OnDialogDecisionEvent onDialogDecision;
 
     private GameObject content;
     private Dialog currentDialog;
@@ -420,6 +434,9 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         // Notify the health system
         NewGameManager.Instance.HealthStatus.OnDialogLine(line);
 
+        // Broadcast
+        onDialogLine?.Invoke(line);
+
         if(IsLastLine(line))
         {
             OnDialogFinished();
@@ -449,6 +466,8 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
                 }
             }
         }
+
+        onDialogDecision?.Invoke(decision);
     }
 
     private void ProcessRedirector(DialogRedirector redirector)

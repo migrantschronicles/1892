@@ -1423,6 +1423,101 @@ MonoBehaviour:
   untraveledRoute: {fileID: 21300000, guid: ae60c9f976eac1647ac46f65552fc6a1, type: 3}
   currentRoute: {fileID: 21300000, guid: 35ee18976edccf145a42e124d31552cd, type: 3}
   traveledRoute: {fileID: 21300000, guid: e910ea77254aa29428963d96ab0480b8, type: 3}
+--- !u!1 &3081731504014373993
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3081731504014374003}
+  - component: {fileID: 3081731504014374004}
+  - component: {fileID: 3081731504014374005}
+  - component: {fileID: 3079483106663693570}
+  m_Layer: 5
+  m_Name: Ship Icon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3081731504014374003
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3081731504014373993}
+  m_LocalRotation: {x: -0, y: -0, z: -0.00032956203, w: 0.99999994}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.0656458, y: 0.0656458, z: 0.05109006}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3664605225781003872}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 351.7973, y: 164.825}
+  m_SizeDelta: {x: 204.8, y: 77.6}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &3081731504014374004
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3081731504014373993}
+  m_CullTransparentMesh: 1
+--- !u!114 &3081731504014374005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3081731504014373993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 4eb51f295a2b6774ca0ac54343edd251, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3079483106663693570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3081731504014373993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8435eb1172b7f4445bdd630ac6244bac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInShip: 0
+  pointA: {x: 351.7973, y: 164.825, z: 0}
+  pointB: {x: -169, y: 92, z: 0}
+  controlPoint1: {x: 97, y: 127, z: 0}
+  daysInCity: 0
+  TotalDaysInShip: 10
 --- !u!1 &3220130007278626977
 GameObject:
   m_ObjectHideFlags: 0
@@ -4186,6 +4281,7 @@ RectTransform:
   m_Children:
   - {fileID: 5200921533434727332}
   - {fileID: 8091921566563213772}
+  - {fileID: 3081731504014374003}
   m_Father: {fileID: 6816797949157836287}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6128,6 +6224,10 @@ PrefabInstance:
     - target: {fileID: 949139363743414732, guid: 7c6e2e36a32ad0a4c82d4b908d3762d3, type: 3}
       propertyPath: m_Name
       value: Diary
+      objectReference: {fileID: 0}
+    - target: {fileID: 949139363743414732, guid: 7c6e2e36a32ad0a4c82d4b908d3762d3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2569920099754288544, guid: 7c6e2e36a32ad0a4c82d4b908d3762d3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

@@ -478,18 +478,9 @@ public class NewGameManager : MonoBehaviour
         SetMorningTime();
         Vibrate();
 
-        // Conditions for Ship movement on Map
-        Vector3 startPoint = new Vector3(120, 92, 0); // To be updated accordingly
-        Vector3 endPoint = new Vector3(120, 10.5f, 0); // To be updated accordingly
-        Vector3 controlPoint1 = new Vector3(160, 51.25f, 0); // Should be in the middle of the route.
-        //Vector3 controlPoint2 = new Vector3(140, 10.5f, 0); // If needed (For curves), uncomment this.
 
-        int TotalDaysInShip = 0; // Needs to be updated accordingly.
-
-        float t = (DaysInCity / TotalDaysInShip) / 13.0f; // Make a scale of "days" to a value between 0 and 1
         
-        // Need to uncomment the line below to allow for movement.
-        //shipIcon.localPosition = Vector3.Lerp(Vector3.Lerp(startPoint, controlPoint1, t), Vector3.Lerp(controlPoint1, endPoint, t), t);
+        
 
     }
 

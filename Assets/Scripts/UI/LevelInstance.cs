@@ -218,7 +218,8 @@ public class LevelInstance : MonoBehaviour
         blur.SetEnabled(false);
         IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
         foregroundScene.gameObject.SetActive(false);
-        dialogSystem.gameObject.SetActive(false);
+        ///@todo
+        //dialogSystem.gameObject.SetActive(false);
         dialogSystem.onDialogLine += OnDialogLine;
         dialogSystem.onDialogDecision += OnDialogDecision;
 

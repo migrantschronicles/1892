@@ -60,6 +60,12 @@ public class DialogChat : MonoBehaviour
 
     private void OnBubbleHeightChanged(DialogBubble bubble, float oldHeight, float newHeight)
     {
+        ///@todo Only accounts if it's the last bubble.
+        if(bubble.gameObject != entries[entries.Count - 1].bubble)
+        {
+            Debug.LogError($"{bubble.name} is not the last added bubble, but changed it's height");
+        }
+
         float adjustment = newHeight - oldHeight;
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y + adjustment);
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);

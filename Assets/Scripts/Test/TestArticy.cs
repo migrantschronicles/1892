@@ -61,6 +61,7 @@ public class TestArticy : MonoBehaviour, IScriptMethodProvider, IPointerClickHan
     /// </summary>
     public void OnFlowPlayerPaused(IFlowObject aObject)
     {
+        Debug.Log("PPPPP");
         // if the flow player paused on a dialog, we immediately continue, usually getting to the first dialogue fragment inside the dialogue
         // makes it more convenient to set the startOn to a dialogue
         if (aObject is IDialogue)
@@ -105,6 +106,7 @@ public class TestArticy : MonoBehaviour, IScriptMethodProvider, IPointerClickHan
     /// </summary>
     public void OnBranchesUpdated(IList<Branch> aBranches)
     {
+        Debug.Log("UUUU");
         TEST_NextBranches = aBranches;
     }
 

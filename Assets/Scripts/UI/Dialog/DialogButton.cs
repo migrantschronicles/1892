@@ -1,3 +1,4 @@
+using Articy.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,8 @@ using UnityEngine.UI;
 
 public class DialogButton : MonoBehaviour
 {
+    [SerializeField, Tooltip("The articy reference to start the dialog")]
+    private ArticyRef startOn;
     [SerializeField]
     private Button dialogButton;
     [SerializeField, Tooltip("The scene to open for this dialog, or leave empty for current scene")]
@@ -24,31 +27,23 @@ public class DialogButton : MonoBehaviour
     public IEnumerable<GameObject> HideObjects { get { return hideObjects; } }
     public GameObject DialogPrefab { get { return dialogPrefab; } }
     public DialogLanguage Language { get { return language; } }
+    public ArticyRef ArticyRef { get { return startOn; } }
+    public DialogChat Chat { get; set; }
 
 #if UNITY_EDITOR
     private void Validate()
     {
-        for (int i = 0; i < transform.childCount; ++i)
-        {
-            Dialog dialog = transform.GetChild(i).GetComponent<Dialog>();
-            if(dialog == null)
-            {
-                DialogSystem.LogValidateError($"A dialog button should only contain Dialog prefabs as children, not {transform.GetChild(i).name}", 
-                    gameObject);
-            }
-        }
-
         if(!string.IsNullOrWhiteSpace(sceneName))
         {
             if(!LevelInstance.Instance.HasScene(sceneName))
             {
-                DialogSystem.LogValidateError($"The scene '{sceneName}' does not exist", gameObject);
+                Debug.LogError($"The scene '{sceneName}' does not exist in {name}");
             }
         }
 
         if(dialogPrefab == null)
         {
-            DialogSystem.LogValidateError($"The dialog prefab was not set", gameObject);
+            Debug.LogError($"The dialog prefab was not set in {name}");
         }
     }
 #endif

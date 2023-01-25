@@ -26,6 +26,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6355772440689313226}
   m_RootOrder: 0
@@ -48,6 +49,7 @@ GameObject:
   - component: {fileID: 6355772440119865427}
   - component: {fileID: 6355772440119865426}
   - component: {fileID: 3477627623357332688}
+  - component: {fileID: 3432508844677597161}
   m_Layer: 5
   m_Name: DialogSystem
   m_TagString: Untagged
@@ -65,6 +67,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6355772440689313226}
   m_Father: {fileID: 0}
@@ -157,13 +160,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   linePrefab: {fileID: 1600438492773470495, guid: d0a35d8c003248f4fb2f38f8c1d265b2, type: 3}
   answerPrefab: {fileID: 1766904060347057382, guid: afbeaf1fd6416ce4aae5cc6db85929c5, type: 3}
+  chatPrefab: {fileID: 682528303171606156, guid: 2f3a14bdb93752b43ac3251b4eb49de3, type: 3}
   spacing: 30
   timeForCharacters: 0.1
   paddingBottom: 8
+  talkOnce: 0
+  mainProtagonistTechnicalName: Ntt_471CB26E
   openClip: {fileID: 8300000, guid: d737383ed29a1ba48ad950e0fac7b088, type: 3}
   closeClip: {fileID: 8300000, guid: d737383ed29a1ba48ad950e0fac7b088, type: 3}
   lineClip: {fileID: 8300000, guid: d737383ed29a1ba48ad950e0fac7b088, type: 3}
   decisionOptionClip: {fileID: 8300000, guid: 48c8d99aa5af90143aa38571f2cddf6e, type: 3}
+--- !u!114 &3432508844677597161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6355772440119865428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 149237616, guid: df2ec02f61e861546b9427c26ccacb8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useDefaultGlobalVariables: 1
+  globalVariables: {fileID: 0}
+  overwriteMethodProvider: 0
+  overwrittenMethodProvider: {fileID: 0}
+  startOn:
+    instanceId: 0
+    referencingMode: 0
+    lowId: 0
+    highId: 0
+  pauseOn: 7
+  ignoreInvalidBranches: 1
+  continuouslyRecalculateBranches: 0
+  continouslyRecalculateInterval: 1
 --- !u!1 &6355772440689313229
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,6 +224,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6355772439702073888}
   m_Father: {fileID: 6355772440119865429}

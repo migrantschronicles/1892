@@ -28,6 +28,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1600438492773470492}
   m_RootOrder: 2
@@ -103,6 +104,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1600438493060906640}
   - {fileID: 1600438493198410963}
@@ -135,6 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 269463e44790190438f8868a0fe351c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  locaCaretaker: {fileID: 3492609556950867020}
   background: {fileID: 1600438493060906641}
   diamond: {fileID: 1600438492083823500}
   text: {fileID: 1600438493198410960}
@@ -174,6 +177,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1600438492773470492}
   m_RootOrder: 0
@@ -249,6 +253,7 @@ GameObject:
   - component: {fileID: 1600438493198410963}
   - component: {fileID: 1600438493198410961}
   - component: {fileID: 1600438493198410960}
+  - component: {fileID: 3492609556950867020}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -266,6 +271,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1600438492773470492}
   m_RootOrder: 1
@@ -316,4 +322,22 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: 
+--- !u!114 &3492609556950867020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600438493198410962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1794015611, guid: df2ec02f61e861546b9427c26ccacb8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetComponent: {fileID: 1600438493198410960}
+  locaKey: 
+  parameters: []
+  localizedTextAssignmentMethod:
+    m_PersistentCalls:
+      m_Calls: []

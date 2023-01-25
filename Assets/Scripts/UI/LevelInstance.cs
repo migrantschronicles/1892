@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
+using static UnityEditor.PlayerSettings.Switch;
 
 public enum Mode
 {
@@ -218,8 +219,7 @@ public class LevelInstance : MonoBehaviour
         blur.SetEnabled(false);
         IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
         foregroundScene.gameObject.SetActive(false);
-        ///@todo
-        //dialogSystem.gameObject.SetActive(false);
+        dialogSystem.gameObject.SetActive(false);
         dialogSystem.onDialogLine += OnDialogLine;
         dialogSystem.onDialogDecision += OnDialogDecision;
 
@@ -484,18 +484,11 @@ public class LevelInstance : MonoBehaviour
 
     private void OnDialogStarted()
     {
-        dialogSystem.gameObject.SetActive(true);
         backButton.gameObject.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
         sceneInteractables.SetActive(false);
         blur.SetEnabled(true);
         NewGameManager.Instance.SetPaused(true);
-    }
-
-    public void StartDialog(GameObject dialogParent, DialogLanguage language)
-    {
-        dialogSystem.StartDialog(dialogParent, language);
-        OnDialogStarted();
     }
 
     private void PrepareDialog(DialogButton button)
@@ -518,26 +511,30 @@ public class LevelInstance : MonoBehaviour
         foregroundScene.SetCharacters(button.DialogPrefab, NewGameManager.Instance.PlayableCharacterData.dialogPrefab);
         foregroundScene.gameObject.SetActive(true);
 
+        dialogSystem.gameObject.SetActive(true);
         AudioManager.Instance.PlayFX(dialogSystem.openClip);
     }
 
     public void StartDialog(DialogButton button)
     {
         PrepareDialog(button);
-        StartDialog(button.gameObject, button.Language);
+        dialogSystem.StartDialog(button, button.Language);
+        OnDialogStarted();
     }
 
     public void StartTooHungryDialog(DialogButton button, ProtagonistData responsibleCharacter)
     {
         PrepareDialog(button);
-        dialogSystem.StartDialog(tooHungryDialog, responsibleCharacter.name);
+        ///@todo
+        //dialogSystem.StartDialog(tooHungryDialog, responsibleCharacter.name);
         OnDialogStarted();
     }
 
     public void StartSickDialog(DialogButton button)
     {
         PrepareDialog(button);
-        dialogSystem.StartDialog(sickDialog);
+        ///@todo
+        //dialogSystem.StartDialog(sickDialog);
         OnDialogStarted();
     }
 

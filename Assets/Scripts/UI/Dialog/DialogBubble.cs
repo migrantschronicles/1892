@@ -1,9 +1,13 @@
+using Articy.Unity;
+using Articy.Unity.Interfaces;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DialogBubble : MonoBehaviour, IAnimatedText
 {
+    [SerializeField]
+    private ArticyLocaCaretaker locaCaretaker;
     [SerializeField]
     private Image background;
     [SerializeField]
@@ -25,7 +29,18 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
     [SerializeField]
     private Color npcForegroundColor = Color.white;
 
+    private RectTransform rectTransform;
+
     public DialogLine Line { get; private set; }
+
+    public delegate void OnHeightChangedEvent(DialogBubble bubble, float oldHeight, float newHeight);
+    public event OnHeightChangedEvent OnHeightChanged;
+
+    private void Awake()
+    {
+        rectTransform = GetComponent<RectTransform>();
+        locaCaretaker.localizedTextAssignmentMethod.AddListener(OnLocalizedTextChanged);
+    }
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -112,23 +127,56 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newHeight);
     }
 
-    public void SetContent(DialogLine line, string content)
+    public void AssignFlowObject(IFlowObject flowObject, string overrideText = null)
     {
-        Line = line;
-        text.text = content;
-        isLeft = line.IsLeft;
-
-        UpdateHeight();
-        if (isLeft)
+        // the caller could set a text that he wants to use, otherwise we build it using the information we find inside the branch
+        if (overrideText != null)
         {
-            SetLeft();
+            locaCaretaker.locaKey = overrideText;
         }
         else
         {
+            // here we extract any Text from the paused object.
+            // In most cases this is the spoken text of a dialogue fragment
+            var modelWithText = flowObject as IObjectWithLocalizableText;
+            if (modelWithText != null)
+            {
+                // but we are not taking Text directly and assigning it to the ui control
+                // we take the LocaKey and assign it to our caretaker. The caretaker will localize it
+                // using the current language and will set it to our text control. The caretaker will also make sure that the text
+                // is updated and localized again if we change the language while it is currently displayed to the screen.
+                locaCaretaker.locaKey = modelWithText.LocaKey_Text;
+            }
+            else
+            {
+                locaCaretaker.locaKey = "...";
+            }
+        }
+
+        if(DialogSystem.Instance.IsMainProtagonist(flowObject))
+        {
             SetRight();
+        }
+        else
+        {
+            SetLeft();
         }
     }
 
+    private void OnLocalizedTextChanged(Component targetComponent, string localizedText)
+    {
+        float oldHeight = rectTransform.rect.height;
+        var text = targetComponent as Text;
+        text.text = localizedText;
+        UpdateHeight();
+        float newHeight = rectTransform.rect.height;
+        if(!Mathf.Approximately(oldHeight, newHeight))
+        {
+            OnHeightChanged?.Invoke(this, oldHeight, newHeight);
+        }
+    }
+
+    ///@todo remove
     /**
      * Does not update the height of the bubble.
      */

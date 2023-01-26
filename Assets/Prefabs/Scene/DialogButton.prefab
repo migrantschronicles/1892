@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2921716783291830012}
   - component: {fileID: 8980214664140639007}
   - component: {fileID: 4829605349635600267}
+  - component: {fileID: 2398102422874416332}
   m_Layer: 5
   m_Name: DialogButton
   m_TagString: Untagged
@@ -136,10 +137,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee01fc1c9cacf7a44b18ce3e80891721, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startOn:
+    instanceId: 0
+    referencingMode: 0
+    lowId: 0
+    highId: 0
   dialogButton: {fileID: 7836639015859468793}
   sceneName: 
-  additiveSceneName: 
   hideObjects: []
+  dialogPrefab: {fileID: 0}
+  language: 0
+  canStartEvenIfSick: 0
 --- !u!114 &8980214664140639007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,5 +175,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da728eedb242dd342a3ce829a8c85c6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mode: 0
   sprite: {fileID: 0}
   normalizedPosition: {x: 0.5, y: 0.5}
+  worldObject: {fileID: 0}
+--- !u!114 &2398102422874416332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7836639015859468791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 461291041, guid: df2ec02f61e861546b9427c26ccacb8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reference:
+    instanceId: 0
+    referencingMode: 0
+    lowId: 0
+    highId: 0

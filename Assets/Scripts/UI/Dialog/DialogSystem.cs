@@ -1,6 +1,7 @@
 using Articy.TheMigrantsChronicles;
 using Articy.Unity;
 using Articy.Unity.Interfaces;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -97,9 +98,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
      */
     public void OnClose()
     {
-        ///@todo
-        //ResetState();
-        //ClearContent();
         CloseCurrentChat();
     }
 
@@ -124,7 +122,8 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         currentChat.OnHeightChanged += OnChatHeightChanged;
 
         // Start the dialog.
-        flowPlayer.StartOn = button.ArticyRef.GetObject();
+        ArticyReference articyReference = button.GetComponent<ArticyReference>();
+        flowPlayer.StartOn = articyReference.reference.GetObject();
     }
 
     private void CloseCurrentChat()
@@ -154,7 +153,8 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         // makes it more convenient to set the startOn to a dialogue
         if (flowObject is IDialogue)
         {
-            flowPlayer.Play();
+            // Don't enable this, because then the corresponding OnBranchesUpdated won't be called and the dialog starts on the second fragment.
+            //flowPlayer.Play();
             return;
         }
 
@@ -170,43 +170,29 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     /// </summary>
     public void OnBranchesUpdated(IList<Branch> branches)
     {
-        if(currentChat)
+        if(flowPlayer.PausedOn is IDialogue)
+        {
+            // The dialog is paused on the dialog (first fragment), so continue to 
+            // the first dialog fragment.
+            ///@todo Handle multiple branches
+            Debug.Assert(branches.Count == 1);
+            StartCoroutine(SetStartOnDelayed(branches[0].Target as IArticyObject));
+            return;
+        }
+
+        if (currentChat)
         {
             currentChat.OnBranchesUpdated(branches);
         }
     }
 
-    /*
-    public float GetAnchoredPositionForChat(Vector2 chatPosition, Vector2 newContentPosition)
+    private IEnumerator SetStartOnDelayed(IArticyObject targetObject)
     {
-        RectTransform contentTransform = content.GetComponent<RectTransform>();
-        float newY = ((Vector2)transform.InverseTransformPoint(contentTransform.position) -
-            (Vector2)transform.InverseTransformPoint(newContentPosition)).y;
-        return newY;
-    }
-    */
-
-    /*
-    private void OnContentAdded(GameObject newContent)
-    {
-        // Position the new content to the current y value.
-        RectTransform rectTransform = newContent.GetComponent<RectTransform>();
-        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -currentY);
-        // Add the height of the new content to the current y value.
-        currentY += rectTransform.rect.height;
-        // Set the size of the scroll rect to the new height (including the new content).
-        RectTransform contentTransform = content.GetComponent<RectTransform>();
-        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY + paddingBottom);
-        // Add the spacing to the current y value, so the next new content will be placed slightly below.
-        currentY += spacing;
-
-        // Set the position of the scroll rect to scroll to the new content.
-        Canvas.ForceUpdateCanvases();
-        float newY = ((Vector2)transform.InverseTransformPoint(contentTransform.position) -
-            (Vector2)transform.InverseTransformPoint(newContent.transform.position)).y;
-        contentTransform.anchoredPosition = new Vector2(contentTransform.anchoredPosition.x, newY);
+        yield return new WaitForEndOfFrame();
+        flowPlayer.StartOn = targetObject;
     }
 
+    /*
     private string ConditionallyEstrangeLine(DialogLine line)
     {
         string text = LocalizationManager.Instance.GetLocalizedString(line.Text, additionalLocalizationArgs);
@@ -224,11 +210,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
      * Called when the back button was pressed during an overlay (when a shop or diary was opened during dialog).
      */
     public void OnOverlayClosed()
-    {
-        ///@todo
-    }
-
-    private void ClearContent()
     {
         ///@todo
     }

@@ -23,8 +23,9 @@ public class DialogChat : MonoBehaviour
 
     private List<Entry> entries = new List<Entry>();
     private RectTransform rectTransform;
-    private IList<Branch> nextBranches;
-    private bool isWaitingForDecision = false;
+    private List<DialogAnswerBubble> currentAnswers = new List<DialogAnswerBubble>();
+
+    public bool IsWaitingForDecision { get { return currentAnswers.Count > 0; } }
 
     public delegate void OnHeightChangedEvent(float height);
     public event OnHeightChangedEvent OnHeightChanged;
@@ -47,7 +48,6 @@ public class DialogChat : MonoBehaviour
 
     public void OnBranchesUpdated(IList<Branch> branches)
     {
-        nextBranches = branches;
     }
 
     private void OnBubbleHeightChanged(DialogBubble bubble, float oldHeight, float newHeight)
@@ -66,6 +66,7 @@ public class DialogChat : MonoBehaviour
 
     public void OnPointerClick()
     {
+        IList<Branch> nextBranches = DialogSystem.Instance.FlowPlayer.AvailableBranches;
         if(nextBranches == null)
         {
             return;
@@ -93,7 +94,7 @@ public class DialogChat : MonoBehaviour
             else
             {
                 // Multiple branches, so it's a decision.
-                if (!isWaitingForDecision)
+                if (!IsWaitingForDecision)
                 {
                     foreach (var branch in nextBranches)
                     {
@@ -109,9 +110,9 @@ public class DialogChat : MonoBehaviour
 
                         DialogAnswerBubble bubble = bubbleGO.GetComponent<DialogAnswerBubble>();
                         bubble.AssignBranch(branch);
+                        bubble.OnSelected += OnDecisionTaken;
+                        currentAnswers.Add(bubble);
                     }
-
-                    isWaitingForDecision = true;
                 }
             }
         }
@@ -126,5 +127,32 @@ public class DialogChat : MonoBehaviour
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newY + bubbleTransform.sizeDelta.y + paddingBottom);
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
         OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
+    }
+
+    private void OnDecisionTaken(DialogAnswerBubble bubble)
+    {
+        // Calculate the height reduction after every decision option was removed.
+        float adjustment = 0.0f;
+        foreach(var answer in currentAnswers)
+        {
+            RectTransform answerTransform = answer.GetComponent<RectTransform>();
+            adjustment += answerTransform.sizeDelta.y + spacing;
+            if(answer != bubble)
+            {
+                answer.transform.SetParent(null, false);
+                Destroy(answer);
+            }
+        }
+
+        // Reposition the selected bubble and adjust the chat height.
+        RectTransform bubbleTransform = bubble.GetComponent<RectTransform>();
+        float newY = rectTransform.sizeDelta.y - adjustment + spacing - paddingBottom;
+        bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, -newY);
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newY + bubbleTransform.sizeDelta.y + paddingBottom);
+        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
+        OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
+
+        currentAnswers.Clear();
+        DialogSystem.Instance.FlowPlayer.StartOn = bubble.Branch.Target as IArticyObject;
     }
 }

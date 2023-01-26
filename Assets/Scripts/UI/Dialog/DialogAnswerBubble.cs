@@ -17,8 +17,6 @@ public enum AnswerType
 
 public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 {
-    public UnityEvent<DialogAnswerBubble> OnSelected = new UnityEvent<DialogAnswerBubble> ();
-
     [SerializeField]
     private ArticyLocaCaretaker locaCaretaker;
     [SerializeField]
@@ -66,6 +64,11 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 
     private DropShadow[] shadows;
     private AnswerType answerType = AnswerType.Talking;
+    
+    public Branch Branch { get; private set; }
+
+    public delegate void OnSelectedEvent(DialogAnswerBubble bubble);
+    public event OnSelectedEvent OnSelected;
 
     private void Awake()
     {
@@ -79,9 +82,12 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 
     private void OnClick()
     {
-        isSelected = true;
-        UpdateColors();
-        OnSelected.Invoke(this);
+        if(!isSelected)
+        {
+            isSelected = true;
+            UpdateColors();
+            OnSelected.Invoke(this);
+        }
     }
 
 #if UNITY_EDITOR
@@ -159,6 +165,8 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 
     public void AssignBranch(Branch branch, string overrideText = null)
     {
+        Branch = branch;
+
         if(overrideText != null)
         {
             locaCaretaker.locaKey = overrideText;

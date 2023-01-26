@@ -1,3 +1,5 @@
+using Articy.Unity;
+using Articy.Unity.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,7 +20,7 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     public UnityEvent<DialogAnswerBubble> OnSelected = new UnityEvent<DialogAnswerBubble> ();
 
     [SerializeField]
-    private AnswerType answerType;
+    private ArticyLocaCaretaker locaCaretaker;
     [SerializeField]
     private Image background;
     [SerializeField]
@@ -62,9 +64,13 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     [SerializeField]
     private Sprite moneyExchangeIcon;
 
-    public DialogDecisionOption Answer { get; private set; }
-
     private DropShadow[] shadows;
+    private AnswerType answerType = AnswerType.Talking;
+
+    private void Awake()
+    {
+        locaCaretaker.localizedTextAssignmentMethod.AddListener(OnLocalizedTextChanged);
+    }
 
     private void Start()
     {
@@ -151,18 +157,35 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
         }
     }
 
-    public void SetContent(DialogDecisionOption answer)
+    public void AssignBranch(Branch branch, string overrideText = null)
     {
-        Answer = answer;
-        answerType = answer.AnswerType;
-        isEnabled = answer.EnabledCondition.Test();
-        // No need to add callback when the language changed, since the language can't change during a dialog.
-        text.text = LocalizationManager.Instance.GetLocalizedString(answer.Text);
+        if(overrideText != null)
+        {
+            locaCaretaker.locaKey = overrideText;
+        }
+        else
+        {
+            var modelWithMenuText = branch.Target as IObjectWithLocalizableMenuText;
+            if(modelWithMenuText != null)
+            {
+                locaCaretaker.locaKey = modelWithMenuText.LocaKey_MenuText;
+            }
+            else
+            {
+                locaCaretaker.locaKey = "...";
+            }
+        }
+
         UpdateColors();
         UpdatePosition();
         UpdateIcon();
         UpdateButton();
         UpdateShadows();
+    }
+
+    private void OnLocalizedTextChanged(Component targetComponent, string localizedText)
+    {
+        text.text = localizedText;
     }
 
     public void SetText(string value)

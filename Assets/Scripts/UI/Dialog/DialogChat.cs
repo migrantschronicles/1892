@@ -21,10 +21,10 @@ public class DialogChat : MonoBehaviour
     [SerializeField, Tooltip("How much space on the bottom should be left for the shadow to display")]
     private float paddingBottom = 8;
 
-    private float currentY = 0;
     private List<Entry> entries = new List<Entry>();
     private RectTransform rectTransform;
     private IList<Branch> nextBranches;
+    private bool isWaitingForDecision = false;
 
     public delegate void OnHeightChangedEvent(float height);
     public event OnHeightChangedEvent OnHeightChanged;
@@ -37,16 +37,8 @@ public class DialogChat : MonoBehaviour
     public void OnFlowPlayerPaused(IFlowObject flowObject)
     {
         GameObject bubbleGO = Instantiate(linePrefab, transform);
-
-        RectTransform bubbleTransform = bubbleGO.GetComponent<RectTransform>();
-        float currentHeight = rectTransform.sizeDelta.y;
-        float newY = currentHeight + (entries.Count == 0 ? 0 : spacing);
-        bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, -newY);
-        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newY + bubbleTransform.sizeDelta.y + paddingBottom);
-        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
-
+        AddToContent(bubbleGO);
         entries.Add(new Entry { bubble = bubbleGO });
-        OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
 
         DialogBubble bubble = bubbleGO.GetComponent<DialogBubble>();
         bubble.OnHeightChanged += OnBubbleHeightChanged;
@@ -79,11 +71,60 @@ public class DialogChat : MonoBehaviour
             return;
         }
 
-        if(nextBranches.Count == 1)
+        bool isDialogFinished = true;
+        foreach(var branch in nextBranches)
         {
-            Branch targetBranch = nextBranches[0];
-            nextBranches = null;
-            DialogSystem.Instance.FlowPlayer.StartOn = targetBranch.Target as IArticyObject;
+            if(branch.Target is IDialogueFragment)
+            {
+                isDialogFinished = false;
+                break;
+            }
         }
+
+        if(!isDialogFinished)
+        {
+            if (nextBranches.Count == 1)
+            {
+                // A linear dialog flow, so go to the next line and create a bubble.
+                Branch targetBranch = nextBranches[0];
+                nextBranches = null;
+                DialogSystem.Instance.FlowPlayer.StartOn = targetBranch.Target as IArticyObject;
+            }
+            else
+            {
+                // Multiple branches, so it's a decision.
+                if (!isWaitingForDecision)
+                {
+                    foreach (var branch in nextBranches)
+                    {
+                        // we filter those out that are not valid
+                        if (!branch.IsValid)
+                        {
+                            continue;
+                        }
+
+                        GameObject bubbleGO = Instantiate(answerPrefab, transform);
+                        AddToContent(bubbleGO);
+                        entries.Add(new Entry { bubble = bubbleGO });
+
+                        DialogAnswerBubble bubble = bubbleGO.GetComponent<DialogAnswerBubble>();
+                        bubble.AssignBranch(branch);
+                    }
+
+                    isWaitingForDecision = true;
+                }
+            }
+        }
+    }
+
+    private void AddToContent(GameObject bubble)
+    {
+        RectTransform bubbleTransform = bubble.GetComponent<RectTransform>();
+        float currentHeight = Mathf.Max(0, rectTransform.sizeDelta.y - paddingBottom);
+        float newY = currentHeight + (entries.Count == 0 ? 0 : spacing);
+        bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, -newY);
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newY + bubbleTransform.sizeDelta.y + paddingBottom);
+        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
+        OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
     }
 }

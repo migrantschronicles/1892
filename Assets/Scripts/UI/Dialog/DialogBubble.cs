@@ -32,6 +32,7 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
     private RectTransform rectTransform;
 
     public DialogLine Line { get; private set; }
+    public IFlowObject FlowObject { get; private set; }
 
     public delegate void OnHeightChangedEvent(DialogBubble bubble, float oldHeight, float newHeight);
     public event OnHeightChangedEvent OnHeightChanged;
@@ -129,6 +130,8 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
 
     public void AssignFlowObject(IFlowObject flowObject, string overrideText = null)
     {
+        FlowObject = flowObject;
+
         // the caller could set a text that he wants to use, otherwise we build it using the information we find inside the branch
         if (overrideText != null)
         {
@@ -173,6 +176,13 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
         if(!Mathf.Approximately(oldHeight, newHeight))
         {
             OnHeightChanged?.Invoke(this, oldHeight, newHeight);
+        }
+
+        if(DialogSystem.Instance.FlowPlayer.PausedOn == FlowObject)
+        {
+            // Just in case the language changed for bubbles before the current one.
+            ///@todo Would be true for the bubble just before a decision.
+            DialogSystem.Instance.RegisterAnimator(this, localizedText);
         }
     }
 

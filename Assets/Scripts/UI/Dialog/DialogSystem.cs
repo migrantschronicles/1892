@@ -79,6 +79,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     private GameObject content;
     private ArticyFlowPlayer flowPlayer;
     private DialogChat currentChat;
+    private Dictionary<IAnimatedText, TextElementAnimator> animators = new();
 
     public ArticyFlowPlayer FlowPlayer { get { return flowPlayer; } }
 
@@ -130,8 +131,15 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     {
         if(currentChat != null)
         {
-            currentChat.OnHeightChanged += OnChatHeightChanged;
+            foreach(var animator in animators)
+            {
+                animator.Value.Finish();
+            }
+            animators.Clear();
+
+            currentChat.OnHeightChanged -= OnChatHeightChanged;
             currentChat.gameObject.SetActive(false);
+            currentChat.OnClosing();
             currentChat = null;
         }
     }
@@ -216,6 +224,18 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        // Check if there are animators
+        if(animators.Count > 0)
+        {
+            // Finish the animators
+            foreach(var animator in animators)
+            {
+                animator.Value.Finish();
+            }
+            animators.Clear();
+            return;
+        }
+
         if(currentChat)
         {
             currentChat.OnPointerClick();
@@ -233,6 +253,48 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
             {
                 return speaker.TechnicalName == mainProtagonistTechnicalName;
             }
+        }
+
+        return false;
+    }
+
+    public void RegisterAnimator(IAnimatedText animatedText, string text)
+    {
+        UnregisterAnimator(animatedText);
+
+        TextElementAnimator newAnimator = new TextElementAnimator(this, animatedText, text, timeForCharacters);
+        animators.Add(animatedText, newAnimator);
+        newAnimator.onFinished += (animator) =>
+        {
+            TextElementAnimator textAnimator = (TextElementAnimator)animator;
+            animators.Remove(textAnimator.AnimatedTextInterface);
+        };
+
+        newAnimator.Start();
+    }
+
+    public bool UnregisterAnimator(IAnimatedText animatedText)
+    {
+        if (animators.TryGetValue(animatedText, out var oldAnimator))
+        {
+            oldAnimator.Finish();
+            animators.Remove(animatedText);
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool IsCurrentBranch(DialogAnswerBubble bubble)
+    {
+        if(!flowPlayer.AvailableBranches.Any(branch => branch.BranchId == bubble.Branch.BranchId))
+        {
+            return false;
+        }
+
+        if(currentChat)
+        {
+            return currentChat.IsCurrentBranch(bubble);
         }
 
         return false;

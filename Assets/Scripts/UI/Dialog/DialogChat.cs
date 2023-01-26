@@ -50,6 +50,12 @@ public class DialogChat : MonoBehaviour
     {
     }
 
+    public void OnClosing()
+    {
+        ///@todo This should be deleted as soon as dialogs remember last position.
+        currentAnswers.Clear();
+    }
+
     private void OnBubbleHeightChanged(DialogBubble bubble, float oldHeight, float newHeight)
     {
         ///@todo Only accounts if it's the last bubble.
@@ -133,6 +139,7 @@ public class DialogChat : MonoBehaviour
     {
         // Calculate the height reduction after every decision option was removed.
         float adjustment = 0.0f;
+        bool containsBubble = false;
         foreach(var answer in currentAnswers)
         {
             RectTransform answerTransform = answer.GetComponent<RectTransform>();
@@ -142,6 +149,16 @@ public class DialogChat : MonoBehaviour
                 answer.transform.SetParent(null, false);
                 Destroy(answer);
             }
+            else
+            {
+                containsBubble = true;
+            }
+        }
+
+        if(!containsBubble)
+        {
+            // Was an old bubble that was not selected.
+            return;
         }
 
         // Reposition the selected bubble and adjust the chat height.
@@ -154,5 +171,10 @@ public class DialogChat : MonoBehaviour
 
         currentAnswers.Clear();
         DialogSystem.Instance.FlowPlayer.StartOn = bubble.Branch.Target as IArticyObject;
+    }
+
+    public bool IsCurrentBranch(DialogAnswerBubble bubble)
+    {
+        return currentAnswers.Contains(bubble);
     }
 }

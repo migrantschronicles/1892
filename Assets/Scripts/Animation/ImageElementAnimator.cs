@@ -38,7 +38,7 @@ public class ImageElementAnimator : ElementAnimator
             yield return new WaitForSeconds(0.0f);
         }
 
-        onFinished.Invoke(this);
+        BroadcastOnFinished();
     }
 
     public override void Finish()

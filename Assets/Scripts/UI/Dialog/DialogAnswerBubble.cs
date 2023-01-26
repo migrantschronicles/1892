@@ -2,6 +2,7 @@ using Articy.Unity;
 using Articy.Unity.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -82,10 +83,11 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 
     private void OnClick()
     {
-        if(!isSelected)
+        if(!isSelected && DialogSystem.Instance.IsCurrentBranch(this))
         {
             isSelected = true;
             UpdateColors();
+            DialogSystem.Instance.UnregisterAnimator(this);
             OnSelected.Invoke(this);
         }
     }
@@ -194,6 +196,12 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     private void OnLocalizedTextChanged(Component targetComponent, string localizedText)
     {
         text.text = localizedText;
+
+        if(DialogSystem.Instance.IsCurrentBranch(this))
+        {
+            // Check that this decision option is a current one and not an old one.
+            DialogSystem.Instance.RegisterAnimator(this, localizedText);
+        }
     }
 
     public void SetText(string value)

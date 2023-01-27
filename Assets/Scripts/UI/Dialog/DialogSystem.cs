@@ -111,14 +111,11 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     {
         CloseCurrentChat();
 
-        bool startFromBeginning = false;
-
         if(!button.Chat)
         {
             // Create a chat object if it does not exist.
             GameObject chatGO = Instantiate(chatPrefab, content.transform);
             button.Chat = chatGO.GetComponent<DialogChat>();
-            startFromBeginning = true;
         }
 
         currentChat = button.Chat;
@@ -126,11 +123,18 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         currentChat.OnHeightChanged += OnChatHeightChanged;
         OnChatHeightChanged(currentChat.Height);
 
-        if(startFromBeginning)
+        // Find the first dialog that matches.
+        for(int i = 0; i < button.transform.childCount; ++i)
         {
-            // Start the dialog.
-            ArticyReference articyReference = button.GetComponent<ArticyReference>();
-            flowPlayer.StartOn = articyReference.reference.GetObject();
+            Dialog dialog = button.transform.GetChild(i).GetComponent<Dialog>();
+            if(dialog != null)
+            {
+                if(dialog.Condition.Test())
+                {
+                    currentChat.Play(dialog);
+                    break;
+                }
+            }
         }
     }
 

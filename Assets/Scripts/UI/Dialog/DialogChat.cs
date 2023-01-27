@@ -26,6 +26,7 @@ public class DialogChat : MonoBehaviour
     private List<DialogAnswerBubble> currentAnswers = new List<DialogAnswerBubble>();
     private IFlowObject pausedOn;
     private IList<Branch> availableBranches;
+    private Dialog currentDialog;
 
     public bool IsWaitingForDecision { get { return currentAnswers.Count > 0; } }
     public float Height { get { return rectTransform.sizeDelta.y; } }
@@ -36,6 +37,18 @@ public class DialogChat : MonoBehaviour
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
+    }
+
+    public void Play(Dialog dialog)
+    {
+        if(dialog == currentDialog)
+        {
+            return;
+        }
+
+        currentDialog = dialog;
+        currentAnswers.Clear();
+        DialogSystem.Instance.FlowPlayer.StartOn = dialog.ArticyObject;
     }
 
     public void OnFlowPlayerPaused(IFlowObject flowObject)

@@ -61,8 +61,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     private float timeForCharacters = 0.1f;
     [SerializeField, Tooltip("Whether the talk animation should be played only once or the whole time a dialog bubble is active")]
     private bool talkOnce;
-    [SerializeField, Tooltip("The technical name in Articy of the main protagonist")]
-    private string mainProtagonistTechnicalName;
 
     public AudioClip openClip;
     public AudioClip closeClip;
@@ -262,7 +260,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
             var speaker = dlgSpeaker.Speaker;
             if (speaker != null)
             {
-                return speaker.TechnicalName == mainProtagonistTechnicalName;
+                return speaker.TechnicalName == NewGameManager.Instance.PlayableCharacterData.mainProtagonistTechnicalName;
             }
         }
 

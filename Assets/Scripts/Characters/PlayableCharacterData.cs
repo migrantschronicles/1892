@@ -43,4 +43,6 @@ public class PlayableCharacterData : ScriptableObject
     public SceneCharacterPrefab[] scenePrefabs;
     [Tooltip("The data about the characters")]
     public ProtagonistData[] protagonistData;
+    [SerializeField, Tooltip("The technical name in Articy of the main protagonist")]
+    public string mainProtagonistTechnicalName;
 }

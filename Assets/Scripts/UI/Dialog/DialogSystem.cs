@@ -100,16 +100,11 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         CloseCurrentChat();
     }
 
-    /**
-     * Starts a dialog.
-     * Goes through each child of the parent and plays the first dialog that meets its conditions.
-     * The parent only should have Dialogs as children.
-     */
-    public void StartDialog(DialogButton button, DialogLanguage language)
+    private void OpenDialog(DialogButton button)
     {
         CloseCurrentChat();
 
-        if(!button.Chat)
+        if (!button.Chat)
         {
             // Create a chat object if it does not exist.
             GameObject chatGO = Instantiate(chatPrefab, content.transform);
@@ -120,6 +115,16 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         currentChat.gameObject.SetActive(true);
         currentChat.OnHeightChanged += OnChatHeightChanged;
         OnChatHeightChanged(currentChat.Height);
+    }
+
+    /**
+     * Starts a dialog.
+     * Goes through each child of the parent and plays the first dialog that meets its conditions.
+     * The parent only should have Dialogs as children.
+     */
+    public void StartDialog(DialogButton button, DialogLanguage language)
+    {
+        OpenDialog(button);
 
         // Find the first dialog that matches.
         for(int i = 0; i < button.transform.childCount; ++i)
@@ -134,6 +139,12 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
                 }
             }
         }
+    }
+
+    public void StartDialog(DialogButton button, IArticyObject specialDialog)
+    {
+        OpenDialog(button);
+        currentChat.PlaySpecial(specialDialog);
     }
 
     private void CloseCurrentChat()
@@ -296,11 +307,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
 
     public bool IsCurrentBranch(DialogAnswerBubble bubble)
     {
-        if(!flowPlayer.AvailableBranches.Any(branch => branch.BranchId == bubble.Branch.BranchId))
-        {
-            return false;
-        }
-
         if(currentChat)
         {
             return currentChat.IsCurrentBranch(bubble);

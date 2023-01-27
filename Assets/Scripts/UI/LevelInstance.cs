@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
 using static UnityEditor.PlayerSettings.Switch;
+using Articy.Unity;
+using Articy.Unity.Interfaces;
 
 public enum Mode
 {
@@ -135,13 +137,15 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private float EndOfDayFadeTime = 20.0f;
     [SerializeField]
-    private Dialog tooHungryDialog;
-    [SerializeField]
-    private Dialog sickDialog;
-    [SerializeField]
     private LevelInstanceMode levelMode = LevelInstanceMode.Default;
     [SerializeField]
     private GameObject roomButtonPrefab;
+    [SerializeField]
+    private ArticyRef mainTooHungryDialog;
+    [SerializeField]
+    private ArticyRef sideTooHungryDialog;
+    [SerializeField]
+    private ArticyRef sickDialog;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -525,16 +529,15 @@ public class LevelInstance : MonoBehaviour
     public void StartTooHungryDialog(DialogButton button, ProtagonistData responsibleCharacter)
     {
         PrepareDialog(button);
-        ///@todo
-        //dialogSystem.StartDialog(tooHungryDialog, responsibleCharacter.name);
+        IArticyObject specialDialog = (responsibleCharacter.isMainProtagonist ? mainTooHungryDialog : sideTooHungryDialog).GetObject();
+        dialogSystem.StartDialog(button, specialDialog);
         OnDialogStarted();
     }
 
     public void StartSickDialog(DialogButton button)
     {
         PrepareDialog(button);
-        ///@todo
-        //dialogSystem.StartDialog(sickDialog);
+        dialogSystem.StartDialog(button, sickDialog.GetObject());
         OnDialogStarted();
     }
 

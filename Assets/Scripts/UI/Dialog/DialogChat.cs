@@ -3,6 +3,7 @@ using Articy.Unity.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DialogChat : MonoBehaviour
@@ -10,6 +11,7 @@ public class DialogChat : MonoBehaviour
     class Entry
     {
         public GameObject bubble;
+        public bool isSpecial = false;
     }
 
     [SerializeField]
@@ -27,6 +29,7 @@ public class DialogChat : MonoBehaviour
     private IFlowObject pausedOn;
     private IList<Branch> availableBranches;
     private Dialog currentDialog;
+    private IArticyObject currentSpecialDialog;
 
     public bool IsWaitingForDecision { get { return currentAnswers.Count > 0; } }
     public float Height { get { return rectTransform.sizeDelta.y; } }
@@ -41,6 +44,7 @@ public class DialogChat : MonoBehaviour
 
     public void Play(Dialog dialog)
     {
+        ResetSpecialDialog();
         if(dialog == currentDialog)
         {
             return;
@@ -51,13 +55,60 @@ public class DialogChat : MonoBehaviour
         DialogSystem.Instance.FlowPlayer.StartOn = dialog.ArticyObject;
     }
 
+    public void PlaySpecial(IArticyObject specialDialog)
+    {
+        if(currentSpecialDialog == specialDialog)
+        {
+            return;
+        }
+
+        currentSpecialDialog = specialDialog;
+        DialogSystem.Instance.FlowPlayer.StartOn = specialDialog;
+    }
+
+    private void ResetSpecialDialog()
+    {
+        if(currentSpecialDialog == null)
+        {
+            return;
+        }
+
+        currentSpecialDialog = null;
+
+        float adjustment = 0.0f;
+        for(int i = entries.Count - 1; i >= 0; --i)
+        {
+            Entry entry = entries[i];
+            if(entry.isSpecial)
+            {
+                RectTransform bubbleTransform = entry.bubble.GetComponent<RectTransform>();
+                adjustment += bubbleTransform.sizeDelta.y + spacing;
+                entry.bubble.transform.SetParent(null, false);
+                Destroy(entry.bubble);
+            }
+            else
+            {
+                entries.RemoveRange(i + 1, entries.Count - i - 1);
+                break;
+            }
+        }
+
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y - adjustment);
+        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
+        OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
+    }
+
     public void OnFlowPlayerPaused(IFlowObject flowObject)
     {
-        pausedOn = flowObject;
+        if(currentSpecialDialog == null)
+        {
+            // Don't store the current paused on, if it's a special dialog to be able to continue the normal dialog.
+            pausedOn = flowObject;
+        }
 
         GameObject bubbleGO = Instantiate(linePrefab, transform);
         AddToContent(bubbleGO);
-        entries.Add(new Entry { bubble = bubbleGO });
+        entries.Add(new Entry { bubble = bubbleGO, isSpecial = currentSpecialDialog != null });
 
         DialogBubble bubble = bubbleGO.GetComponent<DialogBubble>();
         bubble.OnHeightChanged += OnBubbleHeightChanged;
@@ -66,7 +117,11 @@ public class DialogChat : MonoBehaviour
 
     public void OnBranchesUpdated(IList<Branch> branches)
     {
-        availableBranches = branches;
+        if(currentSpecialDialog == null)
+        {
+            // Don't store the branches in a special dialog to be able to continue the normal dialog.
+            availableBranches = branches;
+        }
     }
 
     public void OnClosing()
@@ -89,7 +144,7 @@ public class DialogChat : MonoBehaviour
 
     public void OnPointerClick()
     {
-        if(availableBranches == null)
+        if(currentSpecialDialog != null || availableBranches == null)
         {
             return;
         }
@@ -155,6 +210,7 @@ public class DialogChat : MonoBehaviour
     {
         // Calculate the height reduction after every decision option was removed.
         float adjustment = 0.0f;
+        float bubbleAdjustment = 0.0f;
         bool containsBubble = false;
         foreach(var answer in currentAnswers)
         {
@@ -162,6 +218,11 @@ public class DialogChat : MonoBehaviour
             adjustment += answerTransform.sizeDelta.y + spacing;
             if(answer != bubble)
             {
+                if(!containsBubble)
+                {
+                    bubbleAdjustment += answerTransform.sizeDelta.y + spacing;
+                }
+
                 answer.transform.SetParent(null, false);
                 Destroy(answer);
             }
@@ -179,9 +240,10 @@ public class DialogChat : MonoBehaviour
 
         // Reposition the selected bubble and adjust the chat height.
         RectTransform bubbleTransform = bubble.GetComponent<RectTransform>();
-        float newY = rectTransform.sizeDelta.y - adjustment + spacing - paddingBottom;
-        bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, -newY);
-        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newY + bubbleTransform.sizeDelta.y + paddingBottom);
+        float newBubbleY = bubbleTransform.anchoredPosition.y + bubbleAdjustment;
+        bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, newBubbleY);
+        float newSizeY = rectTransform.sizeDelta.y - adjustment + spacing - paddingBottom;
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newSizeY + bubbleTransform.sizeDelta.y + paddingBottom);
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
         OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
 
@@ -191,6 +253,11 @@ public class DialogChat : MonoBehaviour
 
     public bool IsCurrentBranch(DialogAnswerBubble bubble)
     {
-        return currentAnswers.Contains(bubble);
+        if (!availableBranches.Any(branch => branch.BranchId == bubble.Branch.BranchId))
+        {
+            return false;
+        }
+
+        return currentSpecialDialog == null && currentAnswers.Contains(bubble);
     }
 }

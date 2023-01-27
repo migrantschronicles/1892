@@ -24,8 +24,11 @@ public class DialogChat : MonoBehaviour
     private List<Entry> entries = new List<Entry>();
     private RectTransform rectTransform;
     private List<DialogAnswerBubble> currentAnswers = new List<DialogAnswerBubble>();
+    private IFlowObject pausedOn;
+    private IList<Branch> availableBranches;
 
     public bool IsWaitingForDecision { get { return currentAnswers.Count > 0; } }
+    public float Height { get { return rectTransform.sizeDelta.y; } }
 
     public delegate void OnHeightChangedEvent(float height);
     public event OnHeightChangedEvent OnHeightChanged;
@@ -37,6 +40,8 @@ public class DialogChat : MonoBehaviour
 
     public void OnFlowPlayerPaused(IFlowObject flowObject)
     {
+        pausedOn = flowObject;
+
         GameObject bubbleGO = Instantiate(linePrefab, transform);
         AddToContent(bubbleGO);
         entries.Add(new Entry { bubble = bubbleGO });
@@ -48,12 +53,11 @@ public class DialogChat : MonoBehaviour
 
     public void OnBranchesUpdated(IList<Branch> branches)
     {
+        availableBranches = branches;
     }
 
     public void OnClosing()
     {
-        ///@todo This should be deleted as soon as dialogs remember last position.
-        currentAnswers.Clear();
     }
 
     private void OnBubbleHeightChanged(DialogBubble bubble, float oldHeight, float newHeight)
@@ -72,14 +76,13 @@ public class DialogChat : MonoBehaviour
 
     public void OnPointerClick()
     {
-        IList<Branch> nextBranches = DialogSystem.Instance.FlowPlayer.AvailableBranches;
-        if(nextBranches == null)
+        if(availableBranches == null)
         {
             return;
         }
 
         bool isDialogFinished = true;
-        foreach(var branch in nextBranches)
+        foreach(var branch in availableBranches)
         {
             if(branch.Target is IDialogueFragment)
             {
@@ -90,11 +93,11 @@ public class DialogChat : MonoBehaviour
 
         if(!isDialogFinished)
         {
-            if (nextBranches.Count == 1)
+            if (availableBranches.Count == 1)
             {
                 // A linear dialog flow, so go to the next line and create a bubble.
-                Branch targetBranch = nextBranches[0];
-                nextBranches = null;
+                Branch targetBranch = availableBranches[0];
+                availableBranches = null;
                 DialogSystem.Instance.FlowPlayer.StartOn = targetBranch.Target as IArticyObject;
             }
             else
@@ -102,7 +105,7 @@ public class DialogChat : MonoBehaviour
                 // Multiple branches, so it's a decision.
                 if (!IsWaitingForDecision)
                 {
-                    foreach (var branch in nextBranches)
+                    foreach (var branch in availableBranches)
                     {
                         // we filter those out that are not valid
                         if (!branch.IsValid)

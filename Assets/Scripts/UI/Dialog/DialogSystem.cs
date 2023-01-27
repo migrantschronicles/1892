@@ -111,20 +111,27 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     {
         CloseCurrentChat();
 
+        bool startFromBeginning = false;
+
         if(!button.Chat)
         {
             // Create a chat object if it does not exist.
             GameObject chatGO = Instantiate(chatPrefab, content.transform);
             button.Chat = chatGO.GetComponent<DialogChat>();
+            startFromBeginning = true;
         }
 
         currentChat = button.Chat;
         currentChat.gameObject.SetActive(true);
         currentChat.OnHeightChanged += OnChatHeightChanged;
+        OnChatHeightChanged(currentChat.Height);
 
-        // Start the dialog.
-        ArticyReference articyReference = button.GetComponent<ArticyReference>();
-        flowPlayer.StartOn = articyReference.reference.GetObject();
+        if(startFromBeginning)
+        {
+            // Start the dialog.
+            ArticyReference articyReference = button.GetComponent<ArticyReference>();
+            flowPlayer.StartOn = articyReference.reference.GetObject();
+        }
     }
 
     private void CloseCurrentChat()

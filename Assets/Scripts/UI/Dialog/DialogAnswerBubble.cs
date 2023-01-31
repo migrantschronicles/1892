@@ -1,5 +1,8 @@
+using Articy.Unity;
+using Articy.Unity.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -15,10 +18,8 @@ public enum AnswerType
 
 public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 {
-    public UnityEvent<DialogAnswerBubble> OnSelected = new UnityEvent<DialogAnswerBubble> ();
-
     [SerializeField]
-    private AnswerType answerType;
+    private ArticyLocaCaretaker locaCaretaker;
     [SerializeField]
     private Image background;
     [SerializeField]
@@ -62,9 +63,18 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
     [SerializeField]
     private Sprite moneyExchangeIcon;
 
-    public DialogDecisionOption Answer { get; private set; }
-
     private DropShadow[] shadows;
+    private AnswerType answerType = AnswerType.Talking;
+    
+    public Branch Branch { get; private set; }
+
+    public delegate void OnSelectedEvent(DialogAnswerBubble bubble);
+    public event OnSelectedEvent OnSelected;
+
+    private void Awake()
+    {
+        locaCaretaker.localizedTextAssignmentMethod.AddListener(OnLocalizedTextChanged);
+    }
 
     private void Start()
     {
@@ -73,9 +83,13 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 
     private void OnClick()
     {
-        isSelected = true;
-        UpdateColors();
-        OnSelected.Invoke(this);
+        if(!isSelected && DialogSystem.Instance.IsCurrentBranch(this))
+        {
+            isSelected = true;
+            UpdateColors();
+            DialogSystem.Instance.UnregisterAnimator(this);
+            OnSelected.Invoke(this);
+        }
     }
 
 #if UNITY_EDITOR
@@ -151,18 +165,43 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
         }
     }
 
-    public void SetContent(DialogDecisionOption answer)
+    public void AssignBranch(Branch branch, string overrideText = null)
     {
-        Answer = answer;
-        answerType = answer.AnswerType;
-        isEnabled = answer.EnabledCondition.Test();
-        // No need to add callback when the language changed, since the language can't change during a dialog.
-        text.text = LocalizationManager.Instance.GetLocalizedString(answer.Text);
+        Branch = branch;
+
+        if(overrideText != null)
+        {
+            locaCaretaker.locaKey = overrideText;
+        }
+        else
+        {
+            var modelWithMenuText = branch.Target as IObjectWithLocalizableMenuText;
+            if(modelWithMenuText != null)
+            {
+                locaCaretaker.locaKey = modelWithMenuText.LocaKey_MenuText;
+            }
+            else
+            {
+                locaCaretaker.locaKey = "...";
+            }
+        }
+
         UpdateColors();
         UpdatePosition();
         UpdateIcon();
         UpdateButton();
         UpdateShadows();
+    }
+
+    private void OnLocalizedTextChanged(Component targetComponent, string localizedText)
+    {
+        text.text = localizedText;
+
+        if(DialogSystem.Instance.IsCurrentBranch(this))
+        {
+            // Check that this decision option is a current one and not an old one.
+            DialogSystem.Instance.RegisterAnimator(this, localizedText);
+        }
     }
 
     public void SetText(string value)

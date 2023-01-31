@@ -5,8 +5,13 @@ using UnityEngine;
 public abstract class ElementAnimator
 {
     public delegate void OnFinishedDelegate(ElementAnimator animator);
-    public OnFinishedDelegate onFinished;
+    public event OnFinishedDelegate onFinished;
 
     public abstract void Start();
     public abstract void Finish();
+
+    protected void BroadcastOnFinished()
+    {
+        onFinished?.Invoke(this);
+    }
 }

@@ -11,18 +11,4 @@ public class DialogSelector : DialogElement
     {
         Type = DialogElementType.Selector;
     }
-
-#if UNITY_EDITOR
-    private void Start()
-    {
-        DialogSystem.ValidateChildren(new DialogElementType[]
-        {
-            DialogElementType.Decision,
-            DialogElementType.Line,
-            DialogElementType.Redirector,
-            DialogElementType.Selector,
-            DialogElementType.TriggerLastOption
-        }, gameObject, true);
-    }
-#endif
 }

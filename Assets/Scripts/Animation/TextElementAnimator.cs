@@ -21,6 +21,8 @@ public class TextElementAnimator : ElementAnimator
     private Coroutine coroutine;
     private MonoBehaviour owner;
 
+    public IAnimatedText AnimatedTextInterface { get { return animatedTextInterface; } }
+
     public TextElementAnimator(MonoBehaviour owner, IAnimatedText animatedTextInterface, string text, float timeForCharacters)
     {
         this.animatedTextInterface = animatedTextInterface;
@@ -122,7 +124,7 @@ public class TextElementAnimator : ElementAnimator
         }
 
         AudioManager.Instance.StopTypewriter();
-        onFinished.Invoke(this);
+        BroadcastOnFinished();
     }
 
     public override void Start()

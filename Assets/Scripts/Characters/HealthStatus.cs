@@ -350,9 +350,9 @@ public class HealthStatus : MonoBehaviour
         AddHomesicknessValue(-homesicknessItemBoughtDecrease * count);
     }
 
-    public void OnDialogLine(DialogLine line)
+    public void OnDialogLine(bool isMainProtagonist)
     {
-        AddHomesicknessValue(line.IsLeft ? -homesicknessLeftLineDecrease : -homesicknessRightLineDecrease);
+        AddHomesicknessValue(!isMainProtagonist ? -homesicknessLeftLineDecrease : -homesicknessRightLineDecrease);
     }
 
     public void OnDialogDecision()

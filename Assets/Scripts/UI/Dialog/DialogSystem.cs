@@ -1,3 +1,7 @@
+using Articy.TheMigrantsChronicles;
+using Articy.Unity;
+using Articy.Unity.Interfaces;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -43,87 +47,18 @@ public enum DialogLanguage
  * You can negate each condition so that it only plays if the condition is not met.
  * E.g. If you do not want to play a dialog, add one condition with an empty string and enable Not.
  * Refer to the documentation of DialogConditionProvider for more information.
- * 
- * DIALOG ELEMENT
- * There are multiple elements that can be added to the hierarchy: Dialog, DialogLine, DialogDecision, DialogDecisionOption, DialogRedirector and DialogSelector.
- * Note that within a dialog, only prefabs of a DialogElement should be added, and only correctly 
- * (e.g. only place a DialogDecisionOption as a direct child of a DialogDecision, place Dialog only as a root of the dialog button).
- * 
- * DIALOG
- * A dialog is a parent container for all data (dialog bubbles) that will be displayed.
- * This should only be as a root node (e.g. The child of the dialog button that triggers the dialog).
- * If you call DialogSystem.StartDialog with a GameObject, it will go through all child dialogs (ordered) and start the first dialog that meets its conditions.
- * It does not go through all dialogs sequentially after one dialog finishes, only the first dialog that meets its condition is played.
- * If you have other child game objects in the button, you can add an empty game object to the button and use that as a parent to the dialogs.
- * If you call DialogSystem.StartDialog with a single dialog object, it will not check if it meets the conditions, but rather play it without checking.
- * You can have callbacks, when the dialog is finished (OnFinished). This is called when the last line of a dialog is played or the dialog was left
- * because of a redirector.
- * Also you can set conditions if a dialog is finished.
- * 
- * DIALOG LINE
- * A dialog line represents one dialog bubble.
- * You can set the text that should be displayed and whether it should be a bubble on the left (npc) or right (player).
- * You can also add conditions that should be set when the line plays.
- * E.g. on the last line of a dialog, you can set a condition which signals that the dialog was played.
- * Then you can add another dialog (e.g. "I already talked to you") which plays if the main dialog already played.
- * 
- * DIALOG DECISION
- * A decision is a decision the player can make.
- * This is the parent container for any DialogDecisionOption that the player can take.
- * Note that no element after a decision can be played, since following dialog elements should be a child of each answer,
- * so a decision is the last element in the same level of hierarchy.
- * It can set conditions that will be set if any answer is selected.
- * 
- * DIALOG DECISION OPTION
- * An option for a decision that the player can select.
- * A child of a DialogDecision.
- * You can set the text that should be displayed and select which answer type it is. Depending on the answer type the next action will be done automatically
- * (e.g. AnswerType.Items: automatically opens inventory to trade items).
- * If the answer type is Items or Quest, you need to select the shop that you want to open (should be placed in the Overlays of the LevelInstance).
- * If autoTriggerAction is enabled, selecting this option will immediately trigger the action (opening the shop / the diary map).
- * If it is disabled, you need to place a DialogTriggerLastOption when you want to trigger it.
- * You can use this, if you want to have the shop opened, but you want to have one or more dialog lines first before opening the shop.
- * The dialog will continue after the back button of the shop / diary was pressed.
- * You can also set the conditions that should be added if this specific option is chosen.
- * You can also add conditions that must be met so that the option is displayed in the first place.
- * This can be useful if you do not have an option anymore because of some action on another level.
- * You can also add EnabledCondition. This lets you disable an option if a condition is not met.
- * You can use this e.g. if you want to trade items, but the player does not have a required item.
- * Then you can add a SetCondition in the item, and enable the option only if the player has the item in the inventory.
- * 
- * DIALOG TRIGGER LAST OPTION
- * Triggers the action of the last decision option that was selected.
- * Useful if you e.g. want to open the diary map after a Travel option, but want to have a few lines before really opening the map.
- * 
- * DIALOG SELECTOR
- * A selector is a parent for dialog elements that should only be displayed if certain conditions meet.
- * Normally, after every element of the selector is played, the next element after the selector is played.
- * You can also have nested selectors.
- * Note that if the selector plays a redirector or or a decision, no following elements will be played.
- *
- * DIALOG REDIRECTOR
- * A redirector redirects to another dialog.
- * This is useful if e.g. you have a decision, where each option could have one or more individual dialog lines, but then you want to redirect
- * to a dialog if the rest of the dialog is the same, so you don't have to duplicate the data.
- * Note that after a redirector, no element of the original dialog is played, so it should be the last element of its level in the hierarchy
- * and is the last element of a dialog that is played (if the redirector is played).
  */
-public class DialogSystem : MonoBehaviour, IPointerClickHandler
+public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodProvider
 {
     public delegate void OnConditionsChanged();
 
     public static DialogSystem Instance { get; private set; }
+    public bool IsCalledInForecast { get; set; }
 
     [SerializeField]
-    private GameObject linePrefab;
-    [SerializeField]
-    private GameObject answerPrefab;
-    [SerializeField, Tooltip("The vertical space between each bubble")]
-    private float spacing = 30;
+    private GameObject chatPrefab;
     [SerializeField, Tooltip("The time for each character in a text animation")]
     private float timeForCharacters = 0.1f;
-    [SerializeField]
-    private float paddingBottom = 8;
     [SerializeField, Tooltip("Whether the talk animation should be played only once or the whole time a dialog bubble is active")]
     private bool talkOnce;
 
@@ -132,40 +67,54 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
     public AudioClip lineClip;
     public AudioClip decisionOptionClip;
 
-    public delegate void OnDialogLineEvent(DialogLine line);
+    public delegate void OnDialogLineEvent(bool isMainProtagonist);
     public event OnDialogLineEvent onDialogLine;
-    public delegate void OnDialogDecisionEvent(DialogDecision decision);
+    public delegate void OnDialogDecisionEvent();
     public event OnDialogDecisionEvent onDialogDecision;
 
     private GameObject content;
-    private Dialog currentDialog;
-    private DialogLanguage currentDialogLanguage = DialogLanguage.Native;
-    private DialogElement currentElement;
-    private DialogBubble currentBubble;
-    private DialogDecision currentDecision;
-    private DialogDecisionOption lastSelectedOption;
-    private float currentY = 0;
-    private List<DialogAnswerBubble> currentAnswers = new List<DialogAnswerBubble>();
-    private List<ElementAnimator> currentAnimators = new List<ElementAnimator>();
-    private Dictionary<string, OnConditionsChanged> onConditionsChangedListeners = new Dictionary<string, OnConditionsChanged>();
-    private object[] additionalLocalizationArgs = null;
+    private ArticyFlowPlayer flowPlayer;
+    private DialogChat currentChat;
+    private DialogButton currentButton;
+    private Dictionary<IAnimatedText, TextElementAnimator> animators = new();
+
+    public ArticyFlowPlayer FlowPlayer { get { return flowPlayer; } }
 
     private void Awake()
     {
         Instance = this;
         ScrollRect scrollView = GetComponent<ScrollRect>();
         content = scrollView.content.gameObject;
+        flowPlayer = GetComponent<ArticyFlowPlayer>();
+        // set the default method provider for script methods, so that we needn't pass it as a parameter when calling script methods manually.
+        // look into region "script methods" at the end of this class for more information.
+        ArticyDatabase.DefaultMethodProvider = this;
     }
 
-    private void Activate()
-    {
-        gameObject.SetActive(true);
-    }
-
+    /**
+     * Called when the back button is pressed.
+     */
     public void OnClose()
     {
-        ResetState();
-        ClearContent();
+        CloseCurrentChat();
+    }
+
+    private void OpenDialog(DialogButton button)
+    {
+        CloseCurrentChat();
+
+        if (!button.Chat)
+        {
+            // Create a chat object if it does not exist.
+            GameObject chatGO = Instantiate(chatPrefab, content.transform);
+            button.Chat = chatGO.GetComponent<DialogChat>();
+        }
+
+        currentButton = button;
+        currentChat = button.Chat;
+        currentChat.gameObject.SetActive(true);
+        currentChat.OnHeightChanged += OnChatHeightChanged;
+        OnChatHeightChanged(currentChat.Height);
     }
 
     /**
@@ -173,245 +122,113 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
      * Goes through each child of the parent and plays the first dialog that meets its conditions.
      * The parent only should have Dialogs as children.
      */
-    public void StartDialog(GameObject parent, DialogLanguage language)
+    public void StartDialog(DialogButton button, DialogLanguage language)
     {
-        StartDialog(parent, language, false);
-    }
+        OpenDialog(button);
 
-    /**
-     * Starts a dialog.
-     * Goes through each child of the parent and plays the first dialog that meets its conditions.
-     * The parent only should have Dialogs as children.
-     * @param additive If true, adds the dialog below the existing dialog bubbles. If false, clears all existing dialog bubbles.
-     */
-    public void StartDialog(GameObject parent, DialogLanguage language, bool additive)
-    {
-        Activate();
-        for (int i = 0; i < parent.transform.childCount; ++i)
+        // Find the first dialog that matches.
+        for(int i = 0; i < button.transform.childCount; ++i)
         {
-            Dialog dialog = parent.transform.GetChild(i).GetComponent<Dialog>();
-            if(dialog.Condition.Test())
+            Dialog dialog = button.transform.GetChild(i).GetComponent<Dialog>();
+            if(dialog != null)
             {
-                currentDialogLanguage = language;
-                StartDialog(dialog, additive);
-                return;
-            }
-        }
-    }
-
-    public void StartDialog(Dialog dialog, params object[] args)
-    {
-        additionalLocalizationArgs = args;
-        StartDialog(dialog);
-    }
-
-    /**
-     * Plays a specific dialog.
-     * Does not check if the dialog meets its conditions.
-     */
-    public void StartDialog(Dialog dialog)
-    {
-        StartDialog(dialog, false);
-    }
-
-    /**
-     * Plays a specific dialog.
-     * Does not check if the dialog meets its conditions.
-     * @param additive If true, adds the dialog below the existing dialog bubbles. If false, clears all existing dialog bubbles.
-     */
-    public void StartDialog(Dialog dialog, bool additive)
-    {
-        if(currentDialog)
-        {
-            OnDialogFinished();
-        }
-
-        Activate();
-        if (!additive)
-        {
-            ClearContent();
-            currentY = 0;
-        }
-
-        ResetState();
-        currentDialog = dialog;
-        EnterElementContainer(currentDialog);
-    }
-
-    private void OnDialogFinished()
-    {
-        if(currentDialog)
-        {
-            currentDialog.OnFinished.Invoke();
-            NewGameManager.Instance.conditions.AddConditions(currentDialog.SetOnFinishedConditions);
-            currentDialog = null;
-        }
-    }
-
-    private void ResetState()
-    {
-        foreach (ElementAnimator animator in currentAnimators)
-        {
-            animator.Finish();
-        }
-        currentAnimators.Clear();
-
-        currentDialog = null;
-        currentElement = null;
-        currentBubble = null;
-        currentDecision = null;
-        currentAnswers.Clear();
-        lastSelectedOption = null;
-    }
-
-    private bool IsLastLine(DialogLine line)
-    {
-        DialogElement parent = line.transform.parent.GetComponent<DialogElement>();
-        DialogElement current = line;
-        while (parent)
-        {
-            for (int i = current.transform.GetSiblingIndex() + 1; i < parent.transform.childCount; ++i)
-            {
-                DialogElement e = parent.transform.GetChild(i).GetComponent<DialogElement>();
-                switch(e.Type)
+                if(dialog.Condition.Test())
                 {
-                    case DialogElementType.Line:
-                    case DialogElementType.Decision:
-                    case DialogElementType.Selector:
-                    case DialogElementType.Redirector:
-                    case DialogElementType.TriggerLastOption:
-                        return false;
+                    currentChat.Play(dialog);
+                    break;
                 }
             }
-
-            if (parent.Type == DialogElementType.Dialog)
-            {
-                // Don't trace further.
-                break;
-            }
-
-            current = parent;
-            parent = parent.transform.parent.GetComponent<DialogElement>();
         }
-
-        return true;
     }
 
-    private void EnterElementContainer(DialogElement parent)
+    public void StartDialog(DialogButton button, IArticyObject specialDialog)
     {
-        if(parent.transform.childCount == 0)
+        OpenDialog(button);
+        currentChat.PlaySpecial(specialDialog);
+    }
+
+    private void CloseCurrentChat()
+    {
+        if(currentChat != null)
         {
-            // There are no childs to process
-            OnDialogFinished();
-            currentElement = null;
+            foreach(var animator in animators)
+            {
+                animator.Value.Finish();
+            }
+            animators.Clear();
+
+            currentChat.OnHeightChanged -= OnChatHeightChanged;
+            currentChat.gameObject.SetActive(false);
+            currentChat.OnClosing();
+            currentChat = null;
+            currentButton = null;
+        }
+    }
+
+    private void OnChatHeightChanged(float height)
+    {
+        RectTransform contentTransform = content.GetComponent<RectTransform>();
+        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, height);
+        contentTransform.anchoredPosition = new Vector2(contentTransform.anchoredPosition.x, Mathf.Max(0, height - 800));
+    }
+
+    /// <summary>
+    /// This is one of the important callbacks from the ArticyFlowPlayer, and will notify us about pausing on any flow object.
+    /// It will make sure that the paused object is displayed in our dialog ui, by extracting its text, potential speaker etc.
+    /// </summary>
+    public void OnFlowPlayerPaused(IFlowObject flowObject)
+    {
+        // if the flow player paused on a dialog, we immediately continue, usually getting to the first dialogue fragment inside the dialogue
+        // makes it more convenient to set the startOn to a dialogue
+        if (flowObject is IDialogue)
+        {
+            // Don't enable this, because then the corresponding OnBranchesUpdated won't be called and the dialog starts on the second fragment.
+            //flowPlayer.Play();
             return;
         }
 
-        currentElement = parent.transform.GetChild(0).GetComponent<DialogElement>();
-        ProcessElement(currentElement);
-    }
-
-    private bool ProcessNextElement()
-    {
-        if(currentElement)
+        if (currentChat)
         {
-            int nextIndex = currentElement.transform.GetSiblingIndex() + 1;
-            if(nextIndex < currentElement.transform.parent.childCount)
-            {
-                // Process the next sibling element.
-                currentElement = currentElement.transform.parent.GetChild(nextIndex).GetComponent<DialogElement>();
-                ProcessElement(currentElement);
-                return true;
-            }
-            else
-            {
-                // Check if the current element has a selector as parent, in that case continue with the siblings of the selector.
-                // Do in a loop if the parent selector has no next element, but is itself a child of a selector.
-                DialogSelector parentSelector = currentElement.transform.parent.GetComponent<DialogSelector>();
-                bool processed = false;
-                while(parentSelector && !processed)
-                {
-                    int nextParentIndex = parentSelector.transform.GetSiblingIndex() + 1;
-                    if(nextParentIndex < parentSelector.transform.parent.childCount)
-                    {
-                        // Process the next sibling of the parent selector and jump out of the loop.
-                        currentElement = parentSelector.transform.parent.GetChild(nextParentIndex).GetComponent<DialogElement>();
-                        ProcessElement(currentElement);
-                        processed = true;
-                        return true;
-                    }
-                    else
-                    {
-                        // The parent selector has no next elements, so try the parent of the parent selector.
-                        parentSelector = parentSelector.transform.parent.GetComponent<DialogSelector>();
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private void ProcessElement(DialogElement element)
-    {
-        switch(element.Type)
-        {
-            case DialogElementType.Line:
-            {
-                ProcessLine((DialogLine)element);
-                break;
-            }
-
-            case DialogElementType.Decision:
-            {
-                ProcessDecision((DialogDecision)element);
-                break;
-            }
-
-            case DialogElementType.Redirector:
-            {
-                ProcessRedirector((DialogRedirector)element);
-                break;
-            }
-
-            case DialogElementType.Selector:
-            {
-                ProcessSelector((DialogSelector)element);
-                break;
-            }
-
-            case DialogElementType.TriggerLastOption:
-            {
-                ProcessTriggerLastOption((DialogTriggerLastOption)element);
-                break;
-            }
+            currentChat.OnFlowPlayerPaused(flowObject);
         }
     }
 
-    private void OnContentAdded(GameObject newContent)
+    /// <summary>
+    /// This is the other important callback from the ArticyFlowPlayer, and is called everytime the flow player has new branches
+    /// for us. We use that to update the list of buttons in our dialog interface.
+    /// </summary>
+    public void OnBranchesUpdated(IList<Branch> branches)
     {
-        // Position the new content to the current y value.
-        RectTransform rectTransform = newContent.GetComponent<RectTransform>();
-        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -currentY);
-        // Add the height of the new content to the current y value.
-        currentY += rectTransform.rect.height;
-        // Set the size of the scroll rect to the new height (including the new content).
-        RectTransform contentTransform = content.GetComponent<RectTransform>();
-        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY + paddingBottom);
-        // Add the spacing to the current y value, so the next new content will be placed slightly below.
-        currentY += spacing;
+        if(flowPlayer.PausedOn is IDialogue)
+        {
+            // The dialog is paused on the dialog (first fragment), so continue to 
+            // the first dialog fragment.
+            ///@todo Handle multiple branches
+            Debug.Assert(branches.Count == 1);
+            StartCoroutine(SetStartOnDelayed(branches[0].Target as IArticyObject));
+            return;
+        }
 
-        // Set the position of the scroll rect to scroll to the new content.
-        Canvas.ForceUpdateCanvases();
-        float newY = ((Vector2)transform.InverseTransformPoint(contentTransform.position) -
-            (Vector2)transform.InverseTransformPoint(newContent.transform.position)).y;
-        contentTransform.anchoredPosition = new Vector2(contentTransform.anchoredPosition.x, newY);
+        if (currentChat)
+        {
+            currentChat.OnBranchesUpdated(branches);
+        }
     }
 
-    private string ConditionallyEstrangeLine(DialogLine line)
+    private IEnumerator SetStartOnDelayed(IArticyObject targetObject)
     {
-        string text = LocalizationManager.Instance.GetLocalizedString(line.Text, additionalLocalizationArgs);
-        if(line.IsLeft && !NewGameManager.Instance.UnderstandsDialogLanguage(currentDialogLanguage))
+        yield return new WaitForEndOfFrame();
+        flowPlayer.StartOn = targetObject;
+    }
+
+    public string ConditionallyEstrangeLine(string text)
+    {
+        if(!currentButton)
+        {
+            return text;
+        }
+
+        if(!NewGameManager.Instance.UnderstandsDialogLanguage(currentButton.Language))
         {
             // Estrange the text
             text = NewGameManager.Instance.EstrangeText(text);
@@ -420,334 +237,96 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler
         return text;
     }
 
-    private void ProcessLine(DialogLine line)
-    {
-        GameObject newLine = Instantiate(linePrefab, content.transform);
-        currentBubble = newLine.GetComponent<DialogBubble>();
-        string text = ConditionallyEstrangeLine(line);
-        currentBubble.SetContent(line, text);
-        NewGameManager.Instance.conditions.AddConditions(line.SetConditions);
-        OnContentAdded(newLine);
-        StartTextAnimation(currentBubble, text);
-        AudioManager.Instance.PlayFX(lineClip);
-
-        // Notify the health system
-        NewGameManager.Instance.HealthStatus.OnDialogLine(line);
-
-        // Broadcast
-        onDialogLine?.Invoke(line);
-
-        if(IsLastLine(line))
-        {
-            OnDialogFinished();
-        }
-    }
-
-    private void ProcessDecision(DialogDecision decision)
-    {
-        currentDecision = decision;
-
-        AudioManager.Instance.PlayFX(decisionOptionClip);
-        for(int i = 0; i < currentDecision.transform.childCount; ++i)
-        {
-            DialogDecisionOption answer = currentDecision.transform.GetChild(i).GetComponent<DialogDecisionOption>();
-            if(answer)
-            {
-                if(answer.Condition.Test())
-                {
-                    GameObject newAnswer = Instantiate(answerPrefab, content.transform);
-                    DialogAnswerBubble dialogAnswer = newAnswer.GetComponent<DialogAnswerBubble>();
-                    dialogAnswer.SetContent(answer);
-                    dialogAnswer.SetButtonEnabled(false);
-                    dialogAnswer.OnSelected.AddListener(OnAnswerSelected);
-                    OnContentAdded(newAnswer);
-                    currentAnswers.Add(dialogAnswer);
-                    StartTextAnimation(dialogAnswer, LocalizationManager.Instance.GetLocalizedString(answer.Text));
-                }
-            }
-        }
-
-        onDialogDecision?.Invoke(decision);
-    }
-
-    private void ProcessRedirector(DialogRedirector redirector)
-    {
-        if(redirector.Target)
-        {
-            StartDialog(redirector.Target, redirector.Additive);
-        }
-    }
-
-    private void ProcessSelector(DialogSelector selector)
-    {
-        // Test if the selector applies.
-        if(selector.Condition.Test())
-        {
-            if(selector.transform.childCount > 0)
-            {
-                // The test was positive, so display all child elements of the selector.
-                EnterElementContainer(selector);
-            }
-            else
-            {
-                // The selector is empty, so go to the next element.
-                ProcessNextElement();
-            }
-        }
-        else
-        {
-            // Go to the next element.
-            ProcessNextElement();
-        }
-    }
-
     /**
-     * Opens the shop or diary map for the selected option, if necessary.
-     * @return True if a shop or diary was opened, false if no action was needed.
+     * Called when the back button was pressed during an overlay (when a shop or diary was opened during dialog).
      */
-    private bool HandleOption(DialogDecisionOption decisionOption)
+    public void OnOverlayClosed()
     {
-        switch (decisionOption.AnswerType)
+        ///@todo
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // Check if there are animators
+        if(animators.Count > 0)
         {
-            case AnswerType.Quest:
-            case AnswerType.Items:
+            // Finish the animators
+            foreach(var animator in animators)
             {
-                if (decisionOption.shop)
-                {
-                    LevelInstance.Instance.OpenShop(decisionOption.shop);
-                    return true;
-                }
-                break;
+                animator.Value.Finish();
             }
+            animators.Clear();
+            return;
+        }
 
-            case AnswerType.Travel:
-            {
-                LevelInstance.Instance.OpenDiary(DiaryPageLink.Map);
-                return true;
-            }
+        if(currentChat)
+        {
+            currentChat.OnPointerClick();
+        }
+    }
 
-            case AnswerType.MoneyExchange:
+    public bool IsMainProtagonist(IFlowObject flowObject)
+    {
+        var dlgSpeaker = flowObject as IObjectWithSpeaker;
+        if (dlgSpeaker != null)
+        {
+            // getting the speaker object
+            var speaker = dlgSpeaker.Speaker;
+            if (speaker != null)
             {
-                NewGameManager.Instance.SetCurrency(decisionOption.targetCurrency);
-                return false;
+                return speaker.TechnicalName == NewGameManager.Instance.PlayableCharacterData.mainProtagonistTechnicalName;
             }
         }
 
         return false;
     }
 
-    private void ProcessTriggerLastOption(DialogTriggerLastOption triggerLastOption)
+    public void RegisterAnimator(IAnimatedText animatedText, string text)
     {
-        if(!lastSelectedOption)
-        {
-            return;
-        }
+        UnregisterAnimator(animatedText);
 
-        if(!HandleOption(lastSelectedOption))
+        TextElementAnimator newAnimator = new TextElementAnimator(this, animatedText, text, timeForCharacters);
+        animators.Add(animatedText, newAnimator);
+        newAnimator.onFinished += (animator) =>
         {
-            // The decision option either did not have an answertype selected that needs an action, or has invalid values,
-            // so go ahead to the next element.
-            if(!ProcessNextElement())
-            {
-                OnDialogFinished();
-            }
-        }
+            TextElementAnimator textAnimator = (TextElementAnimator)animator;
+            animators.Remove(textAnimator.AnimatedTextInterface);
+        };
+
+        newAnimator.Start();
     }
-    
-    private void OnAnswerSelected(DialogAnswerBubble bubble)
+
+    public bool UnregisterAnimator(IAnimatedText animatedText)
     {
-        // Cleanup. Set all buttons disabled in case animators get added later on.
-        bubble.OnSelected.RemoveListener(OnAnswerSelected);
-        foreach (DialogAnswerBubble dialogAnswerBubble in currentAnswers)
+        if (animators.TryGetValue(animatedText, out var oldAnimator))
         {
-            dialogAnswerBubble.SetButtonEnabled(false);
+            oldAnimator.Finish();
+            animators.Remove(animatedText);
+            return true;
         }
 
-        // Add the conditions to the list.
-        NewGameManager.Instance.conditions.AddConditions(currentDecision.SetConditions);
-        NewGameManager.Instance.conditions.AddConditions(bubble.Answer.SetConditions);
+        return false;
+    }
 
-        // Save the y position of the first answer.
-        DialogAnswerBubble firstBubble = currentAnswers[0];
-        RectTransform firstTransform = firstBubble.GetComponent<RectTransform>();
-        currentY = -firstTransform.anchoredPosition.y;
-
-        // Destroy all answers except the chosen one.
-        foreach(DialogAnswerBubble dialogAnswerBubble in currentAnswers)
+    public bool IsCurrentBranch(DialogAnswerBubble bubble)
+    {
+        if(currentChat)
         {
-            if(dialogAnswerBubble != bubble)
-            {
-                Destroy(dialogAnswerBubble.gameObject);
-            }
+            return currentChat.IsCurrentBranch(bubble);
         }
-        currentAnswers.Clear();
-        currentDecision = null;
-        lastSelectedOption = bubble.Answer;
 
-        // Set the y position to the first answer.
-        RectTransform bubbleTransform = bubble.GetComponent<RectTransform>();
-        bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, -currentY);
-        currentY += bubbleTransform.rect.height;
+        return false;
+    }
 
-        // Set the scrollrect content size.
-        RectTransform contentTransform = content.GetComponent<RectTransform>();
-        contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, currentY);
-        currentY += spacing;
+    public void OnDialogLine(bool isMainProtagonist)
+    {
+        NewGameManager.Instance.HealthStatus.OnDialogLine(isMainProtagonist);
+        onDialogLine?.Invoke(isMainProtagonist);
+    }
 
-        // Notify the health system
+    public void OnDialogDecision()
+    {
         NewGameManager.Instance.HealthStatus.OnDialogDecision();
-
-        bool continueDialog = true;
-        // Check if the decision option wants to trigger its action.
-        if(bubble.Answer.autoTriggerAction)
-        {
-            continueDialog = !HandleOption(bubble.Answer);
-        }
-
-        if(continueDialog)
-        {
-            ContinueAfterLastOption();
-        }
-    }
-
-    /**
-     * Called after the overlay was closed, that was triggered of the selected option.
-     */
-    private void ContinueAfterLastOption()
-    {
-        if(!lastSelectedOption)
-        {
-            return;
-        }
-
-        // Display the next dialog after the answer (the childs of the answer).
-        if (lastSelectedOption.transform.childCount > 0)
-        {
-            EnterElementContainer(lastSelectedOption);
-        }
-        else
-        {
-            OnDialogFinished();
-        }
-    }
-
-    /**
-     * Called when the back button was pressed during an overlay (when a shop or diary was opened during dialog).
-     */
-    public void OnOverlayClosed()
-    {
-        if(currentElement.Type == DialogElementType.TriggerLastOption)
-        {
-            // If the overlay was triggered because of TriggerLastOption, process the next element after this.
-            if(!ProcessNextElement())
-            {
-                // There was no next element, so the dialog is finished.
-                OnDialogFinished();
-            }
-        }
-        else
-        {
-            // The overlay was triggered because the decision option had autoTriggerAction selected
-            ContinueAfterLastOption();
-        }
-    }
-
-    private void StartTextAnimation(IAnimatedText bubble, string text)
-    {
-        ElementAnimator animator = new TextElementAnimator(this, bubble, text, timeForCharacters);
-        currentAnimators.Add(animator);
-        animator.onFinished += OnAnimationFinished;
-        animator.Start();
-    }
-
-    private void OnAnimationFinished(ElementAnimator animator)
-    {
-        animator.onFinished -= OnAnimationFinished;
-        currentAnimators.Remove(animator);
-        OnCurrentAnimatorsChanged();
-    }
-
-    private void OnCurrentAnimatorsChanged()
-    {
-        if (currentDecision != null && currentAnimators.Count == 0)
-        {
-            // Enable the buttons from the decision.
-            foreach (DialogAnswerBubble dialogAnswerBubble in currentAnswers)
-            {
-                dialogAnswerBubble.SetButtonEnabled(true);
-            }
-        }
-    }
-
-    private void ClearContent()
-    {
-        for (int i = 0; i < content.transform.childCount; ++i)
-        {
-            Destroy(content.transform.GetChild(i).gameObject);
-        }
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (currentAnimators.Count != 0)
-        {
-            foreach (ElementAnimator animator in currentAnimators)
-            {
-                animator.Finish();
-            }
-            currentAnimators.Clear();
-            OnCurrentAnimatorsChanged();
-            AudioManager.Instance.PlayCutTypewriter();
-        }
-        else if (currentElement != null)
-        {
-            ProcessNextElement();
-        }
-    }
-
-    public static void LogValidateError(string message, GameObject go)
-    {
-        Debug.LogError($"({go.name}): {message}");
-    }
-
-    public static void ValidateSetConditions(IEnumerable<SetCondition> setConditions, GameObject go)
-    {
-        foreach(var condition in setConditions)
-        {
-            if(string.IsNullOrWhiteSpace(condition.Condition))
-            {
-                LogValidateError("Trying to set an empty condition", go);
-            }
-        }
-    }
-
-    public static void ValidateChildren(DialogElementType[] allowedTypes, GameObject go, bool requiresChildren = false)
-    {
-        if(requiresChildren && go.transform.childCount == 0)
-        {
-            LogValidateError("The dialog element must have children", go);
-        }
-        else if((allowedTypes == null || allowedTypes.Length == 0) && go.transform.childCount > 0)
-        {
-            LogValidateError("The dialog element may not contain children", go);
-        }
-        else
-        {
-            for (int i = 0; i < go.transform.childCount; ++i)
-            {
-                DialogElement element = go.transform.GetChild(i).GetComponent<DialogElement>();
-                if(element == null)
-                {
-                    LogValidateError($"Only dialog elements are allowed as children, not {go.transform.GetChild(i).name}", go);
-                }
-                else
-                {
-                    if(!allowedTypes.Contains(element.Type))
-                    {
-                        LogValidateError($"The element may not contain a {element.Type} dialog element as a child", go);
-                    }
-                }
-            }
-        }
+        onDialogDecision?.Invoke();
     }
 }

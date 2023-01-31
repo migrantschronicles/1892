@@ -880,7 +880,7 @@ public class NewGameManager : MonoBehaviour
         if(UnityEngine.Random.value < omitWordsFromStartProbability)
         {
             omitWords = UnityEngine.Random.Range(estrangeWordsOmitCount.x, estrangeWordsOmitCount.y);
-            result += "...";
+            result += "???";
         }
 
         for(int i = 0; i < parts.Length; ++i)
@@ -902,7 +902,7 @@ public class NewGameManager : MonoBehaviour
 
                 if(i < parts.Length - 1)
                 {
-                    result += " ...";
+                    result += " ???";
                 }
             }
         }

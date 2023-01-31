@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
+using static UnityEditor.PlayerSettings.Switch;
+using Articy.Unity;
+using Articy.Unity.Interfaces;
 
 public enum Mode
 {
@@ -134,13 +137,17 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private float EndOfDayFadeTime = 20.0f;
     [SerializeField]
-    private Dialog tooHungryDialog;
-    [SerializeField]
-    private Dialog sickDialog;
-    [SerializeField]
     private LevelInstanceMode levelMode = LevelInstanceMode.Default;
     [SerializeField]
     private GameObject roomButtonPrefab;
+    [SerializeField]
+    private ArticyRef mainTooHungryDialog;
+    [SerializeField]
+    private ArticyRef sideTooHungryDialog;
+    [SerializeField]
+    private ArticyRef sickDialog;
+    [SerializeField]
+    private ArticyRef foreignLanguageDialog;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -483,18 +490,11 @@ public class LevelInstance : MonoBehaviour
 
     private void OnDialogStarted()
     {
-        dialogSystem.gameObject.SetActive(true);
         backButton.gameObject.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
         sceneInteractables.SetActive(false);
         blur.SetEnabled(true);
         NewGameManager.Instance.SetPaused(true);
-    }
-
-    public void StartDialog(GameObject dialogParent, DialogLanguage language)
-    {
-        dialogSystem.StartDialog(dialogParent, language);
-        OnDialogStarted();
     }
 
     private void PrepareDialog(DialogButton button)
@@ -517,26 +517,37 @@ public class LevelInstance : MonoBehaviour
         foregroundScene.SetCharacters(button.DialogPrefab, NewGameManager.Instance.PlayableCharacterData.dialogPrefab);
         foregroundScene.gameObject.SetActive(true);
 
+        dialogSystem.gameObject.SetActive(true);
         AudioManager.Instance.PlayFX(dialogSystem.openClip);
     }
 
     public void StartDialog(DialogButton button)
     {
         PrepareDialog(button);
-        StartDialog(button.gameObject, button.Language);
+        if(NewGameManager.Instance.UnderstandsDialogLanguage(button.Language))
+        {
+            dialogSystem.StartDialog(button, button.Language);
+        }
+        else
+        {
+            dialogSystem.StartDialog(button, foreignLanguageDialog.GetObject());
+        }
+
+        OnDialogStarted();
     }
 
     public void StartTooHungryDialog(DialogButton button, ProtagonistData responsibleCharacter)
     {
         PrepareDialog(button);
-        dialogSystem.StartDialog(tooHungryDialog, responsibleCharacter.name);
+        IArticyObject specialDialog = (responsibleCharacter.isMainProtagonist ? mainTooHungryDialog : sideTooHungryDialog).GetObject();
+        dialogSystem.StartDialog(button, specialDialog);
         OnDialogStarted();
     }
 
     public void StartSickDialog(DialogButton button)
     {
         PrepareDialog(button);
-        dialogSystem.StartDialog(sickDialog);
+        dialogSystem.StartDialog(button, sickDialog.GetObject());
         OnDialogStarted();
     }
 
@@ -841,19 +852,19 @@ public class LevelInstance : MonoBehaviour
         }
     }
 
-    private void OnDialogLine(DialogLine line)
+    private void OnDialogLine(bool isMainProtagonist)
     {
         if(mode == Mode.Dialog && overlayMode == OverlayMode.None)
         {
-            foregroundScene.OnDialogLine(line);
+            foregroundScene.OnDialogLine(isMainProtagonist);
         }
     }
 
-    private void OnDialogDecision(DialogDecision decision)
+    private void OnDialogDecision()
     {
         if(mode == Mode.Dialog && overlayMode == OverlayMode.None)
         {
-            foregroundScene.OnDialogDecision(decision);
+            foregroundScene.OnDialogDecision();
         }
     }
 }

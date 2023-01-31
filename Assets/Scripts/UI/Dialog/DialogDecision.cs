@@ -11,12 +11,4 @@ public class DialogDecision : DialogElement
     {
         Type = DialogElementType.Decision;
     }
-
-#if UNITY_EDITOR
-    private void Start()
-    {
-        DialogSystem.ValidateSetConditions(SetConditions, gameObject);
-        DialogSystem.ValidateChildren(new DialogElementType[] { DialogElementType.DecisionOption }, gameObject);
-    }
-#endif
 }

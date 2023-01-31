@@ -74,9 +74,9 @@ public class ForegroundScene : MonoBehaviour
         }
     }
 
-    public void OnDialogLine(DialogLine line)
+    public void OnDialogLine(bool isMainProtagonist)
     {
-        if(line.IsLeft)
+        if(!isMainProtagonist)
         {
             if(leftAnimController)
             {
@@ -92,7 +92,7 @@ public class ForegroundScene : MonoBehaviour
         }
     }
 
-    public void OnDialogDecision(DialogDecision decision)
+    public void OnDialogDecision()
     {
         if(rightAnimController)
         {

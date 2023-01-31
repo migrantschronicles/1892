@@ -852,19 +852,19 @@ public class LevelInstance : MonoBehaviour
         }
     }
 
-    private void OnDialogLine(DialogLine line)
+    private void OnDialogLine(bool isMainProtagonist)
     {
         if(mode == Mode.Dialog && overlayMode == OverlayMode.None)
         {
-            foregroundScene.OnDialogLine(line);
+            foregroundScene.OnDialogLine(isMainProtagonist);
         }
     }
 
-    private void OnDialogDecision(DialogDecision decision)
+    private void OnDialogDecision()
     {
         if(mode == Mode.Dialog && overlayMode == OverlayMode.None)
         {
-            foregroundScene.OnDialogDecision(decision);
+            foregroundScene.OnDialogDecision();
         }
     }
 }

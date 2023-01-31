@@ -67,11 +67,9 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     public AudioClip lineClip;
     public AudioClip decisionOptionClip;
 
-    ///@todo Change type
-    public delegate void OnDialogLineEvent(DialogLine line);
+    public delegate void OnDialogLineEvent(bool isMainProtagonist);
     public event OnDialogLineEvent onDialogLine;
-    ///@todo Change type
-    public delegate void OnDialogDecisionEvent(DialogDecision decision);
+    public delegate void OnDialogDecisionEvent();
     public event OnDialogDecisionEvent onDialogDecision;
 
     private GameObject content;
@@ -318,5 +316,17 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         }
 
         return false;
+    }
+
+    public void OnDialogLine(bool isMainProtagonist)
+    {
+        NewGameManager.Instance.HealthStatus.OnDialogLine(isMainProtagonist);
+        onDialogLine?.Invoke(isMainProtagonist);
+    }
+
+    public void OnDialogDecision()
+    {
+        NewGameManager.Instance.HealthStatus.OnDialogDecision();
+        onDialogDecision?.Invoke();
     }
 }

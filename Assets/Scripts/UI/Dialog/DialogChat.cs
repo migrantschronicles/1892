@@ -114,6 +114,8 @@ public class DialogChat : MonoBehaviour
         DialogBubble bubble = bubbleGO.GetComponent<DialogBubble>();
         bubble.OnHeightChanged += OnBubbleHeightChanged;
         bubble.AssignFlowObject(flowObject);
+
+        DialogSystem.Instance.OnDialogLine(DialogSystem.Instance.IsMainProtagonist(flowObject));
     }
 
     public void OnBranchesUpdated(IList<Branch> branches)
@@ -191,6 +193,8 @@ public class DialogChat : MonoBehaviour
                         bubble.OnSelected += OnDecisionTaken;
                         currentAnswers.Add(bubble);
                     }
+
+                    DialogSystem.Instance.OnDialogDecision();
                 }
             }
         }

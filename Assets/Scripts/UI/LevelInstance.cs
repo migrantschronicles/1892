@@ -146,6 +146,8 @@ public class LevelInstance : MonoBehaviour
     private ArticyRef sideTooHungryDialog;
     [SerializeField]
     private ArticyRef sickDialog;
+    [SerializeField]
+    private ArticyRef foreignLanguageDialog;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -522,7 +524,15 @@ public class LevelInstance : MonoBehaviour
     public void StartDialog(DialogButton button)
     {
         PrepareDialog(button);
-        dialogSystem.StartDialog(button, button.Language);
+        if(NewGameManager.Instance.UnderstandsDialogLanguage(button.Language))
+        {
+            dialogSystem.StartDialog(button, button.Language);
+        }
+        else
+        {
+            dialogSystem.StartDialog(button, foreignLanguageDialog.GetObject());
+        }
+
         OnDialogStarted();
     }
 

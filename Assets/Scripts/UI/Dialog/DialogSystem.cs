@@ -77,6 +77,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     private GameObject content;
     private ArticyFlowPlayer flowPlayer;
     private DialogChat currentChat;
+    private DialogButton currentButton;
     private Dictionary<IAnimatedText, TextElementAnimator> animators = new();
 
     public ArticyFlowPlayer FlowPlayer { get { return flowPlayer; } }
@@ -111,6 +112,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
             button.Chat = chatGO.GetComponent<DialogChat>();
         }
 
+        currentButton = button;
         currentChat = button.Chat;
         currentChat.gameObject.SetActive(true);
         currentChat.OnHeightChanged += OnChatHeightChanged;
@@ -161,6 +163,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
             currentChat.gameObject.SetActive(false);
             currentChat.OnClosing();
             currentChat = null;
+            currentButton = null;
         }
     }
 
@@ -220,11 +223,14 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         flowPlayer.StartOn = targetObject;
     }
 
-    /*
-    private string ConditionallyEstrangeLine(DialogLine line)
+    public string ConditionallyEstrangeLine(string text)
     {
-        string text = LocalizationManager.Instance.GetLocalizedString(line.Text, additionalLocalizationArgs);
-        if(line.IsLeft && !NewGameManager.Instance.UnderstandsDialogLanguage(currentDialogLanguage))
+        if(!currentButton)
+        {
+            return text;
+        }
+
+        if(!NewGameManager.Instance.UnderstandsDialogLanguage(currentButton.Language))
         {
             // Estrange the text
             text = NewGameManager.Instance.EstrangeText(text);
@@ -232,7 +238,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
 
         return text;
     }
-    */
 
     /**
      * Called when the back button was pressed during an overlay (when a shop or diary was opened during dialog).

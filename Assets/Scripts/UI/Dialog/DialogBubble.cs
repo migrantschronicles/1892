@@ -168,9 +168,15 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
 
     private void OnLocalizedTextChanged(Component targetComponent, string localizedText)
     {
+        string estrangedText = localizedText;
+        if(!DialogSystem.Instance.IsMainProtagonist(FlowObject))
+        {
+            estrangedText = DialogSystem.Instance.ConditionallyEstrangeLine(localizedText);
+        }
+
         float oldHeight = rectTransform.rect.height;
         var text = targetComponent as Text;
-        text.text = localizedText;
+        text.text = estrangedText;
         UpdateHeight();
         float newHeight = rectTransform.rect.height;
         if(!Mathf.Approximately(oldHeight, newHeight))
@@ -182,7 +188,7 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
         {
             // Just in case the language changed for bubbles before the current one.
             ///@todo Would be true for the bubble just before a decision.
-            DialogSystem.Instance.RegisterAnimator(this, localizedText);
+            DialogSystem.Instance.RegisterAnimator(this, estrangedText);
         }
     }
 

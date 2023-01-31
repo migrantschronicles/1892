@@ -33,6 +33,7 @@ public class DialogChat : MonoBehaviour
 
     public bool IsWaitingForDecision { get { return currentAnswers.Count > 0; } }
     public float Height { get { return rectTransform.sizeDelta.y; } }
+    public Dialog CurrentDialog { get { return currentDialog; } }
 
     public delegate void OnHeightChangedEvent(float height);
     public event OnHeightChangedEvent OnHeightChanged;

@@ -44,4 +44,9 @@ public class ShipIconManager : MonoBehaviour
         }
     }
 
+    public void StartShipTravel(Vector3 pointA, Vector3 pointB, Image remaningRoute, Image traveledRoute) 
+    {
+    
+    }
+
 }

@@ -4,6 +4,16 @@ using System.Linq;
 using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
 
+public enum HealthState
+{
+    Neutral = 0,
+    Angry = 1,
+    Happy = 2,
+    Hungry = 3,
+    Sad = 4,
+    Sick = 5
+}
+
 public class EndOfDayHealthData
 {
     /// The name of the character.
@@ -151,14 +161,19 @@ public class ProtagonistHealthData
     private HealthStatus_Hungry hungryStatus;
     private HealthStatus_Homesickness homesicknessStatus = new HealthStatus_Homesickness();
     private HealthStatus_Cholera choleraStatus = new HealthStatus_Cholera();
+    private HealthState healthState = HealthState.Happy;
 
     public ProtagonistData CharacterData { get; private set; }
     public HealthStatus_Hungry HungryStatus { get { return hungryStatus; } }
     public HealthStatus_Homesickness HomesickessStatus { get { return homesicknessStatus; } }
     public HealthStatus_Cholera CholeraStatus { get { return choleraStatus; } }
+    public HealthState HealthState { get { return healthState; } }
 
     public delegate void OnHealthChangedEvent(ProtagonistHealthData data);
     public event OnHealthChangedEvent onHealthChanged;
+
+    public delegate void OnHealthStateChangedEvent(ProtagonistHealthData data);
+    public event OnHealthStateChangedEvent onHealthStateChanged;
 
     public ProtagonistHealthData(HealthStatus status)
     {
@@ -176,7 +191,7 @@ public class ProtagonistHealthData
         hungryStatus.OnEndOfDay(healthData != null ? healthData.foodAmount : 0);
         homesicknessStatus.OnEndOfDay();
         CholeraStatus.OnEndOfDay();
-        onHealthChanged?.Invoke(this);
+        OnHealthChanged();
     }
 
     public void OnDayWithoutEnoughFood(int daysWithoutEnoughFood)
@@ -184,6 +199,7 @@ public class ProtagonistHealthData
         if(daysWithoutEnoughFood >= 2)
         {
             // If the character does not have enough food and is hungry, increase the homesickness.
+            // Called from HealthStatus_Hungry::OnEndOfDay, so no need to broadcast because this::OnEndOfDay takes care of it.
             homesicknessStatus.AddValue(healthStatus.HomesicknessHungryIncrease);
         }
     }
@@ -191,7 +207,42 @@ public class ProtagonistHealthData
     public void AddHomesicknessValue(float value)
     {
         HomesickessStatus.AddValue(value);
+        OnHealthChanged();
+    }
+
+    private void OnHealthChanged()
+    {
         onHealthChanged?.Invoke(this);
+        HealthState newState = CalculateHealthState();
+        if(newState != healthState)
+        {
+            healthState = newState;
+            onHealthStateChanged?.Invoke(this);
+        }
+    }
+
+    private HealthState CalculateHealthState()
+    {
+        if (CholeraStatus.IsSick)
+        {
+            return HealthState.Sick;
+        }
+        else if (HungryStatus.DaysWithoutEnoughFood >= 2)
+        {
+            return HealthState.Hungry;
+        }
+        else if (HomesickessStatus.Value >= 5.0f)
+        {
+            return HealthState.Sad;
+        }
+        else if (CholeraStatus.IsExposed || HungryStatus.DaysWithoutEnoughFood > 0 || HomesickessStatus.Value > 2.5f)
+        {
+            return HealthState.Neutral;
+        }
+        else
+        {
+            return HealthState.Happy;
+        }
     }
 }
 

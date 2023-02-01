@@ -18,6 +18,12 @@ public class ProtagonistData
     public string name;
     [Tooltip("Whether this is the main protagonist")]
     public bool isMainProtagonist;
+    public Sprite neutralPortrait;
+    public Sprite angryPortrait;
+    public Sprite happyPortrait;
+    public Sprite hungryPortrait;
+    public Sprite sadPortrait;
+    public Sprite sickPortrait;
 }
 
 /**

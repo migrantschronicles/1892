@@ -65,6 +65,7 @@ public class NewGameManager : MonoBehaviour
     public int minutes;
     public int hour;
     public int day = 0;
+    private bool wantsEndOfDay = false;
 
     
 
@@ -242,32 +243,60 @@ public class NewGameManager : MonoBehaviour
     {
         if (gameRunning)
         {
-            UpdateTime();
+            AdvanceTime(0, 0, Time.deltaTime * timeSpeed);
+        }
+
+        if(wantsEndOfDay && CanEndDay())
+        {
+            EndDay();
         }
     }
 
-    private void UpdateTime() 
+    private bool CanEndDay()
     {
+        return gameRunning && LevelInstance.Instance.Mode == Mode.None;
+    }
+    
+    private void EndDay()
+    {
+        popups.OpenEndDayPopUp();
+        popups.backBTNEndDay.SetActive(false);
+        wantsEndOfDay = false;
+    }
 
-        seconds += Time.deltaTime * timeSpeed;
-
-
-        if (seconds >= 60)
+    public void AdvanceTime(int hours, int minutes = 0, float seconds = 0)
+    {
+        if(wantsEndOfDay)
         {
-            seconds = 0;
-            minutes += 1;
+            // Don't need to advance time if we are already waiting to close dialog to end the day.
+            return;
         }
 
-        if (minutes >= 60)
+        this.seconds += seconds;
+        if(this.seconds >= 60)
         {
-            hour += 1;
-            minutes = 0;
+            this.minutes += (int)(this.seconds / 60);
+            this.seconds %= 60;
         }
 
-        if (hour >= hoursPerDay)
+        this.minutes += minutes;
+        if(this.minutes >= 60)
         {
-            popups.OpenEndDayPopUp();
-            popups.backBTNEndDay.SetActive(false);
+            this.hour += (int)(this.minutes / 60);
+            this.minutes %= 60;
+        }
+
+        hour += hours;
+        if(hour >= hoursPerDay)
+        {
+            if (CanEndDay())
+            {
+                EndDay();
+            }
+            else
+            {
+                wantsEndOfDay = true;
+            }
         }
 
         onTimeChanged?.Invoke(hour, minutes);

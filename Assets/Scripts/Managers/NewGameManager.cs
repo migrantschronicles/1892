@@ -65,6 +65,7 @@ public class NewGameManager : MonoBehaviour
     public int minutes;
     public int hour;
     public int day = 0;
+    private bool wantsEndOfDay = false;
 
     
 
@@ -244,13 +245,34 @@ public class NewGameManager : MonoBehaviour
         {
             UpdateTime();
         }
+
+        if(wantsEndOfDay && CanEndDay())
+        {
+            EndDay();
+        }
+    }
+
+    private bool CanEndDay()
+    {
+        return gameRunning && LevelInstance.Instance.Mode == Mode.None;
+    }
+    
+    private void EndDay()
+    {
+        popups.OpenEndDayPopUp();
+        popups.backBTNEndDay.SetActive(false);
+        wantsEndOfDay = false;
     }
 
     private void UpdateTime() 
     {
+        if(wantsEndOfDay)
+        {
+            // Don't need to advance time if we are already waiting to close dialog to end the day.
+            return;
+        }
 
         seconds += Time.deltaTime * timeSpeed;
-
 
         if (seconds >= 60)
         {
@@ -266,8 +288,14 @@ public class NewGameManager : MonoBehaviour
 
         if (hour >= hoursPerDay)
         {
-            popups.OpenEndDayPopUp();
-            popups.backBTNEndDay.SetActive(false);
+            if(CanEndDay())
+            {
+                EndDay();
+            }
+            else
+            {
+                wantsEndOfDay = true;
+            }
         }
 
         onTimeChanged?.Invoke(hour, minutes);

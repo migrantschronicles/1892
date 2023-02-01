@@ -494,7 +494,6 @@ public class LevelInstance : MonoBehaviour
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
         sceneInteractables.SetActive(false);
         blur.SetEnabled(true);
-        NewGameManager.Instance.SetPaused(true);
     }
 
     private void PrepareDialog(DialogButton button)
@@ -583,7 +582,6 @@ public class LevelInstance : MonoBehaviour
         else
         {
             mode = Mode.Shop;
-            NewGameManager.Instance.SetPaused(true);
         }
 
         currentShop.OnOpened();

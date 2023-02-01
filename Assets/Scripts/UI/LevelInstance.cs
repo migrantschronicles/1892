@@ -148,6 +148,10 @@ public class LevelInstance : MonoBehaviour
     private ArticyRef sickDialog;
     [SerializeField]
     private ArticyRef foreignLanguageDialog;
+    [SerializeField]
+    private GameObject seasicknessScenePrefab;
+    [SerializeField, Tooltip("How many seconds (real time) the seasickness scene should be displayed")]
+    private float seasicknessSceneTime = 5.0f;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -160,6 +164,8 @@ public class LevelInstance : MonoBehaviour
     private DraggedItem draggedItem;
     private bool isEndOfDayFade = false;
     private Room currentRoom;
+    private GameObject seasicknessScene;
+    private float seasicknessSceneTimer = -1.0f;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -186,6 +192,7 @@ public class LevelInstance : MonoBehaviour
         }
     }
     public Mode Mode { get { return mode; } }
+    public bool IsShowingSeasickness { get { return seasicknessSceneTimer >= 0.0f; } }
 
     public delegate void OnSceneChangedEvent(Scene scene);
     public event OnSceneChangedEvent onSceneChanged;
@@ -263,6 +270,18 @@ public class LevelInstance : MonoBehaviour
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
             AudioManager.Instance.PlayMusic(musicClips);
             startedPlayingMusic = true;
+        }
+    }
+
+    private void Update()
+    {
+        if(IsShowingSeasickness)
+        {
+            seasicknessSceneTimer += Time.deltaTime;
+            if(seasicknessSceneTimer >= seasicknessSceneTime)
+            {
+                ShowSeasicknessScene(false);
+            }
         }
     }
 
@@ -863,6 +882,36 @@ public class LevelInstance : MonoBehaviour
         if(mode == Mode.Dialog && overlayMode == OverlayMode.None)
         {
             foregroundScene.OnDialogDecision();
+        }
+    }
+
+    private void ShowSeasicknessScene(bool show)
+    {
+        if(IsShowingSeasickness == show)
+        {
+            return;
+        }
+
+        if(show)
+        {
+            if(!seasicknessScene)
+            {
+                seasicknessScene = Instantiate(seasicknessScenePrefab, canvas.transform);
+            }
+            else
+            {
+                seasicknessScene.SetActive(true);
+            }
+
+            NewGameManager.Instance.SetPaused(true);
+            seasicknessSceneTimer = 0.0f;
+        }
+        else
+        {
+            seasicknessScene.SetActive(false);
+            NewGameManager.Instance.SetPaused(false);
+            NewGameManager.Instance.AdvanceTime(1);
+            seasicknessSceneTimer = -1.0f;
         }
     }
 }

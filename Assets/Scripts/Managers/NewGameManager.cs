@@ -243,7 +243,7 @@ public class NewGameManager : MonoBehaviour
     {
         if (gameRunning)
         {
-            UpdateTime();
+            AdvanceTime(0, 0, Time.deltaTime * timeSpeed);
         }
 
         if(wantsEndOfDay && CanEndDay())
@@ -264,7 +264,7 @@ public class NewGameManager : MonoBehaviour
         wantsEndOfDay = false;
     }
 
-    private void UpdateTime() 
+    public void AdvanceTime(int hours, int minutes = 0, float seconds = 0)
     {
         if(wantsEndOfDay)
         {
@@ -272,23 +272,24 @@ public class NewGameManager : MonoBehaviour
             return;
         }
 
-        seconds += Time.deltaTime * timeSpeed;
-
-        if (seconds >= 60)
+        this.seconds += seconds;
+        if(this.seconds >= 60)
         {
-            seconds = 0;
-            minutes += 1;
+            this.minutes += (int)(this.seconds / 60);
+            this.seconds %= 60;
         }
 
-        if (minutes >= 60)
+        this.minutes += minutes;
+        if(this.minutes >= 60)
         {
-            hour += 1;
-            minutes = 0;
+            this.hour += (int)(this.minutes / 60);
+            this.minutes %= 60;
         }
 
-        if (hour >= hoursPerDay)
+        hour += hours;
+        if(hour >= hoursPerDay)
         {
-            if(CanEndDay())
+            if (CanEndDay())
             {
                 EndDay();
             }

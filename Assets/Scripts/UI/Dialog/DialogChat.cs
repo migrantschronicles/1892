@@ -115,7 +115,7 @@ public class DialogChat : MonoBehaviour
         bubble.OnHeightChanged += OnBubbleHeightChanged;
         bubble.AssignFlowObject(flowObject);
 
-        DialogSystem.Instance.OnDialogLine(DialogSystem.Instance.IsMainProtagonist(flowObject));
+        DialogSystem.Instance.OnDialogLine(DialogSystem.Instance.GetTechnicalNameOfSpeaker(flowObject));
     }
 
     public void OnBranchesUpdated(IList<Branch> branches)

@@ -144,9 +144,9 @@ public class ForegroundScene : MonoBehaviour
         }
     }
 
-    public void OnDialogLine(bool isMainProtagonist)
+    public void OnDialogLine(string speakerTechnicalName)
     {
-        if(!isMainProtagonist)
+        if(!DialogSystem.Instance.IsProtagonist(speakerTechnicalName))
         {
             if(leftAnimController)
             {

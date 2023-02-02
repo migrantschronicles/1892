@@ -18,6 +18,8 @@ public class ProtagonistData
     public string name;
     [Tooltip("Whether this is the main protagonist")]
     public bool isMainProtagonist;
+    [Tooltip("The technical name in Articy")]
+    public string technicalName;
     public Sprite neutralPortrait;
     public Sprite angryPortrait;
     public Sprite happyPortrait;
@@ -49,6 +51,4 @@ public class PlayableCharacterData : ScriptableObject
     public SceneCharacterPrefab[] scenePrefabs;
     [Tooltip("The data about the characters")]
     public ProtagonistData[] protagonistData;
-    [SerializeField, Tooltip("The technical name in Articy of the main protagonist")]
-    public string mainProtagonistTechnicalName;
 }

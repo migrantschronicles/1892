@@ -875,11 +875,11 @@ public class LevelInstance : MonoBehaviour
         }
     }
 
-    private void OnDialogLine(bool isMainProtagonist)
+    private void OnDialogLine(string speakerTechnicalName)
     {
         if(mode == Mode.Dialog && overlayMode == OverlayMode.None)
         {
-            foregroundScene.OnDialogLine(isMainProtagonist);
+            foregroundScene.OnDialogLine(speakerTechnicalName);
         }
     }
 

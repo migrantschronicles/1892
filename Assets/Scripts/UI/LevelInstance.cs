@@ -532,7 +532,13 @@ public class LevelInstance : MonoBehaviour
         }
 
         // Set foreground scene
-        foregroundScene.SetCharacters(button.DialogPrefab, NewGameManager.Instance.PlayableCharacterData.dialogPrefab);
+        GameObject rightDialogPrefab = button.RightDialogPrefab;
+        if(rightDialogPrefab == null)
+        {
+            rightDialogPrefab = NewGameManager.Instance.PlayableCharacterData.dialogPrefab;
+        }
+
+        foregroundScene.SetCharacters(button.LeftDialogPrefab, rightDialogPrefab);
         foregroundScene.gameObject.SetActive(true);
 
         dialogSystem.gameObject.SetActive(true);

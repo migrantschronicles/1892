@@ -17,6 +17,8 @@ public class ProtagonistAnimationController : IAnimationController
     [SerializeField]
     private float sickSpeed = 1.0f;
 
+    public string ProtagonistName { get { return protagonistName; } }
+
     private void Start()
     {
         ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);

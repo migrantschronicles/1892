@@ -71,7 +71,6 @@ public class ForegroundScene : MonoBehaviour
         float widthScaleFactor = worldWidth / spriteSize.x;
         float heightScaleFactor = worldHeight / spriteSize.y;
         float scaleFactor = Mathf.Min(widthScaleFactor, heightScaleFactor);
-        Debug.Log($"{character.name}: {widthScaleFactor} {heightScaleFactor}");
         parent.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
 
         // Reparent
@@ -146,7 +145,7 @@ public class ForegroundScene : MonoBehaviour
 
     public void OnDialogLine(string speakerTechnicalName)
     {
-        if(!DialogSystem.Instance.IsProtagonist(speakerTechnicalName))
+        if(!DialogSystem.Instance.IsRight(speakerTechnicalName))
         {
             if(leftAnimController)
             {
@@ -168,5 +167,27 @@ public class ForegroundScene : MonoBehaviour
         {
             rightAnimController.TalkIfNotTalking();
         }
+    }
+
+    public bool HasRightCharacter(string technicalName)
+    {
+        if(rightCharacter)
+        {
+            ProtagonistData data = NewGameManager.Instance.PlayableCharacterData.GetProtagonistDataByTechnicalName(technicalName);
+            if(data != null)
+            {
+                ProtagonistAnimationController[] controllers = rightCharacter.GetComponentsInChildren<ProtagonistAnimationController>();
+                foreach (ProtagonistAnimationController controller in controllers)
+                {
+                    string protagonistName = controller.ProtagonistName;
+                    if(protagonistName == data.name)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }

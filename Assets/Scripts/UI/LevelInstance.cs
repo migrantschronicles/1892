@@ -920,4 +920,9 @@ public class LevelInstance : MonoBehaviour
             seasicknessSceneTimer = -1.0f;
         }
     }
+
+    public bool HasRightForegroundCharacter(string technicalName)
+    {
+        return foregroundScene.HasRightCharacter(technicalName);
+    }
 }

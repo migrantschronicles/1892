@@ -51,4 +51,30 @@ public class PlayableCharacterData : ScriptableObject
     public SceneCharacterPrefab[] scenePrefabs;
     [Tooltip("The data about the characters")]
     public ProtagonistData[] protagonistData;
+
+    public ProtagonistData GetProtagonistDataByName(string name)
+    {
+        foreach(ProtagonistData data in protagonistData)
+        {
+            if(data.name == name)
+            {
+                return data;
+            }
+        }
+
+        return null;
+    }
+
+    public ProtagonistData GetProtagonistDataByTechnicalName(string technicalName)
+    {
+        foreach (ProtagonistData data in protagonistData)
+        {
+            if (data.technicalName == technicalName)
+            {
+                return data;
+            }
+        }
+
+        return null;
+    }
 }

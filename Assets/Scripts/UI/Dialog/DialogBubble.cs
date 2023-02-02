@@ -156,7 +156,7 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
             }
         }
 
-        if(DialogSystem.Instance.IsProtagonist(flowObject))
+        if(DialogSystem.Instance.IsRight(flowObject))
         {
             SetRight();
         }
@@ -169,7 +169,7 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
     private void OnLocalizedTextChanged(Component targetComponent, string localizedText)
     {
         string estrangedText = localizedText;
-        if(!DialogSystem.Instance.IsProtagonist(FlowObject))
+        if(!DialogSystem.Instance.IsRight(FlowObject))
         {
             estrangedText = DialogSystem.Instance.ConditionallyEstrangeLine(localizedText);
         }

@@ -265,28 +265,20 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         }
     }
 
-    public bool IsProtagonist(IFlowObject flowObject)
+    public bool IsRight(IFlowObject flowObject)
     {
         string technicalName = GetTechnicalNameOfSpeaker(flowObject);
         if(technicalName != null)
         {
-            return IsProtagonist(technicalName);
+            return IsRight(technicalName);
         }
 
         return false;
     }
 
-    public bool IsProtagonist(string technicalName)
+    public bool IsRight(string technicalName)
     {
-        foreach (ProtagonistData data in NewGameManager.Instance.PlayableCharacterData.protagonistData)
-        {
-            if (data.technicalName == technicalName)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return LevelInstance.Instance.HasRightForegroundCharacter(technicalName);
     }
 
     public string GetTechnicalNameOfSpeaker(IFlowObject flowObject)
@@ -344,7 +336,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
 
     public void OnDialogLine(string technicalName)
     {
-        NewGameManager.Instance.HealthStatus.OnDialogLine(IsProtagonist(technicalName));
+        NewGameManager.Instance.HealthStatus.OnDialogLine(IsRight(technicalName));
         onDialogLine?.Invoke(technicalName);
     }
 

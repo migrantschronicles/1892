@@ -155,18 +155,56 @@ public class HealthStatus_Cholera
     }
 }
 
+public class HealthStatus_Seasickness
+{
+    private ProtagonistHealthData healthData;
+    private bool canGetSeasick = false;
+    private bool isOnShip = false;
+
+    public bool IsCurrentlySeasick { get { return canGetSeasick && isOnShip; } }
+    public bool CanGetSeasick { get { return canGetSeasick; } }
+
+    public HealthStatus_Seasickness(ProtagonistHealthData healthData)
+    {
+        this.healthData = healthData;
+    }
+
+    public void Init(ProtagonistData data)
+    {
+        if(UnityEngine.Random.value < data.canGetSeasickProbability)
+        {
+            canGetSeasick = true;
+        }
+    }
+
+    public void SetIsOnShip(bool isOnShip)
+    {
+        this.isOnShip = isOnShip;
+    }
+
+    public void OnEndOfDay()
+    {
+        if(canGetSeasick && isOnShip)
+        {
+            healthData.OnSeasickDay();
+        }
+    }
+}
+
 public class ProtagonistHealthData
 {
     private HealthStatus healthStatus;
     private HealthStatus_Hungry hungryStatus;
-    private HealthStatus_Homesickness homesicknessStatus = new HealthStatus_Homesickness();
-    private HealthStatus_Cholera choleraStatus = new HealthStatus_Cholera();
+    private HealthStatus_Homesickness homesicknessStatus = new();
+    private HealthStatus_Cholera choleraStatus = new();
+    private HealthStatus_Seasickness seasicknessStatus;
     private HealthState healthState = HealthState.Happy;
 
     public ProtagonistData CharacterData { get; private set; }
     public HealthStatus_Hungry HungryStatus { get { return hungryStatus; } }
     public HealthStatus_Homesickness HomesickessStatus { get { return homesicknessStatus; } }
     public HealthStatus_Cholera CholeraStatus { get { return choleraStatus; } }
+    public HealthStatus_Seasickness SeasicknessStatus { get { return seasicknessStatus; } }
     public HealthState HealthState { get { return healthState; } }
 
     public delegate void OnHealthChangedEvent(ProtagonistHealthData data);
@@ -179,11 +217,13 @@ public class ProtagonistHealthData
     {
         healthStatus = status;
         hungryStatus = new HealthStatus_Hungry(this);
+        seasicknessStatus = new HealthStatus_Seasickness(this);
     }
 
     public void Init(ProtagonistData characterData)
     {
         CharacterData = characterData;
+        seasicknessStatus.Init(characterData);
     }
 
     public void OnEndOfDay(EndOfDayHealthData healthData)
@@ -191,6 +231,7 @@ public class ProtagonistHealthData
         hungryStatus.OnEndOfDay(healthData != null ? healthData.foodAmount : 0);
         homesicknessStatus.OnEndOfDay();
         CholeraStatus.OnEndOfDay();
+        seasicknessStatus.OnEndOfDay();
         OnHealthChanged();
     }
 
@@ -202,6 +243,12 @@ public class ProtagonistHealthData
             // Called from HealthStatus_Hungry::OnEndOfDay, so no need to broadcast because this::OnEndOfDay takes care of it.
             homesicknessStatus.AddValue(healthStatus.HomesicknessHungryIncrease);
         }
+    }
+
+    public void OnSeasickDay()
+    {
+        // Called from HealthStatus_Seasickness::OnEndOfDay, so no need to broadcast
+        homesicknessStatus.AddValue(healthStatus.HomesicknessSeasickIncrease);
     }
 
     public void AddHomesicknessValue(float value)
@@ -244,6 +291,11 @@ public class ProtagonistHealthData
             return HealthState.Happy;
         }
     }
+
+    public void SetIsOnShip(bool value)
+    {
+        seasicknessStatus.SetIsOnShip(value);
+    }
 }
 
 public class HealthStatus : MonoBehaviour
@@ -260,12 +312,15 @@ public class HealthStatus : MonoBehaviour
     private float homesicknessRightLineDecrease = 0.025f;
     [SerializeField, Tooltip("How much homesickness will decrease for every decision option taken")]
     private float homesicknessDecisionDecrease = 0.025f;
+    [SerializeField, Tooltip("How much homesickness will increase for every day on a ship if the person is seasick")]
+    private float homesicknessSeasickIncrease = 1.0f;
 
     private List<ProtagonistHealthData> characters = new List<ProtagonistHealthData>();
     private int dialogsStartedToday = 0;
 
     public IEnumerable<ProtagonistHealthData> Characters { get { return characters; } }
     public float HomesicknessHungryIncrease { get { return homesicknessHungryIncrease; } }
+    public float HomesicknessSeasickIncrease { get { return homesicknessSeasickIncrease; } }
 
     private void Start()
     {
@@ -332,7 +387,7 @@ public class HealthStatus : MonoBehaviour
         return characters.Find(status => status.CharacterData.name == name);
     }
 
-    private ProtagonistHealthData GetMainHealthStatus()
+    public ProtagonistHealthData GetMainHealthStatus()
     {
         return characters.Find(status => status.CharacterData.isMainProtagonist);
     }
@@ -425,5 +480,13 @@ public class HealthStatus : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void SetIsOnShip(bool value)
+    {
+        foreach(ProtagonistHealthData healthData in characters)
+        {
+            healthData.SetIsOnShip(value);
+        }
     }
 }

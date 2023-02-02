@@ -169,7 +169,7 @@ public class DialogChat : MonoBehaviour
                 // A linear dialog flow, so go to the next line and create a bubble.
                 Branch targetBranch = availableBranches[0];
                 availableBranches = null;
-                DialogSystem.Instance.FlowPlayer.StartOn = targetBranch.Target as IArticyObject;
+                DialogSystem.Instance.FlowPlayer.Play(targetBranch);
             }
             else
             {
@@ -253,7 +253,7 @@ public class DialogChat : MonoBehaviour
         OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
 
         currentAnswers.Clear();
-        DialogSystem.Instance.FlowPlayer.StartOn = bubble.Branch.Target as IArticyObject;
+        DialogSystem.Instance.FlowPlayer.Play(bubble.Branch);
     }
 
     public bool IsCurrentBranch(DialogAnswerBubble bubble)

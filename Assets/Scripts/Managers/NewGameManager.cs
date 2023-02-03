@@ -297,7 +297,7 @@ public class NewGameManager : MonoBehaviour
             }
         }
 
-        onTimeChanged?.Invoke(hour, minutes);
+        onTimeChanged?.Invoke(hour, this.minutes);
     }
 
     private void Initialize()

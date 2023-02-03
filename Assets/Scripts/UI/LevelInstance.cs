@@ -152,6 +152,8 @@ public class LevelInstance : MonoBehaviour
     private GameObject seasicknessScenePrefab;
     [SerializeField, Tooltip("How many seconds (real time) the seasickness scene should be displayed")]
     private float seasicknessSceneTime = 5.0f;
+    [SerializeField, Tooltip("How often the seasickness scene should appear (realtime seconds)")]
+    private float seasicknessSceneFrequency = 60.0f;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -166,6 +168,8 @@ public class LevelInstance : MonoBehaviour
     private Room currentRoom;
     private GameObject seasicknessScene;
     private float seasicknessSceneTimer = -1.0f;
+    private float nextSeasicknessRemainingTime = -1.0f;
+    private bool wantsToShowSeasickness = false;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -228,6 +232,7 @@ public class LevelInstance : MonoBehaviour
         }
 
         NewGameManager.Instance.onTimeChanged += OnTimeChanged;
+        NewGameManager.Instance.onNewDay += OnNewDay;
         backButton.onClick.AddListener(OnBack);
         blur.SetEnabled(false);
         IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
@@ -270,6 +275,18 @@ public class LevelInstance : MonoBehaviour
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
             AudioManager.Instance.PlayMusic(musicClips);
             startedPlayingMusic = true;
+        }
+
+        NewGameManager.Instance.HealthStatus.SetIsOnShip(levelMode == LevelInstanceMode.Ship);
+        nextSeasicknessRemainingTime = NewGameManager.Instance.RemainingTime - seasicknessSceneFrequency;
+    }
+
+    private void OnDestroy()
+    {
+        if(NewGameManager.Instance)
+        {
+            NewGameManager.Instance.onTimeChanged -= OnTimeChanged;
+            NewGameManager.Instance.onNewDay -= OnNewDay;
         }
     }
 
@@ -393,6 +410,7 @@ public class LevelInstance : MonoBehaviour
                 mode = Mode.None;
                 NewGameManager.Instance.SetPaused(false);
                 UpdateEndOfDayFade();
+                UpdateShowSeasickness();
             }
         }
     }
@@ -429,6 +447,15 @@ public class LevelInstance : MonoBehaviour
                 UpdateEndOfDayFade();
             }
         }
+
+        ProtagonistHealthData mainHealthData = NewGameManager.Instance.HealthStatus.GetMainHealthStatus();
+        if(mainHealthData.SeasicknessStatus.IsCurrentlySeasick)
+        {
+            if(NewGameManager.Instance.RemainingTime <= nextSeasicknessRemainingTime)
+            {
+                ShowSeasicknessScene(true);
+            }
+        }
     }
 
     private void UpdateEndOfDayFade()
@@ -446,6 +473,11 @@ public class LevelInstance : MonoBehaviour
         {
             blur.SetEnabled(false);
         }
+    }
+
+    private void OnNewDay()
+    {
+        nextSeasicknessRemainingTime = NewGameManager.Instance.RemainingTime - seasicknessSceneFrequency;
     }
 
     public bool HasScene(string name)
@@ -532,7 +564,13 @@ public class LevelInstance : MonoBehaviour
         }
 
         // Set foreground scene
-        foregroundScene.SetCharacters(button.DialogPrefab, NewGameManager.Instance.PlayableCharacterData.dialogPrefab);
+        GameObject rightDialogPrefab = button.RightDialogPrefab;
+        if(rightDialogPrefab == null)
+        {
+            rightDialogPrefab = NewGameManager.Instance.PlayableCharacterData.dialogPrefab;
+        }
+
+        foregroundScene.SetCharacters(button.LeftDialogPrefab, rightDialogPrefab);
         foregroundScene.gameObject.SetActive(true);
 
         dialogSystem.gameObject.SetActive(true);
@@ -664,8 +702,23 @@ public class LevelInstance : MonoBehaviour
                     mode = Mode.None;
                     NewGameManager.Instance.SetPaused(false);
                     UpdateEndOfDayFade();
+                    UpdateShowSeasickness();
                 }
                 break;
+        }
+    }
+
+    private void UpdateShowSeasickness()
+    {
+        if (wantsToShowSeasickness)
+        {
+            if(NewGameManager.Instance.wantsEndOfDay)
+            {
+                wantsToShowSeasickness = false;
+                return;
+            }
+
+            ShowSeasicknessScene(true);
         }
     }
 
@@ -869,11 +922,11 @@ public class LevelInstance : MonoBehaviour
         }
     }
 
-    private void OnDialogLine(bool isMainProtagonist)
+    private void OnDialogLine(string speakerTechnicalName)
     {
         if(mode == Mode.Dialog && overlayMode == OverlayMode.None)
         {
-            foregroundScene.OnDialogLine(isMainProtagonist);
+            foregroundScene.OnDialogLine(speakerTechnicalName);
         }
     }
 
@@ -889,6 +942,12 @@ public class LevelInstance : MonoBehaviour
     {
         if(IsShowingSeasickness == show)
         {
+            return;
+        }
+
+        if(mode != Mode.None)
+        {
+            wantsToShowSeasickness = true;
             return;
         }
 
@@ -912,6 +971,14 @@ public class LevelInstance : MonoBehaviour
             NewGameManager.Instance.SetPaused(false);
             NewGameManager.Instance.AdvanceTime(1);
             seasicknessSceneTimer = -1.0f;
+            nextSeasicknessRemainingTime = NewGameManager.Instance.RemainingTime - seasicknessSceneFrequency;
         }
+
+        wantsToShowSeasickness = false;
+    }
+
+    public bool HasRightForegroundCharacter(string technicalName)
+    {
+        return foregroundScene.HasRightCharacter(technicalName);
     }
 }

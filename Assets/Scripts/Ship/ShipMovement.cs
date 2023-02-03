@@ -154,7 +154,7 @@ public class ShipMovement : MonoBehaviour
 
     private void UpdateTouchMovement()
     {
-        if (LevelInstance.Instance.Mode != Mode.None)
+        if (LevelInstance.Instance.Mode != Mode.None || LevelInstance.Instance.IsShowingSeasickness)
         {
             return;
         }

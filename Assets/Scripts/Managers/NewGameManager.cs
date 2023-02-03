@@ -65,9 +65,7 @@ public class NewGameManager : MonoBehaviour
     public int minutes;
     public int hour;
     public int day = 0;
-    private bool wantsEndOfDay = false;
-
-    
+    public bool wantsEndOfDay = false;
 
     public int food;
     public int money;
@@ -502,15 +500,10 @@ public class NewGameManager : MonoBehaviour
         Debug.Log("Go to next day here, via clock");
         day++;
         ++DaysInCity;
-        onNewDay?.Invoke();
         SetDate(date.AddDays(1));
         SetMorningTime();
         Vibrate();
-
-
-        
-        
-
+        onNewDay?.Invoke();
     }
 
     public void SetMorningTime() 

@@ -2,16 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ProtagonistAnimState
-{
-    Neutral = 0,
-    Angry = 1,
-    Happy = 2,
-    Hungry = 3,
-    Sad = 4,
-    Sick = 5
-}
-
 public class ProtagonistAnimationController : IAnimationController
 {
     [SerializeField]
@@ -27,13 +17,13 @@ public class ProtagonistAnimationController : IAnimationController
     [SerializeField]
     private float sickSpeed = 1.0f;
 
-    private ProtagonistAnimState state = ProtagonistAnimState.Neutral;
+    public string ProtagonistName { get { return protagonistName; } }
 
     private void Start()
     {
         ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
-        healthData.onHealthChanged += OnHealthChanged;
-        OnHealthChanged(healthData);
+        healthData.onHealthStateChanged += OnHealthStateChanged;
+        OnHealthStateChanged(healthData);
     }
 
     private void OnDestroy()
@@ -41,13 +31,17 @@ public class ProtagonistAnimationController : IAnimationController
         if(NewGameManager.Instance)
         {
             ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
-            healthData.onHealthChanged -= OnHealthChanged;
+            healthData.onHealthChanged -= OnHealthStateChanged;
         }
     }
 
     private void OnEnable()
     {
-        GetAnimator().SetInteger("State", (int)state);
+        if (NewGameManager.Instance)
+        {
+            ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
+            GetAnimator().SetInteger("State", (int)healthData.HealthState);
+        }
         GetAnimator().SetFloat("AngrySpeed", angrySpeed);
         GetAnimator().SetFloat("HappySpeed", happySpeed);
         GetAnimator().SetFloat("HungrySpeed", hungrySpeed);
@@ -55,36 +49,8 @@ public class ProtagonistAnimationController : IAnimationController
         GetAnimator().SetFloat("SickSpeed", sickSpeed);
     }
 
-    private void OnHealthChanged(ProtagonistHealthData healthData)
+    private void OnHealthStateChanged(ProtagonistHealthData healthData)
     {
-        if(healthData.CholeraStatus.IsSick)
-        {
-            SetAnimState(ProtagonistAnimState.Sick);
-        }
-        else if(healthData.HungryStatus.DaysWithoutEnoughFood >= 2)
-        {
-            SetAnimState(ProtagonistAnimState.Hungry);
-        }
-        else if(healthData.HomesickessStatus.Value >= 5.0f)
-        {
-            SetAnimState(ProtagonistAnimState.Sad);
-        }
-        else if(healthData.CholeraStatus.IsExposed || healthData.HungryStatus.DaysWithoutEnoughFood > 0 || healthData.HomesickessStatus.Value > 2.5f)
-        {
-            SetAnimState(ProtagonistAnimState.Neutral);
-        }
-        else
-        {
-            SetAnimState(ProtagonistAnimState.Happy);
-        }
-    }
-
-    public void SetAnimState(ProtagonistAnimState newState)
-    {
-        if(state != newState)
-        {
-            state = newState;
-            GetAnimator().SetInteger("State", (int)state);
-        }
+        GetAnimator().SetInteger("State", (int)healthData.HealthState);
     }
 }

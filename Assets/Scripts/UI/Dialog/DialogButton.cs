@@ -13,7 +13,9 @@ public class DialogButton : MonoBehaviour
     [SerializeField, Tooltip("The characters involved in the scene (basically everything you want to disappear when the dialog starts).")]
     private GameObject[] hideObjects;
     [SerializeField, Tooltip("The prefab that will be instantiated on the left side of the dialog.")]
-    private GameObject dialogPrefab;
+    private GameObject leftDialogPrefab;
+    [SerializeField, Tooltip("The prefab that will be instantiated on the right side of the dialog. If null, then it uses the default one.")]
+    private GameObject rightDialogPrefab;
     [SerializeField, Tooltip("The language of the dialoges")]
     private DialogLanguage language = DialogLanguage.Native;
     [SerializeField, Tooltip("True if the dialog can start even if the main protagonist is sick (for family members)")]
@@ -23,7 +25,8 @@ public class DialogButton : MonoBehaviour
 
     public string SceneName { get { return sceneName; } }
     public IEnumerable<GameObject> HideObjects { get { return hideObjects; } }
-    public GameObject DialogPrefab { get { return dialogPrefab; } }
+    public GameObject LeftDialogPrefab { get { return leftDialogPrefab; } }
+    public GameObject RightDialogPrefab { get { return rightDialogPrefab; } }
     public DialogLanguage Language { get { return language; } }
     public DialogChat Chat { get; set; }
 
@@ -38,9 +41,9 @@ public class DialogButton : MonoBehaviour
             }
         }
 
-        if(dialogPrefab == null)
+        if(leftDialogPrefab == null)
         {
-            Debug.LogError($"The dialog prefab was not set in {name}");
+            Debug.LogError($"The left dialog prefab was not set in {name}");
         }
     }
 #endif

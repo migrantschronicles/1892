@@ -18,6 +18,16 @@ public class ProtagonistData
     public string name;
     [Tooltip("Whether this is the main protagonist")]
     public bool isMainProtagonist;
+    [Tooltip("The technical name in Articy")]
+    public string technicalName;
+    [Tooltip("The probability of this character to be able to get seasick (0-1).")]
+    public float canGetSeasickProbability = 0.5f;
+    public Sprite neutralPortrait;
+    public Sprite angryPortrait;
+    public Sprite happyPortrait;
+    public Sprite hungryPortrait;
+    public Sprite sadPortrait;
+    public Sprite sickPortrait;
 }
 
 /**
@@ -37,12 +47,36 @@ public class PlayableCharacterData : ScriptableObject
 {
     [Tooltip("The conditions that will be set when the character is selected.")]
     public SetCondition[] setConditions;
-    [Tooltip("The prefab that will be displayed on the right side of the dialogs.")]
+    [Tooltip("The prefab that will be displayed on the right side of the dialogs by default.")]
     public GameObject dialogPrefab;
     [Tooltip("The prefabs that will be instantiated into the scene.")]
     public SceneCharacterPrefab[] scenePrefabs;
     [Tooltip("The data about the characters")]
     public ProtagonistData[] protagonistData;
-    [SerializeField, Tooltip("The technical name in Articy of the main protagonist")]
-    public string mainProtagonistTechnicalName;
+
+    public ProtagonistData GetProtagonistDataByName(string name)
+    {
+        foreach(ProtagonistData data in protagonistData)
+        {
+            if(data.name == name)
+            {
+                return data;
+            }
+        }
+
+        return null;
+    }
+
+    public ProtagonistData GetProtagonistDataByTechnicalName(string technicalName)
+    {
+        foreach (ProtagonistData data in protagonistData)
+        {
+            if (data.technicalName == technicalName)
+            {
+                return data;
+            }
+        }
+
+        return null;
+    }
 }

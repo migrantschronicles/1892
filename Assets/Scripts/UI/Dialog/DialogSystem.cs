@@ -67,7 +67,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     public AudioClip lineClip;
     public AudioClip decisionOptionClip;
 
-    public delegate void OnDialogLineEvent(bool isMainProtagonist);
+    public delegate void OnDialogLineEvent(string speakerTechnicalName);
     public event OnDialogLineEvent onDialogLine;
     public delegate void OnDialogDecisionEvent();
     public event OnDialogDecisionEvent onDialogDecision;
@@ -265,7 +265,23 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         }
     }
 
-    public bool IsMainProtagonist(IFlowObject flowObject)
+    public bool IsRight(IFlowObject flowObject)
+    {
+        string technicalName = GetTechnicalNameOfSpeaker(flowObject);
+        if(technicalName != null)
+        {
+            return IsRight(technicalName);
+        }
+
+        return false;
+    }
+
+    public bool IsRight(string technicalName)
+    {
+        return LevelInstance.Instance.HasRightForegroundCharacter(technicalName);
+    }
+
+    public string GetTechnicalNameOfSpeaker(IFlowObject flowObject)
     {
         var dlgSpeaker = flowObject as IObjectWithSpeaker;
         if (dlgSpeaker != null)
@@ -274,11 +290,11 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
             var speaker = dlgSpeaker.Speaker;
             if (speaker != null)
             {
-                return speaker.TechnicalName == NewGameManager.Instance.PlayableCharacterData.mainProtagonistTechnicalName;
+                return speaker.TechnicalName;
             }
         }
 
-        return false;
+        return null;
     }
 
     public void RegisterAnimator(IAnimatedText animatedText, string text)
@@ -318,10 +334,10 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         return false;
     }
 
-    public void OnDialogLine(bool isMainProtagonist)
+    public void OnDialogLine(string technicalName)
     {
-        NewGameManager.Instance.HealthStatus.OnDialogLine(isMainProtagonist);
-        onDialogLine?.Invoke(isMainProtagonist);
+        NewGameManager.Instance.HealthStatus.OnDialogLine(IsRight(technicalName));
+        onDialogLine?.Invoke(technicalName);
     }
 
     public void OnDialogDecision()

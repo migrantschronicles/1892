@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 using System.Globalization;
 using System;
+using Articy.TheMigrantsChronicles.GlobalVariables;
 
 public enum TransporationMethod
 {

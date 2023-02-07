@@ -513,7 +513,7 @@ RectTransform:
   m_Children:
   - {fileID: 2262813108578868617}
   m_Father: {fileID: 8880984108163671342}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -602,6 +602,87 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1630920129388176778
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1250436126962909249}
+  - component: {fileID: 5682464940112546981}
+  - component: {fileID: 5626682707882446103}
+  m_Layer: 5
+  m_Name: Text (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1250436126962909249
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630920129388176778}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6406311009057012239}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -382, y: 185.13}
+  m_SizeDelta: {x: 326.89, y: 119.51}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &5682464940112546981
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630920129388176778}
+  m_CullTransparentMesh: 1
+--- !u!114 &5626682707882446103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630920129388176778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 789a2add56c54734fb0f2fee14e58199, type: 3}
+    m_FontSize: 60
+    m_FontStyle: 0
+    m_BestFit: 1
+    m_MinSize: 10
+    m_MaxSize: 72
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: "If I have enough money, I should definitely go to a migration hotel. I\u2019m
+    afraid someone will steal something from me if I stay outside for too long."
 --- !u!1 &1741970009912700926
 GameObject:
   m_ObjectHideFlags: 0
@@ -933,12 +1014,12 @@ GameObject:
   - component: {fileID: 6721238341999587084}
   - component: {fileID: 5925540626977903799}
   m_Layer: 5
-  m_Name: Final Outcome (1)
+  m_Name: Pop-upMSG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6406311009057012239
 RectTransform:
   m_ObjectHideFlags: 0
@@ -950,14 +1031,15 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1250436126962909249}
   m_Father: {fileID: 8880984108163671342}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 976, y: 729}
+  m_AnchoredPosition: {x: -58.63, y: -8.08}
+  m_SizeDelta: {x: 1274.17, y: 698.85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1405708632662248610
 CanvasRenderer:
@@ -987,14 +1069,14 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f7e9f6ae779b261439fe879558eb8733, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: 880853440daf111439f91e8e81de076d, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: 1
+  m_FillAmount: 0.19
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 3
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!114 &5925540626977903799
@@ -1969,7 +2051,7 @@ RectTransform:
   m_Children:
   - {fileID: 2334686627586408886}
   m_Father: {fileID: 8880984108163671342}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2306,7 +2388,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8880984108163671342
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2319,10 +2401,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6406311009057012239}
   - {fileID: 4987034993660927067}
   - {fileID: 7252214159217698513}
   - {fileID: 5590800822274604746}
-  - {fileID: 6406311009057012239}
   m_Father: {fileID: 2331030862723692868}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2853,7 +2935,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Sleep Outside (free)
+  m_Text: "Stay outside \n(beware of thieves)"
 --- !u!1 &7363560475851531461
 GameObject:
   m_ObjectHideFlags: 0
@@ -5760,7 +5842,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Find a hostel to sleep
+  m_Text: 'Stay at a migration hotel '
 --- !u!1 &9028148741095531812
 GameObject:
   m_ObjectHideFlags: 0
@@ -5792,12 +5874,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8880984108163671342}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.7509, y: -19}
-  m_SizeDelta: {x: 726.39, y: 91.8357}
+  m_AnchoredPosition: {x: -1.7509, y: -29.31}
+  m_SizeDelta: {x: 726.39, y: 135.35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5842803860814830244
 CanvasRenderer:
@@ -5831,7 +5913,7 @@ MonoBehaviour:
     m_Font: {fileID: 12800000, guid: 789a2add56c54734fb0f2fee14e58199, type: 3}
     m_FontSize: 60
     m_FontStyle: 0
-    m_BestFit: 0
+    m_BestFit: 1
     m_MinSize: 10
     m_MaxSize: 72
     m_Alignment: 4
@@ -5840,7 +5922,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: The day has came to an end.
+  m_Text: 'A long and tiring day on your journey came to an end and you really need
+    to rest. '
 --- !u!1001 &1135686268529157240
 PrefabInstance:
   m_ObjectHideFlags: 0

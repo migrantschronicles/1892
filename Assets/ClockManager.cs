@@ -30,7 +30,7 @@ public class ClockManager : MonoBehaviour
         //Vector3 controlPoint2 = new Vector3(140, 10.5f, 0);
 
 
-        float t = (hour + minutes / 60f) / 13.0f; // Scale "hours" to a value between 0 and 1
+        float t = (hour + minutes / 60f) / NewGameManager.Instance.hoursPerDay; // Scale "hours" to a value between 0 and 1
         knob.localPosition = Vector3.Lerp(Vector3.Lerp(startPoint, controlPoint1, t), Vector3.Lerp(controlPoint1, endPoint, t), t);
     }
 

@@ -16,6 +16,8 @@ public class PopupManager : MonoBehaviour
     public GameObject nightTransition;
     public float nightTime = 3f;
 
+    
+
 
 
     public ItemCategory foodCategory;
@@ -33,14 +35,27 @@ public class PopupManager : MonoBehaviour
     public int girlFoodAmount=0;
     public int purchasedFoodAmount = 0;
 
+
+    public int hostelMoneyEU = 2;
+    public int hostelMoneyUS = 1;
+    public Button stayInHostelBTN;
+
     public GameObject motherFoodHostel; // Food icon for mother in Hostel
+    public GameObject motherFoodBoxHostel;
     public GameObject boyFoodHostel; // Food icon for boy in Hostel
+    public GameObject boyFoodBoxHostel;
     public GameObject girlFoodHostel; // Food icon for girl in Hostel
+    public GameObject girlFoodBoxHostel;
     public GameObject motherFoodOutside; // Food icon for mother in Outside
+    public GameObject motherFoodBoxOutside;
     public GameObject boyFoodOutside; // Food icon for boy in Outside
+    public GameObject boyFoodBoxOutside;
     public GameObject girlFoodOutside; // Food icon for girl in Outside
+    public GameObject girlFoodBoxOutside;
     public GameObject deductFoodBTN;
     public GameObject addFoodBTN;
+    public Color hasFoodColor;
+    public Color noFoodColor;
 
 
 
@@ -92,6 +107,11 @@ public class PopupManager : MonoBehaviour
     {
         CloseAllPopups();
         endDayPopup.SetActive(true);
+
+        // Should have a case for US money as well
+        if (NewGameManager.Instance.money >= hostelMoneyEU) stayInHostelBTN.interactable = true;
+        else stayInHostelBTN.interactable = false;
+
         NewGameManager.Instance.SetPaused(true);
     }
 
@@ -124,9 +144,19 @@ public class PopupManager : MonoBehaviour
     public void OpenFoodDistributePopUpHostel()
     {
         CloseAllPopups();
+
+        motherFoodBoxHostel.GetComponent<Image>().color = noFoodColor;
+        boyFoodBoxHostel.GetComponent<Image>().color = noFoodColor;
+        girlFoodBoxHostel.GetComponent<Image>().color = noFoodColor;
+
         foodDistributePopupHostel.SetActive(true);
         NewGameManager.Instance.SetPaused(true);
-        moneyToBePaid = 10;
+        
+        // If in Europe 2f
+        moneyToBePaid = 2;
+
+        // If in US 1$
+
         foodAmount = NewGameManager.Instance.inventory.GetItemCategoryCount(foodCategory);
         foodAmountTextHostel.text = foodAmount.ToString();
     }
@@ -134,6 +164,11 @@ public class PopupManager : MonoBehaviour
     public void OpenFoodDistributePopUpOutside()
     {
         CloseAllPopups();
+
+        motherFoodBoxOutside.GetComponent<Image>().color = noFoodColor;
+        boyFoodBoxOutside.GetComponent<Image>().color = noFoodColor;
+        girlFoodBoxOutside.GetComponent<Image>().color = noFoodColor;
+
         foodDistributePopupOutside.SetActive(true);
         NewGameManager.Instance.SetPaused(true);
         moneyToBePaid = 0;
@@ -163,6 +198,8 @@ public class PopupManager : MonoBehaviour
         if(foodAmount>0 && motherFoodAmount == 0) { 
             motherFoodHostel.SetActive(true);
             motherFoodOutside.SetActive(true);
+            motherFoodBoxHostel.GetComponent<Image>().color = hasFoodColor;
+            motherFoodBoxOutside.GetComponent<Image>().color = hasFoodColor;
             motherFoodAmount++;
             foodAmount--;
             foodAmountTextHostel.text = foodAmount.ToString();
@@ -173,6 +210,8 @@ public class PopupManager : MonoBehaviour
         {
             motherFoodHostel.SetActive(false);
             motherFoodOutside.SetActive(false);
+            motherFoodBoxHostel.GetComponent<Image>().color = noFoodColor;
+            motherFoodBoxOutside.GetComponent<Image>().color = noFoodColor;
             motherFoodAmount--;
             foodAmount++;
             foodAmountTextHostel.text = foodAmount.ToString();
@@ -186,6 +225,8 @@ public class PopupManager : MonoBehaviour
         {
             boyFoodHostel.SetActive(true);
             boyFoodOutside.SetActive(true);
+            boyFoodBoxHostel.GetComponent<Image>().color = hasFoodColor;
+            boyFoodBoxOutside.GetComponent<Image>().color = hasFoodColor;
             boyFoodAmount++;
             foodAmount--;
             foodAmountTextHostel.text = foodAmount.ToString();
@@ -195,6 +236,8 @@ public class PopupManager : MonoBehaviour
         {
             boyFoodHostel.SetActive(false);
             boyFoodOutside.SetActive(false);
+            boyFoodBoxHostel.GetComponent<Image>().color = noFoodColor;
+            boyFoodBoxOutside.GetComponent<Image>().color = noFoodColor;
             boyFoodAmount--;
             foodAmount++;
             foodAmountTextHostel.text = foodAmount.ToString();
@@ -208,6 +251,8 @@ public class PopupManager : MonoBehaviour
         {
             girlFoodHostel.SetActive(true);
             girlFoodOutside.SetActive(true);
+            girlFoodBoxHostel.GetComponent<Image>().color = hasFoodColor;
+            girlFoodBoxOutside.GetComponent<Image>().color = hasFoodColor;
             girlFoodAmount++;
             foodAmount--;
             foodAmountTextHostel.text = foodAmount.ToString();
@@ -217,6 +262,8 @@ public class PopupManager : MonoBehaviour
         {
             girlFoodHostel.SetActive(false);
             girlFoodOutside.SetActive(false);
+            girlFoodBoxHostel.GetComponent<Image>().color = noFoodColor;
+            girlFoodBoxOutside.GetComponent<Image>().color = noFoodColor;
             girlFoodAmount--;
             foodAmount++;
             foodAmountTextHostel.text = foodAmount.ToString();

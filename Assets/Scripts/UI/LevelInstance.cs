@@ -154,6 +154,8 @@ public class LevelInstance : MonoBehaviour
     private float seasicknessSceneTime = 5.0f;
     [SerializeField, Tooltip("How often the seasickness scene should appear (realtime seconds)")]
     private float seasicknessSceneFrequency = 60.0f;
+    [SerializeField]
+    private DialogButton introductoryDialogButton;
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -170,6 +172,7 @@ public class LevelInstance : MonoBehaviour
     private float seasicknessSceneTimer = -1.0f;
     private float nextSeasicknessRemainingTime = -1.0f;
     private bool wantsToShowSeasickness = false;
+    private bool hasShownIntroductoryDialog = false;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -275,6 +278,13 @@ public class LevelInstance : MonoBehaviour
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
             AudioManager.Instance.PlayMusic(musicClips);
             startedPlayingMusic = true;
+
+            if(introductoryDialogButton)
+            {
+                StartDialog(introductoryDialogButton);
+                introductoryDialogButton.gameObject.SetActive(false);
+                hasShownIntroductoryDialog = true;
+            }
         }
 
         NewGameManager.Instance.HealthStatus.SetIsOnShip(levelMode == LevelInstanceMode.Ship);
@@ -703,6 +713,13 @@ public class LevelInstance : MonoBehaviour
                     NewGameManager.Instance.SetPaused(false);
                     UpdateEndOfDayFade();
                     UpdateShowSeasickness();
+
+                    if(introductoryDialogButton != null && !hasShownIntroductoryDialog)
+                    {
+                        StartDialog(introductoryDialogButton);
+                        introductoryDialogButton.gameObject.SetActive(false);
+                        hasShownIntroductoryDialog = true;
+                    }
                 }
                 break;
         }

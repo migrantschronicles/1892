@@ -156,6 +156,12 @@ public class LevelInstance : MonoBehaviour
     private float seasicknessSceneFrequency = 60.0f;
     [SerializeField]
     private DialogButton introductoryDialogButton;
+#if DEBUG
+    [SerializeField]
+    private GameObject developerLocationPanelPrefab;
+
+    private GameObject developerLocationPanel;
+#endif
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;
@@ -310,6 +316,27 @@ public class LevelInstance : MonoBehaviour
                 ShowSeasicknessScene(false);
             }
         }
+
+#if DEBUG
+        if (Input.GetKeyDown(KeyCode.F10))
+        {
+            if (developerLocationPanel)
+            {
+                if(developerLocationPanel.activeSelf)
+                {
+                    developerLocationPanel.SetActive(false);
+                }
+                else
+                {
+                    developerLocationPanel.SetActive(true);
+                }
+            }
+            else
+            {
+                developerLocationPanel = Instantiate(developerLocationPanelPrefab, canvas.transform);
+            }
+        }
+#endif
     }
 
     private void OnBack()

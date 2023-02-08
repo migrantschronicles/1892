@@ -28,6 +28,18 @@ public class HealthStatus_Hungry
     private int requiredFoodAmount = 0;
     
     public int DaysWithoutEnoughFood { get; private set; }
+    public int NextRequiredFoodAmount { get {
+            // Every day the character needs the double amount plus one for this day.
+            int nextRequiredFoodAmount = requiredFoodAmount * 2 + 1;
+            if (healthData.CholeraStatus.IsSick)
+            {
+                // Sick people need double food amount
+                nextRequiredFoodAmount *= 2;
+            }
+            return nextRequiredFoodAmount;
+        } }
+
+    
 
     public HealthStatus_Hungry(ProtagonistHealthData data)
     {
@@ -36,13 +48,7 @@ public class HealthStatus_Hungry
 
     public void OnEndOfDay(int receivedFoodAmount)
     {
-        // Every day the character needs the double amount plus one for this day.
-        requiredFoodAmount = requiredFoodAmount * 2 + 1;
-        if(healthData.CholeraStatus.IsSick)
-        {
-            // Sick people need double food amount
-            requiredFoodAmount *= 2;
-        }
+        requiredFoodAmount = NextRequiredFoodAmount;
 
         // Subtract the amount of food the character has received today.
         requiredFoodAmount = Mathf.Max(0, requiredFoodAmount - receivedFoodAmount);

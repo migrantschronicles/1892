@@ -17,6 +17,13 @@ using UnityEngine.SceneManagement;
  */
 public class MainMenu : MonoBehaviour
 {
+    public Transform scene; // Used for switching between diary and language selection interface.
+    [SerializeField]
+    private Vector3 menuInitialPos = new Vector3(0, 0, 0);
+    [SerializeField]
+    private Vector3 languageSelectionPos = new Vector3(0, -1202, 0);
+
+
     [SerializeField]
     private Animator diaryAnimator;
     [SerializeField]
@@ -38,6 +45,18 @@ public class MainMenu : MonoBehaviour
     {
         Application.targetFrameRate = 30;
         AudioManager.Instance.PlayMusic(musicClips);
+    }
+
+    public void OpenLanguageSelection() 
+    {
+        while (Vector3.Distance(scene.transform.localPosition, languageSelectionPos) > 0.01f)
+            scene.localPosition = Vector3.Lerp(scene.transform.position, languageSelectionPos, 0.5f * Time.deltaTime);
+    }
+
+    public void CloseLanguageSelection()
+    {
+        while (Vector3.Distance(scene.transform.localPosition, menuInitialPos) > 0.01f)
+            scene.localPosition = Vector3.Lerp(scene.transform.position, menuInitialPos, 0.5f * Time.deltaTime);
     }
 
     public void OpenDiary()

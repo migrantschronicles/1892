@@ -40,11 +40,14 @@ public class PopupManager : MonoBehaviour
     public int hostelMoneyUS = 1;
     public Button stayInHostelBTN;
 
-    public GameObject motherFoodHostel; // Food icon for mother in Hostel
+    //public GameObject motherFoodHostel; // Food icon for mother in Hostel
+    public Text motherFoodTXT;
     public GameObject motherFoodBoxHostel;
-    public GameObject boyFoodHostel; // Food icon for boy in Hostel
+    //public GameObject boyFoodHostel; // Food icon for boy in Hostel
+    public Text boyFoodTXT;
     public GameObject boyFoodBoxHostel;
-    public GameObject girlFoodHostel; // Food icon for girl in Hostel
+    //public GameObject girlFoodHostel; // Food icon for girl in Hostel
+    public Text girlFoodTXT;
     public GameObject girlFoodBoxHostel;
     public GameObject motherFoodOutside; // Food icon for mother in Outside
     public GameObject motherFoodBoxOutside;
@@ -91,9 +94,13 @@ public class PopupManager : MonoBehaviour
         endGamePopup.SetActive(false);
 
         // Reset Food distribution 
-        motherFoodHostel.SetActive(false);
+/*        motherFoodHostel.SetActive(false);
         boyFoodHostel.SetActive(false);
-        girlFoodHostel.SetActive(false);
+        girlFoodHostel.SetActive(false);*/
+        
+        motherFoodTXT.text = "0";
+        boyFoodTXT.text = "0";
+        girlFoodTXT.text = "0";
         motherFoodOutside.SetActive(false);
         boyFoodOutside.SetActive(false);
         girlFoodOutside.SetActive(false);
@@ -151,14 +158,18 @@ public class PopupManager : MonoBehaviour
 
         foodDistributePopupHostel.SetActive(true);
         NewGameManager.Instance.SetPaused(true);
-        
-        // If in Europe 2f
-        moneyToBePaid = 2;
 
-        // If in US 1$
+        if (NewGameManager.Instance.CurrentCurrency == Currency.Franc) // Do the same for the button text from end day pop-up.
+            moneyToBePaid = hostelMoneyEU;
+        else
+            moneyToBePaid = hostelMoneyUS;
 
         foodAmount = NewGameManager.Instance.inventory.GetItemCategoryCount(foodCategory);
         foodAmountTextHostel.text = foodAmount.ToString();
+
+        // Auto-assign food based on needs.
+        DistributeFood();
+
     }
 
     public void OpenFoodDistributePopUpOutside()
@@ -174,6 +185,62 @@ public class PopupManager : MonoBehaviour
         moneyToBePaid = 0;
         foodAmount = NewGameManager.Instance.inventory.GetItemCategoryCount(foodCategory);
         foodAmountTextOutside.text = foodAmount.ToString();
+
+        // Auto-assign food based on needs.
+        DistributeFood();
+    }
+
+    private void DistributeFood() // Based on who is more hungry.
+    {
+        for(int i=0;i<foodAmount; i++) 
+        {
+            DistributeFoodItem();
+        }
+    }
+
+    public void DistributeFoodItem() // Individually
+    {
+        int maxFoodRequired = 0;
+        ProtagonistHealthData characterInNeed = null;
+
+        foreach (ProtagonistHealthData characterHealth in NewGameManager.Instance.HealthStatus.Characters)
+        {
+            int tempNextRequiredFoodAmount = characterHealth.HungryStatus.NextRequiredFoodAmount;
+
+            switch (characterHealth.CharacterData.name) 
+            {
+                case "Elis":
+                    tempNextRequiredFoodAmount -= motherFoodAmount;
+                    break;
+
+                case "Mattis":
+                    tempNextRequiredFoodAmount -= boyFoodAmount;
+                    break;
+
+                case "Mreis":
+                    tempNextRequiredFoodAmount -= girlFoodAmount;
+                    break;
+            }
+
+            if (tempNextRequiredFoodAmount > maxFoodRequired)
+            {
+                maxFoodRequired = tempNextRequiredFoodAmount;
+                characterInNeed = characterHealth;
+            }
+        }
+
+        if (maxFoodRequired > 0)
+        {
+            if (characterInNeed.CharacterData.name == "Elis")
+                FeedMother();
+
+            else if (characterInNeed.CharacterData.name == "Mattis")
+                FeedBoy();
+
+            else if (characterInNeed.CharacterData.name == "Mreis")
+                FeedGirl();
+        }
+        //else if(maxFoodRequired == 0) 
     }
 
     public void AddFood() 
@@ -181,22 +248,23 @@ public class PopupManager : MonoBehaviour
         foodAmount++;
         moneyToBePaid += 5;
         purchasedFoodAmount++;
+
+        DistributeFood();
     }
 
-    public void DeductFood()
+    public void DeductFood() // Should remove deduct food button.
     {
-        if (foodAmount != 0) { 
+        /*if (foodAmount != 0) { 
             foodAmount--;
             moneyToBePaid -= 5;
             purchasedFoodAmount--;
-        }
+        }*/
     }
 
     public void FeedMother() 
     {
         
-        if(foodAmount>0 && motherFoodAmount == 0) { 
-            motherFoodHostel.SetActive(true);
+        if(foodAmount>0) { 
             motherFoodOutside.SetActive(true);
             motherFoodBoxHostel.GetComponent<Image>().color = hasFoodColor;
             motherFoodBoxOutside.GetComponent<Image>().color = hasFoodColor;
@@ -204,9 +272,11 @@ public class PopupManager : MonoBehaviour
             foodAmount--;
             foodAmountTextHostel.text = foodAmount.ToString();
             foodAmountTextOutside.text = foodAmount.ToString();
+            motherFoodTXT.text = motherFoodAmount.ToString();
+            // Need to add one for outside
 
         }
-        else if(motherFoodAmount != 0)
+/*        else if(motherFoodAmount != 0)
         {
             motherFoodHostel.SetActive(false);
             motherFoodOutside.SetActive(false);
@@ -216,14 +286,13 @@ public class PopupManager : MonoBehaviour
             foodAmount++;
             foodAmountTextHostel.text = foodAmount.ToString();
             foodAmountTextOutside.text = foodAmount.ToString();
-        }
+        }*/
     }
 
     public void FeedBoy()
     {
-        if (foodAmount > 0 && boyFoodAmount == 0)
+        if (foodAmount > 0)
         {
-            boyFoodHostel.SetActive(true);
             boyFoodOutside.SetActive(true);
             boyFoodBoxHostel.GetComponent<Image>().color = hasFoodColor;
             boyFoodBoxOutside.GetComponent<Image>().color = hasFoodColor;
@@ -231,8 +300,9 @@ public class PopupManager : MonoBehaviour
             foodAmount--;
             foodAmountTextHostel.text = foodAmount.ToString();
             foodAmountTextOutside.text = foodAmount.ToString();
+            boyFoodTXT.text = boyFoodAmount.ToString();
         }
-        else if(boyFoodAmount != 0)
+ /*       else if(boyFoodAmount != 0)
         {
             boyFoodHostel.SetActive(false);
             boyFoodOutside.SetActive(false);
@@ -242,14 +312,13 @@ public class PopupManager : MonoBehaviour
             foodAmount++;
             foodAmountTextHostel.text = foodAmount.ToString();
             foodAmountTextOutside.text = foodAmount.ToString();
-        }
+        }*/
     }
 
     public void FeedGirl()
     {
-        if (foodAmount > 0 && girlFoodAmount == 0)
+        if (foodAmount > 0)
         {
-            girlFoodHostel.SetActive(true);
             girlFoodOutside.SetActive(true);
             girlFoodBoxHostel.GetComponent<Image>().color = hasFoodColor;
             girlFoodBoxOutside.GetComponent<Image>().color = hasFoodColor;
@@ -257,8 +326,9 @@ public class PopupManager : MonoBehaviour
             foodAmount--;
             foodAmountTextHostel.text = foodAmount.ToString();
             foodAmountTextOutside.text = foodAmount.ToString();
+            girlFoodTXT.text = girlFoodAmount.ToString();
         }
-        else if (girlFoodAmount != 0)
+ /*       else if (girlFoodAmount != 0)
         {
             girlFoodHostel.SetActive(false);
             girlFoodOutside.SetActive(false);
@@ -268,7 +338,7 @@ public class PopupManager : MonoBehaviour
             foodAmount++;
             foodAmountTextHostel.text = foodAmount.ToString();
             foodAmountTextOutside.text = foodAmount.ToString();
-        }
+        }*/
     }
 
 

@@ -18,6 +18,14 @@ public class ClockManager : MonoBehaviour
         NewGameManager.Instance.onTimeChanged += OnTimeChangedEvent;        
     }
 
+    private void OnDestroy()
+    {
+        if(NewGameManager.Instance)
+        {
+            NewGameManager.Instance.onTimeChanged -= OnTimeChangedEvent;
+        }
+    }
+
     private void OnTimeChangedEvent(int hour, int minutes)
     {
         minuteHandle.rotation = Quaternion.Euler(0, 0, minuteHandle.rotation.z - (minutes * (360 / 60)) + minuteOffset);

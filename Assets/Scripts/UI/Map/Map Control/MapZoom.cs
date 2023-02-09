@@ -54,6 +54,7 @@ public class MapZoom : MonoBehaviour
     private Vector3 oldPivot;
     private Vector3 oldLocalPosition;
     private Vector3 oldLocalScale;
+    private Map map;
 
     public delegate void OnMapZoomChangedEvent(float zoomLevel);
     public event OnMapZoomChangedEvent onMapZoomChangedEvent;
@@ -116,7 +117,7 @@ public class MapZoom : MonoBehaviour
     {
         scrollRect = GetComponentInParent<ScrollRect>();
         rectTransform = GetComponent<RectTransform>();
-        LevelInstance.Instance.IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
+        map = GetComponent<Map>();
     }
 
     // Start is called before the first frame update
@@ -127,6 +128,7 @@ public class MapZoom : MonoBehaviour
         SetZoom(Mathf.Clamp(initialZoom, minZoom, maxZoom), rectTransform.TransformPoint(rectTransform.rect.center));
         centerButton.onClick.AddListener(OnCenterMap);
         ResetInitialZoom();
+        LevelInstance.Instance.IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
     }
 
     // Update is called once per frame
@@ -137,10 +139,10 @@ public class MapZoom : MonoBehaviour
             if (IsAutoZoomInProgress)
             {
                 autoZoomCurrentTime += Time.deltaTime;
-                if (NewGameManager.Instance && NewGameManager.Instance.CurrentLocationObject)
+                MapLocationMarker currentLocationMarker = map.CurrentLocationMarker;
+                if (currentLocationMarker)
                 {
-                    GameObject targetMarker = NewGameManager.Instance.CurrentLocationObject.gameObject;
-                    Vector2 targetMarkerPosition = targetMarker.GetComponent<RectTransform>().anchoredPosition;
+                    Vector2 targetMarkerPosition = currentLocationMarker.GetComponent<RectTransform>().anchoredPosition;
                     if (autoZoomCurrentTime < initialZoomDuration)
                     {
                         float alpha = autoZoomCurrentTime / initialZoomDuration;
@@ -155,7 +157,7 @@ public class MapZoom : MonoBehaviour
                     else
                     {
                         autoZoomCurrentTime = -1.0f;
-                        SetCenterToMarker(targetMarker);
+                        SetCenterToMarker(currentLocationMarker.gameObject);
                     }
                 }
             }

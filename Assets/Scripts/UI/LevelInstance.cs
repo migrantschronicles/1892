@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
 using Articy.Unity;
 using Articy.Unity.Interfaces;
+using UnityEngine.SceneManagement;
 
 public enum Mode
 {
@@ -105,6 +106,8 @@ public enum LevelInstanceMode
  */
 public class LevelInstance : MonoBehaviour
 {
+    [SerializeField]
+    private string locationOverride;
     [SerializeField]
     private GameObject sceneParent;
     [SerializeField]
@@ -205,6 +208,19 @@ public class LevelInstance : MonoBehaviour
     }
     public Mode Mode { get { return mode; } }
     public bool IsShowingSeasickness { get { return seasicknessSceneTimer >= 0.0f; } }
+
+    public string LocationName
+    {
+        get
+        {
+            if(locationOverride != null && !string.IsNullOrWhiteSpace(locationOverride))
+            {
+                return locationOverride;
+            }
+
+            return SceneManager.GetActiveScene().name;
+        }
+    }
 
     public delegate void OnSceneChangedEvent(Scene scene);
     public event OnSceneChangedEvent onSceneChanged;

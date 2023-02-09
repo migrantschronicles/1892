@@ -14,7 +14,7 @@ public class LoadingManager : MonoBehaviour
     {
         if (!loadInitiated) 
         {
-            loadLevel = NewGameManager.Instance.currentLocation;
+            loadLevel = LevelInstance.Instance.LocationName;
             LoadNextLevel(loadLevel);
             loadInitiated = true;
         }

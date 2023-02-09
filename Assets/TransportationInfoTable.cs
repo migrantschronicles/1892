@@ -61,4 +61,19 @@ public class TransportationInfoTable
         return null;
     }
 
+    public bool HasRouteInfo(string from, string to, string type = null)
+    {
+        foreach(TransportationRouteInfo route in transportationInfo)
+        {
+            if(route.FromLocation == from && route.ToLocation == to)
+            {
+                if(type == null || route.type == type)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

@@ -87,7 +87,7 @@ public class Diary2 : MonoBehaviour
 
     private void Start()
     {
-        currentLocationText.text = NewGameManager.Instance.currentLocation;
+        currentLocationText.text = LevelInstance.Instance.LocationName;
         openPage = inventoryPage.activeSelf ? DiaryPageLink.Inventory :
             (healthPage.activeSelf ? DiaryPageLink.Health :
             (diaryPage.activeSelf ? DiaryPageLink.Diary :

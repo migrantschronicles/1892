@@ -66,7 +66,7 @@ public class Interface : MonoBehaviour
         OnMoneyChanged(NewGameManager.Instance.money);
         OnFoodChanged(NewGameManager.Instance.food);
         OnDateChanged(NewGameManager.Instance.date);
-        OnLocationChanged(NewGameManager.Instance.currentLocation);
+        OnLocationChanged(LevelInstance.Instance.LocationName);
     }
 
     private void OnDestroy()

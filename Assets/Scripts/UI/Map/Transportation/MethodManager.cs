@@ -8,7 +8,7 @@ public class MethodManager : MonoBehaviour
 
     void OnEnable() 
     {
-        TransportationRouteInfo routeInfo = NewGameManager.Instance.transportationInfo.GetRouteInfo(NewGameManager.Instance.currentLocation, this.GetComponentInParent<LocationMarker>().LocationName, this.transform.name);
+        TransportationRouteInfo routeInfo = NewGameManager.Instance.transportationInfo.GetRouteInfo(LevelInstance.Instance.LocationName, this.GetComponentInParent<LocationMarker>().LocationName, this.transform.name);
         if (routeInfo != null) { 
             float time = routeInfo.time;
             int money = routeInfo.cost;

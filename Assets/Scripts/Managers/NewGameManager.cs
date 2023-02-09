@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 using System.Globalization;
 using System;
-using Articy.TheMigrantsChronicles.GlobalVariables;
 
 public enum TransporationMethod
 {
@@ -48,15 +47,22 @@ public enum Currency
     Dollar
 }
 
+public enum LocationDiscoveryStatus
+{
+    Undiscovered,
+    Discovered,
+    Traveled,
+    Current
+}
+
 public class NewGameManager : MonoBehaviour
 {
 
     public string userName;
     
-    public string currentLocation;
-    public List<string> visitedLocationsStr;
-
     private static bool isInitialized = false;
+
+    private List<Journey> journeys = new();
     
     // Game Stats
     public bool gameRunning = true;
@@ -178,14 +184,6 @@ public class NewGameManager : MonoBehaviour
     public PlayableCharacterData TEST_PlayableCharacter;
     public PlayableCharacterData PlayableCharacterData { get { return TEST_PlayableCharacter; } }
 
-    public LocationMarker CurrentLocationObject
-    {
-        get
-        {
-            return LevelInstance.Instance.IngameDiary.LocationMarkerObjects.First(marker => marker.LocationName == currentLocation);
-        }
-    }
-
     public static NewGameManager Instance { get; private set; }
 
     /**
@@ -208,16 +206,12 @@ public class NewGameManager : MonoBehaviour
     {
         if (Instance == null)
         {
-            if(string.IsNullOrWhiteSpace(currentLocation))
-            {
-                currentLocation = SceneManager.GetActiveScene().name;
-            }
-
             // Detach the child game object.
             transform.SetParent(null, false);
             Instance = this;
             DontDestroyOnLoad(this);
             inventory.Initialize();
+            transportationInfo.Initialize(transportationTableCSV);
         }
         else
         {
@@ -324,7 +318,10 @@ public class NewGameManager : MonoBehaviour
         // ^^^^^^^^^^^^^^^^^^^ Old Manager code until here ^^^^^^^^^^^^^^^^^^^^
         SetMorningTime();
 
-        transportationInfo.Initialize(transportationTableCSV);
+        Journey journey = new Journey();
+        journey.destination = LevelInstance.Instance.LocationName;
+        ///@todo
+        journeys.Add(journey);
 
         InitAfterLoad();
         isInitialized = true;
@@ -334,6 +331,7 @@ public class NewGameManager : MonoBehaviour
     {
         conditions.ResetLocalConditions();
 
+        /*
         foreach (LocationMarker location in LevelInstance.Instance.IngameDiary.LocationMarkerObjects)
         {
             // Re-callibrating vistedLocarions List
@@ -392,6 +390,7 @@ public class NewGameManager : MonoBehaviour
                 }
             }
         }
+        */
     }
 
     public void PostLevelLoad()
@@ -402,8 +401,10 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
+    ///@todo remove
     public void UnlockLocation(string name) 
     {
+        /*
         LocationMarker marker = LevelInstance.Instance.IngameDiary.LocationMarkerObjects.First(marker => marker.LocationName == name);
         if(marker)
         {
@@ -422,6 +423,7 @@ public class NewGameManager : MonoBehaviour
                 }
             }
         }
+        */
     }
 
     public void UnlockAllLocations() 
@@ -531,7 +533,8 @@ public class NewGameManager : MonoBehaviour
 
     public void GoToLocation(string name, string method)
     {
-        TransportationRouteInfo routeInfo = transportationInfo.GetRouteInfo(currentLocation, name, method);
+        /*
+        TransportationRouteInfo routeInfo = transportationInfo.GetRouteInfo(LevelInstance.Instance.LocationName, name, method);
 
         if (routeInfo == null) return;
         float timeNeeded = routeInfo.time;
@@ -604,6 +607,7 @@ public class NewGameManager : MonoBehaviour
         // Load level
         AudioManager.Instance.FadeOutMusic();
         SceneManager.LoadScene(sceneName: "LoadingScene");
+        */
     }
 
     public void AddDiaryEntry(DiaryEntry entry)
@@ -946,5 +950,28 @@ public class NewGameManager : MonoBehaviour
             CurrentCurrency = currency;
             onCurrencyChanged?.Invoke(CurrentCurrency);
         }
+    }
+
+    public LocationDiscoveryStatus GetDiscoveryStatus(string location)
+    {
+        if(location == LevelInstance.Instance.LocationName)
+        {
+            return LocationDiscoveryStatus.Current;
+        }
+
+        foreach(Journey journey in journeys)
+        {
+            if(journey.destination == location)
+            {
+                return LocationDiscoveryStatus.Traveled;
+            }
+        }
+
+        if(transportationInfo.HasRouteInfo(LevelInstance.Instance.LocationName, location))
+        {
+            return LocationDiscoveryStatus.Discovered;
+        }
+        
+        return LocationDiscoveryStatus.Undiscovered;
     }
 }

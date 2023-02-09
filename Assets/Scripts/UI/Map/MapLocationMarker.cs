@@ -41,6 +41,20 @@ public class MapLocationMarker : MonoBehaviour
     private Button button;
     private MapZoom mapZoom;
     private Vector3 initialImageScale;
+    private Map map;
+
+    private Map Map
+    {
+        get
+        {
+            if(map == null)
+            {
+                map = GetComponentInParent<Map>();
+            }
+
+            return map;
+        }
+    }
 
     public string LocationName
     {
@@ -110,6 +124,6 @@ public class MapLocationMarker : MonoBehaviour
 
     private void OnClick()
     {
-        ///@todo
+        Map.OnLocationMarkerClicked(this);
     }
 }

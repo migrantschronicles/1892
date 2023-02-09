@@ -5,28 +5,39 @@ using UnityEngine.UI;
 
 public class MethodManager : MonoBehaviour
 {
+    private TransportationMethodInfo methodInfo;
+    private TransportationRouteInfo routeInfo;
 
-    void OnEnable() 
+    public string Method
     {
-        TransportationRouteInfo routeInfo = NewGameManager.Instance.transportationInfo.GetRouteInfo(LevelInstance.Instance.LocationName, this.GetComponentInParent<LocationMarker>().LocationName, this.transform.name);
-        if (routeInfo != null) { 
-            float time = routeInfo.time;
-            int money = routeInfo.cost;
-            int food = routeInfo.food;
-
-            string timeAsString = $"{(int)(time / 86400)}d {(int)((time % 86400) / 3600)}h {(int)((time % 3600)/60)}m";
-            
-
-            transform.GetChild(0).GetComponent<TransportationMethodInfo>().time.text = timeAsString;
-            transform.GetChild(0).GetComponent<TransportationMethodInfo>().money.text = money.ToString();
-            transform.GetChild(0).GetComponent<TransportationMethodInfo>().food.text = food.ToString();
-
+        get
+        {
+            return gameObject.name;
         }
     }
 
-    public void GoToLocation(string name) // Add resources input 
+    private void Awake()
     {
-        GetComponentInParent<TransportationButtons>().anim.SetBool("ButtonClicked", false);
-        NewGameManager.Instance.GoToLocation(name, this.gameObject.name);
+        methodInfo = GetComponentInChildren<TransportationMethodInfo>();
+    }
+
+    public void SetRouteInfo(TransportationRouteInfo info)
+    {
+        routeInfo = info;
+        float time = info.time;
+        int money = info.cost;
+        int food = info.food;
+        string timeAsString = $"{(int)(time / 86400)}d {(int)((time % 86400) / 3600)}h {(int)((time % 3600) / 60)}m";
+        methodInfo.time.text = timeAsString;
+        methodInfo.money.text = money.ToString();
+        methodInfo.food.text = food.ToString();
+    }
+
+    public void GoToDestination()
+    {
+        if(routeInfo != null)
+        {
+            NewGameManager.Instance.GoToLocation(routeInfo.ToLocation, Method);
+        }
     }
 }

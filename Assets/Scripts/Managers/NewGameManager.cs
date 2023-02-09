@@ -1007,4 +1007,14 @@ public class NewGameManager : MonoBehaviour
 
         return LocationDiscoveryStatus.Undiscovered;
     }
+
+    public bool CanTravel(string from, string to, string type = null)
+    {
+        return transportationInfo.HasRouteInfo(from, to, type);
+    }
+
+    public bool CanTravelTo(string to, string type = null)
+    {
+        return CanTravel(LevelInstance.Instance.LocationName, to, type);
+    }
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
-using static UnityEditor.PlayerSettings.Switch;
 using Articy.Unity;
 using Articy.Unity.Interfaces;
 

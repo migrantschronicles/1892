@@ -974,4 +974,37 @@ public class NewGameManager : MonoBehaviour
         
         return LocationDiscoveryStatus.Undiscovered;
     }
+
+    public LocationDiscoveryStatus GetRouteDiscoveryStatus(string from, string to)
+    {
+        if (to == LevelInstance.Instance.LocationName)
+        {
+            return LocationDiscoveryStatus.Current;
+        }
+        else if(from == LevelInstance.Instance.LocationName)
+        {
+            return LocationDiscoveryStatus.Discovered;
+        }
+
+        string last = null;
+        for(int i = 0; i < journeys.Count; ++i)
+        {
+            Journey journey = journeys[i];
+            if(last == from)
+            {
+                if(journey.destination == to)
+                {
+                    return LocationDiscoveryStatus.Traveled;
+                }
+                else
+                {
+                    return LocationDiscoveryStatus.Discovered;
+                }
+            }
+
+            last = journey.destination;
+        }
+
+        return LocationDiscoveryStatus.Undiscovered;
+    }
 }

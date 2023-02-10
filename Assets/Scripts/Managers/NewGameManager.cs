@@ -302,25 +302,6 @@ public class NewGameManager : MonoBehaviour
 
     private void Initialize()
     {
-        // ^^^^^^^^^^^^^^^^^^^ Old Manager (for reference); to be deleted by Loai after GM is done ^^^^^^^^^^^^^^^^^^^^
-        //map = WorldMapGlobe.instance;
-
-        /*CityManager = new CityMarker(map);
-        NavigationMarker = new NavigationMarker(map);
-        TransportationManager = new TransportationManager();
-        GlobeDesigner = new GlobeDesigner(map);
-
-        StateManager.CurrentState.FreezeTime = true;
-        CityManager.DrawLabel(CityData.Pfaffenthal);
-
-        GlobeDesigner.AssignTextures();
-
-        InitializeMissingCities();
-        SetCurrentCityText();
-        Subscribe();
-        map.DrawCity(CityData.Pfaffenthal);
-        Navigate();*/
-        // ^^^^^^^^^^^^^^^^^^^ Old Manager code until here ^^^^^^^^^^^^^^^^^^^^
         SetMorningTime();
 
         Journey journey = new Journey();
@@ -335,67 +316,6 @@ public class NewGameManager : MonoBehaviour
     private void InitAfterLoad()
     {
         conditions.ResetLocalConditions();
-
-        /*
-        foreach (LocationMarker location in LevelInstance.Instance.IngameDiary.LocationMarkerObjects)
-        {
-            // Re-callibrating vistedLocarions List
-            if (visitedLocationsStr.Contains(location.LocationName) || location.LocationName == currentLocation)
-            {
-                location.SetUnlocked();
-            }
-
-            // Assigning capital markers their art accordingly
-            if(location.GetComponent<TransportationButtons>().capital)
-            {
-                location.transform.GetChild(2).GetComponent<Image>().sprite = currentCityCapital;
-            }
-
-            foreach(GameObject line in location.GetComponent<TransportationButtons>().availableRoutes)
-            {
-                line.SetActive(false);
-            }
-        }
-
-        // Updating Map UI
-        for (int i = 0; i < visitedLocationsStr.Count; ++i)
-        {
-            // Updating Map Markers UI
-            LocationMarker visitedMarker = LevelInstance.Instance.IngameDiary.LocationMarkerObjects.First(marker => marker.LocationName == visitedLocationsStr[i]);
-            TransportationButtons transportation = visitedMarker.GetComponent<TransportationButtons>();
-            bool isCapital = transportation.capital;
-            if (visitedLocationsStr[i] == currentLocation)
-            {
-                visitedMarker.transform.GetChild(2).GetComponent<Image>().sprite = isCapital ? currentCityCapital : currentCityMarker;
-            }
-            else if (isCapital)
-            {
-                visitedMarker.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityCapital;
-            }
-            else
-            {
-                visitedMarker.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityMarker;
-            }
-
-            // Updating Routes UI
-            foreach (GameObject line in transportation.availableRoutes)
-            {
-                line.SetActive(true);
-                if(line.gameObject.name == currentLocation && i == visitedLocationsStr.Count - 1)
-                {
-                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
-                }
-                else if(i < visitedLocationsStr.Count - 1 && line.gameObject.name == visitedLocationsStr[i + 1])
-                {
-                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().traveledRoute;
-                }
-                else
-                {
-                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().untraveledRoute;
-                }
-            }
-        }
-        */
     }
 
     public void PostLevelLoad()
@@ -409,26 +329,6 @@ public class NewGameManager : MonoBehaviour
     ///@todo remove
     public void UnlockLocation(string name) 
     {
-        /*
-        LocationMarker marker = LevelInstance.Instance.IngameDiary.LocationMarkerObjects.First(marker => marker.LocationName == name);
-        if(marker)
-        {
-            marker.SetUnlocked();
-
-            // Updating marker UI
-            if (marker.gameObject.GetComponent<TransportationButtons>().capital) marker.gameObject.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityCapital; // Discovered capital
-            else marker.gameObject.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityMarker; // Discovered marker
-            
-            // Updating route UI
-            foreach (GameObject line in CurrentLocationObject.gameObject.GetComponent<TransportationButtons>().availableRoutes)
-            {
-                if(line.name == name) {
-                    line.SetActive(true);
-                    line.GetComponent<Image>().sprite = line.GetComponent<Route>().untraveledRoute;
-                }
-            }
-        }
-        */
     }
 
     public void UnlockAllLocations() 
@@ -529,13 +429,6 @@ public class NewGameManager : MonoBehaviour
 #endif
     }
 
-    // I commented this as it gave me errors - L
-    /*private void SetTime(float newTime)
-    {
-        time = newTime;
-        onTimeChanged?.Invoke(time);
-    }*/
-
     public void GoToLocation(string name, TransportationMethod method)
     {
         if(nextLocation != null)
@@ -575,90 +468,12 @@ public class NewGameManager : MonoBehaviour
 
         // Reset values
         DaysInCity = 0;
-        hour = 0;
-        minutes = 0;
-        seconds = 0;
+        SetMorningTime();
 
         // Load level
         nextLocation = name;
         AudioManager.Instance.FadeOutMusic();
         StartCoroutine(LoadLoadingScene());
-
-        /*
-        TransportationRouteInfo routeInfo = transportationInfo.GetRouteInfo(LevelInstance.Instance.LocationName, name, method);
-
-        if (routeInfo == null) return;
-        float timeNeeded = routeInfo.time;
-        int moneyNeeded = routeInfo.cost;
-        int foodNeeded = routeInfo.food;
-
-
-        if (money < moneyNeeded || food < foodNeeded)
-        {
-            return;
-        }
-
-        // Consuming money and food accordingly
-        SetFood(food - foodNeeded);
-        SetMoney(money - moneyNeeded);
-        //SetTime(time + timeNeeded); // Have to uncomment this later on when time is fixed - L
-        DaysInCity = 0;
-
-        Debug.Log("Starting to head down to " + name + " by " + method);
-        LocationMarker currentLocationObject = CurrentLocationObject;
-        GameObject line = currentLocationObject.GetComponent<TransportationButtons>().availableRoutes.First(route => route.name == name);
-        if(line == null)
-        {
-            return;
-        }
-
-        LocationMarker newLocation = LevelInstance.Instance.IngameDiary.LocationMarkerObjects.First(marker => marker.LocationName == name);
-        if (newLocation == null)
-        {
-            return;
-        }
-
-        // Initiate loading screen to move to new location
-
-        // Update Map UI
-        foreach(GameObject currentLine in currentLocationObject.GetComponent<TransportationButtons>().availableRoutes)
-        {
-            if (currentLine.GetComponent<Route>().attachedMarker.GetComponent<TransportationButtons>().capital)
-                currentLine.GetComponent<Route>().attachedMarker.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityCapital;
-            else currentLine.GetComponent<Route>().attachedMarker.transform.GetChild(2).GetComponent<Image>().sprite = untraveledCityMarker;
-            currentLine.GetComponent<Image>().sprite = currentLine.GetComponent<Route>().untraveledRoute;
-            currentLine.SetActive(true);
-        }
-
-        //if(method == "Ship")
-        //    line.GetComponent<Image>().sprite = line.GetComponent<Route>().waterRoute;
-        //else 
-        line.GetComponent<Image>().sprite = line.GetComponent<Route>().currentRoute;
-
-        // Add all routes to an array to be updated in the next city to be 'traveled'
-        if(!visitedLocationsStr.Contains(currentLocation))
-        {
-            visitedLocationsStr.Add(currentLocation);
-        }
-
-        if (currentLocationObject.GetComponent<TransportationButtons>().capital)
-            currentLocationObject.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityCapital;
-        else currentLocationObject.transform.GetChild(2).GetComponent<Image>().sprite = traveledCityMarker;
-
-        line.SetActive(true);
-
-        // Set next location variables
-        currentLocation = name;
-        if (newLocation.GetComponent<TransportationButtons>().capital)
-            newLocation.transform.GetChild(2).GetComponent<Image>().sprite = currentCityCapital;
-        else newLocation.transform.GetChild(2).GetComponent<Image>().sprite = currentCityMarker;
-
-        currentLocationObject.GetComponent<TransportationButtons>().DisableTransportationOptions();
-
-        // Load level
-        AudioManager.Instance.FadeOutMusic();
-        SceneManager.LoadScene(sceneName: "LoadingScene");
-        */
     }
 
     private IEnumerator LoadLoadingScene()

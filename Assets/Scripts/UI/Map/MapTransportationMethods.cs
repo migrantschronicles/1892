@@ -5,10 +5,32 @@ using UnityEngine;
 public class MapTransportationMethods : MonoBehaviour
 {
     private MethodManager[] methods;
+    private Vector3 initialScale;
+    private MapZoom mapZoom;
+    private RectTransform rectTransform;
 
     private void Awake()
     {
         methods = GetComponentsInChildren<MethodManager>();
+        rectTransform = GetComponent<RectTransform>();
+        initialScale = rectTransform.localScale;
+        mapZoom = GetComponentInParent<MapZoom>();
+        mapZoom.onMapZoomChangedEvent += OnZoomChanged;
+        OnZoomChanged(mapZoom.ZoomLevel);
+    }
+
+    private void OnDestroy()
+    {
+        if(mapZoom)
+        {
+            mapZoom.onMapZoomChangedEvent -= OnZoomChanged;
+        }
+    }
+
+    private void OnZoomChanged(float zoomLevel)
+    {
+        float scaleFactor = mapZoom.DefaultZoomLevel / zoomLevel;
+        rectTransform.localScale = scaleFactor * initialScale;
     }
 
     public void InitMethods(string from, string to)

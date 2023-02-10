@@ -80,36 +80,11 @@ public class MapZoom : MonoBehaviour
         }
     }
 
-    public float ZoomLevel
-    {
-        get
-        {
-            return zoomLevel;
-        }
-    }
-
-    public float MinZoomLevel
-    {
-        get
-        {
-            return minZoom;
-        }
-    }
-    public float MaxZoomLevel
-    {
-        get
-        {
-            return maxZoom;
-        }
-    }
-
-    private bool IsAutoZoomInProgress
-    {
-        get
-        {
-            return autoZoomCurrentTime >= 0.0f && overrideZoom < 0.0f;
-        }
-    }
+    public float ZoomLevel { get { return zoomLevel; } }
+    public float MinZoomLevel { get { return minZoom; } }
+    public float MaxZoomLevel { get { return maxZoom; } }
+    private bool IsAutoZoomInProgress { get { return autoZoomCurrentTime >= 0.0f && overrideZoom < 0.0f; } }
+    public float DefaultZoomLevel { get { return initialZoom; } }
 
     public bool IsMapScreenshotInProgress { get { return overrideZoom >= 0.0f; } }
 

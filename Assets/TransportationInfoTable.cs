@@ -11,10 +11,16 @@ public class TransportationRouteInfo
     public float time; // In seconds
     public int cost;
     public int food;
+    public bool isDiscoverable;
+
+    /// A flag whether this route was discovered by the player in a dialog.
+    public bool WasDiscovered { get; set; }
+    /// True if the flag was discovered by the player or is discovered by default.
+    public bool IsDiscovered { get { return !isDiscoverable || WasDiscovered; } }
 
     public override string ToString() 
     {
-        return $"Transportation Route Info: {FromLocation}, {ToLocation}, {method}, {time}, {cost}, {food}";
+        return $"Transportation Route Info: {FromLocation}, {ToLocation}, {method}, {time}, {cost}, {food}, {isDiscoverable}";
     }
 }
 
@@ -27,11 +33,15 @@ public class TransportationInfoTable
     public void Initialize(TextAsset infoTable) // infoTable is a CSV file with routes info.
     {
         string fileData = infoTable.text;
+        fileData.Replace("\r\n", "\n");
         string[] lines = fileData.Split("\n"[0]);
 
         for(int i = 1; i < lines.Length; i++) 
         {
-            string[] attributes = lines[i].Split(',');
+            string line = lines[i];
+            if(string.IsNullOrWhiteSpace(line)) continue;
+
+            string[] attributes = line.Split(',');
             string FromLocation = attributes[0];
             string ToLocation = attributes[1];
             string type = attributes[2];
@@ -39,10 +49,19 @@ public class TransportationInfoTable
             float time = float.Parse(attributes[3]);
             int cost = int.Parse(attributes[4]);
             int food = int.Parse(attributes[5]);
-            TransportationRouteInfo newRouteInfo = new TransportationRouteInfo { FromLocation = FromLocation, ToLocation = ToLocation, method = method, time = time, cost = cost, food = food };
+            bool discoverable = !string.IsNullOrWhiteSpace(attributes[6]);
+            TransportationRouteInfo newRouteInfo = new TransportationRouteInfo 
+            { 
+                FromLocation = FromLocation, 
+                ToLocation = ToLocation, 
+                method = method, 
+                time = time, 
+                cost = cost, 
+                food = food,
+                isDiscoverable = discoverable
+            };
 
             
-            //Debug.Log(newRouteInfo);
             transportationInfo.Add(newRouteInfo);
         }
 
@@ -72,6 +91,31 @@ public class TransportationInfoTable
                 {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+    public void DiscoverRoute(string from, string to, TransportationMethod method)
+    {
+        foreach(TransportationRouteInfo route in transportationInfo)
+        {
+            if(route.FromLocation == from && route.ToLocation == to && route.method == method)
+            {
+                route.WasDiscovered = true;
+                return;
+            }
+        }
+    }
+
+    public bool IsRouteDiscovered(string from, string to, TransportationMethod method)
+    {
+        foreach (TransportationRouteInfo route in transportationInfo)
+        {
+            if (route.FromLocation == from && route.ToLocation == to && route.method == method)
+            {
+                return route.IsDiscovered;
             }
         }
 

@@ -69,6 +69,9 @@ public class NewGameManager : MonoBehaviour
     public string nextLocation { get; private set; }
     private AsyncOperation loadingScreenOperation = null;
 
+    public delegate void OnRouteDiscoveredEvent(string from, string to, TransportationMethod method);
+    public event OnRouteDiscoveredEvent OnRouteDiscovered;
+
     // Game Stats
     public bool gameRunning = true;
     public float timeSpeed = 0.1f;
@@ -326,16 +329,12 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
-    ///@todo remove
-    public void UnlockLocation(string name) 
+    public void DiscoverRoute(string from, string to, TransportationMethod method)
     {
-    }
-
-    public void UnlockAllLocations() 
-    {
-        foreach(LocationMarker marker in LevelInstance.Instance.IngameDiary.LocationMarkerObjects)
+        if(!transportationInfo.IsRouteDiscovered(from, to, method))
         {
-            marker.SetUnlocked();
+            transportationInfo.DiscoverRoute(from, to, method);
+            OnRouteDiscovered?.Invoke(from, to, method);
         }
     }
 
@@ -901,7 +900,19 @@ public class NewGameManager : MonoBehaviour
 
     public bool CanTravel(string from, string to, TransportationMethod method = TransportationMethod.None)
     {
-        return transportationInfo.HasRouteInfo(from, to, method);
+        bool hasRouteInfo = transportationInfo.HasRouteInfo(from, to, method);
+        if(!hasRouteInfo)
+        {
+            return false;
+        }
+
+        if(method != TransportationMethod.None && !transportationInfo.IsRouteDiscovered(from, to, method))
+        {
+            // Not yet discovered
+            return false;
+        }
+
+        return true;
     }
 
     public bool CanTravelTo(string to, TransportationMethod method = TransportationMethod.None)

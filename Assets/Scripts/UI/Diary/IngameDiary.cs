@@ -21,8 +21,6 @@ public class IngameDiary : MonoBehaviour
     [SerializeField]
     private DiaryContentPage defaultPage;
     [SerializeField]
-    private GameObject locationMarkerParent;
-    [SerializeField]
     private DiaryContentPages inventoryPages;
     [SerializeField]
     private DiaryContentPages healthPages;
@@ -35,41 +33,13 @@ public class IngameDiary : MonoBehaviour
     [SerializeField]
     private DiaryContentPages immediatelyOpenedPages;
 
-    private Dictionary<string, LocationMarker> locationMarkers;
     private DiaryContentPage screenshotPrevPage;
 
     public Diary Diary { get { return diary; } }
 
-    public Dictionary<string, LocationMarker> LocationMarkers
-    {
-        get
-        {
-            if (locationMarkers == null)
-            {
-                GatherLocationMarkers();
-            }
-
-            return locationMarkers;
-        }
-    }
-
-    public IEnumerable<string> LocationStrings { get { return LocationMarkers.Keys; } }
-    public IEnumerable<LocationMarker> LocationMarkerObjects { get { return LocationMarkers.Values; } }
-    public IEnumerable<GameObject> LocationMarkersGO
-    {
-        get
-        {
-            return LocationMarkers.Values.Select(marker => marker.gameObject);
-        }
-    }
-
     private void Awake()
     {
         diary.onDiaryStatusChanged += OnDiaryStatusChanged;
-        if (locationMarkers == null)
-        {
-            GatherLocationMarkers();
-        }
     }
 
     private void Start()
@@ -185,19 +155,6 @@ public class IngameDiary : MonoBehaviour
         diaryAnimator.SetBool("ImmediatelyFix", false);
         StartCoroutine(SwitchKeepOpenAndOpened(false));
         diary.CloseImmediately();
-    }
-
-    private void GatherLocationMarkers()
-    {
-        locationMarkers = new Dictionary<string, LocationMarker>();
-        for (int i = 0; i < locationMarkerParent.transform.childCount; ++i)
-        {
-            LocationMarker marker = locationMarkerParent.transform.GetChild(i).GetComponent<LocationMarker>();
-            if (marker != null)
-            {
-                locationMarkers.Add(marker.LocationName, marker);
-            }
-        }
     }
 
     public void PrepareForMapScreenshot()

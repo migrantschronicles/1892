@@ -391,10 +391,12 @@ public class PDFBuilder
         // Only test data
         Journey[] journeys = new Journey[] 
         {
-            new Journey { destination = "Pfaffenthal", method = TransporationMethod.Foot, money = 28383 },
-            new Journey { destination = "Brussels", method = TransporationMethod.Foot, money = 28383 },
-            new Journey { destination = "Paris", method = TransporationMethod.Carriage, money = 28383},
-            new Journey { destination = "Antwerp", method = TransporationMethod.Train, money = 28383 }
+            /*
+            new Journey { destination = "Pfaffenthal", method = TransportationMethod.Walking, money = 28383 },
+            new Journey { destination = "Brussels", method = TransportationMethod.Walking, money = 28383 },
+            new Journey { destination = "Paris", method = TransportationMethod.Carriage, money = 28383},
+            new Journey { destination = "Antwerp", method = TransportationMethod.Train, money = 28383 }
+            */
         };
 
         string[] diaryEntries = new string[]
@@ -440,10 +442,11 @@ public class PDFBuilder
                 string iconPath = "PDF/Methods/";
                 switch(journeys[i].method)
                 {
-                    case TransporationMethod.Foot: iconPath += "PDF_Transportation Icon_6.png"; break;
-                    case TransporationMethod.Train: iconPath += "PDF_Transportation Icon_7.png"; break;
-                    case TransporationMethod.Ship: iconPath += "PDF_Transportation Icon_2.png"; break;
-                    case TransporationMethod.Carriage: iconPath += "PDF_Transportation Icon_4.png"; break;
+                    case TransportationMethod.Walking: iconPath += "PDF_Transportation Icon_6.png"; break;
+                    case TransportationMethod.Train: iconPath += "PDF_Transportation Icon_7.png"; break;
+                    case TransportationMethod.Ship: iconPath += "PDF_Transportation Icon_2.png"; break;
+                    case TransportationMethod.Carriage: iconPath += "PDF_Transportation Icon_4.png"; break;
+                        ///@todo
                 }
 
                 pdf.DrawPNG(iconPath, 275, top ? 13 : 407, 28, 28);

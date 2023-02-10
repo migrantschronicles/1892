@@ -208,18 +208,17 @@ public class LevelInstance : MonoBehaviour
     }
     public Mode Mode { get { return mode; } }
     public bool IsShowingSeasickness { get { return seasicknessSceneTimer >= 0.0f; } }
-
-    public string LocationName
-    {
-        get
-        {
+    public string LocationName 
+    { 
+        get 
+        { 
             if(locationOverride != null && !string.IsNullOrWhiteSpace(locationOverride))
             {
                 return locationOverride;
             }
 
-            return SceneManager.GetActiveScene().name;
-        }
+            return SceneManager.GetActiveScene().name; 
+        } 
     }
 
     public delegate void OnSceneChangedEvent(Scene scene);

@@ -7,12 +7,15 @@ using System.Linq;
 using System.Globalization;
 using System;
 
-public enum TransporationMethod
+public enum TransportationMethod
 {
-    Foot,
-    Train,
+    None,
+    Walking,
+    Tram,
+    Carriage,
+    Cart,
     Ship,
-    Carriage
+    Train
 }
 
 public class DiaryEntryData
@@ -23,7 +26,7 @@ public class DiaryEntryData
 public class Journey
 {
     public string destination;
-    public TransporationMethod method;
+    public TransportationMethod method;
     public int money;
     public DiaryEntryData diaryEntry;
 }
@@ -531,7 +534,7 @@ public class NewGameManager : MonoBehaviour
         onTimeChanged?.Invoke(time);
     }*/
 
-    public void GoToLocation(string name, string method)
+    public void GoToLocation(string name, TransportationMethod method)
     {
         /*
         TransportationRouteInfo routeInfo = transportationInfo.GetRouteInfo(LevelInstance.Instance.LocationName, name, method);
@@ -1008,13 +1011,29 @@ public class NewGameManager : MonoBehaviour
         return LocationDiscoveryStatus.Undiscovered;
     }
 
-    public bool CanTravel(string from, string to, string type = null)
+    public bool CanTravel(string from, string to, TransportationMethod method = TransportationMethod.None)
     {
-        return transportationInfo.HasRouteInfo(from, to, type);
+        return transportationInfo.HasRouteInfo(from, to, method);
     }
 
-    public bool CanTravelTo(string to, string type = null)
+    public bool CanTravelTo(string to, TransportationMethod method = TransportationMethod.None)
     {
-        return CanTravel(LevelInstance.Instance.LocationName, to, type);
+        return CanTravel(LevelInstance.Instance.LocationName, to, method);
+    }
+
+    public static TransportationMethod GetTransportationMethodByName(string method)
+    {
+        switch(method.ToLower())
+        {
+            case "walking": return TransportationMethod.Walking;
+            case "tram": return TransportationMethod.Tram;
+            case "carriage": return TransportationMethod.Carriage;
+            case "ship": return TransportationMethod.Ship;
+            case "train": return TransportationMethod.Train;
+            case "cart": return TransportationMethod.Cart;
+            default: Debug.Assert(false, $"Invalid transporation method: {method}"); break;
+        }
+
+        return TransportationMethod.Walking;
     }
 }

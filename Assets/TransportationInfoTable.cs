@@ -7,14 +7,14 @@ public class TransportationRouteInfo
 {
     public string FromLocation;
     public string ToLocation;
-    public string type; // Walking, Train, Carriage, etc.
+    public TransportationMethod method; // Walking, Train, Carriage, etc.
     public float time; // In seconds
     public int cost;
     public int food;
 
     public override string ToString() 
     {
-        return $"Transportation Route Info: {FromLocation}, {ToLocation}, {type}, {time}, {cost}, {food}";
+        return $"Transportation Route Info: {FromLocation}, {ToLocation}, {method}, {time}, {cost}, {food}";
     }
 }
 
@@ -35,10 +35,11 @@ public class TransportationInfoTable
             string FromLocation = attributes[0];
             string ToLocation = attributes[1];
             string type = attributes[2];
+            TransportationMethod method = NewGameManager.GetTransportationMethodByName(type);
             float time = float.Parse(attributes[3]);
             int cost = int.Parse(attributes[4]);
             int food = int.Parse(attributes[5]);
-            TransportationRouteInfo newRouteInfo = new TransportationRouteInfo { FromLocation = FromLocation, ToLocation = ToLocation, type = type, time = time, cost = cost, food = food };
+            TransportationRouteInfo newRouteInfo = new TransportationRouteInfo { FromLocation = FromLocation, ToLocation = ToLocation, method = method, time = time, cost = cost, food = food };
 
             
             //Debug.Log(newRouteInfo);
@@ -47,27 +48,27 @@ public class TransportationInfoTable
 
     }
 
-    public TransportationRouteInfo GetRouteInfo(string FromLocation, string ToLocation, string type) 
+    public TransportationRouteInfo GetRouteInfo(string FromLocation, string ToLocation, TransportationMethod method) 
     {
         foreach(TransportationRouteInfo route in transportationInfo) 
         {
-            if(route.FromLocation == FromLocation && route.ToLocation == ToLocation && route.type== type) 
+            if(route.FromLocation == FromLocation && route.ToLocation == ToLocation && route.method == method) 
             {
                 return route;
             }
         }
 
-        Debug.LogError($"Route: ({FromLocation}, {ToLocation}, {type}) is not found. Please make sure to include it in the CSV file.");
+        Debug.LogError($"Route: ({FromLocation}, {ToLocation}, {method}) is not found. Please make sure to include it in the CSV file.");
         return null;
     }
 
-    public bool HasRouteInfo(string from, string to, string type = null)
+    public bool HasRouteInfo(string from, string to, TransportationMethod method = TransportationMethod.None)
     {
         foreach(TransportationRouteInfo route in transportationInfo)
         {
             if(route.FromLocation == from && route.ToLocation == to)
             {
-                if(type == null || route.type == type)
+                if (method == TransportationMethod.None || route.method == method)
                 {
                     return true;
                 }

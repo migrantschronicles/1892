@@ -8,11 +8,11 @@ public class MethodManager : MonoBehaviour
     private TransportationMethodInfo methodInfo;
     private TransportationRouteInfo routeInfo;
 
-    public string Method
+    public TransportationMethod Method
     {
         get
         {
-            return gameObject.name;
+            return NewGameManager.GetTransportationMethodByName(gameObject.name);
         }
     }
 

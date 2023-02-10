@@ -11,8 +11,7 @@ public class Map : MonoBehaviour
     private GameObject transportationMethodsPrefab;
 
     private MapLocationMarker[] locationMarkers;
-    private GameObject prevTransportationMethods;
-    private GameObject transportationMethodsGO;
+    private MapTransportationMethods transportationMethods;
 
     public MapLocationMarker CurrentLocationMarker
     {
@@ -29,12 +28,17 @@ public class Map : MonoBehaviour
 
     public void OnLocationMarkerClicked(MapLocationMarker marker)
     {
-        if(transportationMethodsGO != null)
+        if(transportationMethods != null)
         {
+            if(transportationMethods.ToLocation == marker.LocationName)
+            {
+                // Clicks on same marker.
+                return;
+            }
+
             // Start anim
-            ///@todo
-            Destroy(transportationMethodsGO);
-            transportationMethodsGO = null;
+            StartCoroutine(CloseTransporationMethods(transportationMethods));
+            transportationMethods = null;
         }
 
         if(!NewGameManager.Instance.CanTravelTo(marker.LocationName))
@@ -44,10 +48,21 @@ public class Map : MonoBehaviour
 
         RectTransform markerTransform = marker.GetComponent<RectTransform>();
 
-        transportationMethodsGO = Instantiate(transportationMethodsPrefab, transform);
+        GameObject transportationMethodsGO = Instantiate(transportationMethodsPrefab, transform);
         RectTransform transportationMethodsTransform = transportationMethodsGO.GetComponent<RectTransform>();
         transportationMethodsTransform.anchoredPosition = markerTransform.anchoredPosition;
-        MapTransportationMethods transportationMethods = transportationMethodsGO.GetComponent<MapTransportationMethods>();
+        transportationMethods = transportationMethodsGO.GetComponent<MapTransportationMethods>();
         transportationMethods.InitMethods(LevelInstance.Instance.LocationName, marker.LocationName);
+        transportationMethods.Open();
+    }
+
+    private IEnumerator CloseTransporationMethods(MapTransportationMethods methods)
+    {
+        methods.Close();
+        while(!methods.IsClosed())
+        {
+            yield return 0;
+        }
+        Destroy(methods.gameObject);
     }
 }

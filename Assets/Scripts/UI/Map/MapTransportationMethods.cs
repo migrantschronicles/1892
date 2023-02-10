@@ -8,6 +8,9 @@ public class MapTransportationMethods : MonoBehaviour
     private Vector3 initialScale;
     private MapZoom mapZoom;
     private RectTransform rectTransform;
+    private Animator animator;
+
+    public string ToLocation { get; private set; }
 
     private void Awake()
     {
@@ -17,6 +20,7 @@ public class MapTransportationMethods : MonoBehaviour
         mapZoom = GetComponentInParent<MapZoom>();
         mapZoom.onMapZoomChangedEvent += OnZoomChanged;
         OnZoomChanged(mapZoom.ZoomLevel);
+        animator = GetComponent<Animator>();
     }
 
     private void OnDestroy()
@@ -35,6 +39,7 @@ public class MapTransportationMethods : MonoBehaviour
 
     public void InitMethods(string from, string to)
     {
+        ToLocation = to;
         foreach(MethodManager manager in methods)
         {
             if(NewGameManager.Instance.CanTravel(from, to, manager.Method))
@@ -48,5 +53,20 @@ public class MapTransportationMethods : MonoBehaviour
                 manager.gameObject.SetActive(false);
             }
         }
+    }
+
+    public void Open()
+    {
+        animator.SetBool("Opened", true);
+    }
+
+    public void Close()
+    {
+        animator.SetBool("Opened", false);
+    }
+
+    public bool IsClosed()
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).IsName("Closed");
     }
 }

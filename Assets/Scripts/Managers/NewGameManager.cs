@@ -66,7 +66,9 @@ public class NewGameManager : MonoBehaviour
     private static bool isInitialized = false;
 
     private List<Journey> journeys = new();
-    
+    public string nextLocation { get; private set; }
+    private AsyncOperation loadingScreenOperation = null;
+
     // Game Stats
     public bool gameRunning = true;
     public float timeSpeed = 0.1f;
@@ -536,6 +538,52 @@ public class NewGameManager : MonoBehaviour
 
     public void GoToLocation(string name, TransportationMethod method)
     {
+        if(nextLocation != null)
+        {
+            // Already travelling
+            return;
+        }
+
+        // Check prerequisits
+        if(!CanTravelTo(name, method))
+        {
+            Debug.Log($"Cannot travel to {name} via {method}");
+            return;
+        }
+
+        TransportationRouteInfo routeInfo = transportationInfo.GetRouteInfo(LevelInstance.Instance.LocationName, name, method);
+        if(routeInfo == null)
+        {
+            Debug.Log($"No route info found for {name} via {method}");
+            return;
+        }
+
+        int foodAmount = inventory.GetItemTypeCount(ItemType.Food);
+        if(money < routeInfo.cost || foodAmount < routeInfo.food)
+        {
+            Debug.Log($"Not enough money of food for {name} via {method}");
+            return;
+        }
+
+        // Remove required costs.
+        SetMoney(money - routeInfo.cost);
+        if(routeInfo.food > 0)
+        {
+            inventory.RemoveItemType(ItemType.Food, routeInfo.food);
+        }
+        ///@todo Advance days
+
+        // Reset values
+        DaysInCity = 0;
+        hour = 0;
+        minutes = 0;
+        seconds = 0;
+
+        // Load level
+        nextLocation = name;
+        AudioManager.Instance.FadeOutMusic();
+        StartCoroutine(LoadLoadingScene());
+
         /*
         TransportationRouteInfo routeInfo = transportationInfo.GetRouteInfo(LevelInstance.Instance.LocationName, name, method);
 
@@ -611,6 +659,31 @@ public class NewGameManager : MonoBehaviour
         AudioManager.Instance.FadeOutMusic();
         SceneManager.LoadScene(sceneName: "LoadingScene");
         */
+    }
+
+    private IEnumerator LoadLoadingScene()
+    {
+        if(loadingScreenOperation != null)
+        {
+            while(loadingScreenOperation.progress < 0.9f)
+            {
+                yield return null;
+            }
+
+            loadingScreenOperation.allowSceneActivation = true;
+            loadingScreenOperation = null;
+        }
+        else
+        {
+            Debug.LogError("Preloading loading scene did not trigger");
+            // Preloading did not trigger somehow, just load synchronous.
+            SceneManager.LoadScene("LoadingScene");
+        }
+    }
+
+    public void OnTravelComplete()
+    {
+        nextLocation = null;
     }
 
     public void AddDiaryEntry(DiaryEntry entry)
@@ -1035,5 +1108,11 @@ public class NewGameManager : MonoBehaviour
         }
 
         return TransportationMethod.Walking;
+    }
+
+    public void PreloadLoadingScene()
+    {
+        loadingScreenOperation = SceneManager.LoadSceneAsync("LoadingScene");
+        loadingScreenOperation.allowSceneActivation = false;
     }
 }

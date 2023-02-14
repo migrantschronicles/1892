@@ -461,6 +461,12 @@ public class NewGameManager : MonoBehaviour
         SetMoney(money - routeInfo.cost);
         ///@todo Advance days
 
+        // Add the journey
+        Journey journey = new Journey();
+        journey.destination = name;
+        journey.method = method;
+        journeys.Add(journey);
+
         // Reset values
         DaysInCity = 0;
         SetMorningTime();
@@ -856,6 +862,14 @@ public class NewGameManager : MonoBehaviour
             }
         }
 
+        foreach(Journey journey in journeys)
+        {
+            if(transportationInfo.HasRouteInfo(journey.destination, location))
+            {
+                return LocationDiscoveryStatus.Discovered;
+            }
+        }
+
         if(transportationInfo.HasRouteInfo(LevelInstance.Instance.LocationName, location))
         {
             return LocationDiscoveryStatus.Discovered;
@@ -866,6 +880,40 @@ public class NewGameManager : MonoBehaviour
 
     public LocationDiscoveryStatus GetRouteDiscoveryStatus(string from, string to)
     {
+        if(from == LevelInstance.Instance.LocationName)
+        {
+            return LocationDiscoveryStatus.Discovered;
+        }
+        else if(to == LevelInstance.Instance.LocationName)
+        {
+            if(journeys.Count > 1 && journeys[journeys.Count - 2].destination == from)
+            {
+                return LocationDiscoveryStatus.Current;
+            }
+        }
+
+        string last = null;
+        for (int i = 0; i < journeys.Count; ++i)
+        {
+            Journey journey = journeys[i];
+            if (last == from)
+            {
+                if (journey.destination == to)
+                {
+                    return LocationDiscoveryStatus.Traveled;
+                }
+                else
+                {
+                    return LocationDiscoveryStatus.Discovered;
+                }
+            }
+
+            last = journey.destination;
+        }
+
+        return LocationDiscoveryStatus.Undiscovered;
+
+        /*
         if (to == LevelInstance.Instance.LocationName)
         {
             return LocationDiscoveryStatus.Current;
@@ -895,6 +943,7 @@ public class NewGameManager : MonoBehaviour
         }
 
         return LocationDiscoveryStatus.Undiscovered;
+        */
     }
 
     public bool CanTravel(string from, string to, TransportationMethod method = TransportationMethod.None)

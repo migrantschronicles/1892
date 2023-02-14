@@ -1,3 +1,6 @@
+// Uncomment to enable developer menu to select location
+//#define ENABLE_DEVELOPER_MENU
+
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -158,7 +161,7 @@ public class LevelInstance : MonoBehaviour
     private float seasicknessSceneFrequency = 60.0f;
     [SerializeField]
     private DialogButton introductoryDialogButton;
-#if DEBUG
+#if DEBUG && ENABLE_DEVELOPER_MENU
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
 
@@ -334,7 +337,7 @@ public class LevelInstance : MonoBehaviour
             }
         }
 
-#if DEBUG
+#if DEBUG && ENABLE_DEVELOPER_MENU
         if (Input.GetKeyDown(KeyCode.F10))
         {
             if (developerLocationPanel)

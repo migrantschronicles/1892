@@ -8,7 +8,8 @@ public enum PositionOnSpriteMode
 {
     Sprite,
     PlayableCharacter,
-    WorldObject
+    WorldObject,
+    SpriteContainer
 }
 
 public class PositionOnSprite : MonoBehaviour
@@ -21,6 +22,10 @@ public class PositionOnSprite : MonoBehaviour
     private Vector2 normalizedPosition = new Vector2(0.5f, 0.5f);
     [SerializeField]
     private GameObject worldObject;
+    [SerializeField]
+    private Vector2 worldObjectOffset = new Vector2(0, 0);
+    [SerializeField]
+    private GameObject spriteContainer;
 
     private RectTransform rectTransform;
 
@@ -46,6 +51,8 @@ public class PositionOnSprite : MonoBehaviour
         switch(mode)
         {
             case PositionOnSpriteMode.Sprite:
+            case PositionOnSpriteMode.WorldObject:
+            case PositionOnSpriteMode.SpriteContainer:
                 UpdatePosition();
                 break;
 
@@ -55,10 +62,6 @@ public class PositionOnSprite : MonoBehaviour
                 {
                     OnPlayableCharacterSpawnChanged(LevelInstance.Instance.PlayableCharacterSpawn);
                 }
-                break;
-
-            case PositionOnSpriteMode.WorldObject:
-                UpdatePosition();
                 break;
         }
     }
@@ -120,24 +123,7 @@ public class PositionOnSprite : MonoBehaviour
                 if (LevelInstance.Instance.CurrentScene && IsInSceneInteractables(LevelInstance.Instance.CurrentScene))
                 {
                     GameObject spawnedCharacter = LevelInstance.Instance.PlayableCharacterSpawn.SpawnedCharacter;
-                    SpriteRenderer[] renderers = spawnedCharacter.GetComponentsInChildren<SpriteRenderer>(true);
-                    Bounds? bounds = null;
-                    foreach (SpriteRenderer renderer in renderers)
-                    {
-                        if (bounds != null)
-                        {
-                            bounds.Value.Encapsulate(renderer.bounds);
-                        }
-                        else
-                        {
-                            bounds = renderer.bounds;
-                        }
-                    }
-
-                    if (bounds != null)
-                    {
-                        UpdatePositionToBounds(bounds.Value);
-                    }
+                    UpdatePositionToSpriteContainer(spawnedCharacter);
                 }
 
                 break;
@@ -151,6 +137,37 @@ public class PositionOnSprite : MonoBehaviour
                 }
                 break;
             }
+
+            case PositionOnSpriteMode.SpriteContainer:
+            {
+                if(spriteContainer)
+                {
+                    UpdatePositionToSpriteContainer(spriteContainer);
+                }
+                break;
+            }
+        }
+    }
+
+    private void UpdatePositionToSpriteContainer(GameObject container)
+    {
+        SpriteRenderer[] renderers = container.GetComponentsInChildren<SpriteRenderer>(true);
+        Bounds? bounds = null;
+        foreach (SpriteRenderer renderer in renderers)
+        {
+            if (bounds.HasValue)
+            {
+                bounds.Value.Encapsulate(renderer.bounds);
+            }
+            else
+            {
+                bounds = renderer.bounds;
+            }
+        }
+
+        if (bounds != null)
+        {
+            UpdatePositionToBounds(bounds.Value);
         }
     }
 
@@ -179,6 +196,6 @@ public class PositionOnSprite : MonoBehaviour
 
     private void UpdatePositionToWorldPosition(Vector3 worldPosition)
     {
-        rectTransform.anchoredPosition = WorldToAnchoredPosition(worldPosition);
+        rectTransform.anchoredPosition = WorldToAnchoredPosition(worldPosition) + worldObjectOffset;
     }
 }

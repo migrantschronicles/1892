@@ -161,6 +161,7 @@ public class DiaryPages : MonoBehaviour
         {
             // Set the current page of the diary content pages so that the new page is opened the next time that the diary entries are opened.
             contentPages.CurrentPage = newContentPage;
+            newContentPage.gameObject.SetActive(false);
         }
     }
 

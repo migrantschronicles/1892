@@ -451,18 +451,14 @@ public class NewGameManager : MonoBehaviour
         }
 
         int foodAmount = inventory.GetItemTypeCount(ItemType.Food);
-        if(money < routeInfo.cost || foodAmount < routeInfo.food)
+        if(money < routeInfo.cost)
         {
-            Debug.Log($"Not enough money of food for {name} via {method}");
+            Debug.Log($"Not enough money for {name} via {method}");
             return;
         }
 
         // Remove required costs.
         SetMoney(money - routeInfo.cost);
-        if(routeInfo.food > 0)
-        {
-            inventory.RemoveItemType(ItemType.Food, routeInfo.food);
-        }
         ///@todo Advance days
 
         // Reset values

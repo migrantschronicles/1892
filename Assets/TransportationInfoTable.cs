@@ -10,7 +10,6 @@ public class TransportationRouteInfo
     public TransportationMethod method; // Walking, Train, Carriage, etc.
     public float time; // In seconds
     public int cost;
-    public int food;
     public bool isDiscoverable;
 
     /// A flag whether this route was discovered by the player in a dialog.
@@ -20,7 +19,7 @@ public class TransportationRouteInfo
 
     public override string ToString() 
     {
-        return $"Transportation Route Info: {FromLocation}, {ToLocation}, {method}, {time}, {cost}, {food}, {isDiscoverable}";
+        return $"Transportation Route Info: {FromLocation}, {ToLocation}, {method}, {time}, {cost}, {isDiscoverable}";
     }
 }
 
@@ -46,9 +45,10 @@ public class TransportationInfoTable
             string ToLocation = attributes[1];
             string type = attributes[2];
             TransportationMethod method = NewGameManager.GetTransportationMethodByName(type);
-            float time = float.Parse(attributes[3]);
-            int cost = int.Parse(attributes[4]);
-            int food = int.Parse(attributes[5]);
+            int hours = int.Parse(attributes[3]);
+            int minutes = int.Parse(attributes[4]);
+            float time = hours * 60 * 60 + minutes * 60;
+            int cost = int.Parse(attributes[5]);
             bool discoverable = !string.IsNullOrWhiteSpace(attributes[6]);
             TransportationRouteInfo newRouteInfo = new TransportationRouteInfo 
             { 
@@ -57,11 +57,9 @@ public class TransportationInfoTable
                 method = method, 
                 time = time, 
                 cost = cost, 
-                food = food,
                 isDiscoverable = discoverable
             };
 
-            
             transportationInfo.Add(newRouteInfo);
         }
 

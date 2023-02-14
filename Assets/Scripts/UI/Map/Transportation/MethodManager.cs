@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class MethodManager : MonoBehaviour
 {
-    private TransportationMethodInfo methodInfo;
+    private TransportationMethodBox methodBox;
     private TransportationRouteInfo routeInfo;
 
     public TransportationMethod Method
@@ -18,19 +18,13 @@ public class MethodManager : MonoBehaviour
 
     private void Awake()
     {
-        methodInfo = GetComponentInChildren<TransportationMethodInfo>();
+        methodBox = GetComponentInChildren<TransportationMethodBox>();
     }
 
     public void SetRouteInfo(TransportationRouteInfo info)
     {
         routeInfo = info;
-        float time = info.time;
-        int money = info.cost;
-        int food = info.food;
-        string timeAsString = $"{(int)(time / 86400)}d {(int)((time % 86400) / 3600)}h {(int)((time % 3600) / 60)}m";
-        methodInfo.time.text = timeAsString;
-        methodInfo.money.text = money.ToString();
-        methodInfo.food.text = food.ToString();
+        methodBox.RouteInfo = info;
     }
 
     public void GoToDestination()

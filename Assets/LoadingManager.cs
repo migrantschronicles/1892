@@ -29,13 +29,12 @@ public class LoadingManager : MonoBehaviour
                 if(Time.time - startTime >= minimumLoadingTime)
                 {
                     op.allowSceneActivation = true;
+                    NewGameManager.Instance.OnBeforeSceneActivation();
                 }
             }
 
             yield return null;
         }
-
-        NewGameManager.Instance.OnTravelComplete();
     }
 
     /*

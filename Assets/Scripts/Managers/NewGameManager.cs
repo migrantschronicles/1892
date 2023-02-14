@@ -491,7 +491,10 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
-    public void OnTravelComplete()
+    /**
+     * Called after another scene is loaded, just before that scene is activated and the loading scene is unloaded.
+     */
+    public void OnBeforeSceneActivation()
     {
         nextLocation = null;
     }

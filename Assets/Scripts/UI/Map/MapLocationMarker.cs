@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum LocationMarkerScaling
+{
+    Default,
+    Clamp,
+    Map
+}
+
 public class MapLocationMarker : MonoBehaviour
 {
     [SerializeField]

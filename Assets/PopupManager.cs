@@ -41,19 +41,22 @@ public class PopupManager : MonoBehaviour
     public Button stayInHostelBTN;
 
     //public GameObject motherFoodHostel; // Food icon for mother in Hostel
-    public Text motherFoodTXT;
+    public Text motherFoodTXTHostel;
+    public Text motherFoodTXTOutside;
     public GameObject motherFoodBoxHostel;
     //public GameObject boyFoodHostel; // Food icon for boy in Hostel
-    public Text boyFoodTXT;
+    public Text boyFoodTXTHostel;
+    public Text boyFoodTXTOutside;
     public GameObject boyFoodBoxHostel;
     //public GameObject girlFoodHostel; // Food icon for girl in Hostel
-    public Text girlFoodTXT;
+    public Text girlFoodTXTHostel;
+    public Text girlFoodTXTOutside;
     public GameObject girlFoodBoxHostel;
-    public GameObject motherFoodOutside; // Food icon for mother in Outside
+    //public GameObject motherFoodOutside; // Food icon for mother in Outside
     public GameObject motherFoodBoxOutside;
-    public GameObject boyFoodOutside; // Food icon for boy in Outside
+    //public GameObject boyFoodOutside; // Food icon for boy in Outside
     public GameObject boyFoodBoxOutside;
-    public GameObject girlFoodOutside; // Food icon for girl in Outside
+    //public GameObject girlFoodOutside; // Food icon for girl in Outside
     public GameObject girlFoodBoxOutside;
     public GameObject deductFoodBTN;
     public GameObject addFoodBTN;
@@ -98,12 +101,15 @@ public class PopupManager : MonoBehaviour
         boyFoodHostel.SetActive(false);
         girlFoodHostel.SetActive(false);*/
         
-        motherFoodTXT.text = "0";
-        boyFoodTXT.text = "0";
-        girlFoodTXT.text = "0";
-        motherFoodOutside.SetActive(false);
+        motherFoodTXTHostel.text = "0";
+        motherFoodTXTOutside.text = "0";
+        boyFoodTXTHostel.text = "0";
+        boyFoodTXTOutside.text = "0";
+        girlFoodTXTHostel.text = "0";
+        girlFoodTXTOutside.text = "0";
+/*        motherFoodOutside.SetActive(false);
         boyFoodOutside.SetActive(false);
-        girlFoodOutside.SetActive(false);
+        girlFoodOutside.SetActive(false);*/
         motherFoodAmount = 0;
         boyFoodAmount = 0;
         girlFoodAmount = 0;
@@ -265,14 +271,15 @@ public class PopupManager : MonoBehaviour
     {
         
         if(foodAmount>0) { 
-            motherFoodOutside.SetActive(true);
+            //motherFoodOutside.SetActive(true);
             motherFoodBoxHostel.GetComponent<Image>().color = hasFoodColor;
             motherFoodBoxOutside.GetComponent<Image>().color = hasFoodColor;
             motherFoodAmount++;
             foodAmount--;
             foodAmountTextHostel.text = foodAmount.ToString();
             foodAmountTextOutside.text = foodAmount.ToString();
-            motherFoodTXT.text = motherFoodAmount.ToString();
+            motherFoodTXTHostel.text = motherFoodAmount.ToString();
+            motherFoodTXTOutside.text = motherFoodAmount.ToString();
             // Need to add one for outside
 
         }
@@ -293,14 +300,15 @@ public class PopupManager : MonoBehaviour
     {
         if (foodAmount > 0)
         {
-            boyFoodOutside.SetActive(true);
+            //boyFoodOutside.SetActive(true);
             boyFoodBoxHostel.GetComponent<Image>().color = hasFoodColor;
             boyFoodBoxOutside.GetComponent<Image>().color = hasFoodColor;
             boyFoodAmount++;
             foodAmount--;
             foodAmountTextHostel.text = foodAmount.ToString();
             foodAmountTextOutside.text = foodAmount.ToString();
-            boyFoodTXT.text = boyFoodAmount.ToString();
+            boyFoodTXTHostel.text = boyFoodAmount.ToString();
+            boyFoodTXTOutside.text = boyFoodAmount.ToString();
         }
  /*       else if(boyFoodAmount != 0)
         {
@@ -319,14 +327,15 @@ public class PopupManager : MonoBehaviour
     {
         if (foodAmount > 0)
         {
-            girlFoodOutside.SetActive(true);
+            //girlFoodOutside.SetActive(true);
             girlFoodBoxHostel.GetComponent<Image>().color = hasFoodColor;
             girlFoodBoxOutside.GetComponent<Image>().color = hasFoodColor;
             girlFoodAmount++;
             foodAmount--;
             foodAmountTextHostel.text = foodAmount.ToString();
             foodAmountTextOutside.text = foodAmount.ToString();
-            girlFoodTXT.text = girlFoodAmount.ToString();
+            girlFoodTXTHostel.text = girlFoodAmount.ToString();
+            girlFoodTXTOutside.text = girlFoodAmount.ToString();
         }
  /*       else if (girlFoodAmount != 0)
         {

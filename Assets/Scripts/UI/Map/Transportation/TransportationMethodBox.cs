@@ -79,9 +79,7 @@ public class TransportationMethodBox : MonoBehaviour
 
         if(Application.isPlaying)
         {
-            ///@todo
-            titleText.text = method.ToString();
-            //titleText.text = LocalizationManager.Instance.GetLocalizedString(transportationTitle);
+            titleText.text = LocalizationManager.Instance.GetLocalizedString(transportationTitle);
         }
         else
         {

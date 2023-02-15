@@ -312,9 +312,6 @@ public class LevelInstance : MonoBehaviour
 
         NewGameManager.Instance.HealthStatus.SetIsOnShip(levelMode == LevelInstanceMode.Ship);
         nextSeasicknessRemainingTime = NewGameManager.Instance.RemainingTime - seasicknessSceneFrequency;
-
-        // Preload the loadingscreen
-        NewGameManager.Instance.PreloadLoadingScene();
     }
 
     private void OnDestroy()

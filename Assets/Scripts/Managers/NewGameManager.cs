@@ -67,7 +67,6 @@ public class NewGameManager : MonoBehaviour
 
     private List<Journey> journeys = new();
     public string nextLocation { get; private set; }
-    private AsyncOperation loadingScreenOperation = null;
 
     public delegate void OnRouteDiscoveredEvent(string from, string to, TransportationMethod method);
     public event OnRouteDiscoveredEvent OnRouteDiscovered;
@@ -474,27 +473,7 @@ public class NewGameManager : MonoBehaviour
         // Load level
         nextLocation = name;
         AudioManager.Instance.FadeOutMusic();
-        StartCoroutine(LoadLoadingScene());
-    }
-
-    private IEnumerator LoadLoadingScene()
-    {
-        if(loadingScreenOperation != null)
-        {
-            while(loadingScreenOperation.progress < 0.9f)
-            {
-                yield return null;
-            }
-
-            loadingScreenOperation.allowSceneActivation = true;
-            loadingScreenOperation = null;
-        }
-        else
-        {
-            Debug.LogError("Preloading loading scene did not trigger");
-            // Preloading did not trigger somehow, just load synchronous.
-            SceneManager.LoadScene("LoadingScene");
-        }
+        SceneManager.LoadScene("LoadingScene");
     }
 
     /**
@@ -950,11 +929,5 @@ public class NewGameManager : MonoBehaviour
         }
 
         return TransportationMethod.Walking;
-    }
-
-    public void PreloadLoadingScene()
-    {
-        loadingScreenOperation = SceneManager.LoadSceneAsync("LoadingScene");
-        loadingScreenOperation.allowSceneActivation = false;
     }
 }

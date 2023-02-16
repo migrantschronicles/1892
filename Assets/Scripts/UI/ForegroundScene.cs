@@ -67,7 +67,8 @@ public class ForegroundScene : MonoBehaviour
         character.transform.SetParent(null, false);
 
         // Calculate the sprite height (since the characters are made of a lot of sprites, all have to be considered).
-        Vector2 spriteSize = CalculateSpriteSize(character);
+        Bounds bounds = PositionOnSprite.CalculateSpriteContainerBounds(character);
+        Vector2 spriteSize = bounds.size;
         float widthScaleFactor = worldWidth / spriteSize.x;
         float heightScaleFactor = worldHeight / spriteSize.y;
         float scaleFactor = Mathf.Min(widthScaleFactor, heightScaleFactor);
@@ -75,37 +76,6 @@ public class ForegroundScene : MonoBehaviour
 
         // Reparent
         character.transform.SetParent(parent, false);
-    }
-
-    private Vector2 CalculateSpriteSize(GameObject go)
-    {
-        float minY = 0;
-        float maxY = 0;
-        float minX = 0;
-        float maxX = 0;
-        SpriteRenderer[] sprites = go.GetComponentsInChildren<SpriteRenderer>();
-        for (int i = 0; i < sprites.Length; ++i)
-        {
-            SpriteRenderer sprite = sprites[i];
-            if(i == 0 || sprite.bounds.min.x < minX)
-            {
-                minX = sprite.bounds.min.x;
-            }
-            if(i == 0 || sprite.bounds.max.x > maxX)
-            {
-                maxX = sprite.bounds.max.x;
-            }
-            if(i == 0 || sprite.bounds.min.y < minY)
-            {
-                minY = sprite.bounds.min.y;
-            }
-            if(i == 0 || sprite.bounds.max.y > maxY)
-            {
-                maxY = sprite.bounds.max.y;
-            }
-        }
-
-        return new Vector2(maxX - minX, maxY - minY);
     }
 
     public void SetCharacters(GameObject leftPrefab, GameObject rightPrefab)

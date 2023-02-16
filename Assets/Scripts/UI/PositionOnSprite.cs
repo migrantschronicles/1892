@@ -149,26 +149,43 @@ public class PositionOnSprite : MonoBehaviour
         }
     }
 
-    private void UpdatePositionToSpriteContainer(GameObject container)
+    public static Bounds CalculateSpriteContainerBounds(GameObject container)
     {
-        SpriteRenderer[] renderers = container.GetComponentsInChildren<SpriteRenderer>(true);
-        Bounds? bounds = null;
-        foreach (SpriteRenderer renderer in renderers)
+        SpriteRenderer[] sprites = container.GetComponentsInChildren<SpriteRenderer>();
+        float minX = 0;
+        float maxX = 0;
+        float minY = 0;
+        float maxY = 0;
+        for(int i = 0; i < sprites.Length; i++)
         {
-            if (bounds.HasValue)
+            SpriteRenderer sprite = sprites[i];
+            if (i == 0 || sprite.bounds.min.x < minX)
             {
-                bounds.Value.Encapsulate(renderer.bounds);
+                minX = sprite.bounds.min.x;
             }
-            else
+            if (i == 0 || sprite.bounds.max.x > maxX)
             {
-                bounds = renderer.bounds;
+                maxX = sprite.bounds.max.x;
+            }
+            if (i == 0 || sprite.bounds.min.y < minY)
+            {
+                minY = sprite.bounds.min.y;
+            }
+            if (i == 0 || sprite.bounds.max.y > maxY)
+            {
+                maxY = sprite.bounds.max.y;
             }
         }
 
-        if (bounds != null)
-        {
-            UpdatePositionToBounds(bounds.Value);
-        }
+        Vector3 center = new(minX + (maxX - minX) / 2, minY + (maxY - minY) / 2, 0);
+        Vector3 size = new(maxX - minX, maxY - minY, 0);
+        return new Bounds(center, size);
+    }
+
+    private void UpdatePositionToSpriteContainer(GameObject container)
+    {
+        Bounds bounds = CalculateSpriteContainerBounds(container);
+        UpdatePositionToBounds(bounds);
     }
 
     private void UpdatePositionToBounds(Bounds bounds)

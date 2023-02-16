@@ -229,7 +229,7 @@ public class DialogChat : MonoBehaviour
     {
         if(pausedOn is Destination destination)
         {
-
+            ///@todo
         }
         else if(pausedOn is ItemAdded itemAdded)
         {
@@ -253,7 +253,23 @@ public class DialogChat : MonoBehaviour
         }
         else if(pausedOn is ItemRemoved itemRemoved)
         {
-
+            if(itemRemoved.Template.ItemTaken.ItemName != null)
+            {
+                string technicalName = itemRemoved.Template.ItemTaken.ItemName.TechnicalName;
+                Item item = NewGameManager.Instance.ItemManager.GetItemByTechnicalName(technicalName);
+                if(item != null)
+                {
+                    LevelInstance.Instance.OpenShopForItemRemoved(item);
+                }
+                else
+                {
+                    Debug.LogError($"Could not find item for {technicalName} for ItemRemoved template");
+                }
+            }
+            else
+            {
+                Debug.LogError($"{(pausedOn as IArticyObject).TechnicalName} has ItemRemoved template, but the item is null");
+            }
         }
     }
 

@@ -719,6 +719,15 @@ public class LevelInstance : MonoBehaviour
         OpenShop(shop);
     }
 
+    public void OpenShopForItemRemoved(Item item)
+    {
+        Debug.Assert(overlayMode == OverlayMode.None && mode == Mode.Dialog);
+        GameObject shopGO = Instantiate(shopPrefab, overlays.transform);
+        Shop shop = shopGO.GetComponent<Shop>();
+        shop.InitItemRemoved(item);
+        OpenShop(shop);
+    }
+
     private void OnTradeAccepted()
     {
         IEnumerable<SetCondition> setConditions = currentShop.AcceptableItemSetConditions;

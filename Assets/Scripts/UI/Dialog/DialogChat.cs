@@ -1,3 +1,5 @@
+using Articy.TheMigrantsChronicles;
+using Articy.TheMigrantsChronicles.Features;
 using Articy.Unity;
 using Articy.Unity.Interfaces;
 using System;
@@ -34,6 +36,23 @@ public class DialogChat : MonoBehaviour
     public bool IsWaitingForDecision { get { return currentAnswers.Count > 0; } }
     public float Height { get { return rectTransform.sizeDelta.y; } }
     public Dialog CurrentDialog { get { return currentDialog; } }
+    public bool WantsRestart
+    {
+        get
+        {
+            if(!currentDialog)
+            {
+                return true;
+            }
+
+            if(NewGameManager.Instance.conditions.HasCondition(currentDialog.restartCondition))
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
 
     public delegate void OnHeightChangedEvent(float height);
     public event OnHeightChangedEvent OnHeightChanged;
@@ -46,11 +65,12 @@ public class DialogChat : MonoBehaviour
     public void Play(Dialog dialog)
     {
         ResetSpecialDialog();
-        if(dialog == currentDialog)
+        if(dialog == currentDialog && !WantsRestart)
         {
             return;
         }
 
+        NewGameManager.Instance.conditions.RemoveCondition(dialog.restartCondition);
         currentDialog = dialog;
         currentAnswers.Clear();
         DialogSystem.Instance.FlowPlayer.StartOn = dialog.ArticyObject;
@@ -115,6 +135,22 @@ public class DialogChat : MonoBehaviour
         bubble.OnHeightChanged += OnBubbleHeightChanged;
         bubble.AssignFlowObject(flowObject);
 
+        ///@todo
+        /*
+        if(flowObject is Destination)
+        {
+            Destination destination = (Destination)flowObject;
+        }
+        else if(flowObject is ItemAdded)
+        {
+
+        }
+        else if(flowObject is ItemRemoved)
+        {
+
+        }
+        */
+
         DialogSystem.Instance.OnDialogLine(DialogSystem.Instance.GetTechnicalNameOfSpeaker(flowObject));
     }
 
@@ -129,6 +165,17 @@ public class DialogChat : MonoBehaviour
 
     public void OnClosing()
     {
+        if(pausedOn != null && IsDialogFinished())
+        {
+            // If the dialog is finished, end the dialog.
+            OnDialogEnded();
+        }
+    }
+
+    private void OnDialogEnded()
+    {
+        // Call instructions on the last paused object, if there are any.
+        DialogSystem.Instance.FlowPlayer.FinishCurrentPausedObject();
     }
 
     private void OnBubbleHeightChanged(DialogBubble bubble, float oldHeight, float newHeight)
@@ -145,6 +192,20 @@ public class DialogChat : MonoBehaviour
         OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
     }
 
+    private bool IsDialogFinished()
+    {
+        bool finished = true;
+        foreach (var branch in availableBranches)
+        {
+            if (branch.Target is IDialogueFragment)
+            {
+                finished = false;
+                break;
+            }
+        }
+        return finished;
+    }
+
     public void OnPointerClick()
     {
         if(currentSpecialDialog != null || availableBranches == null)
@@ -152,15 +213,7 @@ public class DialogChat : MonoBehaviour
             return;
         }
 
-        bool isDialogFinished = true;
-        foreach(var branch in availableBranches)
-        {
-            if(branch.Target is IDialogueFragment)
-            {
-                isDialogFinished = false;
-                break;
-            }
-        }
+        bool isDialogFinished = IsDialogFinished();
 
         if(!isDialogFinished)
         {
@@ -197,6 +250,10 @@ public class DialogChat : MonoBehaviour
                     DialogSystem.Instance.OnDialogDecision();
                 }
             }
+        }
+        else
+        {
+            OnDialogEnded();
         }
     }
 

@@ -219,6 +219,7 @@ public class NewGameManager : MonoBehaviour
             DontDestroyOnLoad(this);
             inventory.Initialize();
             transportationInfo.Initialize(transportationTableCSV);
+            conditions.Init();
         }
         else
         {

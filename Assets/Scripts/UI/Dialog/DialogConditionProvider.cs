@@ -1,3 +1,5 @@
+using Articy.TheMigrantsChronicles;
+using Articy.TheMigrantsChronicles.GlobalVariables;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -53,6 +55,45 @@ public class DialogConditionProvider
     public delegate void OnConditionsChangedEvent(object context);
     private readonly Dictionary<string, OnConditionsChangedEventData> onConditionsChangedListeners = new Dictionary<string, OnConditionsChangedEventData>();
 
+    public void Init()
+    {
+        foreach(string condition in ArticyGlobalVariables.VariableNames)
+        {
+            // Only handle bool conditions
+            if(ArticyGlobalVariables.Default.IsVariableOfTypeBoolean(condition))
+            {
+                if(ArticyGlobalVariables.Default.GetVariableByString<bool>(condition))
+                {
+                    // If  the variable is set by default, add it  to the global conditions.
+                    globalConditions.Add(condition);
+                }
+
+                // Add a callback that gets called whenever the value changes.
+                ArticyGlobalVariables.Default.Notifications.AddListener(condition, OnArticyVariableChanged);
+            }
+        }
+    }
+
+    private void OnArticyVariableChanged(string condition, object value)
+    {
+        if((bool) value)
+        {
+            // If the new value is true, add it to our conditions.
+            globalConditions.Add(condition);
+        }
+        else
+        {
+            // If the new value is false, remove it from our conditions.
+            globalConditions.Remove(condition);
+        }
+
+        if (onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChangedEventData onConditionsChanged))
+        {
+            // Call the delegate.
+            onConditionsChanged.onConditionsChanged?.Invoke(onConditionsChanged.context);
+        }
+    }
+
     /**
      * Adds a listener for when the specified condition changes.
      * @param conditions The conditions to add the listener to.
@@ -96,14 +137,24 @@ public class DialogConditionProvider
             return;
         }
 
-        List<string> conditions = GetConditionList(global);
-        if(!conditions.Contains(condition))
+        if(ArticyGlobalVariables.VariableNames.Contains(condition))
         {
-            conditions.Add(condition);
-
-            if(onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChangedEventData onConditionsChanged))
+            // Add the condition to articy
+            // The callback for when an articy condition changed handles invoking delegate etc.
+            ArticyGlobalVariables.Default.SetVariableByString(condition, true);
+        }
+        else
+        {
+            // This is a condition which only exists in our system, not in articy.
+            List<string> conditions = GetConditionList(global);
+            if (!conditions.Contains(condition))
             {
-                onConditionsChanged.onConditionsChanged?.Invoke(onConditionsChanged.context);
+                conditions.Add(condition);
+
+                if (onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChangedEventData onConditionsChanged))
+                {
+                    onConditionsChanged.onConditionsChanged?.Invoke(onConditionsChanged.context);
+                }
             }
         }
     }
@@ -148,14 +199,25 @@ public class DialogConditionProvider
             return;
         }
 
-        bool successful = false;
-        successful |= localConditions.Remove(condition);
-        successful |= globalConditions.Remove(condition);
-        if(successful)
+        // Set the condition to false in articy
+        if(ArticyGlobalVariables.VariableNames.Contains(condition))
         {
-            if(onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChangedEventData onConditionsChanged))
+            // Set the value to false in articy.
+            // The callback handles calling the delegate and removing it from our conditions.
+            ArticyGlobalVariables.Default.SetVariableByString(condition, false);
+        }
+        else
+        {
+            // This condition does not exist in articy.
+            bool successful = false;
+            successful |= localConditions.Remove(condition);
+            successful |= globalConditions.Remove(condition);
+            if (successful)
             {
-                onConditionsChanged.onConditionsChanged?.Invoke(onConditionsChanged.context);
+                if (onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChangedEventData onConditionsChanged))
+                {
+                    onConditionsChanged.onConditionsChanged?.Invoke(onConditionsChanged.context);
+                }
             }
         }
     }

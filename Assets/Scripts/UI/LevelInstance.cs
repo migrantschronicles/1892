@@ -233,7 +233,6 @@ public class LevelInstance : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        previousScene = defaultScene;
 
         for (int i = 0; i < sceneParent.transform.childCount; ++i)
         {

@@ -286,7 +286,7 @@ public class DialogChat : MonoBehaviour
                 }
 
                 answer.transform.SetParent(null, false);
-                Destroy(answer);
+                Destroy(answer.gameObject);
             }
             else
             {

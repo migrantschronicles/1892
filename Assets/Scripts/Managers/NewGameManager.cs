@@ -102,6 +102,7 @@ public class NewGameManager : MonoBehaviour
     public PlayerInventory inventory = new PlayerInventory();
     public ItemCategory foodCategory;
     public Item foodItem;
+    public ItemManager ItemManager { get { return GetComponent<ItemManager>(); } }
 
     // Diary entries
     private List<DiaryEntry> diaryEntries = new List<DiaryEntry>();

@@ -93,10 +93,23 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
 
     /**
      * Called when the back button is pressed.
+     * @return True if the dialog should actually close, false otherwise.
      */
-    public void OnClose()
+    public bool OnClose()
     {
-        CloseCurrentChat();
+        FinishAnimators();
+
+        if(currentChat)
+        {
+            if(!currentChat.OnClosing())
+            {
+                return false;
+            }
+
+            CloseCurrentChat();
+        }
+
+        return true;
     }
 
     private void OpenDialog(DialogButton button)
@@ -151,11 +164,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     {
         if(currentChat != null)
         {
-            foreach(var animator in animators)
-            {
-                animator.Value.Finish();
-            }
-            animators.Clear();
+            FinishAnimators();
 
             currentChat.OnHeightChanged -= OnChatHeightChanged;
             currentChat.gameObject.SetActive(false);
@@ -242,7 +251,10 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
      */
     public void OnOverlayClosed()
     {
-        ///@todo
+        if(currentChat)
+        {
+            currentChat.OnOverlayClosed();
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -251,11 +263,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         if(animators.Count > 0)
         {
             // Finish the animators
-            foreach(var animator in animators)
-            {
-                animator.Value.Finish();
-            }
-            animators.Clear();
+            FinishAnimators();
             return;
         }
 
@@ -322,6 +330,15 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         }
 
         return false;
+    }
+
+    public void FinishAnimators()
+    {
+        foreach (var animator in animators)
+        {
+            animator.Value.Finish();
+        }
+        animators.Clear();
     }
 
     public bool IsCurrentBranch(DialogAnswerBubble bubble)

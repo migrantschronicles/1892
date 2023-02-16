@@ -161,6 +161,10 @@ public class LevelInstance : MonoBehaviour
     private float seasicknessSceneFrequency = 60.0f;
     [SerializeField]
     private DialogButton introductoryDialogButton;
+    [SerializeField]
+    private GameObject shopPrefab;
+    [SerializeField]
+    private GameObject overlays;
 #if DEBUG && ENABLE_DEVELOPER_MENU
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -371,6 +375,7 @@ public class LevelInstance : MonoBehaviour
                     currentShop.gameObject.SetActive(false);
                     currentShop.OnClosed();
                     AudioManager.Instance.PlayFX(currentShop.closeClip);
+                    Destroy(currentShop.gameObject);
                     currentShop = null;
                     break;
                 }
@@ -400,27 +405,34 @@ public class LevelInstance : MonoBehaviour
             {
                 case Mode.Dialog:
                     // If the dialog was active, notify it to clear its entries.
-                    dialogSystem.OnClose();
-                    AudioManager.Instance.PlayFX(dialogSystem.closeClip);
-                    dialogSystem.gameObject.SetActive(false);
-                    foregroundScene.gameObject.SetActive(false);
-
-                    if (previousScene != null && currentScene.SceneName != previousScene)
+                    if(dialogSystem.OnClose())
                     {
-                        // If the scene switched for a dialog temporarily, return to the previous scene.
-                        OpenScene(previousScene);
-                        previousScene = null;
-                    }
+                        AudioManager.Instance.PlayFX(dialogSystem.closeClip);
+                        dialogSystem.gameObject.SetActive(false);
+                        foregroundScene.gameObject.SetActive(false);
 
-                    PlayableCharacterSpawn.SetCharactersVisible(true);
-                    if (currentHiddenObjects != null)
-                    {
-                        // Reactivate all the characters that were hidden during the dialog.
-                        foreach (GameObject go in currentHiddenObjects)
+                        if (previousScene != null && currentScene.SceneName != previousScene)
                         {
-                            go.SetActive(true);
+                            // If the scene switched for a dialog temporarily, return to the previous scene.
+                            OpenScene(previousScene);
+                            previousScene = null;
                         }
-                        currentHiddenObjects = null;
+
+                        PlayableCharacterSpawn.SetCharactersVisible(true);
+                        if (currentHiddenObjects != null)
+                        {
+                            // Reactivate all the characters that were hidden during the dialog.
+                            foreach (GameObject go in currentHiddenObjects)
+                            {
+                                go.SetActive(true);
+                            }
+                            currentHiddenObjects = null;
+                        }
+                    }
+                    else
+                    {
+                        // If the dialog system does not want to close, it opened an overlay for ItemAdded / LocationRevealed etc, so nothing to do yet.
+                        return;
                     }
 
                     break;
@@ -696,6 +708,15 @@ public class LevelInstance : MonoBehaviour
 
         currentShop.OnOpened();
         AudioManager.Instance.PlayFX(shop.openClip);
+    }
+
+    public void OpenShopForItemAdded(Item item)
+    {
+        Debug.Assert(overlayMode == OverlayMode.None && mode == Mode.Dialog);
+        GameObject shopGO = Instantiate(shopPrefab, overlays.transform);
+        Shop shop = shopGO.GetComponent<Shop>();
+        shop.InitItemAdded(item);
+        OpenShop(shop);
     }
 
     private void OnTradeAccepted()

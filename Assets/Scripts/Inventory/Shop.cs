@@ -143,6 +143,13 @@ public class Shop : MonoBehaviour
         SetSelectedItem(null);
     }
 
+    public void InitItemAdded(Item item)
+    {
+        freeShop = true;
+        OnBasketItemAmountChanged(item, 1);
+        UpdateDynamics();
+    }
+
     private void OnBasketItemAmountChanged(Item item, int amount)
     {
         if(basketItems.TryGetValue(item, out int currentAmount))

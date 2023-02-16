@@ -10,6 +10,8 @@ public class Item : ScriptableObject
     public LocalizedString Name;
     [Tooltip("The description of the item")]
     public LocalizedString Description;
+    [Tooltip("The technical name in Articy / the ID")]
+    public string technicalName;
     [Tooltip("The normal sprite used in the inventory")]
     public Sprite sprite;
     [Tooltip("The price of the item")]

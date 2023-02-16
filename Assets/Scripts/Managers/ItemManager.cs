@@ -12,6 +12,18 @@ public class ItemManager : MonoBehaviour
     private void Awake()
     {
         items = Resources.LoadAll<Item>(folderPrefix);
-        Debug.Log(items.Length);
+    }
+
+    public Item GetItemByTechnicalName(string technicalName)
+    {
+        foreach(Item item in items)
+        {
+            if(item.technicalName == technicalName)
+            {
+                return item;
+            }
+        }
+
+        return null;
     }
 }

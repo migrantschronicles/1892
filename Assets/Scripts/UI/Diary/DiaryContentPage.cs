@@ -79,6 +79,13 @@ public class DiaryContentPage : MonoBehaviour
     private void OnEnable()
     {
         animator.SetFloat("IsDoublePage", isDoublePage ? 1.0f : 0.0f);
+        switch(status)
+        {
+            case OpenStatus.Opened:
+                // The diary was closed during a popup, so open immediately.
+                animator.SetTrigger("OpenImmediately");
+                break;
+        }
     }
 
     public void OpenImmediately()

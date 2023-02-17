@@ -17,14 +17,16 @@ public enum Mode
     None,
     Shop,
     Dialog,
-    Diary
+    Diary,
+    Popup
 }
 
 enum OverlayMode
 {
     None,
     Shop,
-    Diary
+    Diary,
+    Popup
 }
 
 public enum LevelInstanceMode
@@ -227,6 +229,7 @@ public class LevelInstance : MonoBehaviour
             return SceneManager.GetActiveScene().name; 
         } 
     }
+    private PopupManager PopupManager { get { return GetComponent<PopupManager>(); } }
 
     public delegate void OnSceneChangedEvent(Scene scene);
     public event OnSceneChangedEvent onSceneChanged;
@@ -387,16 +390,45 @@ public class LevelInstance : MonoBehaviour
                     ui.CloseDiaryImmediately();
                     break;
                 }
+
+                case OverlayMode.Popup:
+                {
+                    if(PopupManager.PopPopup())
+                    {
+                        // There are still more popups
+                        return;
+                    }
+
+                    // There are no more popups, so revert changes.
+                    break;
+                }
             }
 
-            // Readd all the necessary elements for the dialog
-            SetBackButtonVisible(true);
-            ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-            blur.SetEnabled(true);
             overlayMode = OverlayMode.None;
-            dialogSystem.gameObject.SetActive(true);
-            dialogSystem.OnOverlayClosed();
-            foregroundScene.gameObject.SetActive(true);
+
+            // Overlay can happen either in the dialogs (then map / shop) or a popup.
+            switch (mode)
+            {
+                case Mode.Dialog:
+                {
+                    // Readd all the necessary elements for the dialog
+                    SetBackButtonVisible(true);
+                    ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+                    blur.SetEnabled(true);
+                    dialogSystem.gameObject.SetActive(true);
+                    dialogSystem.OnOverlayClosed();
+                    foregroundScene.gameObject.SetActive(true);
+                    break;
+                }
+
+                case Mode.Diary:
+                {
+                    // An overlay over the diary can only happen if it's a popup.
+                    ui.HideDiary(false);
+                    SetBackButtonVisible(true);
+                    break;
+                }
+            }
         }
         else
         {
@@ -1070,5 +1102,75 @@ public class LevelInstance : MonoBehaviour
     public bool HasRightForegroundCharacter(string technicalName)
     {
         return foregroundScene.HasRightCharacter(technicalName);
+    }
+
+    /**
+     * Shows a popup.
+     * Adds it to the list, so you can go back to the previous one.
+     */
+    public GameObject PushPopup(GameObject prefab)
+    {
+        if(overlayMode != OverlayMode.None && overlayMode != OverlayMode.Popup)
+        {
+            Debug.LogError("There is already an overlay, and there may not be popups over overlays.");
+            return null;
+        }
+        else if(mode == Mode.Popup)
+        {
+            Debug.LogError("Cannot show a popup over a popup");
+            return null;
+        }
+
+        if(overlayMode == OverlayMode.Popup)
+        {
+            // There is already a popup overlay
+        }
+        else if(mode != Mode.None)
+        {
+            // A shop / dialog etc is open, we need to hide it.
+            switch(mode)
+            {
+                case Mode.Shop:
+                    break;
+
+                case Mode.Diary:
+                    ui.HideDiary(true);
+                    break;
+
+                case Mode.Dialog:
+                    break;
+
+                case Mode.Popup:
+                    break;
+            }
+
+            overlayMode = OverlayMode.Popup;
+        }
+        else
+        {
+            // Nothing is open yet.
+        }
+
+        GameObject popupGO = Instantiate(prefab, overlays.transform);
+        PopupManager.PushPopup(popupGO);
+        return popupGO;
+    }
+
+    /**
+     * Shows a popup.
+     * Replaces all popups that may have been there before, so you can't go back.
+     */
+    public GameObject ShowPopup(GameObject prefab)
+    {
+        // Clear all the popups 
+        PopupManager.ClearHistory();
+
+        return PushPopup(prefab);
+    }
+
+    public void PopPopup()
+    {
+        Debug.Assert(mode == Mode.Popup || overlayMode == OverlayMode.Popup);
+        OnBack();
     }
 }

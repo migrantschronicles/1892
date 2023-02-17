@@ -14,6 +14,8 @@ public class DiaryInventoryManager : InventoryManager
     private DiaryInventoryContainer bag2;
     [SerializeField]
     private Text descriptionText;
+    [SerializeField]
+    private GameObject deleteItemPopupPrefab;
 
     private InventorySlot selectedSlot = null;
 
@@ -84,35 +86,48 @@ public class DiaryInventoryManager : InventoryManager
             return;
         }
 
-        int bagIndex = GetBagIndex(selectedSlot.Y);
-        switch(bagIndex)
+        // Show popup
+        GameObject popup = LevelInstance.Instance.ShowPopup(deleteItemPopupPrefab);
+        DeleteItemPopup deleteItemPopup = popup.GetComponent<DeleteItemPopup>();
+        deleteItemPopup.OnAccepted += (popup) =>
         {
-            case 0:
-                if (container != bag0) return;
-                break;
+            int bagIndex = GetBagIndex(selectedSlot.Y);
+            switch (bagIndex)
+            {
+                case 0:
+                    if (container != bag0) return;
+                    break;
 
-            case 1:
-                if (container != bag1) return;
-                break;
+                case 1:
+                    if (container != bag1) return;
+                    break;
 
-            case 2:
-                if (container != bag2) return;
-                break;
-        }
+                case 2:
+                    if (container != bag2) return;
+                    break;
+            }
 
-        if(TryRemoveItemAt(selectedSlot.X, selectedSlot.Y))
+            if (TryRemoveItemAt(selectedSlot.X, selectedSlot.Y))
+            {
+                NewGameManager.Instance.inventory.OnItemAmountChanged(selectedSlot.Item, -1);
+                if (GetInventorySlotAt(selectedSlot.X, selectedSlot.Y) == selectedSlot)
+                {
+                    // The item amount was decreased.
+                    selectedSlot.SetSelected(true);
+                }
+                else
+                {
+                    descriptionText.text = "";
+                    selectedSlot = null;
+                }
+            }
+
+            LevelInstance.Instance.PopPopup();
+        };
+
+        deleteItemPopup.OnRejected += (popup) =>
         {
-            NewGameManager.Instance.inventory.OnItemAmountChanged(selectedSlot.Item, -1);
-            if(GetInventorySlotAt(selectedSlot.X, selectedSlot.Y) == selectedSlot)
-            {
-                // The item amount was decreased.
-                selectedSlot.SetSelected(true);
-            }
-            else
-            {
-                descriptionText.text = "";
-                selectedSlot = null;
-            }
-        }
+            LevelInstance.Instance.PopPopup();
+        };
     }
 }

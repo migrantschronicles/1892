@@ -50,6 +50,17 @@ public class IngameDiary : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        switch (diary.Status)
+        {
+            case OpenStatus.Opened:
+                diaryAnimator.SetTrigger("OpenImmediately");
+                diaryAnimator.SetBool("ImmediatelyFix", true);
+                break;
+        }
+    }
+
     private void OnDiaryStatusChanged(OpenStatus status)
     {
         switch(status)

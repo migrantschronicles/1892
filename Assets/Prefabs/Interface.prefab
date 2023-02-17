@@ -416,7 +416,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2331030862723692868}
-  - component: {fileID: 7688118026684521228}
   m_Layer: 0
   m_Name: Pop-ups
   m_TagString: Untagged
@@ -446,57 +445,6 @@ Transform:
   m_Father: {fileID: 8993063790044699348}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7688118026684521228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1042639427446672904}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 784341f1a349f354a932b4cb2e00ace7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  endDayPopup: {fileID: 5196533781474647983}
-  startDayHostelPopup: {fileID: 5013184033993136480}
-  startDayOutsidePopup: {fileID: 4071742281754355346}
-  foodDistributePopupHostel: {fileID: 2600057831481079330}
-  foodDistributePopupOutside: {fileID: 8379520865054043187}
-  endGamePopup: {fileID: 8548007847509004253}
-  backBTNEndDay: {fileID: 5423789466034462927}
-  nightTransition: {fileID: 5196159654674703530}
-  nightTime: 3
-  foodCategory: {fileID: 11400000, guid: 5be223bfefe0c634e8939e07736e02f5, type: 2}
-  foodAmountTextHostel: {fileID: 9143121215540401922}
-  foodAmountTextOutside: {fileID: 3946399611162270201}
-  moneyText: {fileID: 4563909651051860010}
-  stolenItemsText: {fileID: 885180050555351829}
-  nonStolenItemsTXT: {fileID: 8588596769239671010}
-  stolenItemsTXT: {fileID: 840571265048065344}
-  motherFoodAmount: 0
-  boyFoodAmount: 0
-  girlFoodAmount: 0
-  purchasedFoodAmount: 0
-  hostelMoneyEU: 2
-  hostelMoneyUS: 1
-  stayInHostelBTN: {fileID: 1336789284701711617}
-  motherFoodTXTHostel: {fileID: 7501050979588057939}
-  motherFoodTXTOutside: {fileID: 2133279232001959720}
-  motherFoodBoxHostel: {fileID: 8118105327203159221}
-  boyFoodTXTHostel: {fileID: 4175055377796399185}
-  boyFoodTXTOutside: {fileID: 7471034282214642153}
-  boyFoodBoxHostel: {fileID: 8360193155782566658}
-  girlFoodTXTHostel: {fileID: 948464592470562779}
-  girlFoodTXTOutside: {fileID: 5078555044137471123}
-  girlFoodBoxHostel: {fileID: 4383178536033859650}
-  motherFoodBoxOutside: {fileID: 4698569532121466536}
-  boyFoodBoxOutside: {fileID: 4081901683889248093}
-  girlFoodBoxOutside: {fileID: 5935548680824672601}
-  deductFoodBTN: {fileID: 4080961302014763824}
-  addFoodBTN: {fileID: 7812613497605354678}
-  hasFoodColor: {r: 1, g: 1, b: 1, a: 1}
-  noFoodColor: {r: 0.9433962, g: 0.54645777, b: 0.54645777, a: 1}
 --- !u!1 &1091533163315337121
 GameObject:
   m_ObjectHideFlags: 0
@@ -619,7 +567,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: CloseStartDayOutsidePopUp
         m_Mode: 1
@@ -752,7 +700,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: DeductFood
         m_Mode: 1
@@ -1043,7 +991,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: OpenFoodDistributePopUpOutside
         m_Mode: 1
@@ -2539,7 +2487,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: DeductFood
         m_Mode: 1
@@ -2672,7 +2620,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: FeedBoy
         m_Mode: 1
@@ -3004,7 +2952,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: FeedGirl
         m_Mode: 1
@@ -3137,7 +3085,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: CloseAllPopups
         m_Mode: 1
@@ -3149,7 +3097,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: OpenEndDayPopUp
         m_Mode: 1
@@ -3282,7 +3230,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: FeedMother
         m_Mode: 1
@@ -3416,7 +3364,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: CloseStartDayHostelPopUp
         m_Mode: 1
@@ -3550,7 +3498,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: OpenFoodDistributePopUpHostel
         m_Mode: 1
@@ -4276,7 +4224,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: CloseAllPopups
         m_Mode: 1
@@ -4486,7 +4434,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: FeedGirl
         m_Mode: 1
@@ -4740,7 +4688,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: SleepOutsideMethod
         m_Mode: 1
@@ -5029,7 +4977,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: CloseAllPopups
         m_Mode: 1
@@ -5041,7 +4989,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: OpenEndDayPopUp
         m_Mode: 1
@@ -5619,7 +5567,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: AddFood
         m_Mode: 1
@@ -5830,7 +5778,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: FeedMother
         m_Mode: 1
@@ -6119,7 +6067,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: AddFood
         m_Mode: 1
@@ -6252,7 +6200,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7688118026684521228}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PopupManager, Assembly-CSharp
         m_MethodName: FeedBoy
         m_Mode: 1
@@ -7434,7 +7382,7 @@ MonoBehaviour:
   dateText: {fileID: 8993063790079616071}
   clockButton: {fileID: 8993063790452526935}
   ingameDiary: {fileID: 74810424097596111}
-  popupManager: {fileID: 7688118026684521228}
+  popupManager: {fileID: 0}
 --- !u!1 &8993063790079616090
 GameObject:
   m_ObjectHideFlags: 0

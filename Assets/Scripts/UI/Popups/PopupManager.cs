@@ -3,9 +3,81 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+class PopupStackInfo
+{
+    public GameObject popupGO;
+    public IPopup popup;
+}
+
 public class PopupManager : MonoBehaviour
 {
+    Stack<PopupStackInfo> popupStack = new Stack<PopupStackInfo>();
 
+    public void PushPopup(GameObject popupGO)
+    {
+        if(popupStack.TryPeek(out PopupStackInfo prevInfo))
+        {
+            prevInfo.popup.RemoveOnCanCloseChangedListener(OnCanCloseChanged);
+            prevInfo.popupGO.SetActive(false);
+        }
+
+        IPopup popup = popupGO.GetComponent<IPopup>();
+        bool canClose = popup != null ? popup.CanClose : true;
+        PopupStackInfo info = new()
+        {
+            popupGO = popupGO,
+            popup = popup
+        };
+        popupStack.Push(info);
+        popup.AddOnCanCloseChangedListener(OnCanCloseChanged);
+        LevelInstance.Instance.SetBackButtonVisible(canClose);
+    }
+
+    /**
+     * Removes the top popup from the stack and destroys it.
+     * @return True if there are still more popups, false if this was the last popup.
+     */
+    public bool PopPopup()
+    {
+        if(popupStack.TryPop(out PopupStackInfo info))
+        {
+            Destroy(info.popupGO);
+        }
+
+        if(popupStack.TryPeek(out PopupStackInfo nextInfo))
+        {
+            nextInfo.popupGO.SetActive(true);
+            nextInfo.popup.AddOnCanCloseChangedListener(OnCanCloseChanged);
+            LevelInstance.Instance.SetBackButtonVisible(nextInfo.popup.CanClose);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Deletes the stack and destroys all popups.
+     */
+    public void ClearHistory()
+    {
+        while(popupStack.TryPop(out PopupStackInfo info))
+        {
+            Destroy(info.popupGO);
+        }
+    }
+
+    private void OnCanCloseChanged(IPopup popup, bool canClose)
+    {
+        if(popupStack.TryPeek(out PopupStackInfo info))
+        {
+            if(info.popup == popup)
+            {
+                LevelInstance.Instance.SetBackButtonVisible(canClose);
+            }
+        }
+    }
+
+    /*
     public GameObject endDayPopup;
     public GameObject startDayHostelPopup;
     public GameObject startDayOutsidePopup;
@@ -97,9 +169,7 @@ public class PopupManager : MonoBehaviour
         endGamePopup.SetActive(false);
 
         // Reset Food distribution 
-/*        motherFoodHostel.SetActive(false);
-        boyFoodHostel.SetActive(false);
-        girlFoodHostel.SetActive(false);*/
+
         
         motherFoodTXTHostel.text = "0";
         motherFoodTXTOutside.text = "0";
@@ -107,9 +177,7 @@ public class PopupManager : MonoBehaviour
         boyFoodTXTOutside.text = "0";
         girlFoodTXTHostel.text = "0";
         girlFoodTXTOutside.text = "0";
-/*        motherFoodOutside.SetActive(false);
-        boyFoodOutside.SetActive(false);
-        girlFoodOutside.SetActive(false);*/
+
         motherFoodAmount = 0;
         boyFoodAmount = 0;
         girlFoodAmount = 0;
@@ -260,11 +328,7 @@ public class PopupManager : MonoBehaviour
 
     public void DeductFood() // Should remove deduct food button.
     {
-        /*if (foodAmount != 0) { 
-            foodAmount--;
-            moneyToBePaid -= 5;
-            purchasedFoodAmount--;
-        }*/
+
     }
 
     public void FeedMother() 
@@ -283,17 +347,6 @@ public class PopupManager : MonoBehaviour
             // Need to add one for outside
 
         }
-/*        else if(motherFoodAmount != 0)
-        {
-            motherFoodHostel.SetActive(false);
-            motherFoodOutside.SetActive(false);
-            motherFoodBoxHostel.GetComponent<Image>().color = noFoodColor;
-            motherFoodBoxOutside.GetComponent<Image>().color = noFoodColor;
-            motherFoodAmount--;
-            foodAmount++;
-            foodAmountTextHostel.text = foodAmount.ToString();
-            foodAmountTextOutside.text = foodAmount.ToString();
-        }*/
     }
 
     public void FeedBoy()
@@ -310,17 +363,6 @@ public class PopupManager : MonoBehaviour
             boyFoodTXTHostel.text = boyFoodAmount.ToString();
             boyFoodTXTOutside.text = boyFoodAmount.ToString();
         }
- /*       else if(boyFoodAmount != 0)
-        {
-            boyFoodHostel.SetActive(false);
-            boyFoodOutside.SetActive(false);
-            boyFoodBoxHostel.GetComponent<Image>().color = noFoodColor;
-            boyFoodBoxOutside.GetComponent<Image>().color = noFoodColor;
-            boyFoodAmount--;
-            foodAmount++;
-            foodAmountTextHostel.text = foodAmount.ToString();
-            foodAmountTextOutside.text = foodAmount.ToString();
-        }*/
     }
 
     public void FeedGirl()
@@ -337,17 +379,6 @@ public class PopupManager : MonoBehaviour
             girlFoodTXTHostel.text = girlFoodAmount.ToString();
             girlFoodTXTOutside.text = girlFoodAmount.ToString();
         }
- /*       else if (girlFoodAmount != 0)
-        {
-            girlFoodHostel.SetActive(false);
-            girlFoodOutside.SetActive(false);
-            girlFoodBoxHostel.GetComponent<Image>().color = noFoodColor;
-            girlFoodBoxOutside.GetComponent<Image>().color = noFoodColor;
-            girlFoodAmount--;
-            foodAmount++;
-            foodAmountTextHostel.text = foodAmount.ToString();
-            foodAmountTextOutside.text = foodAmount.ToString();
-        }*/
     }
 
 
@@ -425,4 +456,5 @@ public class PopupManager : MonoBehaviour
         yield return new WaitForSeconds(nightTime);
         nightTransition.SetActive(false);
     }
+    */
 }

@@ -160,6 +160,12 @@ public class Interface : MonoBehaviour
 
     public void OpenEndDayPopUp()
     {
-        popupManager.OpenEndDayPopUp();
+        ///@todo
+        //popupManager.OpenEndDayPopUp();
+    }
+
+    public void HideDiary(bool hide)
+    {
+        ingameDiary.gameObject.SetActive(!hide);
     }
 }

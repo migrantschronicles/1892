@@ -13,6 +13,8 @@ public class PopupManager : MonoBehaviour
 {
     Stack<PopupStackInfo> popupStack = new Stack<PopupStackInfo>();
 
+    public int Count { get { return popupStack.Count; } }
+
     public void PushPopup(GameObject popupGO)
     {
         if(popupStack.TryPeek(out PopupStackInfo prevInfo))

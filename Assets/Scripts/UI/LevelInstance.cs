@@ -428,6 +428,13 @@ public class LevelInstance : MonoBehaviour
                     SetBackButtonVisible(true);
                     break;
                 }
+
+                case Mode.Shop:
+                {
+                    ui.SetUIElementsVisible(InterfaceVisibilityFlags.StatusInfo);
+                    currentShop.gameObject.SetActive(true);
+                    break;
+                }
             }
         }
         else
@@ -490,6 +497,16 @@ public class LevelInstance : MonoBehaviour
                     currentShop.OnClosed();
                     AudioManager.Instance.PlayFX(currentShop.closeClip);
                     currentShop = null;
+                    break;
+
+                case Mode.Popup:
+                    if (PopupManager.PopPopup())
+                    {
+                        // There are still more popups
+                        return;
+                    }
+
+                    // There are no more popups, so revert changes.
                     break;
             }
 
@@ -1121,34 +1138,39 @@ public class LevelInstance : MonoBehaviour
             return null;
         }
 
-        if(overlayMode == OverlayMode.Popup)
+        if(overlayMode == OverlayMode.None)
         {
-            // There is already a popup overlay
-        }
-        else if(mode != Mode.None)
-        {
-            // A shop / dialog etc is open, we need to hide it.
-            switch(mode)
+            if (mode != Mode.None)
             {
-                case Mode.Shop:
-                    break;
+                // A shop / dialog etc is open, we need to hide it.
+                switch (mode)
+                {
+                    case Mode.Shop:
+                        ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+                        currentShop.gameObject.SetActive(false);
+                        break;
 
-                case Mode.Diary:
-                    ui.HideDiary(true);
-                    break;
+                    case Mode.Diary:
+                        ui.HideDiary(true);
+                        break;
 
-                case Mode.Dialog:
-                    break;
+                    case Mode.Dialog:
+                        dialogSystem.gameObject.SetActive(false);
+                        foregroundScene.gameObject.SetActive(false);
+                        break;
+                }
 
-                case Mode.Popup:
-                    break;
+                overlayMode = OverlayMode.Popup;
             }
+            else
+            {
+                // Nothing is open yet.
+                ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+                sceneInteractables.SetActive(false);
+                blur.SetEnabled(true);
 
-            overlayMode = OverlayMode.Popup;
-        }
-        else
-        {
-            // Nothing is open yet.
+                mode = Mode.Popup;
+            }
         }
 
         GameObject popupGO = Instantiate(prefab, overlays.transform);
@@ -1163,7 +1185,13 @@ public class LevelInstance : MonoBehaviour
     public GameObject ShowPopup(GameObject prefab)
     {
         // Clear all the popups 
-        PopupManager.ClearHistory();
+        if(mode == Mode.Popup || overlayMode == OverlayMode.Popup)
+        {
+            while(PopupManager.Count > 0)
+            {
+                OnBack();
+            }
+        }
 
         return PushPopup(prefab);
     }

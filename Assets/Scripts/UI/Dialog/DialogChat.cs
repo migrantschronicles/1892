@@ -225,11 +225,79 @@ public class DialogChat : MonoBehaviour
         return false;
     }
 
+    private TransportationMethod ConvertArticyMethodToTransportationMethod(EnumValue value)
+    {
+        TransportationMethod method = TransportationMethod.None;
+        switch (value)
+        {
+            case EnumValue.Walking: method = TransportationMethod.Walking; break;
+            case EnumValue.Cart: method = TransportationMethod.Cart; break;
+            case EnumValue.Ship: method = TransportationMethod.Ship; break;
+            case EnumValue.Carriage: method = TransportationMethod.Carriage; break;
+            case EnumValue.Tram: method = TransportationMethod.Tram; break;
+            case EnumValue.Train: method = TransportationMethod.Train; break;
+        }
+        return method;
+    }
+
+    private void OnRouteDiscovered(ArticyObject location, IEnumerable<EnumValue> value)
+    {
+        GameObject popupGO = LevelInstance.Instance.PushPopup(DialogSystem.Instance.DiscoveredRoutePopup);
+        DiscoveredRoutePopup popup = popupGO.GetComponent<DiscoveredRoutePopup>();
+        string locationName = NewGameManager.Instance.LocationManager.GetLocationByTechnicalName(location.TechnicalName);
+        popup.Init(locationName, value
+            .Where(enumValue => enumValue != 0)
+            .Select(enumValue => ConvertArticyMethodToTransportationMethod(enumValue)));
+        ///@todo Add routes to NewGameManager.
+        popup.OnAccepted += (popup) =>
+        {
+            ///@todo Liverpool: popups won't dissapear after close
+            LevelInstance.Instance.PopPopup();
+        };
+    }
+
     private void HandleTemplate()
     {
         if(pausedOn is Destination destination)
         {
-            ///@todo
+            if(destination.Template.Location_Revealed_1.LocationRevealed != null)
+            {
+                OnRouteDiscovered(destination.Template.Location_Revealed_1.LocationRevealed,
+                    new EnumValue[] {
+                        destination.Template.Transportation.EnumValue,
+                        destination.Template.Transportation_02.EnumValue,
+                        destination.Template.Transportation_3.EnumValue
+                    });
+            }
+
+            if(destination.Template.Location_Revealed_2.LocationRevealed != null)
+            {
+                OnRouteDiscovered(destination.Template.Location_Revealed_2.LocationRevealed,
+                    new EnumValue[]
+                    {
+                        destination.Template.Transportation_4.EnumValue,
+                        destination.Template.Transportation_5.EnumValue,
+                        destination.Template.Transportation_6.EnumValue
+                    });
+            }
+
+            if(destination.Template.Location_Revealed_3.LocationRevealed != null)
+            {
+                OnRouteDiscovered(destination.Template.Location_Revealed_3.LocationRevealed,
+                    new EnumValue[]
+                    {
+                        destination.Template.Transportation_7.EnumValue,
+                    });
+            }
+
+            if(destination.Template.Location_Revealed_4.LocationRevealed != null)
+            {
+                OnRouteDiscovered(destination.Template.Location_Revealed_4.LocationRevealed,
+                    new EnumValue[]
+                    {
+                        destination.Template.Transportation_8.EnumValue,
+                    });
+            }
         }
         else if(pausedOn is ItemAdded itemAdded)
         {

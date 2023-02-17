@@ -61,6 +61,8 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     private float timeForCharacters = 0.1f;
     [SerializeField, Tooltip("Whether the talk animation should be played only once or the whole time a dialog bubble is active")]
     private bool talkOnce;
+    [SerializeField]
+    private GameObject discoveredRoutePopup;
 
     public AudioClip openClip;
     public AudioClip closeClip;
@@ -79,6 +81,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     private Dictionary<IAnimatedText, TextElementAnimator> animators = new();
 
     public ArticyFlowPlayer FlowPlayer { get { return flowPlayer; } }
+    public GameObject DiscoveredRoutePopup { get { return discoveredRoutePopup; } }
 
     private void Awake()
     {

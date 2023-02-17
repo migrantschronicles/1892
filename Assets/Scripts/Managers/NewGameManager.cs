@@ -71,6 +71,8 @@ public class NewGameManager : MonoBehaviour
     public delegate void OnRouteDiscoveredEvent(string from, string to, TransportationMethod method);
     public event OnRouteDiscoveredEvent OnRouteDiscovered;
 
+    public LocationManager LocationManager { get { return GetComponent<LocationManager>(); } }
+
     // Game Stats
     public bool gameRunning = true;
     public float timeSpeed = 0.1f;

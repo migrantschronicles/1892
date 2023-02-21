@@ -137,6 +137,9 @@ public class DialogChat : MonoBehaviour
         bubble.OnHeightChanged += OnBubbleHeightChanged;
         bubble.AssignFlowObject(flowObject);
 
+        // Reset the flag
+        handledTemplate = false;
+
         DialogSystem.Instance.OnDialogLine(DialogSystem.Instance.GetTechnicalNameOfSpeaker(flowObject));
     }
 
@@ -361,9 +364,6 @@ public class DialogChat : MonoBehaviour
 
         if(!isDialogFinished)
         {
-            // Reset the flag
-            handledTemplate = false;
-
             if (availableBranches.Count == 1)
             {
                 // A linear dialog flow, so go to the next line and create a bubble.

@@ -1,3 +1,5 @@
+using Articy.TheMigrantsChronicles;
+using Articy.TheMigrantsChronicles.Features;
 using Articy.Unity;
 using Articy.Unity.Interfaces;
 using System;
@@ -30,10 +32,29 @@ public class DialogChat : MonoBehaviour
     private IList<Branch> availableBranches;
     private Dialog currentDialog;
     private IArticyObject currentSpecialDialog;
+    /// This will be true after a template was handled for a fragment which had a template.
+    private bool handledTemplate = false;
 
     public bool IsWaitingForDecision { get { return currentAnswers.Count > 0; } }
     public float Height { get { return rectTransform.sizeDelta.y; } }
     public Dialog CurrentDialog { get { return currentDialog; } }
+    public bool WantsRestart
+    {
+        get
+        {
+            if(!currentDialog)
+            {
+                return true;
+            }
+
+            if(!string.IsNullOrWhiteSpace(currentDialog.restartCondition) && NewGameManager.Instance.conditions.HasCondition(currentDialog.restartCondition))
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
 
     public delegate void OnHeightChangedEvent(float height);
     public event OnHeightChangedEvent OnHeightChanged;
@@ -46,11 +67,12 @@ public class DialogChat : MonoBehaviour
     public void Play(Dialog dialog)
     {
         ResetSpecialDialog();
-        if(dialog == currentDialog)
+        if(dialog == currentDialog && !WantsRestart)
         {
             return;
         }
 
+        NewGameManager.Instance.conditions.RemoveCondition(dialog.restartCondition);
         currentDialog = dialog;
         currentAnswers.Clear();
         DialogSystem.Instance.FlowPlayer.StartOn = dialog.ArticyObject;
@@ -127,8 +149,42 @@ public class DialogChat : MonoBehaviour
         }
     }
 
-    public void OnClosing()
+    public bool OnClosing()
     {
+        if(pausedOn != null)
+        {
+            if(WantsToHandleTemplate())
+            {
+                // If the current pausedOn has a template, handle it.
+                HandleTemplate();
+                return false;
+            }
+            else if(IsDialogFinished())
+            {
+                // If the dialog is finished, end the dialog.
+                OnDialogEnded();
+            }
+        }
+
+        return true;
+    }
+
+    public void OnOverlayClosed()
+    {
+        // The template was handled.
+        handledTemplate = true;
+
+        // This is called after a shop / popup was closed after the pausedOn had a template.
+        if(IsDialogFinished())
+        {
+            OnDialogEnded();
+        }
+    }
+
+    private void OnDialogEnded()
+    {
+        // Call instructions on the last paused object, if there are any.
+        DialogSystem.Instance.FlowPlayer.FinishCurrentPausedObject();
     }
 
     private void OnBubbleHeightChanged(DialogBubble bubble, float oldHeight, float newHeight)
@@ -145,6 +201,78 @@ public class DialogChat : MonoBehaviour
         OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
     }
 
+    private bool IsDialogFinished()
+    {
+        bool finished = true;
+        foreach (var branch in availableBranches)
+        {
+            if (branch.Target is IDialogueFragment)
+            {
+                finished = false;
+                break;
+            }
+        }
+        return finished;
+    }
+
+    private bool WantsToHandleTemplate()
+    {
+        if(pausedOn != null)
+        {
+            return (pausedOn is Destination || pausedOn is ItemAdded || pausedOn is ItemRemoved) && !handledTemplate;
+        }
+
+        return false;
+    }
+
+    private void HandleTemplate()
+    {
+        if(pausedOn is Destination destination)
+        {
+            ///@todo
+        }
+        else if(pausedOn is ItemAdded itemAdded)
+        {
+            if(itemAdded.Template.ItemGiven.ItemName != null)
+            {
+                string technicalName = itemAdded.Template.ItemGiven.ItemName.TechnicalName;
+                Item item = NewGameManager.Instance.ItemManager.GetItemByTechnicalName(technicalName);
+                if(item != null)
+                {
+                    LevelInstance.Instance.OpenShopForItemAdded(item);
+                }
+                else
+                {
+                    Debug.LogError($"Could not find item for {technicalName} for ItemAdded template");
+                }
+            }
+            else
+            {
+                Debug.LogError($"{(pausedOn as IArticyObject).TechnicalName} has ItemAdded template, but the item is null");
+            }
+        }
+        else if(pausedOn is ItemRemoved itemRemoved)
+        {
+            if(itemRemoved.Template.ItemTaken.ItemName != null)
+            {
+                string technicalName = itemRemoved.Template.ItemTaken.ItemName.TechnicalName;
+                Item item = NewGameManager.Instance.ItemManager.GetItemByTechnicalName(technicalName);
+                if(item != null)
+                {
+                    LevelInstance.Instance.OpenShopForItemRemoved(item);
+                }
+                else
+                {
+                    Debug.LogError($"Could not find item for {technicalName} for ItemRemoved template");
+                }
+            }
+            else
+            {
+                Debug.LogError($"{(pausedOn as IArticyObject).TechnicalName} has ItemRemoved template, but the item is null");
+            }
+        }
+    }
+
     public void OnPointerClick()
     {
         if(currentSpecialDialog != null || availableBranches == null)
@@ -152,18 +280,22 @@ public class DialogChat : MonoBehaviour
             return;
         }
 
-        bool isDialogFinished = true;
-        foreach(var branch in availableBranches)
+        if(WantsToHandleTemplate())
         {
-            if(branch.Target is IDialogueFragment)
-            {
-                isDialogFinished = false;
-                break;
-            }
+            // Handle the template code
+            HandleTemplate();
+            // The dialog continues after the overlay was closed.
+            // If the dialog is finished, this will be handled there as well.
+            return;
         }
+
+        bool isDialogFinished = IsDialogFinished();
 
         if(!isDialogFinished)
         {
+            // Reset the flag
+            handledTemplate = false;
+
             if (availableBranches.Count == 1)
             {
                 // A linear dialog flow, so go to the next line and create a bubble.
@@ -198,6 +330,10 @@ public class DialogChat : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            OnDialogEnded();
+        }
     }
 
     private void AddToContent(GameObject bubble)
@@ -229,7 +365,8 @@ public class DialogChat : MonoBehaviour
                 }
 
                 answer.transform.SetParent(null, false);
-                Destroy(answer);
+                DialogSystem.Instance.UnregisterAnimator(answer);
+                Destroy(answer.gameObject);
             }
             else
             {

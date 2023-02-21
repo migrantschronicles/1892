@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 7430646057224914511}
   - component: {fileID: 6468859767798026066}
   - component: {fileID: 7944783083826979776}
+  - component: {fileID: 1617485015708389388}
+  - component: {fileID: 8110903036055847939}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: GameManager
@@ -51,8 +53,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   userName: 
-  currentLocation: 
-  visitedLocationsStr: []
   gameRunning: 1
   timeSpeed: 500
   hoursPerDay: 10
@@ -60,6 +60,7 @@ MonoBehaviour:
   minutes: 0
   hour: 0
   day: 0
+  wantsEndOfDay: 0
   food: 100
   money: 100
   dateStr: 
@@ -121,3 +122,31 @@ MonoBehaviour:
   homesicknessHungryIncrease: 0.5
   homesicknessItemStolenIncrease: 0.3
   homesicknessItemBoughtDecrease: 0.3
+  homesicknessLeftLineDecrease: 0.025
+  homesicknessRightLineDecrease: 0.025
+  homesicknessDecisionDecrease: 0.025
+  homesicknessSeasickIncrease: 1
+--- !u!114 &1617485015708389388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce63a52979e9395468857670f3d5b65f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8110903036055847939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5ed210320986e74fbc9e7828e224b81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

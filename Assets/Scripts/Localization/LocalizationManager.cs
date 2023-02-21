@@ -1,3 +1,4 @@
+using Articy.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -53,6 +54,10 @@ public class LocalizationManager
 
         if(!string.IsNullOrWhiteSpace(languageCode))
         {
+            // Set articy language
+            ArticyDatabase.Localization.Language = languageCode;
+
+            // Set application language
             LocaleIdentifier identifier = new LocaleIdentifier(languageCode);
             for(int i = 0; i < LocalizationSettings.AvailableLocales.Locales.Count; ++i)
             {

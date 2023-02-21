@@ -38,7 +38,7 @@ public class TransportationMethodBox : MonoBehaviour
         }
     }
 
-    private void Awake()
+    private void Start()
     {
         UpdateTransportationMethod();
     }
@@ -74,7 +74,7 @@ public class TransportationMethodBox : MonoBehaviour
             case TransportationMethod.Cart: transportationTitle = cartString; normalizedPosition.Set(1, -1); break;
             case TransportationMethod.Ship: transportationTitle = shipString; normalizedPosition.Set(1, 1); break;
             case TransportationMethod.Carriage: transportationTitle = carriageString; normalizedPosition.Set(-1, 1); break;
-            default: return;
+            default: titleText.text = "NONE"; return;
         }
 
         if(Application.isPlaying)

@@ -31,7 +31,7 @@ public class ProtagonistAnimationController : IAnimationController
         if(NewGameManager.Instance)
         {
             ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
-            healthData.onHealthChanged -= OnHealthStateChanged;
+            healthData.onHealthStateChanged -= OnHealthStateChanged;
         }
     }
 

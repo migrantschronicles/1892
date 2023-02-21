@@ -641,6 +641,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1dd08d2ba48d1d4a89d43dd1a82665b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  locationOverride: 
   sceneParent: {fileID: 705376517610133110}
   foregroundScene: {fileID: 7049624023261008550}
   backButton: {fileID: 1923004301047999426}
@@ -685,7 +686,8 @@ MonoBehaviour:
   seasicknessSceneTime: 5
   seasicknessSceneFrequency: 60
   introductoryDialogButton: {fileID: 0}
-  developerLocationPanelPrefab: {fileID: 3124184666252390237, guid: 8dac1850cb38c2242994b607af18f50e, type: 3}
+  shopPrefab: {fileID: 1011960336168767627, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
+  overlays: {fileID: 1347933614999765271}
 --- !u!1 &7425761066399079259
 GameObject:
   m_ObjectHideFlags: 0
@@ -1880,34 +1882,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 10.900002
       objectReference: {fileID: 0}
-    - target: {fileID: 580164672718159573, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 580164672718159573, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 580164672718159573, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2660712524924995203}
-    - target: {fileID: 580164672718159573, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 580164672718159573, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseStartDayHostelPopUp
-      objectReference: {fileID: 0}
-    - target: {fileID: 580164672718159573, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PopupManager, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 580164672718159573, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 690131002026453687, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
@@ -1927,34 +1901,6 @@ PrefabInstance:
     - target: {fileID: 910136918276150990, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 928961780881976947, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 928961780881976947, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 928961780881976947, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2660712524924995203}
-    - target: {fileID: 928961780881976947, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 928961780881976947, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseStartDayOutsidePopUp
-      objectReference: {fileID: 0}
-    - target: {fileID: 928961780881976947, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PopupManager, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 928961780881976947, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 940403884596772295, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -1999,34 +1945,6 @@ PrefabInstance:
     - target: {fileID: 1289467922431404798, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1336789284701711617, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1336789284701711617, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1336789284701711617, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2660712524924995203}
-    - target: {fileID: 1336789284701711617, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1336789284701711617, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OpenFoodDistributePopUp
-      objectReference: {fileID: 0}
-    - target: {fileID: 1336789284701711617, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PopupManager, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 1336789284701711617, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1344999131450263817, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -2099,34 +2017,6 @@ PrefabInstance:
     - target: {fileID: 2142195820456249788, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146428644164546246, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146428644164546246, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146428644164546246, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2660712524924995203}
-    - target: {fileID: 2146428644164546246, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146428644164546246, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: AddFood
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146428644164546246, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PopupManager, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 2146428644164546246, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 2166320965862346403, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -2219,34 +2109,6 @@ PrefabInstance:
     - target: {fileID: 2906395281555806350, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2908225080556790579, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2908225080556790579, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2908225080556790579, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2660712524924995203}
-    - target: {fileID: 2908225080556790579, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2908225080556790579, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: DeductFood
-      objectReference: {fileID: 0}
-    - target: {fileID: 2908225080556790579, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PopupManager, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 2908225080556790579, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 2974080570757836737, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -2925,34 +2787,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8140723296749322114, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8140723296749322114, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8140723296749322114, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2660712524924995203}
-    - target: {fileID: 8140723296749322114, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8140723296749322114, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OpenFoodDistributePopUpOutside
-      objectReference: {fileID: 0}
-    - target: {fileID: 8140723296749322114, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PopupManager, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 8140723296749322114, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 8147058618483173124, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
@@ -3281,11 +3115,7 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6466631275541063371, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-    - {fileID: 7651206361577576637, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-    - {fileID: 6804308247425746017, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-    - {fileID: 2356568348552895115, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
 --- !u!114 &2660712524924995203 stripped
 MonoBehaviour:

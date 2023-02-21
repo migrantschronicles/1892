@@ -248,13 +248,13 @@ public class DialogChat : MonoBehaviour
         GameObject popupGO = LevelInstance.Instance.PushPopup(DialogSystem.Instance.DiscoveredRoutePopup);
         DiscoveredRoutePopup popup = popupGO.GetComponent<DiscoveredRoutePopup>();
         string locationName = NewGameManager.Instance.LocationManager.GetLocationByTechnicalName(location.TechnicalName);
-        popup.Init(locationName, value
+        IEnumerable<TransportationMethod> methods = value
             .Where(enumValue => enumValue != 0)
-            .Select(enumValue => ConvertArticyMethodToTransportationMethod(enumValue)));
-        ///@todo Add routes to NewGameManager.
+            .Select(enumValue => ConvertArticyMethodToTransportationMethod(enumValue));
+        popup.Init(locationName, methods);
+        methods.ToList().ForEach(method => NewGameManager.Instance.DiscoverRoute(LevelInstance.Instance.LocationName, locationName, method));
         popup.OnAccepted += (popup) =>
         {
-            ///@todo Liverpool: popups won't dissapear after close
             LevelInstance.Instance.PopPopup();
         };
     }

@@ -22,6 +22,8 @@ public class MainMenu : MonoBehaviour
     private Vector3 menuInitialPos = new Vector3(0, 0, 0);
     [SerializeField]
     private Vector3 languageSelectionPos = new Vector3(0, -1202, 0);
+    private bool inLanguageSelection = false;
+    public Transform mainCamera;
 
 
     [SerializeField]
@@ -41,22 +43,42 @@ public class MainMenu : MonoBehaviour
 
     private Animator currentPage;
 
+    public Animator ENBook;
+    public Animator LUXBook;
+
     private void Start()
     {
         Application.targetFrameRate = 30;
         AudioManager.Instance.PlayMusic(musicClips);
+        inLanguageSelection = true;
+    }
+
+    private void Update()
+    {
+        if(inLanguageSelection && Vector3.Distance(mainCamera.localPosition, languageSelectionPos) > 0.01f) mainCamera.localPosition = Vector3.Lerp(mainCamera.localPosition, languageSelectionPos, 0.6f * Time.deltaTime);
+        else if (!inLanguageSelection && Vector3.Distance(scene.transform.localPosition, menuInitialPos) > 0.01f) mainCamera.localPosition = Vector3.Lerp(mainCamera.localPosition, menuInitialPos, 0.6f * Time.deltaTime);
     }
 
     public void OpenLanguageSelection() 
     {
-        while (Vector3.Distance(scene.transform.localPosition, languageSelectionPos) > 0.01f)
-            scene.localPosition = Vector3.Lerp(scene.transform.position, languageSelectionPos, 0.5f * Time.deltaTime);
+        inLanguageSelection = true;
     }
 
     public void CloseLanguageSelection()
     {
-        while (Vector3.Distance(scene.transform.localPosition, menuInitialPos) > 0.01f)
-            scene.localPosition = Vector3.Lerp(scene.transform.position, menuInitialPos, 0.5f * Time.deltaTime);
+        inLanguageSelection = false;
+    }
+
+    IEnumerator CloseLanguageSelectionWithDelay(float seconds) 
+    {
+        yield return new WaitForSeconds(seconds);
+        CloseLanguageSelection();
+    }
+
+    public void SelectLanguage(string language) 
+    {
+        // Apply it to GameManager (For later)
+        StartCoroutine(CloseLanguageSelectionWithDelay(0.5f));
     }
 
     public void OpenDiary()

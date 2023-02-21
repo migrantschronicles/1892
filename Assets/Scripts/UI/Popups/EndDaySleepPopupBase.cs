@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -55,12 +56,21 @@ public class EndDaySleepPopupBase : MonoBehaviour, IPopup
 
     protected virtual bool CanDistributeFoodTo(EndDayPortrait portrait)
     {
-        if(foodCounter.Count <= 0 && foodCounter.IsInfinite)
+        if(foodCounter.Count <= 0 && !foodCounter.IsInfinite)
         {
             return false;
         }
 
         ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(portrait.ProtagonistName);
         return portrait.FoodAmount < healthData.HungryStatus.NextRequiredFoodAmount;
+    }
+
+    public List<EndOfDayHealthData> GetEndOfDayHealthData()
+    {
+        return new List<EndOfDayHealthData>(portraits.Select(portrait => new EndOfDayHealthData
+        {
+            name = portrait.ProtagonistName,
+            foodAmount = portrait.FoodAmount
+        }));
     }
 }

@@ -87,6 +87,8 @@ public class EndDayHostelPopup : EndDaySleepPopupBase
             return;
         }
 
+
+
         ++boughtFoodAmount;
         ++foodCounter.Count;
         UpdateCosts();
@@ -96,5 +98,10 @@ public class EndDayHostelPopup : EndDaySleepPopupBase
     {
         price = CurrentCost;
         UpdateElements();
+    }
+
+    public void OnAccept()
+    {
+        LevelInstance.Instance.OnSleepInHostel(GetEndOfDayHealthData(), CurrentCost, boughtFoodAmount);
     }
 }

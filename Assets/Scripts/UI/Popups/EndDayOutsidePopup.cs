@@ -9,4 +9,9 @@ public class EndDayOutsidePopup : EndDaySleepPopupBase
         CreatePortraits();
         InitFoodCounter();
     }
+
+    public void OnAccept()
+    {
+        LevelInstance.Instance.OnSleepOutside(GetEndOfDayHealthData());
+    }
 }

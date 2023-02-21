@@ -360,53 +360,41 @@ public class NewGameManager : MonoBehaviour
         onDateChanged?.Invoke(date);
     }
 
-    public void SleepOutside(int motherFoodAmount, int boyFoodAmount, int girlFoodAmount) {
-        int totalFoodUsed = motherFoodAmount + boyFoodAmount + girlFoodAmount;
-
-        if (totalFoodUsed != 0) { 
-            // Apply Health
-            inventory.RemoveItemCategory(foodCategory, totalFoodUsed);
-        }
-
-        ///@todo Should be passed as a parameter
-        HealthStatus.OnEndOfDay(new EndOfDayHealthData[]
+    public List<StolenItemInfo> OnSleepOutside(List<EndOfDayHealthData> endOfDayHealthData)
+    {
+        int distributedFoodAmount = endOfDayHealthData.Select(data => data.foodAmount).Sum();
+        if(distributedFoodAmount > 0)
         {
-            new EndOfDayHealthData { name = "Elis", foodAmount = motherFoodAmount },
-            new EndOfDayHealthData { name = "Mreis", foodAmount = girlFoodAmount },
-            new EndOfDayHealthData { name = "Mattis", foodAmount = boyFoodAmount }
-        });
+            inventory.RemoveItemCategory(foodCategory, distributedFoodAmount);
+        }
+        HealthStatus.OnEndOfDay(endOfDayHealthData);
+        StartNewDay();
+        List<StolenItemInfo> stolenItems = StealItems();
+        return stolenItems;
     }
 
-    public void SleepInHostel(int cost,int purchasedFoodAmount, int motherFoodAmount, int boyFoodAmount, int girlFoodAmount) {
-        money -= cost;
-
-
-        int totalFoodUsed = motherFoodAmount + boyFoodAmount + girlFoodAmount;
-        int remainingFood = totalFoodUsed - purchasedFoodAmount;
-
-        if (totalFoodUsed != 0) { } // Apply health
-
-        if (totalFoodUsed - purchasedFoodAmount > 0)
+    public void OnSleepInHostel(List<EndOfDayHealthData> endOfDayHealthData, int cost, int boughtFoodAmount)
+    {
+        int distributedFoodAmount = endOfDayHealthData.Select(data => data.foodAmount).Sum();
+        int itemsToAdd = boughtFoodAmount;
+        if (distributedFoodAmount > 0)
         {
-            inventory.RemoveItemCategory(foodCategory, totalFoodUsed-purchasedFoodAmount);
+            int itemsRemoved = inventory.RemoveItemCategory(foodCategory, distributedFoodAmount);
+            if(itemsRemoved < distributedFoodAmount)
+            {
+                itemsToAdd -= distributedFoodAmount - itemsRemoved;
+            }
         }
-        if(purchasedFoodAmount - totalFoodUsed > 0) 
+        if(itemsToAdd > 0)
         {
-            inventory.AddItem(foodItem, purchasedFoodAmount - totalFoodUsed);
+            inventory.AddItem(foodItem, itemsToAdd);
         }
-
-        ///@todo Should be passed as a parameter
-        HealthStatus.OnEndOfDay(new EndOfDayHealthData[]
-        {
-            new EndOfDayHealthData { name = "Elis", foodAmount = motherFoodAmount },
-            new EndOfDayHealthData { name = "Mreis", foodAmount = girlFoodAmount },
-            new EndOfDayHealthData { name = "Mattis", foodAmount = boyFoodAmount }
-        });
+        HealthStatus.OnEndOfDay(endOfDayHealthData);
+        StartNewDay();
     }
     
     public void StartNewDay() 
     {
-        Debug.Log("Go to next day here, via clock");
         day++;
         ++DaysInCity;
         SetDate(date.AddDays(1));

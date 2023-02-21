@@ -25,6 +25,7 @@ public class EndDayPortrait : MonoBehaviour
     private Sprite filledFoodItemSprite;
 
     public int FoodAmount { get { return amount; } set { amount = value; UpdateElements(); } }
+    public string ProtagonistName { get { return protagonistName; } }
 
     public delegate void OnPortraitClickedEvent(EndDayPortrait portrait);
     public event OnPortraitClickedEvent OnPortraitClicked;

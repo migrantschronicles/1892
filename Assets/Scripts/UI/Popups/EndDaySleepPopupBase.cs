@@ -55,6 +55,12 @@ public class EndDaySleepPopupBase : MonoBehaviour, IPopup
 
     protected virtual bool CanDistributeFoodTo(EndDayPortrait portrait)
     {
-        return foodCounter.Count > 0 || foodCounter.IsInfinite;
+        if(foodCounter.Count <= 0 && foodCounter.IsInfinite)
+        {
+            return false;
+        }
+
+        ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(portrait.ProtagonistName);
+        return portrait.FoodAmount < healthData.HungryStatus.NextRequiredFoodAmount;
     }
 }

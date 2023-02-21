@@ -167,6 +167,8 @@ public class LevelInstance : MonoBehaviour
     private GameObject shopPrefab;
     [SerializeField]
     private GameObject overlays;
+    [SerializeField]
+    private GameObject endDayPopupPrefab;
 #if DEBUG && ENABLE_DEVELOPER_MENU
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -542,10 +544,7 @@ public class LevelInstance : MonoBehaviour
             else if(NewGameManager.Instance.RemainingTime == 0)
             {
                 // Reset blur.
-                ///@todo Change this when blur is enabled for popups
                 isEndOfDayFade = false;
-                //blur.SetEnabled(true);
-                blur.SetEnabled(false);
             }
             else
             {
@@ -861,11 +860,6 @@ public class LevelInstance : MonoBehaviour
         }
     }
 
-    public void OpenClock()
-    {
-        ui.OpenEndDayPopUp();
-    }
-
     public void SetBackButtonVisible(bool visible)
     {
         backButton.gameObject.SetActive(visible);
@@ -1132,44 +1126,42 @@ public class LevelInstance : MonoBehaviour
             Debug.LogError("There is already an overlay, and there may not be popups over overlays.");
             return null;
         }
-        else if(mode == Mode.Popup)
-        {
-            Debug.LogError("Cannot show a popup over a popup");
-            return null;
-        }
 
-        if(overlayMode == OverlayMode.None)
+        if(mode != Mode.Popup)
         {
-            if (mode != Mode.None)
+            if (overlayMode == OverlayMode.None)
             {
-                // A shop / dialog etc is open, we need to hide it.
-                switch (mode)
+                if (mode != Mode.None)
                 {
-                    case Mode.Shop:
-                        ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-                        currentShop.gameObject.SetActive(false);
-                        break;
+                    // A shop / dialog etc is open, we need to hide it.
+                    switch (mode)
+                    {
+                        case Mode.Shop:
+                            ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+                            currentShop.gameObject.SetActive(false);
+                            break;
 
-                    case Mode.Diary:
-                        ui.HideDiary(true);
-                        break;
+                        case Mode.Diary:
+                            ui.HideDiary(true);
+                            break;
 
-                    case Mode.Dialog:
-                        dialogSystem.gameObject.SetActive(false);
-                        foregroundScene.gameObject.SetActive(false);
-                        break;
+                        case Mode.Dialog:
+                            dialogSystem.gameObject.SetActive(false);
+                            foregroundScene.gameObject.SetActive(false);
+                            break;
+                    }
+
+                    overlayMode = OverlayMode.Popup;
                 }
+                else
+                {
+                    // Nothing is open yet.
+                    ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+                    sceneInteractables.SetActive(false);
+                    blur.SetEnabled(true);
 
-                overlayMode = OverlayMode.Popup;
-            }
-            else
-            {
-                // Nothing is open yet.
-                ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-                sceneInteractables.SetActive(false);
-                blur.SetEnabled(true);
-
-                mode = Mode.Popup;
+                    mode = Mode.Popup;
+                }
             }
         }
 
@@ -1200,5 +1192,11 @@ public class LevelInstance : MonoBehaviour
     {
         Debug.Assert(mode == Mode.Popup || overlayMode == OverlayMode.Popup);
         OnBack();
+    }
+
+    public void OpenEndDayPopup()
+    {
+        GameObject popupGO = ShowPopup(endDayPopupPrefab);
+
     }
 }

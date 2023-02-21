@@ -28,6 +28,21 @@ public class ProtagonistData
     public Sprite hungryPortrait;
     public Sprite sadPortrait;
     public Sprite sickPortrait;
+
+    public Sprite GetPortraitByHealthState(HealthState state)
+    {
+        switch(state)
+        {
+            case HealthState.Neutral: return neutralPortrait;
+            case HealthState.Angry: return angryPortrait;
+            case HealthState.Happy: return happyPortrait;
+            case HealthState.Hungry: return hungryPortrait;
+            case HealthState.Sad: return sadPortrait;
+            case HealthState.Sick: return sickPortrait;
+        }
+
+        return null;
+    }
 }
 
 /**

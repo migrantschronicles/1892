@@ -263,9 +263,7 @@ public class NewGameManager : MonoBehaviour
     
     private void EndDay()
     {
-        ///@todo
-        //popups.OpenEndDayPopUp();
-        //popups.backBTNEndDay.SetActive(false);
+        LevelInstance.Instance.OpenEndDayPopup();
         wantsEndOfDay = false;
     }
 

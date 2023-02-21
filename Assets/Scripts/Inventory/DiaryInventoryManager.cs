@@ -59,7 +59,7 @@ public class DiaryInventoryManager : InventoryManager
     {
         int bagIndex = GetBagIndex(slot.Y);
         InventoryContainer container = GetContainer(bagIndex);
-        container.AttachSlot(slot, slot.X, slot.Y);
+        container.AttachSlot(slot, slot.X, slot.Y % GridHeight);
         return true;
     }
 

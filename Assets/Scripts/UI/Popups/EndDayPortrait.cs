@@ -58,14 +58,16 @@ public class EndDayPortrait : MonoBehaviour
     {
         Sprite portraitSprite = null;
         HealthState state = HealthState.Neutral;
-#if UNITY_EDITOR
-        if(!string.IsNullOrWhiteSpace(protagonistName))
+        if (Application.isPlaying)
         {
-            ProtagonistData data = NewGameManager.Instance.PlayableCharacterData.GetProtagonistDataByName(protagonistName);
-            ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
-            portraitSprite = data.GetPortraitByHealthState(healthData.HealthState);
+            if (!string.IsNullOrWhiteSpace(protagonistName))
+            {
+                ProtagonistData data = NewGameManager.Instance.PlayableCharacterData.GetProtagonistDataByName(protagonistName);
+                ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
+                portraitSprite = data.GetPortraitByHealthState(healthData.HealthState);
+                state = healthData.HealthState;
+            }
         }
-#endif
 
         if(portraitSprite != null)
         {

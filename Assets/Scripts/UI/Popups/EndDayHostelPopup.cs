@@ -87,7 +87,17 @@ public class EndDayHostelPopup : EndDaySleepPopupBase
             return;
         }
 
-
+        ///@todo Change if food can be stackable or can have volume 2
+        // Calculate if there is an available slot after distributed food and bought food gets added.
+        // Assumes that food can't be stackable and can only have a volume of 1.
+        int availableSlotCount = NewGameManager.Instance.inventory.GetAvailableSlotCount();
+        int distributedFromInventory = Mathf.Min(distributedFoodCount, inventoryFoodCount);
+        int distributedFromBought = distributedFoodCount - distributedFromInventory;
+        if(availableSlotCount + distributedFromInventory - (boughtFoodAmount - distributedFromBought) <= 0)
+        {
+            // Inventory is full.
+            return;
+        }
 
         ++boughtFoodAmount;
         ++foodCounter.Count;

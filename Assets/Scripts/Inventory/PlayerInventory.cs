@@ -254,9 +254,64 @@ public class PlayerInventory
      * Adds a specified item to the inventory.
      * @param item The item to add.
      * @param amount The amount
+     * @return The number of items added
      */
-    public void AddItem(Item item, int amount = 1)
+    public int AddItem(Item item, int amount = 1)
     {
-        OnItemAmountChanged(item, amount);
+        int added = 0;
+        for(; added < amount && CanAddItem(item); ++added)
+        {
+            OnItemAmountChanged(item, 1);
+        }
+
+        return added;
+    }
+
+    public int GetBagCount()
+    {
+        ///@todo
+        return 1;
+    }
+
+    public int GetAvailableSlotCount()
+    {
+        int bagCount = GetBagCount();
+        int bagSlotCount = bagCount * InventoryManager.GridWidth * InventoryManager.GridHeight;
+        int filledSlots = 0;
+        foreach (var inventoryItem in items)
+        {
+            if (inventoryItem.Key.IsInfinitlyStackable || inventoryItem.Value == 1)
+            {
+                // Either the item is infinitly stackable or only 1 amount, so it takes only one slot.
+                filledSlots += inventoryItem.Key.Volume;
+            }
+            else
+            {
+                // The item is stackable and has a max stack amount
+                filledSlots += (inventoryItem.Value / inventoryItem.Key.MaxStackCount +
+                    (((inventoryItem.Value % inventoryItem.Key.MaxStackCount) == 0) ? 0 : 1)) * inventoryItem.Key.Volume;
+            }
+        }
+
+        int availableSlots = bagSlotCount - filledSlots;
+        Debug.Assert(availableSlots >= 0);
+
+        return availableSlots;
+    }
+
+    public bool CanAddItem(Item item)
+    {
+        foreach (var inventoryItem in items)
+        {
+            if (inventoryItem.Key == item && item.IsStackable &&
+                (item.IsInfinitlyStackable || ((inventoryItem.Value % inventoryItem.Key.MaxStackCount) != 0)))
+            {
+                // Can just add it to the stack.
+                return true;
+            }
+        }
+
+        int availableSlotCount = GetAvailableSlotCount();
+        return availableSlotCount >= item.Volume;
     }
 }

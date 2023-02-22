@@ -36,6 +36,8 @@ public class Item : ScriptableObject
         }
     }
 
+    public bool IsInfinitlyStackable { get { return MaxStackCount <= 0; } }
+
     public ItemType ItemType
     {
         get

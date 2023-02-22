@@ -196,12 +196,12 @@ public class InventorySlot : MonoBehaviour
         bool defaultVisuals = !(isSelected || isGhostMode);
         if(defaultVisuals)
         {
-            material.SetFloat("_OutlineEnabled", 0.0f);
+            image.materialForRendering.SetFloat("_OutlineEnabled", 0.0f);
         }
         else
         {
-            material.SetFloat("_OutlineColorIndex", isSelected ? 1 : 0);
-            material.SetFloat("_OutlineEnabled", 1.0f);
+            image.materialForRendering.SetFloat("_OutlineColorIndex", isSelected ? 1 : 0);
+            image.materialForRendering.SetFloat("_OutlineEnabled", 1.0f);
         }
         amountText.color = defaultVisuals ? defaultTextColor : ghostTextColor;
     }

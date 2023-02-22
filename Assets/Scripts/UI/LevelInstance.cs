@@ -170,6 +170,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject endDayPopupPrefab;
     [SerializeField]
+    private GameObject endDayShipPopupPrefab;
+    [SerializeField]
     private GameObject nightTransitionPrefab;
     [SerializeField]
     private float nightTransitionTime = 2.0f;
@@ -1205,7 +1207,14 @@ public class LevelInstance : MonoBehaviour
 
     public void OpenEndDayPopup()
     {
-        ShowPopup(endDayPopupPrefab);
+        GameObject popup = null;
+        switch(levelMode)
+        {
+            case LevelInstanceMode.Ship: popup = endDayShipPopupPrefab; break;
+            default: popup = endDayPopupPrefab; break;
+        }
+
+        ShowPopup(popup);
     }
 
     public void OnSleepOutside(List<EndOfDayHealthData> endOfDayHealthData)
@@ -1224,7 +1233,7 @@ public class LevelInstance : MonoBehaviour
         GameObject popupGO = ShowPopup(startDayOutsidePrefab);
         StartDayOutsidePopup popup = popupGO.GetComponent<StartDayOutsidePopup>();
         popup.Init(stolenItems);
-        popup.OnStartDay += () => PopPopup();
+        popup.OnStartDay += (p) => PopPopup();
     }
 
     public void OnSleepInHostel(List<EndOfDayHealthData> endOfDayHealthData, int cost, int boughtFoodAmount)
@@ -1242,6 +1251,24 @@ public class LevelInstance : MonoBehaviour
         NewGameManager.Instance.OnSleepInHostel(endOfDayHealthData, cost, boughtFoodAmount);
         GameObject popupGO = ShowPopup(startDayHostelPrefab);
         StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
-        popup.OnStartDay += () => PopPopup();
+        popup.OnStartDay += (p) => PopPopup();
+    }
+
+    public void OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)
+    {
+        StartCoroutine(SleepInShipTransition(endOfDayHealthData));
+    }
+
+    private IEnumerator SleepInShipTransition(List<EndOfDayHealthData> endOfDayHealthData)
+    {
+        ///@todo close all mode
+        nightTransition = Instantiate(nightTransitionPrefab, canvas.transform);
+        yield return new WaitForSeconds(nightTransitionTime);
+        Destroy(nightTransition);
+
+        NewGameManager.Instance.OnSleepInShip(endOfDayHealthData);
+        GameObject popupGO = ShowPopup(startDayHostelPrefab);
+        StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
+        popup.OnStartDay += (p) => PopPopup();
     }
 }

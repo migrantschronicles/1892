@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class StartDayHostelPopup : MonoBehaviour, IPopup
 {
-    public delegate void OnStartDayEvent();
-    public event OnStartDayEvent OnStartDay;
+    public event IPopup.OnPopupAction OnStartDay;
 
     public bool CanClose { get { return false; } }
 
     public void OnAccept()
     {
-        OnStartDay?.Invoke();
+        OnStartDay?.Invoke(this);
     }
 }

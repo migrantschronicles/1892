@@ -16,8 +16,7 @@ public class StartDayOutsidePopup : MonoBehaviour, IPopup
     [SerializeField]
     private LocalizedString noItemsStolenText;
 
-    public delegate void OnStartDayEvent();
-    public event OnStartDayEvent OnStartDay;
+    public event IPopup.OnPopupAction OnStartDay;
     public bool CanClose { get { return false; } }
 
     public void Init(List<StolenItemInfo> stolenItems)
@@ -48,6 +47,6 @@ public class StartDayOutsidePopup : MonoBehaviour, IPopup
 
     public void OnAccept()
     {
-        OnStartDay?.Invoke();
+        OnStartDay?.Invoke(this);
     }
 }

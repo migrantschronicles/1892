@@ -392,6 +392,12 @@ public class NewGameManager : MonoBehaviour
         HealthStatus.OnEndOfDay(endOfDayHealthData);
         StartNewDay();
     }
+
+    public void OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)
+    {
+        HealthStatus.OnEndOfDay(endOfDayHealthData);
+        StartNewDay();
+    }
     
     public void StartNewDay() 
     {

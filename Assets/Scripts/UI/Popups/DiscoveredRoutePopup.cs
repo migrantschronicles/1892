@@ -25,6 +25,8 @@ public class DiscoveredRoutePopup : MonoBehaviour, IPopup
 
     public event IPopup.OnPopupAction OnAccepted;
 
+    public bool CanClose { get { return false; } }
+
     public void Accept()
     {
         OnAccepted?.Invoke(this);

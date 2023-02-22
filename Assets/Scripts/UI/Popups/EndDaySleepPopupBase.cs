@@ -12,8 +12,6 @@ public class EndDaySleepPopupBase : MonoBehaviour, IPopup
     protected GameObject endDayPortraitContainer;
     [SerializeField]
     protected GameObject endDayPortraitPrefab;
-    [SerializeField]
-    protected Button acceptButton;
 
     protected List<EndDayPortrait> portraits = new();
     protected int inventoryFoodCount = 0;

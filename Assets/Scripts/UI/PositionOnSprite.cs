@@ -193,8 +193,8 @@ public class PositionOnSprite : MonoBehaviour
         Vector2 minAnchoredPosition = WorldToAnchoredPosition(bounds.min);
         Vector2 maxAnchoredPosition = WorldToAnchoredPosition(bounds.max);
         Vector2 interpolatedPosition = new Vector2(
-            Mathf.Lerp(minAnchoredPosition.x, maxAnchoredPosition.x, normalizedPosition.x),
-            Mathf.Lerp(minAnchoredPosition.y, maxAnchoredPosition.y, normalizedPosition.y)
+            Mathf.LerpUnclamped(minAnchoredPosition.x, maxAnchoredPosition.x, normalizedPosition.x),
+            Mathf.LerpUnclamped(minAnchoredPosition.y, maxAnchoredPosition.y, normalizedPosition.y)
             );
 
         rectTransform.anchoredPosition = interpolatedPosition;

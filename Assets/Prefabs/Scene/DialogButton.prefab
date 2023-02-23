@@ -40,7 +40,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 90, y: 90}
+  m_SizeDelta: {x: 113, y: 148}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7836639015859468795
 CanvasRenderer:
@@ -70,9 +70,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 60277ea9ffc7c4c4981f7c32afe78d5c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 884dedd1cb4c7ff47ab09f087b66189a, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -109,8 +109,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: b59b4c6baa165614293d0ff162ad1e11, type: 3}
-    m_PressedSprite: {fileID: 21300000, guid: b59b4c6baa165614293d0ff162ad1e11, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 283996c3dc41b36459d2b69eb16840de, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 283996c3dc41b36459d2b69eb16840de, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -139,7 +139,8 @@ MonoBehaviour:
   dialogButton: {fileID: 7836639015859468793}
   sceneName: 
   hideObjects: []
-  dialogPrefab: {fileID: 0}
+  leftDialogPrefab: {fileID: 0}
+  rightDialogPrefab: {fileID: 0}
   language: 0
   canStartEvenIfSick: 0
 --- !u!114 &8980214664140639007
@@ -173,3 +174,5 @@ MonoBehaviour:
   sprite: {fileID: 0}
   normalizedPosition: {x: 0.5, y: 0.5}
   worldObject: {fileID: 0}
+  worldObjectOffset: {x: 0, y: 0}
+  spriteContainer: {fileID: 0}

@@ -41,7 +41,7 @@ public class Map : MonoBehaviour
             transportationMethods = null;
         }
 
-        if(!NewGameManager.Instance.CanTravelTo(marker.LocationName))
+        if(!NewGameManager.Instance.CanTravelTo(marker.LocationName) || NewGameManager.Instance.ShipManager.IsTravellingInShip)
         {
             return;
         }

@@ -38,7 +38,8 @@ public class ShipManager : MonoBehaviour
     }
 
     public string StopoverLocation { get { return currentShipRoute != null ? currentShipRoute.stopoverLocation : null; } }
-    public bool HasReachedDestination { get { return currentShipRoute != null && NewGameManager.Instance.DaysInCity >= 10; } }
+    public int TravelDays { get { return 10; } }
+    public bool HasReachedDestination { get { return currentShipRoute != null && NewGameManager.Instance.DaysInCity >= TravelDays; } }
 
     private ShipRoute currentShipRoute = null;
 

@@ -9,6 +9,8 @@ public class Map : MonoBehaviour
     private GameObject locationsParent;
     [SerializeField]
     private GameObject transportationMethodsPrefab;
+    [SerializeField]
+    private ShipIconManager shipMarker;
 
     private MapLocationMarker[] locationMarkers;
     private MapTransportationMethods transportationMethods;
@@ -21,9 +23,31 @@ public class Map : MonoBehaviour
         }
     }
 
+    public GameObject CurrentFocusObject
+    {
+        get
+        {
+            if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship)
+            {
+                return shipMarker.gameObject;
+            }
+
+            MapLocationMarker marker = CurrentLocationMarker;
+            return marker ? marker.gameObject : null;
+        }
+    }
+
     private void Awake()
     {
         locationMarkers = GetComponentsInChildren<MapLocationMarker>();
+    }
+
+    private void Start()
+    {
+        if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship)
+        {
+            shipMarker.gameObject.SetActive(true);
+        }
     }
 
     public void OnLocationMarkerClicked(MapLocationMarker marker)

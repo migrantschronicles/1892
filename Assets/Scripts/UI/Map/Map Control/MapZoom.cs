@@ -114,10 +114,10 @@ public class MapZoom : MonoBehaviour
             if (IsAutoZoomInProgress)
             {
                 autoZoomCurrentTime += Time.deltaTime;
-                MapLocationMarker currentLocationMarker = map.CurrentLocationMarker;
-                if (currentLocationMarker)
+                GameObject currentFocusObject = map.CurrentFocusObject;
+                if (currentFocusObject)
                 {
-                    Vector2 targetMarkerPosition = currentLocationMarker.GetComponent<RectTransform>().anchoredPosition;
+                    Vector2 targetMarkerPosition = currentFocusObject.GetComponent<RectTransform>().anchoredPosition;
                     if (autoZoomCurrentTime < initialZoomDuration)
                     {
                         float alpha = autoZoomCurrentTime / initialZoomDuration;
@@ -132,7 +132,7 @@ public class MapZoom : MonoBehaviour
                     else
                     {
                         autoZoomCurrentTime = -1.0f;
-                        SetCenterToMarker(currentLocationMarker.gameObject);
+                        SetCenterToMarker(currentFocusObject);
                     }
                 }
             }

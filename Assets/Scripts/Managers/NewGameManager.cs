@@ -67,6 +67,7 @@ public class NewGameManager : MonoBehaviour
 
     private List<Journey> journeys = new();
     public string nextLocation { get; private set; }
+    public TransportationMethod nextMethod { get; private set; }
     public ShipManager ShipManager { get { return GetComponent<ShipManager>(); } }
 
     public delegate void OnRouteDiscoveredEvent(string from, string to, TransportationMethod method);
@@ -463,13 +464,6 @@ public class NewGameManager : MonoBehaviour
         SetMoney(money - routeInfo.cost);
         ///@todo Advance days
 
-        // Add the journey
-        ///@todo Move this to when arrived (because if travelling via ship, you can make a stop in cities).
-        Journey journey = new Journey();
-        journey.destination = name;
-        journey.method = method;
-        journeys.Add(journey);
-
         // Reset values
         DaysInCity = 0;
         SetMorningTime();
@@ -482,6 +476,7 @@ public class NewGameManager : MonoBehaviour
 
         // Load level
         nextLocation = name;
+        nextMethod = method;
         AudioManager.Instance.FadeOutMusic();
         SceneManager.LoadScene("LoadingScene");
     }
@@ -517,7 +512,14 @@ public class NewGameManager : MonoBehaviour
      */
     public void OnBeforeSceneActivation()
     {
+        // Add the journey
+        Journey journey = new Journey();
+        journey.destination = nextLocation;
+        journey.method = nextMethod;
+        journeys.Add(journey);
+
         nextLocation = null;
+        nextMethod = TransportationMethod.None;
         SetMorningTime();
     }
 
@@ -529,11 +531,23 @@ public class NewGameManager : MonoBehaviour
 
     public void OnLoadedStopover()
     {
+        // Add the journey
+        Journey journey = new Journey();
+        journey.destination = LevelInstance.Instance.LocationName;
+        journey.method = TransportationMethod.Ship;
+        journeys.Add(journey);
+
         SetMorningTime();
     }
 
     public void OnLoadedElisIsland()
     {
+        // Add the journey
+        Journey journey = new Journey();
+        journey.destination = LevelInstance.Instance.LocationName;
+        journey.method = TransportationMethod.Ship;
+        journeys.Add(journey);
+
         StartNewDay();
         DaysInCity = 0;
         ShipManager.EndTravellingInShip();

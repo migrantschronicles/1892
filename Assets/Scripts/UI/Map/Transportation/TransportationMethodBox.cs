@@ -28,6 +28,10 @@ public class TransportationMethodBox : MonoBehaviour
     private LocalizedString shipString;
     [SerializeField]
     private LocalizedString carriageString;
+    [SerializeField]
+    private LocalizedString ferryString;
+    [SerializeField]
+    private bool useFerry = false;
 
     public TransportationRouteInfo RouteInfo
     {
@@ -72,7 +76,7 @@ public class TransportationMethodBox : MonoBehaviour
             case TransportationMethod.Tram: transportationTitle = tramString; normalizedPosition.Set(-1, -1); break;
             case TransportationMethod.Train: transportationTitle = trainString; normalizedPosition.Set(0, 1); break;
             case TransportationMethod.Cart: transportationTitle = cartString; normalizedPosition.Set(1, -1); break;
-            case TransportationMethod.Ship: transportationTitle = shipString; normalizedPosition.Set(1, 1); break;
+            case TransportationMethod.Ship: transportationTitle = useFerry ? ferryString : shipString; normalizedPosition.Set(1, 1); break;
             case TransportationMethod.Carriage: transportationTitle = carriageString; normalizedPosition.Set(-1, 1); break;
             default: titleText.text = "NONE"; return;
         }
@@ -90,5 +94,11 @@ public class TransportationMethodBox : MonoBehaviour
         RectTransform handleTransform = handle.GetComponent<RectTransform>();
         Vector2 newPosition = rectTransform.sizeDelta / 2 * normalizedPosition;
         handleTransform.anchoredPosition = newPosition;
+    }
+
+    public void SetUseFerry(bool ferry)
+    {
+        useFerry = ferry;
+        UpdateTransportationMethod();
     }
 }

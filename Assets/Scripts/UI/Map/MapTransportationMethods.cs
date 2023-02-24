@@ -1,9 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MapTransportationMethods : MonoBehaviour
 {
+    [SerializeField]
+    private Image shipImage;
+    [SerializeField]
+    private Sprite shipIcon;
+    [SerializeField]
+    private Sprite ferryIcon;
+
     private MethodManager[] methods;
     private Vector3 initialScale;
     private MapZoom mapZoom;
@@ -53,6 +61,11 @@ public class MapTransportationMethods : MonoBehaviour
                 manager.gameObject.SetActive(false);
             }
         }
+
+        bool useFerry = !NewGameManager.Instance.LocationManager.IsFromEuropeToAmerica(from, to);
+        shipImage.sprite = useFerry ? ferryIcon : shipIcon;
+        TransportationMethodBox box = shipImage.GetComponentInChildren<TransportationMethodBox>();
+        box.SetUseFerry(useFerry);
     }
 
     public void Open()

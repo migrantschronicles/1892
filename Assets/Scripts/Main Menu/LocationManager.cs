@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Localization;
 
+public enum Continent
+{
+    None,
+    Europe,
+    America,
+    Ship
+}
+
 [System.Serializable]
 public class LocationInfo
 {
     public string displayName;
     public string technicalName;
+    public Continent continent;
     public LocalizedString localizedString;
 }
 
@@ -40,6 +49,28 @@ public class LocationManager : MonoBehaviour
             }
         }
 
+        Debug.LogError($"LocationManager::GetLocalizedName: {location} not found");
         return null;
+    }
+
+    public Continent GetContinent(string location)
+    {
+        foreach(LocationInfo info in infos)
+        {
+            if(info.displayName == location)
+            {
+                return info.continent;
+            }
+        }
+
+        Debug.LogError($"LocationManager::GetContinent: {location} not found");
+        return Continent.None;
+    }
+
+    public bool IsFromEuropeToAmerica(string from, string to)
+    {
+        Continent current = GetContinent(from);
+        Continent next = GetContinent(to);
+        return current == Continent.Europe && next == Continent.America;
     }
 }

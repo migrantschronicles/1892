@@ -179,6 +179,8 @@ public class LevelInstance : MonoBehaviour
     private GameObject startDayOutsidePrefab;
     [SerializeField]
     private GameObject startDayHostelPrefab;
+    [SerializeField]
+    private GameObject visitCityPopupPrefab;
 #if DEBUG && ENABLE_DEVELOPER_MENU
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -1208,10 +1210,13 @@ public class LevelInstance : MonoBehaviour
     public void OpenEndDayPopup()
     {
         GameObject popup = null;
-        switch(levelMode)
+        if(levelMode == LevelInstanceMode.Ship || NewGameManager.Instance.ShipManager.IsStopoverDay)
         {
-            case LevelInstanceMode.Ship: popup = endDayShipPopupPrefab; break;
-            default: popup = endDayPopupPrefab; break;
+            popup = endDayShipPopupPrefab;
+        }
+        else
+        {
+            popup = endDayPopupPrefab;
         }
 
         ShowPopup(popup);
@@ -1267,8 +1272,30 @@ public class LevelInstance : MonoBehaviour
         Destroy(nightTransition);
 
         NewGameManager.Instance.OnSleepInShip(endOfDayHealthData);
-        GameObject popupGO = ShowPopup(startDayHostelPrefab);
-        StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
-        popup.OnStartDay += (p) => PopPopup();
+
+        if(NewGameManager.Instance.ShipManager.IsStopoverDay)
+        {
+            // Can visit city.
+            GameObject popupGO = ShowPopup(visitCityPopupPrefab);
+            VisitCityPopup popup = popupGO.GetComponent<VisitCityPopup>();
+            popup.SetDestinationCity(NewGameManager.Instance.ShipManager.StopoverLocation);
+            popup.OnStayOnBoard += (_) => PopPopup();
+            popup.OnVisit += (_) =>
+            {
+                NewGameManager.Instance.VisitStopover();
+                PopPopup();
+            };
+        }
+        else if(NewGameManager.Instance.ShipManager.WasStopoverDay && levelMode != LevelInstanceMode.Ship)
+        {
+            NewGameManager.Instance.ReturnToShip();
+        }
+        else
+        {
+            // Normal day on ship.
+            GameObject popupGO = ShowPopup(startDayHostelPrefab);
+            StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
+            popup.OnStartDay += (p) => PopPopup();
+        }
     }
 }

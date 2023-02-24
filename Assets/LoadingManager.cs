@@ -20,7 +20,27 @@ public class LoadingManager : MonoBehaviour
         yield return null;
 
         startTime = Time.time;
-        AsyncOperation op = SceneManager.LoadSceneAsync(NewGameManager.Instance.nextLocation);
+        string loadSceneName = NewGameManager.Instance.nextLocation;
+        if(NewGameManager.Instance.ShipManager.IsTravellingInShip)
+        {
+            if(NewGameManager.Instance.ShipManager.HasReachedDestination)
+            {
+                // Player reached Elis island.
+                loadSceneName = "ElisIsland";
+            }
+            else if(NewGameManager.Instance.ShipManager.IsStopoverDay)
+            {
+                // Player wants to go to stopover.
+                loadSceneName = NewGameManager.Instance.ShipManager.StopoverLocation;
+            }
+            else
+            {
+                // Player chose to travel to america
+                loadSceneName = "Ship";
+            }
+        }
+
+        AsyncOperation op = SceneManager.LoadSceneAsync(loadSceneName);
         op.allowSceneActivation = false;
         while(!op.isDone)
         {
@@ -29,7 +49,24 @@ public class LoadingManager : MonoBehaviour
                 if(Time.time - startTime >= minimumLoadingTime)
                 {
                     op.allowSceneActivation = true;
-                    NewGameManager.Instance.OnBeforeSceneActivation();
+
+                    if(loadSceneName == NewGameManager.Instance.nextLocation)
+                    {
+                        // Else it is a special map (ship, stopover).
+                        NewGameManager.Instance.OnBeforeSceneActivation();
+                    }
+                    else if(loadSceneName == "Ship")
+                    {
+                        NewGameManager.Instance.OnLoadedShip();
+                    }
+                    else if(loadSceneName == NewGameManager.Instance.ShipManager.StopoverLocation)
+                    {
+                        NewGameManager.Instance.OnLoadedStopover();
+                    }
+                    else if(loadSceneName == "ElisIsland")
+                    {
+                        NewGameManager.Instance.OnLoadedElisIsland();
+                    }
                 }
             }
 

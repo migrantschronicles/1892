@@ -65,4 +65,13 @@ public class Map : MonoBehaviour
         }
         Destroy(methods.gameObject);
     }
+
+    public void CloseTransportationMethodsImmediately()
+    {
+        if(transportationMethods != null)
+        {
+            Destroy(transportationMethods.gameObject);
+            transportationMethods = null;
+        }
+    }
 }

@@ -67,6 +67,7 @@ public class NewGameManager : MonoBehaviour
 
     private List<Journey> journeys = new();
     public string nextLocation { get; private set; }
+    public ShipManager ShipManager { get { return GetComponent<ShipManager>(); } }
 
     public delegate void OnRouteDiscoveredEvent(string from, string to, TransportationMethod method);
     public event OnRouteDiscoveredEvent OnRouteDiscovered;
@@ -397,6 +398,12 @@ public class NewGameManager : MonoBehaviour
     {
         HealthStatus.OnEndOfDay(endOfDayHealthData);
         StartNewDay();
+
+        if(ShipManager.HasReachedDestination)
+        {
+            // Ship travel finished, arrived in Elis island.
+            SceneManager.LoadScene("LoadingScene");
+        }
     }
     
     public void StartNewDay() 
@@ -446,7 +453,6 @@ public class NewGameManager : MonoBehaviour
             return;
         }
 
-        int foodAmount = inventory.GetItemTypeCount(ItemType.Food);
         if(money < routeInfo.cost)
         {
             Debug.Log($"Not enough money for {name} via {method}");
@@ -458,6 +464,7 @@ public class NewGameManager : MonoBehaviour
         ///@todo Advance days
 
         // Add the journey
+        ///@todo Move this to when arrived (because if travelling via ship, you can make a stop in cities).
         Journey journey = new Journey();
         journey.destination = name;
         journey.method = method;
@@ -467,9 +474,41 @@ public class NewGameManager : MonoBehaviour
         DaysInCity = 0;
         SetMorningTime();
 
+        // Set ship values.
+        if(LocationManager.IsFromEuropeToAmerica(LevelInstance.Instance.LocationName, name))
+        {
+            ShipManager.StartTravellingInShip();
+        }
+
         // Load level
         nextLocation = name;
         AudioManager.Instance.FadeOutMusic();
+        SceneManager.LoadScene("LoadingScene");
+    }
+    
+    /**
+     * Called if the player is travelling on ship and wants to visit the stopover location.
+     */
+    public void VisitStopover()
+    {
+        if(!ShipManager.IsStopoverDay)
+        {
+            return;
+        }
+
+        SceneManager.LoadScene("LoadingScene");
+    }
+
+    /**
+     * Called if the player spend the day in the stopover location and now returns to the ship. 
+     */
+    public void ReturnToShip()
+    {
+        if(!ShipManager.WasStopoverDay)
+        {
+            return;
+        }
+
         SceneManager.LoadScene("LoadingScene");
     }
 
@@ -479,6 +518,25 @@ public class NewGameManager : MonoBehaviour
     public void OnBeforeSceneActivation()
     {
         nextLocation = null;
+        SetMorningTime();
+    }
+
+    public void OnLoadedShip()
+    {
+        SetPaused(false);
+        SetMorningTime();
+    }
+
+    public void OnLoadedStopover()
+    {
+        SetMorningTime();
+    }
+
+    public void OnLoadedElisIsland()
+    {
+        StartNewDay();
+        DaysInCity = 0;
+        ShipManager.EndTravellingInShip();
     }
 
     public void AddDiaryEntry(DiaryEntry entry)

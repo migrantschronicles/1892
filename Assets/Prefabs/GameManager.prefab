@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1617485015708389388}
   - component: {fileID: 8110903036055847939}
   - component: {fileID: 5470086948773973320}
+  - component: {fileID: 4835187160314046443}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: GameManager
@@ -167,6 +168,7 @@ MonoBehaviour:
   infos:
   - displayName: Antwerp
     technicalName: Loc_27015426
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -178,6 +180,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: Bremerhaven
     technicalName: Loc_540F1887
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -189,6 +192,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: Brussels
     technicalName: Loc_EE325B47
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -200,6 +204,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: Genoa
     technicalName: Loc_F2502FFF
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -211,6 +216,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: Hamburg
     technicalName: Loc_0080DEB8
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -222,6 +228,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: LeHavre
     technicalName: Loc_C96789D3
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -233,6 +240,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: Liverpool
     technicalName: Loc_96CDA099
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -244,6 +252,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: Luxembourg
     technicalName: Loc_A63C5650
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -255,6 +264,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: Marseilles
     technicalName: Loc_286FEBD4
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -266,6 +276,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: Paris
     technicalName: Loc_DC8E1AF6
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -277,6 +288,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: Pfaffenthal
     technicalName: Loc_4D672C9F
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -288,6 +300,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: Rotterdam
     technicalName: Loc_A01529A0
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -299,6 +312,7 @@ MonoBehaviour:
       m_LocalVariables: []
   - displayName: Southampton
     technicalName: Loc_BBF51F85
+    continent: 1
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -308,8 +322,9 @@ MonoBehaviour:
       m_FallbackState: 0
       m_WaitForCompletion: 0
       m_LocalVariables: []
-  - displayName: NewYork
+  - displayName: NewYorkCity
     technicalName: Loc_A5420794
+    continent: 2
     localizedString:
       m_TableReference:
         m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
@@ -322,3 +337,19 @@ MonoBehaviour:
   references:
     version: 2
     RefIds: []
+--- !u!114 &4835187160314046443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8362ce87cdde749459d9a8f8a0d4f000, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shipRoutes:
+  - fromLocation: LeHavre
+    stopoverLocation: Southampton
+    stopoverDay: 3

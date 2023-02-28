@@ -98,7 +98,7 @@ public class Interface : MonoBehaviour
 
     private void OnLocationChanged(string location)
     {
-        locationText.text = location;
+        locationText.text = NewGameManager.Instance.LocationManager.GetLocalizedName(location);
     }
 
     /**

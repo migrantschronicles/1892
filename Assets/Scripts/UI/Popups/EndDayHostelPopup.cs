@@ -113,5 +113,6 @@ public class EndDayHostelPopup : EndDaySleepPopupBase
     public void OnAccept()
     {
         LevelInstance.Instance.OnSleepInHostel(GetEndOfDayHealthData(), CurrentCost, boughtFoodAmount);
+        LevelInstance.Instance.PopPopup();
     }
 }

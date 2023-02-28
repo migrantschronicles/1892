@@ -37,5 +37,6 @@ public class EndDayShipPopup : EndDaySleepPopupBase
     public void OnAccept()
     {
         LevelInstance.Instance.OnSleepInShip(GetEndOfDayHealthData());
+        LevelInstance.Instance.PopPopup();
     }
 }

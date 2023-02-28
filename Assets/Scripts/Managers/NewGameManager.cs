@@ -440,39 +440,40 @@ public class NewGameManager : MonoBehaviour
             return;
         }
 
-        // Check prerequisits
-        if(!CanTravelTo(name, method))
-        {
-            Debug.Log($"Cannot travel to {name} via {method}");
-            return;
-        }
-
-        TransportationRouteInfo routeInfo = transportationInfo.GetRouteInfo(LevelInstance.Instance.LocationName, name, method);
-        if(routeInfo == null)
-        {
-            Debug.Log($"No route info found for {name} via {method}");
-            return;
-        }
-
-        if(money < routeInfo.cost)
-        {
-            Debug.Log($"Not enough money for {name} via {method}");
-            return;
-        }
-
-        // Remove required costs.
-        SetMoney(money - routeInfo.cost);
-        ///@todo Advance days
-
-        // Reset values
-        DaysInCity = 0;
-        SetMorningTime();
-
-        // Set ship values.
         if(LocationManager.IsFromEuropeToAmerica(LevelInstance.Instance.LocationName, name))
         {
             ShipManager.StartTravellingInShip();
         }
+        else
+        {
+            // Check prerequisits
+            if (!CanTravelTo(name, method))
+            {
+                Debug.Log($"Cannot travel to {name} via {method}");
+                return;
+            }
+
+            TransportationRouteInfo routeInfo = transportationInfo.GetRouteInfo(LevelInstance.Instance.LocationName, name, method);
+            if (routeInfo == null)
+            {
+                Debug.Log($"No route info found for {name} via {method}");
+                return;
+            }
+
+            if (money < routeInfo.cost)
+            {
+                Debug.Log($"Not enough money for {name} via {method}");
+                return;
+            }
+
+            // Remove required costs.
+            SetMoney(money - routeInfo.cost);
+            ///@todo Advance days
+        }
+
+        // Reset values
+        DaysInCity = 0;
+        SetPaused(true);
 
         // Load level
         nextLocation = name;
@@ -521,12 +522,12 @@ public class NewGameManager : MonoBehaviour
         nextLocation = null;
         nextMethod = TransportationMethod.None;
         SetMorningTime();
+        SetPaused(false);
     }
 
     public void OnLoadedShip()
     {
         SetPaused(false);
-        SetMorningTime();
     }
 
     public void OnLoadedStopover()
@@ -538,6 +539,7 @@ public class NewGameManager : MonoBehaviour
         journeys.Add(journey);
 
         SetMorningTime();
+        SetPaused(false);
     }
 
     public void OnLoadedElisIsland()
@@ -548,7 +550,9 @@ public class NewGameManager : MonoBehaviour
         journey.method = TransportationMethod.Ship;
         journeys.Add(journey);
 
-        StartNewDay();
+        nextLocation = null;
+        nextMethod = TransportationMethod.None;
+        SetPaused(false);
         DaysInCity = 0;
         ShipManager.EndTravellingInShip();
     }

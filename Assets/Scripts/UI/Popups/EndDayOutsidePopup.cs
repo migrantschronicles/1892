@@ -13,5 +13,6 @@ public class EndDayOutsidePopup : EndDaySleepPopupBase
     public void OnAccept()
     {
         LevelInstance.Instance.OnSleepOutside(GetEndOfDayHealthData());
+        LevelInstance.Instance.PopPopup();
     }
 }

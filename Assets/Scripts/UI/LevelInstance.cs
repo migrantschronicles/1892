@@ -537,7 +537,6 @@ public class LevelInstance : MonoBehaviour
                 sceneInteractables.SetActive(true);
 
                 mode = Mode.None;
-                NewGameManager.Instance.SetPaused(false);
                 UpdateEndOfDayFade();
                 UpdateShowSeasickness();
             }
@@ -1230,6 +1229,7 @@ public class LevelInstance : MonoBehaviour
     private IEnumerator SleepOutsideTransition(List<EndOfDayHealthData> endOfDayHealthData)
     {
         ///@todo close all mode
+        NewGameManager.Instance.SetPaused(true);
         nightTransition = Instantiate(nightTransitionPrefab, canvas.transform);
         yield return new WaitForSeconds(nightTransitionTime);
         Destroy(nightTransition);
@@ -1238,7 +1238,7 @@ public class LevelInstance : MonoBehaviour
         GameObject popupGO = ShowPopup(startDayOutsidePrefab);
         StartDayOutsidePopup popup = popupGO.GetComponent<StartDayOutsidePopup>();
         popup.Init(stolenItems);
-        popup.OnStartDay += (p) => PopPopup();
+        popup.OnStartDay += (p) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
     }
 
     public void OnSleepInHostel(List<EndOfDayHealthData> endOfDayHealthData, int cost, int boughtFoodAmount)
@@ -1249,6 +1249,7 @@ public class LevelInstance : MonoBehaviour
     private IEnumerator SleepInHostelTransition(List<EndOfDayHealthData> endOfDayHealthData, int cost, int boughtFoodAmount)
     {
         ///@todo close all mode
+        NewGameManager.Instance.SetPaused(true);
         nightTransition = Instantiate(nightTransitionPrefab, canvas.transform);
         yield return new WaitForSeconds(nightTransitionTime);
         Destroy(nightTransition);
@@ -1256,7 +1257,7 @@ public class LevelInstance : MonoBehaviour
         NewGameManager.Instance.OnSleepInHostel(endOfDayHealthData, cost, boughtFoodAmount);
         GameObject popupGO = ShowPopup(startDayHostelPrefab);
         StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
-        popup.OnStartDay += (p) => PopPopup();
+        popup.OnStartDay += (p) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
     }
 
     public void OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)
@@ -1267,19 +1268,20 @@ public class LevelInstance : MonoBehaviour
     private IEnumerator SleepInShipTransition(List<EndOfDayHealthData> endOfDayHealthData)
     {
         ///@todo close all mode
+        NewGameManager.Instance.SetPaused(true);
         nightTransition = Instantiate(nightTransitionPrefab, canvas.transform);
         yield return new WaitForSeconds(nightTransitionTime);
         Destroy(nightTransition);
 
         NewGameManager.Instance.OnSleepInShip(endOfDayHealthData);
 
-        if(NewGameManager.Instance.ShipManager.IsStopoverDay)
+        if (NewGameManager.Instance.ShipManager.IsStopoverDay)
         {
             // Can visit city.
             GameObject popupGO = ShowPopup(visitCityPopupPrefab);
             VisitCityPopup popup = popupGO.GetComponent<VisitCityPopup>();
             popup.SetDestinationCity(NewGameManager.Instance.ShipManager.StopoverLocation);
-            popup.OnStayOnBoard += (_) => PopPopup();
+            popup.OnStayOnBoard += (_) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
             popup.OnVisit += (_) =>
             {
                 NewGameManager.Instance.VisitStopover();
@@ -1295,7 +1297,7 @@ public class LevelInstance : MonoBehaviour
             // Normal day on ship.
             GameObject popupGO = ShowPopup(startDayHostelPrefab);
             StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
-            popup.OnStartDay += (p) => PopPopup();
+            popup.OnStartDay += (p) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
         }
     }
 }

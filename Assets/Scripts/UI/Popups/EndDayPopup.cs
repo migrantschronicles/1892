@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 
 public class EndDayPopup : MonoBehaviour, IPopup
 {
     [SerializeField]
     private Button hostelButton;
+    [SerializeField]
+    private LocalizeStringEvent descriptionLocalizeEvent;
     [SerializeField]
     private GameObject endDayHostelPrefab;
     [SerializeField]
@@ -21,8 +24,11 @@ public class EndDayPopup : MonoBehaviour, IPopup
         EndDayHostelPopup hostelPopup = endDayHostelPrefab.GetComponent<EndDayHostelPopup>();
         if(NewGameManager.Instance.money < hostelPopup.HostelFee)
         {
-            hostelButton.enabled = false;
+            hostelButton.gameObject.SetActive(false);
         }
+
+        descriptionLocalizeEvent.StringReference.Arguments = new List<object> { hostelPopup.HostelFee.ToString() };
+        descriptionLocalizeEvent.RefreshString();
     }
 
     private void OnEnable()

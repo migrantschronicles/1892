@@ -38,7 +38,7 @@ public class Interface : MonoBehaviour
     [SerializeField]
     private IngameDiary ingameDiary;
     [SerializeField]
-    private PopupManager popupManager;
+    private GameObject pauseFrame;
 
     public IngameDiary IngameDiary { get { return ingameDiary; } }
     private bool TreatDiaryAsButton { get { return IngameDiary.Diary.Status == OpenStatus.Closed; } }
@@ -62,11 +62,13 @@ public class Interface : MonoBehaviour
         NewGameManager.Instance.onDateChanged += OnDateChanged;
         NewGameManager.Instance.onFoodChanged += OnFoodChanged;
         NewGameManager.Instance.onMoneyChanged += OnMoneyChanged;
+        NewGameManager.Instance.OnPauseChanged += OnPauseChanged;
 
         OnMoneyChanged(NewGameManager.Instance.money);
         OnFoodChanged(NewGameManager.Instance.food);
         OnDateChanged(NewGameManager.Instance.date);
         OnLocationChanged(LevelInstance.Instance.LocationName);
+        OnPauseChanged(NewGameManager.Instance.IsPaused);
     }
 
     private void OnDestroy()
@@ -76,7 +78,13 @@ public class Interface : MonoBehaviour
             NewGameManager.Instance.onDateChanged -= OnDateChanged;
             NewGameManager.Instance.onFoodChanged -= OnFoodChanged;
             NewGameManager.Instance.onMoneyChanged -= OnMoneyChanged;
+            NewGameManager.Instance.OnPauseChanged -= OnPauseChanged;
         }
+    }
+
+    private void OnPauseChanged(bool paused)
+    {
+        pauseFrame.gameObject.SetActive(paused);
     }
 
     private void OnMoneyChanged(int money)
@@ -156,12 +164,6 @@ public class Interface : MonoBehaviour
     public void ResetFromScreenshot()
     {
         ingameDiary.ResetFromScreenshot();
-    }
-
-    public void OpenEndDayPopUp()
-    {
-        ///@todo
-        //popupManager.OpenEndDayPopUp();
     }
 
     public void HideDiary(bool hide)

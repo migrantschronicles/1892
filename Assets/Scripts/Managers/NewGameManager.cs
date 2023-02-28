@@ -85,6 +85,11 @@ public class NewGameManager : MonoBehaviour
     public int day = 0;
     public bool wantsEndOfDay = false;
 
+    public bool IsPaused { get { return !gameRunning; } }
+
+    public delegate void OnPauseChangedEvent(bool paused);
+    public event OnPauseChangedEvent OnPauseChanged;
+
     public int food;
     public int money;
     // Date
@@ -577,6 +582,7 @@ public class NewGameManager : MonoBehaviour
     public void SetPaused(bool paused)
     {
         gameRunning = !paused;
+        OnPauseChanged?.Invoke(!gameRunning);
     }
 
 #if UNITY_EDITOR

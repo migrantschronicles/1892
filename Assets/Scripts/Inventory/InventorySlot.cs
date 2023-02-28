@@ -11,6 +11,8 @@ public class InventorySlot : MonoBehaviour
     [SerializeField]
     private Text amountText;
     [SerializeField]
+    private Image amountBackground;
+    [SerializeField]
     private Color defaultTextColor;
     [SerializeField]
     private Color ghostTextColor;
@@ -134,7 +136,7 @@ public class InventorySlot : MonoBehaviour
     private void UpdateAmountText()
     {
         amountText.text = ghostAmount.ToString();
-        amountText.gameObject.SetActive(Item.IsStackable); 
+        amountBackground.gameObject.SetActive(Item.IsStackable); 
     }
 
     public void EnableGhostMode()

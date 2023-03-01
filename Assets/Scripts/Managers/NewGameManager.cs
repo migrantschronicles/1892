@@ -363,7 +363,7 @@ public class NewGameManager : MonoBehaviour
     {
         DateTimeFormatInfo dateFormat = CultureInfo.CurrentCulture.DateTimeFormat;
         date = newDate;
-        dateStr = date.ToString("dd'st', MMMM, yyyy"); //dateFormat.ShortDatePattern);
+        //dateStr = date.ToString("dd'st', MMMM, yyyy"); //);
         onDateChanged?.Invoke(date);
     }
 

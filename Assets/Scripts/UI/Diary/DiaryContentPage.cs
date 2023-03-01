@@ -12,8 +12,9 @@ public class DiaryContentPage : MonoBehaviour
     private GameObject rightPage;
     [SerializeField]
     private GameObject doublePage;
-
+    [SerializeField]
     private Animator animator;
+
     private Coroutine watchAnimationCoroutine;
     public event OnDiaryStatusChangedEvent onStatusChanged;
     private OpenStatus status;
@@ -72,7 +73,6 @@ public class DiaryContentPage : MonoBehaviour
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
         animator.SetFloat("IsDoublePage", isDoublePage ? 1.0f : 0.0f);
     }
 

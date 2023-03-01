@@ -23,6 +23,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField]
     private Vector3 languageSelectionPos = new Vector3(0, -1202, 0);
     private bool inLanguageSelection = false;
+    public float transitionSpeed = 0.9f;
+    private bool readyToStartAnimations = false; // To indicate if language selection is done and main menu (book) is ready to be activated
     public Transform mainCamera;
 
 
@@ -55,8 +57,9 @@ public class MainMenu : MonoBehaviour
 
     private void Update()
     {
-        if(inLanguageSelection && Vector3.Distance(mainCamera.localPosition, languageSelectionPos) > 0.01f) mainCamera.localPosition = Vector3.Lerp(mainCamera.localPosition, languageSelectionPos, 0.6f * Time.deltaTime);
-        else if (!inLanguageSelection && Vector3.Distance(scene.transform.localPosition, menuInitialPos) > 0.01f) mainCamera.localPosition = Vector3.Lerp(mainCamera.localPosition, menuInitialPos, 0.6f * Time.deltaTime);
+        if (inLanguageSelection && Vector3.Distance(mainCamera.localPosition, languageSelectionPos) > 0.01f) mainCamera.localPosition = Vector3.Lerp(mainCamera.localPosition, languageSelectionPos, transitionSpeed * Time.deltaTime);
+        else if (!inLanguageSelection && Vector3.Distance(scene.transform.localPosition, menuInitialPos) > 0.01f) mainCamera.localPosition = Vector3.Lerp(mainCamera.localPosition, menuInitialPos, transitionSpeed * Time.deltaTime);
+        else if (Vector3.Distance(scene.transform.localPosition, menuInitialPos) <= 0.01f) readyToStartAnimations = true;
     }
 
     public void OpenLanguageSelection() 
@@ -73,12 +76,22 @@ public class MainMenu : MonoBehaviour
     {
         yield return new WaitForSeconds(seconds);
         CloseLanguageSelection();
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(StartMainMenu());
+    }
+
+    public IEnumerator StartMainMenu() 
+    {
+        diaryAnimator.gameObject.SetActive(true);
+        diaryAnimator.SetTrigger("BookToPosition");
+        yield return new WaitForSeconds(1f);
+        for(int i = 0; i < coverAnimator.gameObject.transform.childCount; i++) { coverAnimator.gameObject.transform.GetChild(i).gameObject.SetActive(true); }
     }
 
     public void SelectLanguage(string language) 
     {
         // Apply it to GameManager (For later)
-        StartCoroutine(CloseLanguageSelectionWithDelay(0.5f));
+        StartCoroutine(CloseLanguageSelectionWithDelay(0.5f));        
     }
 
     public void OpenDiary()
@@ -88,6 +101,8 @@ public class MainMenu : MonoBehaviour
 
     public void OpenDiary(Animator page)
     {
+        diaryAnimator.SetTrigger("BookToPositionOpen");
+
         diaryAnimator.SetBool("Opened", true);
         coverAnimator.SetBool("DiaryOpened", true);
         AudioManager.Instance.PlayFX(openDiaryClip);

@@ -222,7 +222,11 @@ public class DialogChat : MonoBehaviour
     {
         if(pausedOn != null)
         {
-            return (pausedOn is Destination || pausedOn is ItemAdded || pausedOn is ItemRemoved) && !handledTemplate;
+            return (pausedOn is Destination || 
+                pausedOn is ItemAdded || 
+                pausedOn is ItemRemoved ||
+                pausedOn is ShipTicket) && 
+                !handledTemplate;
         }
 
         return false;
@@ -310,7 +314,14 @@ public class DialogChat : MonoBehaviour
                 Item item = NewGameManager.Instance.ItemManager.GetItemByTechnicalName(technicalName);
                 if(item != null)
                 {
-                    LevelInstance.Instance.OpenShopForItemAdded(item);
+                    if(itemAdded.Template.Secretly.Secretly)
+                    {
+                        ///@todo
+                    }
+                    else
+                    {
+                        LevelInstance.Instance.OpenShopForItemAdded(item);
+                    }
                 }
                 else
                 {
@@ -341,6 +352,11 @@ public class DialogChat : MonoBehaviour
             {
                 Debug.LogError($"{(pausedOn as IArticyObject).TechnicalName} has ItemRemoved template, but the item is null");
             }
+        }
+        else if(pausedOn is ShipTicket shipTicket)
+        {
+            Debug.Log(shipTicket.Template.MoneyRemoved.FrancRemoved);
+            Debug.Log(shipTicket.Template.Ship_Class.EnumValue);
         }
     }
 

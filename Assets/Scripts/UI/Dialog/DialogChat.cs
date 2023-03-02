@@ -174,11 +174,16 @@ public class DialogChat : MonoBehaviour
 
     public void OnOverlayClosed()
     {
+        OnTemplateHandled();
+    }
+
+    private void OnTemplateHandled()
+    {
         // The template was handled.
         handledTemplate = true;
 
         // This is called after a shop / popup was closed after the pausedOn had a template.
-        if(IsDialogFinished())
+        if (IsDialogFinished())
         {
             OnDialogEnded();
         }
@@ -222,28 +227,33 @@ public class DialogChat : MonoBehaviour
     {
         if(pausedOn != null)
         {
-            return (pausedOn is Destination || pausedOn is ItemAdded || pausedOn is ItemRemoved) && !handledTemplate;
+            return (pausedOn is Destination || 
+                pausedOn is ItemAdded || 
+                pausedOn is ItemRemoved ||
+                pausedOn is Money_Removed ||
+                pausedOn is Money_Received) && 
+                !handledTemplate;
         }
 
         return false;
     }
 
-    private TransportationMethod ConvertArticyMethodToTransportationMethod(EnumValue value)
+    private TransportationMethod ConvertArticyMethodToTransportationMethod(Transportation value)
     {
         TransportationMethod method = TransportationMethod.None;
         switch (value)
         {
-            case EnumValue.Walking: method = TransportationMethod.Walking; break;
-            case EnumValue.Cart: method = TransportationMethod.Cart; break;
-            case EnumValue.Ship: method = TransportationMethod.Ship; break;
-            case EnumValue.Carriage: method = TransportationMethod.Carriage; break;
-            case EnumValue.Tram: method = TransportationMethod.Tram; break;
-            case EnumValue.Train: method = TransportationMethod.Train; break;
+            case Transportation.Walking: method = TransportationMethod.Walking; break;
+            case Transportation.Cart: method = TransportationMethod.Cart; break;
+            case Transportation.Ship: method = TransportationMethod.Ship; break;
+            case Transportation.Carriage: method = TransportationMethod.Carriage; break;
+            case Transportation.Tram: method = TransportationMethod.Tram; break;
+            case Transportation.Train: method = TransportationMethod.Train; break;
         }
         return method;
     }
 
-    private void OnRouteDiscovered(ArticyObject location, IEnumerable<EnumValue> value)
+    private void OnRouteDiscovered(ArticyObject location, IEnumerable<Transportation> value)
     {
         GameObject popupGO = LevelInstance.Instance.PushPopup(DialogSystem.Instance.DiscoveredRoutePopup);
         DiscoveredRoutePopup popup = popupGO.GetComponent<DiscoveredRoutePopup>();
@@ -266,39 +276,39 @@ public class DialogChat : MonoBehaviour
             if(destination.Template.Location_Revealed_1.LocationRevealed != null)
             {
                 OnRouteDiscovered(destination.Template.Location_Revealed_1.LocationRevealed,
-                    new EnumValue[] {
-                        destination.Template.Transportation.EnumValue,
-                        destination.Template.Transportation_02.EnumValue,
-                        destination.Template.Transportation_3.EnumValue
+                    new Transportation[] {
+                        destination.Template.Transportation.Transportation,
+                        destination.Template.Transportation_02.Transportation,
+                        destination.Template.Transportation_3.Transportation
                     });
             }
 
             if(destination.Template.Location_Revealed_2.LocationRevealed != null)
             {
                 OnRouteDiscovered(destination.Template.Location_Revealed_2.LocationRevealed,
-                    new EnumValue[]
+                    new Transportation[]
                     {
-                        destination.Template.Transportation_4.EnumValue,
-                        destination.Template.Transportation_5.EnumValue,
-                        destination.Template.Transportation_6.EnumValue
+                        destination.Template.Transportation_4.Transportation,
+                        destination.Template.Transportation_5.Transportation,
+                        destination.Template.Transportation_6.Transportation
                     });
             }
 
             if(destination.Template.Location_Revealed_3.LocationRevealed != null)
             {
                 OnRouteDiscovered(destination.Template.Location_Revealed_3.LocationRevealed,
-                    new EnumValue[]
+                    new Transportation[]
                     {
-                        destination.Template.Transportation_7.EnumValue,
+                        destination.Template.Transportation_7.Transportation,
                     });
             }
 
             if(destination.Template.Location_Revealed_4.LocationRevealed != null)
             {
                 OnRouteDiscovered(destination.Template.Location_Revealed_4.LocationRevealed,
-                    new EnumValue[]
+                    new Transportation[]
                     {
-                        destination.Template.Transportation_8.EnumValue,
+                        destination.Template.Transportation_8.Transportation,
                     });
             }
         }
@@ -310,7 +320,15 @@ public class DialogChat : MonoBehaviour
                 Item item = NewGameManager.Instance.ItemManager.GetItemByTechnicalName(technicalName);
                 if(item != null)
                 {
-                    LevelInstance.Instance.OpenShopForItemAdded(item);
+                    if(itemAdded.Template.Secretly.Secretly)
+                    {
+                        NewGameManager.Instance.inventory.AddItem(item);
+                        OnTemplateHandled();
+                    }
+                    else
+                    {
+                        LevelInstance.Instance.OpenShopForItemAdded(item);
+                    }
                 }
                 else
                 {
@@ -341,6 +359,18 @@ public class DialogChat : MonoBehaviour
             {
                 Debug.LogError($"{(pausedOn as IArticyObject).TechnicalName} has ItemRemoved template, but the item is null");
             }
+        }
+        else if(pausedOn is Money_Removed moneyRemoved)
+        {
+            int amount = moneyRemoved.Template.MoneyRemoved.MoneyRemoved;
+            NewGameManager.Instance.SetMoney(NewGameManager.Instance.money - amount);
+            OnTemplateHandled();
+        }
+        else if(pausedOn is Money_Received moneyReceived)
+        {
+            int amount = moneyReceived.Template.MoneyAdded.MoneyAdded;
+            NewGameManager.Instance.SetMoney(NewGameManager.Instance.money + amount);
+            OnTemplateHandled();
         }
     }
 

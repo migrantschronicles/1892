@@ -82,7 +82,7 @@ public static class TransportationData
         return TimeSpan.FromHours(distance / TransportationSpaceByType[type]);
     }
 
-    public static IEnumerable<Transportation> GetAllTransportation(string origin, string destination)
+    public static IEnumerable<TransportationOld> GetAllTransportation(string origin, string destination)
     {
         return LegData.Legs.Where(l => l.Origin == origin && l.Destination == destination).Select(l => l.Transportation);
     }

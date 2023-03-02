@@ -174,11 +174,16 @@ public class DialogChat : MonoBehaviour
 
     public void OnOverlayClosed()
     {
+        OnTemplateHandled();
+    }
+
+    private void OnTemplateHandled()
+    {
         // The template was handled.
         handledTemplate = true;
 
         // This is called after a shop / popup was closed after the pausedOn had a template.
-        if(IsDialogFinished())
+        if (IsDialogFinished())
         {
             OnDialogEnded();
         }
@@ -225,7 +230,8 @@ public class DialogChat : MonoBehaviour
             return (pausedOn is Destination || 
                 pausedOn is ItemAdded || 
                 pausedOn is ItemRemoved ||
-                pausedOn is ShipTicket) && 
+                pausedOn is Money_Removed ||
+                pausedOn is Money_Received) && 
                 !handledTemplate;
         }
 
@@ -353,10 +359,17 @@ public class DialogChat : MonoBehaviour
                 Debug.LogError($"{(pausedOn as IArticyObject).TechnicalName} has ItemRemoved template, but the item is null");
             }
         }
-        else if(pausedOn is ShipTicket shipTicket)
+        else if(pausedOn is Money_Removed moneyRemoved)
         {
-            //Debug.Log(shipTicket.Template.MoneyRemoved.FrancRemoved);
-            //Debug.Log(shipTicket.Template.Ship_Class.EnumValue);
+            int amount = moneyRemoved.Template.MoneyRemoved.MoneyRemoved;
+            NewGameManager.Instance.SetMoney(NewGameManager.Instance.money - amount);
+            OnTemplateHandled();
+        }
+        else if(pausedOn is Money_Received moneyReceived)
+        {
+            int amount = moneyReceived.Template.MoneyAdded.MoneyAdded;
+            NewGameManager.Instance.SetMoney(NewGameManager.Instance.money + amount);
+            OnTemplateHandled();
         }
     }
 

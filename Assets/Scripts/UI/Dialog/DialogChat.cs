@@ -322,7 +322,8 @@ public class DialogChat : MonoBehaviour
                 {
                     if(itemAdded.Template.Secretly.Secretly)
                     {
-                        ///@todo
+                        NewGameManager.Instance.inventory.AddItem(item);
+                        OnTemplateHandled();
                     }
                     else
                     {

@@ -95,14 +95,21 @@ public class Diary : MonoBehaviour
         // Can only happen during diary open or closing
         switch(Status)
         {
-            case OpenStatus.Closing:
-                currentPage.onStatusChanged += OnCurrentPageStatusChanged;
-                currentPage.DiaryCloseToRight();
-                break;
-
             case OpenStatus.Opening:
                 nextPage.onStatusChanged += OnNextPageStatusChanged;
                 nextPage.DiaryOpenToLeft();
+                break;
+        }
+    }
+
+    public void Anim_EndPageAnimation()
+    {
+        // Can only happen during diary open or closing
+        switch (Status)
+        {
+            case OpenStatus.Closing:
+                currentPage.onStatusChanged += OnCurrentPageStatusChanged;
+                currentPage.DiaryCloseToRight();
                 break;
         }
     }

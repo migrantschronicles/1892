@@ -254,4 +254,9 @@ public class IngameDiary : MonoBehaviour
     {
         diary.Anim_StartPageAnimation();
     }
+
+    public void Anim_EndPageAnimation()
+    {
+        diary.Anim_EndPageAnimation();
+    }
 }

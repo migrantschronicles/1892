@@ -32,9 +32,9 @@ public class ClockManager : MonoBehaviour
         hourHandle.rotation = Quaternion.Euler(0, 0, hourHandle.rotation.z - (hour * (360 / 12) + (minutes * 0.5f)) + hourOffset);
 
         // Moving the knob with the day.
-        Vector3 startPoint = new Vector3(120, 92, 0);
-        Vector3 endPoint = new Vector3(120, 10.5f, 0);
-        Vector3 controlPoint1 = new Vector3(160, 51.25f, 0);
+        Vector3 startPoint = new Vector3(175, 161, 0);
+        Vector3 endPoint = new Vector3(205, 99.6f, 0);
+        Vector3 controlPoint1 = new Vector3(175, 35.6f, 0);
         //Vector3 controlPoint2 = new Vector3(140, 10.5f, 0);
 
 

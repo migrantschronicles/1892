@@ -99,8 +99,7 @@ public class Interface : MonoBehaviour
 
     private void OnDateChanged(DateTime date)
     {
-        DateTimeFormatInfo dateFormat = CultureInfo.CurrentCulture.DateTimeFormat;
-        string dateStr = date.ToString(dateFormat.ShortDatePattern);
+        string dateStr = date.ToString("d MMMM yyyy");
         dateText.text = dateStr;
     }
 

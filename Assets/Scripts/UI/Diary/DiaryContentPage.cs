@@ -154,6 +154,16 @@ public class DiaryContentPage : MonoBehaviour
         }
     }
 
+    public void FlipToLeft()
+    {
+
+    }
+
+    public void FlipToRight()
+    {
+
+    }
+
     private IEnumerator WatchAnimation()
     { 
         while((Status == OpenStatus.Closing && !animator.GetCurrentAnimatorStateInfo(0).IsName("DiaryContentPageClosed"))

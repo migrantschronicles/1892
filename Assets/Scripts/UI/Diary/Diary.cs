@@ -18,6 +18,8 @@ public class Diary : MonoBehaviour
 
     [SerializeField]
     private DiaryMarkerPanel markerPanel;
+    [SerializeField]
+    private Animator pagesController;
 
     public AudioClip openClip;
     public AudioClip closeClip;
@@ -189,6 +191,7 @@ public class Diary : MonoBehaviour
             }
         }
 
+        /*
         if(isPageToRight)
         {
             currentPage.CloseToLeft();
@@ -199,6 +202,8 @@ public class Diary : MonoBehaviour
             currentPage.CloseToRight();
             nextPage.OpenToRight();
         }
+        */
+        pagesController.SetTrigger(isPageToRight ? "FlipLeft" : "FlipRight");
 
         return true;
     }

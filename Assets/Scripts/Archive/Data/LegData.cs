@@ -12,7 +12,7 @@ public static class LegData
         {
             Origin = CityData.Pfaffenthal,
             Destination = CityData.Luxembourg,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -22,7 +22,7 @@ public static class LegData
         {
             Origin = CityData.Pfaffenthal,
             Destination = CityData.Luxembourg,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.StageCoach
             },
@@ -32,7 +32,7 @@ public static class LegData
         {
             Origin = CityData.Luxembourg,
             Destination = CityData.Antwerp,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -42,7 +42,7 @@ public static class LegData
         {
             Origin = CityData.Brussels,
             Destination = CityData.Rotterdam,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -52,7 +52,7 @@ public static class LegData
         {
             Origin = CityData.Luxembourg,
             Destination = CityData.Antwerp,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Train
             },
@@ -62,7 +62,7 @@ public static class LegData
         {
             Origin = CityData.Luxembourg,
             Destination = CityData.Arlon,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -72,7 +72,7 @@ public static class LegData
         {
             Origin = CityData.Arlon,
             Destination = CityData.Brussels,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Train
             },
@@ -82,7 +82,7 @@ public static class LegData
         {
             Origin = CityData.Brussels,
             Destination = CityData.Antwerp,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -92,7 +92,7 @@ public static class LegData
         {
             Origin = CityData.Brussels,
             Destination = CityData.Antwerp,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Train
             },
@@ -102,7 +102,7 @@ public static class LegData
         {
             Origin = CityData.Brussels,
             Destination = CityData.Antwerp,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Train
             },
@@ -112,7 +112,7 @@ public static class LegData
         {
             Origin = CityData.Antwerp,
             Destination = CityData.Rotterdam,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -122,7 +122,7 @@ public static class LegData
         {
             Origin = CityData.Antwerp,
             Destination = CityData.Rotterdam,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Train
             },
@@ -132,7 +132,7 @@ public static class LegData
         {
             Origin = CityData.Luxembourg,
             Destination = CityData.Brussels,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Train
             },
@@ -142,7 +142,7 @@ public static class LegData
         {
             Origin = CityData.Luxembourg,
             Destination = CityData.Brussels,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -152,7 +152,7 @@ public static class LegData
         {
             Origin = CityData.Luxembourg,
             Destination = CityData.Brussels,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -162,7 +162,7 @@ public static class LegData
         {
             Origin = CityData.Luxembourg,
             Destination = CityData.Paris,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -172,7 +172,7 @@ public static class LegData
         {
             Origin = CityData.Luxembourg,
             Destination = CityData.Paris,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Train
             },
@@ -182,7 +182,7 @@ public static class LegData
         {
             Origin = CityData.Luxembourg,
             Destination = CityData.Metz,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -192,7 +192,7 @@ public static class LegData
         {
             Origin = CityData.Luxembourg,
             Destination = CityData.Metz,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Train
             },
@@ -202,7 +202,7 @@ public static class LegData
         {
             Origin = CityData.Metz,
             Destination = CityData.Paris,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -212,7 +212,7 @@ public static class LegData
         {
             Origin = CityData.Metz,
             Destination = CityData.Paris,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Train
             },
@@ -222,7 +222,7 @@ public static class LegData
         {
             Origin = CityData.Paris,
             Destination = CityData.Havre,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Foot
             },
@@ -232,7 +232,7 @@ public static class LegData
         {
             Origin = CityData.Paris,
             Destination = CityData.Havre,
-            Transportation = new Transportation
+            Transportation = new TransportationOld
             {
                 Type = TransportationType.Train
             },

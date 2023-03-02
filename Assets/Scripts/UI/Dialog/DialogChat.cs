@@ -232,22 +232,22 @@ public class DialogChat : MonoBehaviour
         return false;
     }
 
-    private TransportationMethod ConvertArticyMethodToTransportationMethod(EnumValue value)
+    private TransportationMethod ConvertArticyMethodToTransportationMethod(Transportation value)
     {
         TransportationMethod method = TransportationMethod.None;
         switch (value)
         {
-            case EnumValue.Walking: method = TransportationMethod.Walking; break;
-            case EnumValue.Cart: method = TransportationMethod.Cart; break;
-            case EnumValue.Ship: method = TransportationMethod.Ship; break;
-            case EnumValue.Carriage: method = TransportationMethod.Carriage; break;
-            case EnumValue.Tram: method = TransportationMethod.Tram; break;
-            case EnumValue.Train: method = TransportationMethod.Train; break;
+            case Transportation.Walking: method = TransportationMethod.Walking; break;
+            case Transportation.Cart: method = TransportationMethod.Cart; break;
+            case Transportation.Ship: method = TransportationMethod.Ship; break;
+            case Transportation.Carriage: method = TransportationMethod.Carriage; break;
+            case Transportation.Tram: method = TransportationMethod.Tram; break;
+            case Transportation.Train: method = TransportationMethod.Train; break;
         }
         return method;
     }
 
-    private void OnRouteDiscovered(ArticyObject location, IEnumerable<EnumValue> value)
+    private void OnRouteDiscovered(ArticyObject location, IEnumerable<Transportation> value)
     {
         GameObject popupGO = LevelInstance.Instance.PushPopup(DialogSystem.Instance.DiscoveredRoutePopup);
         DiscoveredRoutePopup popup = popupGO.GetComponent<DiscoveredRoutePopup>();
@@ -270,39 +270,39 @@ public class DialogChat : MonoBehaviour
             if(destination.Template.Location_Revealed_1.LocationRevealed != null)
             {
                 OnRouteDiscovered(destination.Template.Location_Revealed_1.LocationRevealed,
-                    new EnumValue[] {
-                        destination.Template.Transportation.EnumValue,
-                        destination.Template.Transportation_02.EnumValue,
-                        destination.Template.Transportation_3.EnumValue
+                    new Transportation[] {
+                        destination.Template.Transportation.Transportation,
+                        destination.Template.Transportation_02.Transportation,
+                        destination.Template.Transportation_3.Transportation
                     });
             }
 
             if(destination.Template.Location_Revealed_2.LocationRevealed != null)
             {
                 OnRouteDiscovered(destination.Template.Location_Revealed_2.LocationRevealed,
-                    new EnumValue[]
+                    new Transportation[]
                     {
-                        destination.Template.Transportation_4.EnumValue,
-                        destination.Template.Transportation_5.EnumValue,
-                        destination.Template.Transportation_6.EnumValue
+                        destination.Template.Transportation_4.Transportation,
+                        destination.Template.Transportation_5.Transportation,
+                        destination.Template.Transportation_6.Transportation
                     });
             }
 
             if(destination.Template.Location_Revealed_3.LocationRevealed != null)
             {
                 OnRouteDiscovered(destination.Template.Location_Revealed_3.LocationRevealed,
-                    new EnumValue[]
+                    new Transportation[]
                     {
-                        destination.Template.Transportation_7.EnumValue,
+                        destination.Template.Transportation_7.Transportation,
                     });
             }
 
             if(destination.Template.Location_Revealed_4.LocationRevealed != null)
             {
                 OnRouteDiscovered(destination.Template.Location_Revealed_4.LocationRevealed,
-                    new EnumValue[]
+                    new Transportation[]
                     {
-                        destination.Template.Transportation_8.EnumValue,
+                        destination.Template.Transportation_8.Transportation,
                     });
             }
         }
@@ -355,8 +355,8 @@ public class DialogChat : MonoBehaviour
         }
         else if(pausedOn is ShipTicket shipTicket)
         {
-            Debug.Log(shipTicket.Template.MoneyRemoved.FrancRemoved);
-            Debug.Log(shipTicket.Template.Ship_Class.EnumValue);
+            //Debug.Log(shipTicket.Template.MoneyRemoved.FrancRemoved);
+            //Debug.Log(shipTicket.Template.Ship_Class.EnumValue);
         }
     }
 

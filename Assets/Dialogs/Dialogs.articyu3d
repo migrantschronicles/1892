@@ -6,8 +6,8 @@
     "set_UsedLanguage": "en",
     "set_UseScriptSupport": "True",
     "ExportVersion": "1.2",
-    "ObjectDefinitionsHash": "769A14E5FAB215D11C57C0CEFD3FF29A19AD95D045C6EA514EC92CB6AB6CBC58",
-    "ScriptFragmentsHash": "1397533513"
+    "ObjectDefinitionsHash": "D60033C8E536E9470D7AB9FB53F95E7AA6B4D21504823E24DBD489BAA8257531",
+    "ScriptFragmentsHash": "3350867238"
   },
   "Project": {
     "Name": "The Migrants' Chronicles",
@@ -457,6 +457,18 @@
           "Type": "Boolean",
           "Value": "False",
           "Description": "The player asked Nikola Tesla whether he is also migrating."
+        },
+        {
+          "Variable": "TheoFamiliar",
+          "Type": "Boolean",
+          "Value": "False",
+          "Description": "The player has become a little familiar with Theo."
+        },
+        {
+          "Variable": "TheoAffection",
+          "Type": "Boolean",
+          "Value": "False",
+          "Description": "The player and Theo care for each other."
         }
       ]
     },
@@ -775,6 +787,12 @@
           "Type": "Integer",
           "Value": "0",
           "Description": "Shows how many consecutive days the player has spent in the current city (or on the ship)"
+        },
+        {
+          "Variable": "Solvency",
+          "Type": "Boolean",
+          "Value": "False",
+          "Description": "Shows whether the player has enough money to buy something."
         }
       ]
     },
@@ -850,6 +868,12 @@
         },
         {
           "Variable": "Captain",
+          "Type": "Boolean",
+          "Value": "False",
+          "Description": "If the player has reached this point of the dialogue, the dialogue will start over next time you choose it."
+        },
+        {
+          "Variable": "Theo",
           "Type": "Boolean",
           "Value": "False",
           "Description": "If the player has reached this point of the dialogue, the dialogue will start over next time you choose it."
@@ -1153,9 +1177,24 @@
       }
     },
     {
-      "Type": "EnumValue",
+      "Type": "ShipClass",
       "Class": "Enum",
-      "DisplayName": "$Enum.EnumValue.DisplayName",
+      "DisplayName": "$Enum.ShipClass.DisplayName",
+      "Values": {
+        "FirstClass": 1,
+        "SecondClass": 2,
+        "SteerageClass": 3
+      },
+      "DisplayNames": {
+        "FirstClass": "$Enum.ShipClass.FirstClass.DisplayName",
+        "SecondClass": "$Enum.ShipClass.SecondClass.DisplayName",
+        "SteerageClass": "$Enum.ShipClass.SteerageClass.DisplayName"
+      }
+    },
+    {
+      "Type": "Transportation",
+      "Class": "Enum",
+      "DisplayName": "$Enum.Transportation.DisplayName",
       "Values": {
         "Walking": 1,
         "Cart": 2,
@@ -1165,12 +1204,12 @@
         "Ship": 6
       },
       "DisplayNames": {
-        "Walking": "$Enum.EnumValue.Walking.DisplayName",
-        "Cart": "$Enum.EnumValue.Cart.DisplayName",
-        "Carriage": "$Enum.EnumValue.Carriage.DisplayName",
-        "Tram": "$Enum.EnumValue.Tram.DisplayName",
-        "Train": "$Enum.EnumValue.Train.DisplayName",
-        "Ship": "$Enum.EnumValue.Ship.DisplayName"
+        "Walking": "$Enum.Transportation.Walking.DisplayName",
+        "Cart": "$Enum.Transportation.Cart.DisplayName",
+        "Carriage": "$Enum.Transportation.Carriage.DisplayName",
+        "Tram": "$Enum.Transportation.Tram.DisplayName",
+        "Train": "$Enum.Transportation.Train.DisplayName",
+        "Ship": "$Enum.Transportation.Ship.DisplayName"
       }
     },
     {
@@ -1680,14 +1719,14 @@
             "DisplayName": "$Feature.Transportation_8.DisplayName",
             "Properties": [
               {
-                "Property": "EnumValue",
-                "Type": "EnumValue",
-                "DisplayName": "$Property.Transportation_8.EnumValue.DisplayName"
+                "Property": "Transportation",
+                "Type": "Transportation",
+                "DisplayName": "$Property.Transportation_8.Transportation.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "EnumValue",
+                "Property": "Transportation",
                 "Type": "Enum",
                 "IsLocalized": "False",
                 "SortMode": "BySortIndex"
@@ -1746,14 +1785,14 @@
             "DisplayName": "$Feature.Transportation_7.DisplayName",
             "Properties": [
               {
-                "Property": "EnumValue",
-                "Type": "EnumValue",
-                "DisplayName": "$Property.Transportation_7.EnumValue.DisplayName"
+                "Property": "Transportation",
+                "Type": "Transportation",
+                "DisplayName": "$Property.Transportation_7.Transportation.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "EnumValue",
+                "Property": "Transportation",
                 "Type": "Enum",
                 "IsLocalized": "False",
                 "SortMode": "BySortIndex"
@@ -1812,14 +1851,14 @@
             "DisplayName": "$Feature.Transportation_6.DisplayName",
             "Properties": [
               {
-                "Property": "EnumValue",
-                "Type": "EnumValue",
-                "DisplayName": "$Property.Transportation_6.EnumValue.DisplayName"
+                "Property": "Transportation",
+                "Type": "Transportation",
+                "DisplayName": "$Property.Transportation_6.Transportation.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "EnumValue",
+                "Property": "Transportation",
                 "Type": "Enum",
                 "IsLocalized": "False",
                 "SortMode": "BySortIndex"
@@ -1831,14 +1870,14 @@
             "DisplayName": "$Feature.Transportation_5.DisplayName",
             "Properties": [
               {
-                "Property": "EnumValue",
-                "Type": "EnumValue",
-                "DisplayName": "$Property.Transportation_5.EnumValue.DisplayName"
+                "Property": "Transportation",
+                "Type": "Transportation",
+                "DisplayName": "$Property.Transportation_5.Transportation.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "EnumValue",
+                "Property": "Transportation",
                 "Type": "Enum",
                 "IsLocalized": "False",
                 "SortMode": "BySortIndex"
@@ -1850,14 +1889,14 @@
             "DisplayName": "$Feature.Transportation_4.DisplayName",
             "Properties": [
               {
-                "Property": "EnumValue",
-                "Type": "EnumValue",
-                "DisplayName": "$Property.Transportation_4.EnumValue.DisplayName"
+                "Property": "Transportation",
+                "Type": "Transportation",
+                "DisplayName": "$Property.Transportation_4.Transportation.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "EnumValue",
+                "Property": "Transportation",
                 "Type": "Enum",
                 "IsLocalized": "False",
                 "SortMode": "BySortIndex"
@@ -1916,14 +1955,14 @@
             "DisplayName": "$Feature.Transportation_3.DisplayName",
             "Properties": [
               {
-                "Property": "EnumValue",
-                "Type": "EnumValue",
-                "DisplayName": "$Property.Transportation_3.EnumValue.DisplayName"
+                "Property": "Transportation",
+                "Type": "Transportation",
+                "DisplayName": "$Property.Transportation_3.Transportation.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "EnumValue",
+                "Property": "Transportation",
                 "Type": "Enum",
                 "IsLocalized": "False",
                 "SortMode": "BySortIndex"
@@ -1935,14 +1974,14 @@
             "DisplayName": "$Feature.Transportation_02.DisplayName",
             "Properties": [
               {
-                "Property": "EnumValue",
-                "Type": "EnumValue",
-                "DisplayName": "$Property.Transportation_02.EnumValue.DisplayName"
+                "Property": "Transportation",
+                "Type": "Transportation",
+                "DisplayName": "$Property.Transportation_02.Transportation.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "EnumValue",
+                "Property": "Transportation",
                 "Type": "Enum",
                 "IsLocalized": "False",
                 "SortMode": "BySortIndex"
@@ -1954,14 +1993,14 @@
             "DisplayName": "$Feature.Transportation.DisplayName",
             "Properties": [
               {
-                "Property": "EnumValue",
-                "Type": "EnumValue",
-                "DisplayName": "$Property.Transportation.EnumValue.DisplayName"
+                "Property": "Transportation",
+                "Type": "Transportation",
+                "DisplayName": "$Property.Transportation.Transportation.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "EnumValue",
+                "Property": "Transportation",
                 "Type": "Enum",
                 "IsLocalized": "False",
                 "SortMode": "BySortIndex"
@@ -2063,18 +2102,18 @@
         "DisplayName": "$Template.ShipTicket.DisplayName",
         "Features": [
           {
-            "TechnicalName": "Ship_Class",
-            "DisplayName": "$Feature.Ship_Class.DisplayName",
+            "TechnicalName": "ShipClass",
+            "DisplayName": "$Feature.ShipClass.DisplayName",
             "Properties": [
               {
-                "Property": "EnumValue",
-                "Type": "EnumValue",
-                "DisplayName": "$Property.Ship_Class.EnumValue.DisplayName"
+                "Property": "ShipClass",
+                "Type": "ShipClass",
+                "DisplayName": "$Property.ShipClass.ShipClass.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "EnumValue",
+                "Property": "ShipClass",
                 "Type": "Enum",
                 "IsLocalized": "False",
                 "SortMode": "BySortIndex"
@@ -2086,36 +2125,21 @@
             "DisplayName": "$Feature.MoneyRemoved.DisplayName",
             "Properties": [
               {
-                "Property": "FrancRemoved",
-                "Type": "Float",
-                "DisplayName": "$Property.MoneyRemoved.FrancRemoved.DisplayName"
-              },
-              {
-                "Property": "DollarsRemoved",
+                "Property": "MoneyRemoved",
                 "Type": "Int",
-                "DisplayName": "$Property.MoneyRemoved.DollarsRemoved.DisplayName"
+                "DisplayName": "$Property.MoneyRemoved.MoneyRemoved.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "FrancRemoved",
-                "Type": "Number",
-                "MinValue": "-3.40282346638529E+38",
-                "MaxValue": "3.40282346638529E+38",
-                "Precision": "0",
-                "MinPrecision": "0",
-                "MaxPrecision": "0",
-                "Unit": "f"
-              },
-              {
-                "Property": "DollarsRemoved",
+                "Property": "MoneyRemoved",
                 "Type": "Number",
                 "MinValue": "1",
                 "MaxValue": "3.40282346638529E+38",
                 "Precision": "0",
                 "MinPrecision": "0",
                 "MaxPrecision": "0",
-                "Unit": "$"
+                "Unit": ""
               }
             ]
           }
@@ -2135,36 +2159,21 @@
             "DisplayName": "$Feature.MoneyAdded.DisplayName",
             "Properties": [
               {
-                "Property": "FrancAdded",
+                "Property": "MoneyAdded",
                 "Type": "Int",
-                "DisplayName": "$Property.MoneyAdded.FrancAdded.DisplayName"
-              },
-              {
-                "Property": "DollarsAdded",
-                "Type": "Int",
-                "DisplayName": "$Property.MoneyAdded.DollarsAdded.DisplayName"
+                "DisplayName": "$Property.MoneyAdded.MoneyAdded.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "FrancAdded",
+                "Property": "MoneyAdded",
                 "Type": "Number",
                 "MinValue": "1",
                 "MaxValue": "3.40282346638529E+38",
                 "Precision": "0",
                 "MinPrecision": "0",
                 "MaxPrecision": "0",
-                "Unit": "f"
-              },
-              {
-                "Property": "DollarsAdded",
-                "Type": "Number",
-                "MinValue": "1",
-                "MaxValue": "3.40282346638529E+38",
-                "Precision": "0",
-                "MinPrecision": "0",
-                "MaxPrecision": "0",
-                "Unit": "$"
+                "Unit": ""
               }
             ]
           }
@@ -2184,36 +2193,21 @@
             "DisplayName": "$Feature.MoneyRemoved.DisplayName",
             "Properties": [
               {
-                "Property": "FrancRemoved",
-                "Type": "Float",
-                "DisplayName": "$Property.MoneyRemoved.FrancRemoved.DisplayName"
-              },
-              {
-                "Property": "DollarsRemoved",
+                "Property": "MoneyRemoved",
                 "Type": "Int",
-                "DisplayName": "$Property.MoneyRemoved.DollarsRemoved.DisplayName"
+                "DisplayName": "$Property.MoneyRemoved.MoneyRemoved.DisplayName"
               }
             ],
             "Constraints": [
               {
-                "Property": "FrancRemoved",
-                "Type": "Number",
-                "MinValue": "-3.40282346638529E+38",
-                "MaxValue": "3.40282346638529E+38",
-                "Precision": "0",
-                "MinPrecision": "0",
-                "MaxPrecision": "0",
-                "Unit": "f"
-              },
-              {
-                "Property": "DollarsRemoved",
+                "Property": "MoneyRemoved",
                 "Type": "Number",
                 "MinValue": "1",
                 "MaxValue": "3.40282346638529E+38",
                 "Precision": "0",
                 "MinPrecision": "0",
                 "MaxPrecision": "0",
-                "Unit": "$"
+                "Unit": ""
               }
             ]
           }
@@ -5112,6 +5106,261 @@
                 "Text": "",
                 "Id": "0x0100000000001233",
                 "Owner": "0x010000000000122F"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "FlowFragment",
+          "Properties": {
+            "TechnicalName": "FFr_7D730DE1",
+            "Id": "0x0100000000005185",
+            "Parent": "0x0300000043CE43F7",
+            "Attachments": [],
+            "DisplayName": "FFr_7D730DE1.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "FFr_7D730DE1.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": -2450.0,
+              "y": -300.0
+            },
+            "ZIndex": 29.0,
+            "Size": {
+              "w": 325.0,
+              "h": 250.0
+            },
+            "ShortId": 2104692193,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005188",
+                "Owner": "0x0100000000005185"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005189",
+                "Owner": "0x0100000000005185"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "FlowFragment",
+          "Properties": {
+            "TechnicalName": "FFr_C4587DA0",
+            "Id": "0x010000000000518B",
+            "Parent": "0x0100000000005185",
+            "Attachments": [],
+            "DisplayName": "FFr_C4587DA0.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "FFr_C4587DA0.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 0.0,
+              "y": 550.0
+            },
+            "ZIndex": 0.0,
+            "Size": {
+              "w": 275.0,
+              "h": 200.0
+            },
+            "ShortId": 3294133664,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000518E",
+                "Owner": "0x010000000000518B"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000518F",
+                "Owner": "0x010000000000518B"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "FlowFragment",
+          "Properties": {
+            "TechnicalName": "FFr_8066CC7E",
+            "Id": "0x0100000000005191",
+            "Parent": "0x0100000000005185",
+            "Attachments": [],
+            "DisplayName": "FFr_8066CC7E.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "FFr_8066CC7E.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 350.0,
+              "y": 550.0
+            },
+            "ZIndex": 1.0,
+            "Size": {
+              "w": 275.0,
+              "h": 200.0
+            },
+            "ShortId": 2154220670,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005194",
+                "Owner": "0x0100000000005191"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005195",
+                "Owner": "0x0100000000005191"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "FlowFragment",
+          "Properties": {
+            "TechnicalName": "FFr_51852DC2",
+            "Id": "0x0100000000005197",
+            "Parent": "0x0100000000005185",
+            "Attachments": [],
+            "DisplayName": "FFr_51852DC2.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "FFr_51852DC2.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 700.0,
+              "y": 550.0
+            },
+            "ZIndex": 2.0,
+            "Size": {
+              "w": 275.0,
+              "h": 200.0
+            },
+            "ShortId": 1367682498,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000519A",
+                "Owner": "0x0100000000005197"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000519B",
+                "Owner": "0x0100000000005197"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "FlowFragment",
+          "Properties": {
+            "TechnicalName": "FFr_5D5F10C9",
+            "Id": "0x010000000000519D",
+            "Parent": "0x0100000000005185",
+            "Attachments": [],
+            "DisplayName": "FFr_5D5F10C9.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "FFr_5D5F10C9.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1050.0,
+              "y": 550.0
+            },
+            "ZIndex": 3.0,
+            "Size": {
+              "w": 275.0,
+              "h": 200.0
+            },
+            "ShortId": 1566511305,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051A0",
+                "Owner": "0x010000000000519D"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051A1",
+                "Owner": "0x010000000000519D"
               }
             ]
           }
@@ -9863,6 +10112,196 @@
                 "Text": "",
                 "Id": "0x0100000000003304",
                 "Owner": "0x0100000000003300"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "Dialogue",
+          "Properties": {
+            "TechnicalName": "Dlg_448D364A",
+            "Id": "0x01000000000051A3",
+            "Parent": "0x010000000000518B",
+            "Attachments": [],
+            "DisplayName": "Dlg_448D364A.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Dlg_448D364A.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 442.0,
+              "y": 500.0
+            },
+            "ZIndex": 0.0,
+            "Size": {
+              "w": 291.0,
+              "h": 200.0
+            },
+            "ShortId": 1150105162,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051A6",
+                "Owner": "0x01000000000051A3",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000051C2",
+                    "Target": "0x01000000000051BF"
+                  }
+                ]
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051A7",
+                "Owner": "0x01000000000051A3"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "Dialogue",
+          "Properties": {
+            "TechnicalName": "Dlg_11E07E47",
+            "Id": "0x01000000000051A9",
+            "Parent": "0x010000000000518B",
+            "Attachments": [],
+            "DisplayName": "Dlg_11E07E47.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Dlg_11E07E47.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 767.0,
+              "y": 500.0
+            },
+            "ZIndex": 1.0,
+            "Size": {
+              "w": 291.0,
+              "h": 200.0
+            },
+            "ShortId": 299925063,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051AC",
+                "Owner": "0x01000000000051A9"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051AD",
+                "Owner": "0x01000000000051A9"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "Dialogue",
+          "Properties": {
+            "TechnicalName": "Dlg_DF42B577",
+            "Id": "0x01000000000051AF",
+            "Parent": "0x010000000000518B",
+            "Attachments": [],
+            "DisplayName": "Dlg_DF42B577.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Dlg_DF42B577.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1092.0,
+              "y": 500.0
+            },
+            "ZIndex": 2.0,
+            "Size": {
+              "w": 291.0,
+              "h": 200.0
+            },
+            "ShortId": 3745690999,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051B2",
+                "Owner": "0x01000000000051AF",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005248",
+                    "Target": "0x0100000000005245"
+                  },
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005253",
+                    "Target": "0x0100000000005250"
+                  }
+                ]
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051B3",
+                "Owner": "0x01000000000051AF"
               }
             ]
           }
@@ -26159,7 +26598,7 @@
             ],
             "OutputPins": [
               {
-                "Text": "",
+                "Text": "DialogueOptions.TheoFamiliar = true",
                 "Id": "0x01000000000010B0",
                 "Owner": "0x01000000000010AC",
                 "Connections": [
@@ -26864,7 +27303,7 @@
             ],
             "OutputPins": [
               {
-                "Text": "",
+                "Text": "DialogueEnd.Theo = true",
                 "Id": "0x010000000000134C",
                 "Owner": "0x0100000000001348",
                 "Connections": [
@@ -27435,7 +27874,7 @@
             ],
             "OutputPins": [
               {
-                "Text": "Acquaintances.Theo = true",
+                "Text": "Acquaintances.Theo = true;\nDialogueEnd.Theo = true",
                 "Id": "0x01000000000013A4",
                 "Owner": "0x01000000000013A0",
                 "Connections": [
@@ -99536,6 +99975,1898 @@
           }
         },
         {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_EC3B7A0D",
+            "Id": "0x01000000000051B5",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_EC3B7A0D.PreviewText",
+            "StageDirections": "DFr_EC3B7A0D.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_EC3B7A0D.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 450.0,
+              "y": 450.0
+            },
+            "ZIndex": 0.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3963320845,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051B8",
+                "Owner": "0x01000000000051B5"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051B9",
+                "Owner": "0x01000000000051B5",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000051BD",
+                    "Target": "0x01000000000051BA"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_B4F5DA1F",
+            "Id": "0x01000000000051BA",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_B4F5DA1F.PreviewText",
+            "StageDirections": "DFr_B4F5DA1F.StageDirections",
+            "Speaker": "0x0100000000000144",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_B4F5DA1F.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 725.0,
+              "y": 450.0
+            },
+            "ZIndex": 1.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3036011039,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051BD",
+                "Owner": "0x01000000000051BA"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051BE",
+                "Owner": "0x01000000000051BA",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000051CD",
+                    "Target": "0x01000000000051CA"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_C8682C83",
+            "Id": "0x01000000000051BF",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_C8682C83.PreviewText",
+            "StageDirections": "DFr_C8682C83.StageDirections",
+            "Speaker": "0x0100000000000149",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_C8682C83.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 175.0,
+              "y": 450.0
+            },
+            "ZIndex": 2.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3362270339,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051C2",
+                "Owner": "0x01000000000051BF"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051C3",
+                "Owner": "0x01000000000051BF",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000051B8",
+                    "Target": "0x01000000000051B5"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_AF355008",
+            "Id": "0x01000000000051CA",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_AF355008.PreviewText",
+            "StageDirections": "DFr_AF355008.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_AF355008.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1000.0,
+              "y": 450.0
+            },
+            "ZIndex": 6.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 2939506696,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051CD",
+                "Owner": "0x01000000000051CA"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051CE",
+                "Owner": "0x01000000000051CA",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000051D4",
+                    "Target": "0x01000000000051D1"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_43A778A2",
+            "Id": "0x01000000000051D1",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_43A778A2.PreviewText",
+            "StageDirections": "DFr_43A778A2.StageDirections",
+            "Speaker": "0x0100000000000149",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_43A778A2.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1275.0,
+              "y": 450.0
+            },
+            "ZIndex": 8.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 1135048866,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051D4",
+                "Owner": "0x01000000000051D1"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051D5",
+                "Owner": "0x01000000000051D1",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000051DB",
+                    "Target": "0x01000000000051D8"
+                  },
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000051E2",
+                    "Target": "0x01000000000051DF"
+                  },
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000051E8",
+                    "Target": "0x01000000000051E5"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_4F634182",
+            "Id": "0x01000000000051D8",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_4F634182.PreviewText",
+            "StageDirections": "DFr_4F634182.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_4F634182.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1550.0,
+              "y": 725.0
+            },
+            "ZIndex": 10.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 1331904898,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051DB",
+                "Owner": "0x01000000000051D8"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051DC",
+                "Owner": "0x01000000000051D8",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005233",
+                    "Target": "0x0100000000005230"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_77DA8FCB",
+            "Id": "0x01000000000051DF",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_77DA8FCB.PreviewText",
+            "StageDirections": "DFr_77DA8FCB.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_77DA8FCB.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1550.0,
+              "y": 100.0
+            },
+            "ZIndex": 12.0,
+            "Size": {
+              "w": 225.0,
+              "h": 300.0
+            },
+            "ShortId": 2010812363,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051E2",
+                "Owner": "0x01000000000051DF"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051E3",
+                "Owner": "0x01000000000051DF",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000051F3",
+                    "Target": "0x01000000000051F0"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_5DF59D4C",
+            "Id": "0x01000000000051E5",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_5DF59D4C.PreviewText",
+            "StageDirections": "DFr_5DF59D4C.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_5DF59D4C.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1550.0,
+              "y": 450.0
+            },
+            "ZIndex": 14.0,
+            "Size": {
+              "w": 225.0,
+              "h": 225.0
+            },
+            "ShortId": 1576377676,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051E8",
+                "Owner": "0x01000000000051E5"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051E9",
+                "Owner": "0x01000000000051E5",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005216",
+                    "Target": "0x0100000000005213"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_BC4D88A9",
+            "Id": "0x01000000000051F0",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_BC4D88A9.PreviewText",
+            "StageDirections": "DFr_BC4D88A9.StageDirections",
+            "Speaker": "0x0100000000000144",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_BC4D88A9.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1825.0000000000002,
+              "y": 150.0
+            },
+            "ZIndex": 16.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3159197865,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051F3",
+                "Owner": "0x01000000000051F0"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051F4",
+                "Owner": "0x01000000000051F0",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000051FA",
+                    "Target": "0x01000000000051F7"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_38A15149",
+            "Id": "0x01000000000051F7",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_38A15149.PreviewText",
+            "StageDirections": "DFr_38A15149.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_38A15149.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 2100.0,
+              "y": 150.0
+            },
+            "ZIndex": 18.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 950096201,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051FA",
+                "Owner": "0x01000000000051F7"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000051FB",
+                "Owner": "0x01000000000051F7",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005201",
+                    "Target": "0x01000000000051FE"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_B39941AA",
+            "Id": "0x01000000000051FE",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_B39941AA.PreviewText",
+            "StageDirections": "DFr_B39941AA.StageDirections",
+            "Speaker": "0x0100000000000149",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_B39941AA.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 2375.0,
+              "y": 450.0
+            },
+            "ZIndex": 20.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3013165482,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005201",
+                "Owner": "0x01000000000051FE"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005202",
+                "Owner": "0x01000000000051FE",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005208",
+                    "Target": "0x0100000000005205"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_320E23B7",
+            "Id": "0x0100000000005205",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_320E23B7.PreviewText",
+            "StageDirections": "DFr_320E23B7.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_320E23B7.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 2650.0,
+              "y": 450.0
+            },
+            "ZIndex": 22.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 839787447,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005208",
+                "Owner": "0x0100000000005205"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005209",
+                "Owner": "0x0100000000005205",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000051A7",
+                    "Target": "0x01000000000051A3"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_8C398E4D",
+            "Id": "0x0100000000005213",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_8C398E4D.PreviewText",
+            "StageDirections": "DFr_8C398E4D.StageDirections",
+            "Speaker": "0x0100000000000144",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_8C398E4D.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1825.0000000000002,
+              "y": 450.0
+            },
+            "ZIndex": 24.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 2352582221,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005216",
+                "Owner": "0x0100000000005213"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005217",
+                "Owner": "0x0100000000005213",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x010000000000521D",
+                    "Target": "0x010000000000521A"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_4DEC4752",
+            "Id": "0x010000000000521A",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_4DEC4752.PreviewText",
+            "StageDirections": "DFr_4DEC4752.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_4DEC4752.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 2100.0,
+              "y": 450.0
+            },
+            "ZIndex": 26.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 1307330386,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000521D",
+                "Owner": "0x010000000000521A"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000521E",
+                "Owner": "0x010000000000521A",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005201",
+                    "Target": "0x01000000000051FE"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_89C6EFC6",
+            "Id": "0x0100000000005230",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_89C6EFC6.PreviewText",
+            "StageDirections": "DFr_89C6EFC6.StageDirections",
+            "Speaker": "0x0100000000000144",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_89C6EFC6.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1825.0000000000002,
+              "y": 725.0
+            },
+            "ZIndex": 29.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 2311516102,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005233",
+                "Owner": "0x0100000000005230"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005234",
+                "Owner": "0x0100000000005230",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x010000000000523A",
+                    "Target": "0x0100000000005237"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_DB1EC08B",
+            "Id": "0x0100000000005237",
+            "Parent": "0x01000000000051A3",
+            "MenuText": "DFr_DB1EC08B.PreviewText",
+            "StageDirections": "DFr_DB1EC08B.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_DB1EC08B.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 2100.0,
+              "y": 725.0
+            },
+            "ZIndex": 31.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3676225675,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000523A",
+                "Owner": "0x0100000000005237"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000523B",
+                "Owner": "0x0100000000005237",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005201",
+                    "Target": "0x01000000000051FE"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_CB98F15F",
+            "Id": "0x0100000000005240",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_CB98F15F.PreviewText",
+            "StageDirections": "DFr_CB98F15F.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_CB98F15F.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 400.0,
+              "y": 300.0
+            },
+            "ZIndex": 0.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3415798111,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005243",
+                "Owner": "0x0100000000005240"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005244",
+                "Owner": "0x0100000000005240",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005261",
+                    "Target": "0x010000000000525E"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_349A02E5",
+            "Id": "0x0100000000005245",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_349A02E5.PreviewText",
+            "StageDirections": "DFr_349A02E5.StageDirections",
+            "Speaker": "0x0100000000000B52",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_349A02E5.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 125.0,
+              "y": 300.0
+            },
+            "ZIndex": 1.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 882508517,
+            "InputPins": [
+              {
+                "Text": "Acquaintances.Theo == true",
+                "Id": "0x0100000000005248",
+                "Owner": "0x0100000000005245"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005249",
+                "Owner": "0x0100000000005245",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005243",
+                    "Target": "0x0100000000005240"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_0A2767D7",
+            "Id": "0x0100000000005250",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_0A2767D7.PreviewText",
+            "StageDirections": "DFr_0A2767D7.StageDirections",
+            "Speaker": "0x0100000000000B52",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_0A2767D7.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 125.0,
+              "y": 1125.0
+            },
+            "ZIndex": 4.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 170354647,
+            "InputPins": [
+              {
+                "Text": "Acquaintances.Theo == false",
+                "Id": "0x0100000000005253",
+                "Owner": "0x0100000000005250"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005254",
+                "Owner": "0x0100000000005250",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x010000000000525A",
+                    "Target": "0x0100000000005257"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_701BA653",
+            "Id": "0x0100000000005257",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_701BA653.PreviewText",
+            "StageDirections": "DFr_701BA653.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_701BA653.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 400.0,
+              "y": 1125.0
+            },
+            "ZIndex": 6.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 1880860243,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000525A",
+                "Owner": "0x0100000000005257"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000525B",
+                "Owner": "0x0100000000005257"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_BC4787E2",
+            "Id": "0x010000000000525E",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_BC4787E2.PreviewText",
+            "StageDirections": "DFr_BC4787E2.StageDirections",
+            "Speaker": "0x0100000000000B52",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_BC4787E2.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 675.0,
+              "y": 300.0
+            },
+            "ZIndex": 8.0,
+            "Size": {
+              "w": 300.0,
+              "h": 200.0
+            },
+            "ShortId": 3158804450,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005261",
+                "Owner": "0x010000000000525E"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005262",
+                "Owner": "0x010000000000525E",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005268",
+                    "Target": "0x0100000000005265"
+                  },
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x010000000000526E",
+                    "Target": "0x010000000000526B"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_DB90FE3C",
+            "Id": "0x0100000000005265",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_DB90FE3C.PreviewText",
+            "StageDirections": "DFr_DB90FE3C.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_DB90FE3C.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1025.0,
+              "y": -200.0
+            },
+            "ZIndex": 10.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3683712572,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005268",
+                "Owner": "0x0100000000005265"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005269",
+                "Owner": "0x0100000000005265"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_F4DBF2E3",
+            "Id": "0x010000000000526B",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_F4DBF2E3.PreviewText",
+            "StageDirections": "DFr_F4DBF2E3.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_F4DBF2E3.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1025.0,
+              "y": 425.0
+            },
+            "ZIndex": 12.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 4108055267,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000526E",
+                "Owner": "0x010000000000526B"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x010000000000526F",
+                "Owner": "0x010000000000526B",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005278",
+                    "Target": "0x0100000000005275"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_DBFC1695",
+            "Id": "0x0100000000005275",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_DBFC1695.PreviewText",
+            "StageDirections": "DFr_DBFC1695.StageDirections",
+            "Speaker": "0x0100000000000B52",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_DBFC1695.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1300.0,
+              "y": 425.0
+            },
+            "ZIndex": 14.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3690731157,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005278",
+                "Owner": "0x0100000000005275"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005279",
+                "Owner": "0x0100000000005275",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x010000000000527F",
+                    "Target": "0x010000000000527C"
+                  },
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x0100000000005285",
+                    "Target": "0x0100000000005282"
+                  },
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000053A2",
+                    "Target": "0x010000000000539F"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_647D5975",
+            "Id": "0x010000000000527C",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_647D5975.PreviewText",
+            "StageDirections": "DFr_647D5975.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_647D5975.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1575.0,
+              "y": 300.0
+            },
+            "ZIndex": 16.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 1685936501,
+            "InputPins": [
+              {
+                "Text": "DialogueOptions.TheoFamiliar == false",
+                "Id": "0x010000000000527F",
+                "Owner": "0x010000000000527C"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005280",
+                "Owner": "0x010000000000527C",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000053B3",
+                    "Target": "0x01000000000053B0"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_4E33C886",
+            "Id": "0x0100000000005282",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_4E33C886.PreviewText",
+            "StageDirections": "DFr_4E33C886.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_4E33C886.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1575.0,
+              "y": 825.0
+            },
+            "ZIndex": 18.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 1312016518,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005285",
+                "Owner": "0x0100000000005282"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x0100000000005286",
+                "Owner": "0x0100000000005282"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_4ED82B34",
+            "Id": "0x010000000000539F",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_4ED82B34.PreviewText",
+            "StageDirections": "DFr_4ED82B34.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_4ED82B34.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1575.0,
+              "y": 50.0
+            },
+            "ZIndex": 20.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 1322789684,
+            "InputPins": [
+              {
+                "Text": "DialogueOptions.TheoFamiliar == true &&\nCharacterTraits.Love >=1",
+                "Id": "0x01000000000053A2",
+                "Owner": "0x010000000000539F"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053A3",
+                "Owner": "0x010000000000539F",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000053AA",
+                    "Target": "0x01000000000053A7"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_41C657EA",
+            "Id": "0x01000000000053A7",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_41C657EA.PreviewText",
+            "StageDirections": "DFr_41C657EA.StageDirections",
+            "Speaker": "0x0100000000000B52",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_41C657EA.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1850.0000000000002,
+              "y": 50.0
+            },
+            "ZIndex": 22.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 1103517674,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053AA",
+                "Owner": "0x01000000000053A7"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "DialogueOptions.TheoAffection = true",
+                "Id": "0x01000000000053AB",
+                "Owner": "0x01000000000053A7",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000053D8",
+                    "Target": "0x01000000000053D5"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_FF2A4B34",
+            "Id": "0x01000000000053B0",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_FF2A4B34.PreviewText",
+            "StageDirections": "DFr_FF2A4B34.StageDirections",
+            "Speaker": "0x0100000000000B52",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_FF2A4B34.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 1850.0000000000002,
+              "y": 300.0
+            },
+            "ZIndex": 24.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 4280961844,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053B3",
+                "Owner": "0x01000000000053B0"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053B4",
+                "Owner": "0x01000000000053B0",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000053BA",
+                    "Target": "0x01000000000053B7"
+                  },
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000053C2",
+                    "Target": "0x01000000000053BF"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_85425645",
+            "Id": "0x01000000000053B7",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_85425645.PreviewText",
+            "StageDirections": "DFr_85425645.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_85425645.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 2125.0,
+              "y": 300.0
+            },
+            "ZIndex": 26.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 2235717189,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053BA",
+                "Owner": "0x01000000000053B7"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053BB",
+                "Owner": "0x01000000000053B7",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000053CA",
+                    "Target": "0x01000000000053C7"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_EC389139",
+            "Id": "0x01000000000053BF",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_EC389139.PreviewText",
+            "StageDirections": "DFr_EC389139.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_EC389139.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 2125.0,
+              "y": 550.0
+            },
+            "ZIndex": 28.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3963130169,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053C2",
+                "Owner": "0x01000000000053BF"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053C3",
+                "Owner": "0x01000000000053BF",
+                "Connections": [
+                  {
+                    "Color": {
+                      "a": 1.0,
+                      "r": 0.577580452,
+                      "g": 0.7605245,
+                      "b": 0.7991027
+                    },
+                    "Label": "",
+                    "TargetPin": "0x01000000000053D1",
+                    "Target": "0x01000000000053CE"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_52946C81",
+            "Id": "0x01000000000053C7",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_52946C81.PreviewText",
+            "StageDirections": "DFr_52946C81.StageDirections",
+            "Speaker": "0x0100000000000B52",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_52946C81.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 2400.0,
+              "y": 300.0
+            },
+            "ZIndex": 30.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 1385458817,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053CA",
+                "Owner": "0x01000000000053C7"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053CB",
+                "Owner": "0x01000000000053C7"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_D818FC51",
+            "Id": "0x01000000000053CE",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_D818FC51.PreviewText",
+            "StageDirections": "DFr_D818FC51.StageDirections",
+            "Speaker": "0x0100000000000B52",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_D818FC51.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 2400.0,
+              "y": 550.0
+            },
+            "ZIndex": 32.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3625516113,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053D1",
+                "Owner": "0x01000000000053CE"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053D2",
+                "Owner": "0x01000000000053CE"
+              }
+            ]
+          }
+        },
+        {
+          "Type": "DialogueFragment",
+          "Properties": {
+            "TechnicalName": "DFr_D765B517",
+            "Id": "0x01000000000053D5",
+            "Parent": "0x01000000000051AF",
+            "MenuText": "DFr_D765B517.PreviewText",
+            "StageDirections": "DFr_D765B517.StageDirections",
+            "Speaker": "0x0100000000000136",
+            "SplitHeight": 64.0,
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "DFr_D765B517.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 2125.0,
+              "y": 50.0
+            },
+            "ZIndex": 34.0,
+            "Size": {
+              "w": 225.0,
+              "h": 200.0
+            },
+            "ShortId": 3613766935,
+            "InputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053D8",
+                "Owner": "0x01000000000053D5"
+              }
+            ],
+            "OutputPins": [
+              {
+                "Text": "",
+                "Id": "0x01000000000053D9",
+                "Owner": "0x01000000000053D5"
+              }
+            ]
+          }
+        },
+        {
           "Type": "Destination",
           "Properties": {
             "TechnicalName": "DFr_51980D1A",
@@ -99592,7 +101923,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -99601,7 +101932,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -99610,13 +101941,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0000000000000000"
@@ -99625,13 +101956,13 @@
               "CityDescription": ""
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000001124"
@@ -99698,7 +102029,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -99707,7 +102038,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -99716,13 +102047,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0000000000000000"
@@ -99731,13 +102062,13 @@
               "CityDescription": ""
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 2
+              "Transportation": 2
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000000853"
@@ -99804,7 +102135,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0100000000001118"
@@ -99813,7 +102144,7 @@
               "CityDescription": "Marseilles"
             },
             "Transportation_7": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0100000000001114"
@@ -99822,13 +102153,13 @@
               "CityDescription": "Le Havre"
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation_4": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000001110"
@@ -99837,13 +102168,13 @@
               "CityDescription": "Paris"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000001104"
@@ -99910,7 +102241,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0100000000001118"
@@ -99919,7 +102250,7 @@
               "CityDescription": "Marseilles"
             },
             "Transportation_7": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0100000000001114"
@@ -99928,13 +102259,13 @@
               "CityDescription": "Le Havre"
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation_4": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000001110"
@@ -99943,13 +102274,13 @@
               "CityDescription": "Paris"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000001104"
@@ -100016,7 +102347,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0100000000001118"
@@ -100025,7 +102356,7 @@
               "CityDescription": "Marseilles"
             },
             "Transportation_7": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0100000000001114"
@@ -100034,13 +102365,13 @@
               "CityDescription": "Le Havre"
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation_4": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000001110"
@@ -100049,13 +102380,13 @@
               "CityDescription": "Paris"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000001108"
@@ -100122,7 +102453,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -100131,7 +102462,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0100000000000119"
@@ -100140,13 +102471,13 @@
               "CityDescription": "Hamburg"
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation_4": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000001108"
@@ -100155,13 +102486,13 @@
               "CityDescription": "Brussels"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x010000000000110C"
@@ -100228,7 +102559,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -100237,7 +102568,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -100246,13 +102577,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000003BEF"
@@ -100261,13 +102592,13 @@
               "CityDescription": "Rotterdam - London - Southampton"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000003BF3"
@@ -100345,7 +102676,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -100354,7 +102685,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -100363,13 +102694,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0000000000000000"
@@ -100378,13 +102709,13 @@
               "CityDescription": ""
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000003BFD"
@@ -100451,7 +102782,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0100000000001118"
@@ -100460,7 +102791,7 @@
               "CityDescription": "Marseilles"
             },
             "Transportation_7": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0100000000001114"
@@ -100469,13 +102800,13 @@
               "CityDescription": "Le Havre"
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation_4": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000001110"
@@ -100484,13 +102815,13 @@
               "CityDescription": "Paris"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000001104"
@@ -100557,7 +102888,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0100000000001118"
@@ -100566,7 +102897,7 @@
               "CityDescription": "Marseilles"
             },
             "Transportation_7": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0100000000001114"
@@ -100575,13 +102906,13 @@
               "CityDescription": "Le Havre"
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000000853"
@@ -100590,13 +102921,13 @@
               "CityDescription": "Luxembourg"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000001108"
@@ -100674,7 +103005,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -100683,7 +103014,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -100692,13 +103023,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0000000000000000"
@@ -100707,13 +103038,13 @@
               "CityDescription": ""
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000003BFD"
@@ -100791,7 +103122,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -100800,7 +103131,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -100809,13 +103140,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0000000000000000"
@@ -100824,13 +103155,13 @@
               "CityDescription": ""
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000001110"
@@ -100908,7 +103239,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -100917,7 +103248,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -100926,13 +103257,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0000000000000000"
@@ -100941,13 +103272,13 @@
               "CityDescription": ""
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000003BEF"
@@ -101025,7 +103356,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -101034,7 +103365,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0100000000003BFD"
@@ -101043,13 +103374,13 @@
               "CityDescription": "New York"
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000000119"
@@ -101058,13 +103389,13 @@
               "CityDescription": "Hamburg"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000001104"
@@ -101153,7 +103484,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -101162,7 +103493,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0100000000003BFD"
@@ -101171,13 +103502,13 @@
               "CityDescription": "New York"
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Transportation_4": {
-              "EnumValue": 3
+              "Transportation": 3
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x010000000000111C"
@@ -101186,13 +103517,13 @@
               "CityDescription": "Genoa"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000001110"
@@ -101259,7 +103590,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -101268,7 +103599,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -101277,13 +103608,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0000000000000000"
@@ -101292,13 +103623,13 @@
               "CityDescription": ""
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x010000000000111C"
@@ -101376,7 +103707,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -101385,7 +103716,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -101394,13 +103725,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000003BFD"
@@ -101409,13 +103740,13 @@
               "CityDescription": "New York"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000001118"
@@ -101493,7 +103824,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -101502,7 +103833,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -101511,13 +103842,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000003BFD"
@@ -101526,13 +103857,13 @@
               "CityDescription": "New York"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000000119"
@@ -101610,7 +103941,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -101619,7 +103950,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -101628,13 +103959,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0000000000000000"
@@ -101643,13 +103974,13 @@
               "CityDescription": ""
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0000000000000000"
@@ -101727,7 +104058,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -101736,7 +104067,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0000000000000000"
@@ -101745,13 +104076,13 @@
               "CityDescription": ""
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000003BFD"
@@ -101760,13 +104091,13 @@
               "CityDescription": "New York"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000003BEF"
@@ -101844,7 +104175,7 @@
           },
           "Template": {
             "Transportation_8": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Location_Revealed_4": {
               "LocationRevealed": "0x0000000000000000"
@@ -101853,7 +104184,7 @@
               "CityDescription": ""
             },
             "Transportation_7": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_3": {
               "LocationRevealed": "0x0100000000003BFD"
@@ -101862,13 +104193,13 @@
               "CityDescription": "New York"
             },
             "Transportation_6": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_5": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_4": {
-              "EnumValue": 6
+              "Transportation": 6
             },
             "Location_Revealed_2": {
               "LocationRevealed": "0x0100000000001114"
@@ -101877,13 +104208,13 @@
               "CityDescription": "Le Havre"
             },
             "Transportation_3": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation_02": {
-              "EnumValue": null
+              "Transportation": null
             },
             "Transportation": {
-              "EnumValue": 5
+              "Transportation": 5
             },
             "Location_Revealed_1": {
               "LocationRevealed": "0x0100000000003BF3"
@@ -104904,12 +107235,11 @@
             ]
           },
           "Template": {
-            "Ship_Class": {
-              "EnumValue": 3
+            "ShipClass": {
+              "ShipClass": 3
             },
             "MoneyRemoved": {
-              "FrancRemoved": 40.0,
-              "DollarsRemoved": null
+              "MoneyRemoved": null
             }
           }
         },
@@ -104969,12 +107299,11 @@
             ]
           },
           "Template": {
-            "Ship_Class": {
-              "EnumValue": 1
+            "ShipClass": {
+              "ShipClass": 1
             },
             "MoneyRemoved": {
-              "FrancRemoved": 80.0,
-              "DollarsRemoved": null
+              "MoneyRemoved": null
             }
           }
         },
@@ -105034,12 +107363,11 @@
             ]
           },
           "Template": {
-            "Ship_Class": {
-              "EnumValue": 2
+            "ShipClass": {
+              "ShipClass": 2
             },
             "MoneyRemoved": {
-              "FrancRemoved": 50.0,
-              "DollarsRemoved": null
+              "MoneyRemoved": null
             }
           }
         },
@@ -105222,8 +107550,7 @@
           },
           "Template": {
             "MoneyAdded": {
-              "FrancAdded": 0.0,
-              "DollarsAdded": 15.0
+              "MoneyAdded": 15.0
             }
           }
         },
@@ -105284,8 +107611,7 @@
           },
           "Template": {
             "MoneyAdded": {
-              "FrancAdded": null,
-              "DollarsAdded": 15.0
+              "MoneyAdded": 15.0
             }
           }
         },
@@ -105346,8 +107672,7 @@
           },
           "Template": {
             "MoneyAdded": {
-              "FrancAdded": null,
-              "DollarsAdded": 15.0
+              "MoneyAdded": 15.0
             }
           }
         },
@@ -105408,8 +107733,7 @@
           },
           "Template": {
             "MoneyAdded": {
-              "FrancAdded": 5.0,
-              "DollarsAdded": null
+              "MoneyAdded": null
             }
           }
         },
@@ -105470,8 +107794,7 @@
           },
           "Template": {
             "MoneyAdded": {
-              "FrancAdded": 5.0,
-              "DollarsAdded": null
+              "MoneyAdded": null
             }
           }
         },
@@ -109680,6 +112003,33 @@
         {
           "Type": "Comment",
           "Properties": {
+            "TechnicalName": "CMT_72057594037949068",
+            "Id": "0x010000000000528C",
+            "Parent": "0x0100000000003031",
+            "CreatedBy": "",
+            "CreatedOn": "2023-03-01T19:44:08.9560721",
+            "Color": {
+              "r": 1.0,
+              "g": 0.0,
+              "b": 0.0
+            },
+            "Text": "72057594037949068.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 749.77777608235681,
+              "y": 1600.0
+            },
+            "ZIndex": 230.0,
+            "Size": {
+              "w": 275.11111450195313,
+              "h": 175.0
+            },
+            "ShortId": 2482605562
+          }
+        },
+        {
+          "Type": "Comment",
+          "Properties": {
             "TechnicalName": "CMT_72057594037946309",
             "Id": "0x01000000000047C5",
             "Parent": "0x0100000000004064",
@@ -113366,6 +115716,376 @@
           }
         },
         {
+          "Type": "Location",
+          "Properties": {
+            "TechnicalName": "Loc_2076CAAE",
+            "Id": "0x010000000000515D",
+            "Parent": "0x0100000000003BFB",
+            "Attachments": [],
+            "DisplayName": "Loc_2076CAAE.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Loc_2076CAAE.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 20.0,
+              "y": 20.0
+            },
+            "ZIndex": 1.0,
+            "Size": {
+              "w": 256.0,
+              "h": 196.0
+            },
+            "ShortId": 544656046
+          }
+        },
+        {
+          "Type": "Location",
+          "Properties": {
+            "TechnicalName": "Loc_65D38FA2",
+            "Id": "0x0100000000005161",
+            "Parent": "0x0100000000003BFB",
+            "Attachments": [],
+            "DisplayName": "Loc_65D38FA2.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Loc_65D38FA2.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 40.0,
+              "y": 40.0
+            },
+            "ZIndex": 2.0,
+            "Size": {
+              "w": 256.0,
+              "h": 196.0
+            },
+            "ShortId": 1708363682
+          }
+        },
+        {
+          "Type": "Location",
+          "Properties": {
+            "TechnicalName": "Loc_3DC0FA00",
+            "Id": "0x0100000000005165",
+            "Parent": "0x0100000000003BFB",
+            "Attachments": [],
+            "DisplayName": "Loc_3DC0FA00.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Loc_3DC0FA00.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 60.0,
+              "y": 60.0
+            },
+            "ZIndex": 3.0,
+            "Size": {
+              "w": 256.0,
+              "h": 196.0
+            },
+            "ShortId": 1036057088
+          }
+        },
+        {
+          "Type": "Location",
+          "Properties": {
+            "TechnicalName": "Loc_832A7A71",
+            "Id": "0x0100000000005169",
+            "Parent": "0x0100000000003BFB",
+            "Attachments": [],
+            "DisplayName": "Loc_832A7A71.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Loc_832A7A71.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 80.0,
+              "y": 80.0
+            },
+            "ZIndex": 4.0,
+            "Size": {
+              "w": 256.0,
+              "h": 196.0
+            },
+            "ShortId": 2200599153
+          }
+        },
+        {
+          "Type": "Location",
+          "Properties": {
+            "TechnicalName": "Loc_A28DB023",
+            "Id": "0x010000000000516D",
+            "Parent": "0x0100000000003BFB",
+            "Attachments": [],
+            "DisplayName": "Loc_A28DB023.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Loc_A28DB023.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 100.0,
+              "y": 100.0
+            },
+            "ZIndex": 5.0,
+            "Size": {
+              "w": 256.0,
+              "h": 196.0
+            },
+            "ShortId": 2727194659
+          }
+        },
+        {
+          "Type": "Location",
+          "Properties": {
+            "TechnicalName": "Loc_23D7F0F6",
+            "Id": "0x0100000000005171",
+            "Parent": "0x0100000000003BFB",
+            "Attachments": [],
+            "DisplayName": "Loc_23D7F0F6.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Loc_23D7F0F6.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 120.0,
+              "y": 120.0
+            },
+            "ZIndex": 6.0,
+            "Size": {
+              "w": 256.0,
+              "h": 196.0
+            },
+            "ShortId": 601354486
+          }
+        },
+        {
+          "Type": "Location",
+          "Properties": {
+            "TechnicalName": "Loc_2F30C954",
+            "Id": "0x0100000000005175",
+            "Parent": "0x0100000000003BFB",
+            "Attachments": [],
+            "DisplayName": "Loc_2F30C954.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Loc_2F30C954.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 140.0,
+              "y": 140.0
+            },
+            "ZIndex": 7.0,
+            "Size": {
+              "w": 256.0,
+              "h": 196.0
+            },
+            "ShortId": 791726420
+          }
+        },
+        {
+          "Type": "Location",
+          "Properties": {
+            "TechnicalName": "Loc_20A22678",
+            "Id": "0x0100000000005179",
+            "Parent": "0x0100000000003BFB",
+            "Attachments": [],
+            "DisplayName": "Loc_20A22678.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Loc_20A22678.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 160.0,
+              "y": 160.0
+            },
+            "ZIndex": 8.0,
+            "Size": {
+              "w": 256.0,
+              "h": 196.0
+            },
+            "ShortId": 547497592
+          }
+        },
+        {
+          "Type": "Location",
+          "Properties": {
+            "TechnicalName": "Loc_D4E0238B",
+            "Id": "0x010000000000517D",
+            "Parent": "0x0100000000003BFB",
+            "Attachments": [],
+            "DisplayName": "Loc_D4E0238B.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Loc_D4E0238B.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 180.0,
+              "y": 180.0
+            },
+            "ZIndex": 9.0,
+            "Size": {
+              "w": 256.0,
+              "h": 196.0
+            },
+            "ShortId": 3571458955
+          }
+        },
+        {
+          "Type": "Location",
+          "Properties": {
+            "TechnicalName": "Loc_8C6CC4FA",
+            "Id": "0x0100000000005181",
+            "Parent": "0x0100000000003BFB",
+            "Attachments": [],
+            "DisplayName": "Loc_8C6CC4FA.DisplayName",
+            "PreviewImage": {
+              "ViewBox": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.0,
+                "h": 0.0
+              },
+              "Mode": "FromAsset",
+              "Asset": "0x0000000000000000"
+            },
+            "Color": {
+              "r": 0.577580452,
+              "g": 0.7605245,
+              "b": 0.7991027
+            },
+            "Text": "Loc_8C6CC4FA.Text",
+            "ExternalId": "",
+            "Position": {
+              "x": 200.0,
+              "y": 200.0
+            },
+            "ZIndex": 10.0,
+            "Size": {
+              "w": 256.0,
+              "h": 196.0
+            },
+            "ShortId": 2355938554
+          }
+        },
+        {
           "Type": "Link",
           "Properties": {
             "TechnicalName": "Lnk_B3AF9FBB",
@@ -116007,6 +118727,224 @@
         "Type": "Flow",
         "Children": [
           {
+            "Id": "0x0100000000005185",
+            "TechnicalName": "FFr_7D730DE1",
+            "Type": "FlowFragment",
+            "Children": [
+              {
+                "Id": "0x010000000000518B",
+                "TechnicalName": "FFr_C4587DA0",
+                "Type": "FlowFragment",
+                "Children": [
+                  {
+                    "Id": "0x01000000000051A3",
+                    "TechnicalName": "Dlg_448D364A",
+                    "Type": "Dialogue",
+                    "Children": [
+                      {
+                        "Id": "0x01000000000051BF",
+                        "TechnicalName": "DFr_C8682C83",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000051B5",
+                        "TechnicalName": "DFr_EC3B7A0D",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000051BA",
+                        "TechnicalName": "DFr_B4F5DA1F",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000051CA",
+                        "TechnicalName": "DFr_AF355008",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000051D1",
+                        "TechnicalName": "DFr_43A778A2",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000051DF",
+                        "TechnicalName": "DFr_77DA8FCB",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000051E5",
+                        "TechnicalName": "DFr_5DF59D4C",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000051D8",
+                        "TechnicalName": "DFr_4F634182",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000051F0",
+                        "TechnicalName": "DFr_BC4D88A9",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x0100000000005213",
+                        "TechnicalName": "DFr_8C398E4D",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x0100000000005230",
+                        "TechnicalName": "DFr_89C6EFC6",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000051F7",
+                        "TechnicalName": "DFr_38A15149",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x010000000000521A",
+                        "TechnicalName": "DFr_4DEC4752",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x0100000000005237",
+                        "TechnicalName": "DFr_DB1EC08B",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000051FE",
+                        "TechnicalName": "DFr_B39941AA",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x0100000000005205",
+                        "TechnicalName": "DFr_320E23B7",
+                        "Type": "DialogueFragment"
+                      }
+                    ]
+                  },
+                  {
+                    "Id": "0x01000000000051A9",
+                    "TechnicalName": "Dlg_11E07E47",
+                    "Type": "Dialogue"
+                  },
+                  {
+                    "Id": "0x01000000000051AF",
+                    "TechnicalName": "Dlg_DF42B577",
+                    "Type": "Dialogue",
+                    "Children": [
+                      {
+                        "Id": "0x0100000000005245",
+                        "TechnicalName": "DFr_349A02E5",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x0100000000005250",
+                        "TechnicalName": "DFr_0A2767D7",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x0100000000005240",
+                        "TechnicalName": "DFr_CB98F15F",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x0100000000005257",
+                        "TechnicalName": "DFr_701BA653",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x010000000000525E",
+                        "TechnicalName": "DFr_BC4787E2",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x0100000000005265",
+                        "TechnicalName": "DFr_DB90FE3C",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x010000000000526B",
+                        "TechnicalName": "DFr_F4DBF2E3",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x0100000000005275",
+                        "TechnicalName": "DFr_DBFC1695",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x010000000000539F",
+                        "TechnicalName": "DFr_4ED82B34",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x010000000000527C",
+                        "TechnicalName": "DFr_647D5975",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x0100000000005282",
+                        "TechnicalName": "DFr_4E33C886",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000053A7",
+                        "TechnicalName": "DFr_41C657EA",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000053B0",
+                        "TechnicalName": "DFr_FF2A4B34",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000053D5",
+                        "TechnicalName": "DFr_D765B517",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000053B7",
+                        "TechnicalName": "DFr_85425645",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000053BF",
+                        "TechnicalName": "DFr_EC389139",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000053C7",
+                        "TechnicalName": "DFr_52946C81",
+                        "Type": "DialogueFragment"
+                      },
+                      {
+                        "Id": "0x01000000000053CE",
+                        "TechnicalName": "DFr_D818FC51",
+                        "Type": "DialogueFragment"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "Id": "0x0100000000005191",
+                "TechnicalName": "FFr_8066CC7E",
+                "Type": "FlowFragment"
+              },
+              {
+                "Id": "0x0100000000005197",
+                "TechnicalName": "FFr_51852DC2",
+                "Type": "FlowFragment"
+              },
+              {
+                "Id": "0x010000000000519D",
+                "TechnicalName": "FFr_5D5F10C9",
+                "Type": "FlowFragment"
+              }
+            ]
+          },
+          {
             "Id": "0x010000000000301F",
             "TechnicalName": "FFr_A811BF1F",
             "Type": "FlowFragment",
@@ -117505,6 +120443,11 @@
                 "Children": [
                   {
                     "Id": "0x01000000000047C7",
+                    "TechnicalName": "",
+                    "Type": "Comment"
+                  },
+                  {
+                    "Id": "0x010000000000528C",
                     "TechnicalName": "",
                     "Type": "Comment"
                   },
@@ -125443,8 +128386,58 @@
             "Type": "LocationsUserFolder",
             "Children": [
               {
+                "Id": "0x0100000000005175",
+                "TechnicalName": "Loc_2F30C954",
+                "Type": "Location"
+              },
+              {
+                "Id": "0x0100000000005169",
+                "TechnicalName": "Loc_832A7A71",
+                "Type": "Location"
+              },
+              {
+                "Id": "0x0100000000005161",
+                "TechnicalName": "Loc_65D38FA2",
+                "Type": "Location"
+              },
+              {
+                "Id": "0x010000000000516D",
+                "TechnicalName": "Loc_A28DB023",
+                "Type": "Location"
+              },
+              {
+                "Id": "0x010000000000515D",
+                "TechnicalName": "Loc_2076CAAE",
+                "Type": "Location"
+              },
+              {
+                "Id": "0x0100000000005171",
+                "TechnicalName": "Loc_23D7F0F6",
+                "Type": "Location"
+              },
+              {
+                "Id": "0x0100000000005181",
+                "TechnicalName": "Loc_8C6CC4FA",
+                "Type": "Location"
+              },
+              {
                 "Id": "0x0100000000003BFD",
                 "TechnicalName": "Loc_A5420794",
+                "Type": "Location"
+              },
+              {
+                "Id": "0x0100000000005165",
+                "TechnicalName": "Loc_3DC0FA00",
+                "Type": "Location"
+              },
+              {
+                "Id": "0x010000000000517D",
+                "TechnicalName": "Loc_D4E0238B",
+                "Type": "Location"
+              },
+              {
+                "Id": "0x0100000000005179",
+                "TechnicalName": "Loc_20A22678",
                 "Type": "Location"
               }
             ]
@@ -125734,7 +128727,7 @@
               },
               {
                 "Id": "0x0100000000004D4E",
-                "TechnicalName": "Ship_Class",
+                "TechnicalName": "ShipClass",
                 "Type": "Feature"
               },
               {

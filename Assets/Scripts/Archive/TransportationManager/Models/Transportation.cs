@@ -1,4 +1,4 @@
-public class Transportation
+public class TransportationOld
 {
     public TransportationType Type { get; set; }
 

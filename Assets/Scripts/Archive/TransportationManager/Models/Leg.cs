@@ -11,7 +11,7 @@ public class Leg
 
     public int Distance { get; set; }
 
-    public Transportation Transportation { get; set; }
+    public TransportationOld Transportation { get; set; }
 
     public TimeSpan Duration => TimeSpan.FromHours(Distance / Transportation.Speed);
 }

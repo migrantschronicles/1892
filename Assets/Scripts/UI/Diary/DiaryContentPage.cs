@@ -154,14 +154,29 @@ public class DiaryContentPage : MonoBehaviour
         }
     }
 
-    public void FlipToLeft()
+    public void DiaryOpenToLeft()
     {
-
+        switch (Status)
+        {
+            case OpenStatus.Closed:
+                gameObject.SetActive(true);
+                Status = OpenStatus.Opening;
+                animator.SetTrigger("DiaryOpenToLeft");
+                watchAnimationCoroutine = StartCoroutine(WatchAnimation());
+                break;
+        }
     }
 
-    public void FlipToRight()
+    public void DiaryCloseToRight()
     {
-
+        switch (Status)
+        {
+            case OpenStatus.Opened:
+                Status = OpenStatus.Closing;
+                animator.SetTrigger("DiaryCloseToRight");
+                watchAnimationCoroutine = StartCoroutine(WatchAnimation());
+                break;
+        }
     }
 
     private IEnumerator WatchAnimation()

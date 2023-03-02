@@ -97,12 +97,12 @@ public class Diary : MonoBehaviour
         {
             case OpenStatus.Closing:
                 currentPage.onStatusChanged += OnCurrentPageStatusChanged;
-                currentPage.CloseToRight();
+                currentPage.DiaryCloseToRight();
                 break;
 
             case OpenStatus.Opening:
                 nextPage.onStatusChanged += OnNextPageStatusChanged;
-                nextPage.OpenToLeft();
+                nextPage.DiaryOpenToLeft();
                 break;
         }
     }
@@ -191,7 +191,6 @@ public class Diary : MonoBehaviour
             }
         }
 
-        /*
         if(isPageToRight)
         {
             currentPage.CloseToLeft();
@@ -202,7 +201,7 @@ public class Diary : MonoBehaviour
             currentPage.CloseToRight();
             nextPage.OpenToRight();
         }
-        */
+
         pagesController.SetTrigger(isPageToRight ? "FlipLeft" : "FlipRight");
 
         return true;

@@ -205,6 +205,7 @@ public class LevelInstance : MonoBehaviour
     private bool wantsToShowSeasickness = false;
     private bool hasShownIntroductoryDialog = false;
     private GameObject nightTransition;
+    private bool wantsToContinueGame = false;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -519,6 +520,12 @@ public class LevelInstance : MonoBehaviour
                     {
                         // There are still more popups
                         return;
+                    }
+
+                    if(wantsToContinueGame)
+                    {
+                        NewGameManager.Instance.SetPaused(false);
+                        wantsToContinueGame = true;
                     }
 
                     // There are no more popups, so revert changes.
@@ -1208,7 +1215,7 @@ public class LevelInstance : MonoBehaviour
 
     public void OpenEndDayPopup()
     {
-        GameObject popup = null;
+        GameObject popup;
         if(levelMode == LevelInstanceMode.Ship || NewGameManager.Instance.ShipManager.IsStopoverDay)
         {
             popup = endDayShipPopupPrefab;
@@ -1219,10 +1226,13 @@ public class LevelInstance : MonoBehaviour
         }
 
         ShowPopup(popup);
+        NewGameManager.Instance.SetPaused(true);
+        wantsToContinueGame = true;
     }
 
     public void OnSleepOutside(List<EndOfDayHealthData> endOfDayHealthData)
     {
+        wantsToContinueGame = false;
         StartCoroutine(SleepOutsideTransition(endOfDayHealthData));
     }
 
@@ -1243,6 +1253,7 @@ public class LevelInstance : MonoBehaviour
 
     public void OnSleepInHostel(List<EndOfDayHealthData> endOfDayHealthData, int cost, int boughtFoodAmount)
     {
+        wantsToContinueGame = false;
         StartCoroutine(SleepInHostelTransition(endOfDayHealthData, cost, boughtFoodAmount));
     }
 
@@ -1262,6 +1273,7 @@ public class LevelInstance : MonoBehaviour
 
     public void OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)
     {
+        wantsToContinueGame = false;
         StartCoroutine(SleepInShipTransition(endOfDayHealthData));
     }
 
@@ -1299,5 +1311,10 @@ public class LevelInstance : MonoBehaviour
             StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
             popup.OnStartDay += (p) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
         }
+    }
+
+    public void SetInterfaceVisibilityFlags(InterfaceVisibilityFlags flags)
+    {
+        ui.SetUIElementsVisible(flags);
     }
 }

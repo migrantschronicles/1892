@@ -17,6 +17,8 @@ public class EndDaySleepPopupBase : MonoBehaviour, IPopup
     protected int inventoryFoodCount = 0;
     protected int distributedFoodCount = 0;
 
+    public InterfaceVisibilityFlags InterfaceVisibilityFlags { get { return InterfaceVisibilityFlags.ClockButton; } }
+
     protected void CreatePortraits()
     {
         foreach(ProtagonistData data in NewGameManager.Instance.PlayableCharacterData.protagonistData)

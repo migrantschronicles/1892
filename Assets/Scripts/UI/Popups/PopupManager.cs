@@ -25,6 +25,7 @@ public class PopupManager : MonoBehaviour
 
         IPopup popup = popupGO.GetComponent<IPopup>();
         bool canClose = popup != null ? popup.CanClose : true;
+        InterfaceVisibilityFlags flags = popup != null ? popup.InterfaceVisibilityFlags : InterfaceVisibilityFlags.None;
         PopupStackInfo info = new()
         {
             popupGO = popupGO,
@@ -33,6 +34,7 @@ public class PopupManager : MonoBehaviour
         popupStack.Push(info);
         popup.AddOnCanCloseChangedListener(OnCanCloseChanged);
         LevelInstance.Instance.SetBackButtonVisible(canClose);
+        LevelInstance.Instance.SetInterfaceVisibilityFlags(flags);
     }
 
     /**
@@ -51,6 +53,7 @@ public class PopupManager : MonoBehaviour
             nextInfo.popupGO.SetActive(true);
             nextInfo.popup.AddOnCanCloseChangedListener(OnCanCloseChanged);
             LevelInstance.Instance.SetBackButtonVisible(nextInfo.popup.CanClose);
+            LevelInstance.Instance.SetInterfaceVisibilityFlags(nextInfo.popup.InterfaceVisibilityFlags);
             return true;
         }
 

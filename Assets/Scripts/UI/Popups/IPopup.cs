@@ -12,4 +12,5 @@ public interface IPopup
     public void RemoveOnCanCloseChangedListener(OnCanCloseChangedEvent onCanCloseChanged) { }
 
     public delegate void OnPopupAction(IPopup popup);
+    public InterfaceVisibilityFlags InterfaceVisibilityFlags { get { return InterfaceVisibilityFlags.None; } }
 }

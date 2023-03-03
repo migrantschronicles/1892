@@ -16,6 +16,7 @@ public class EndDayPopup : MonoBehaviour, IPopup
     private GameObject endDayOutsidePrefab;
 
     public bool CanClose { get { return NewGameManager.Instance.RemainingTime > 0; } }
+    public InterfaceVisibilityFlags InterfaceVisibilityFlags { get { return InterfaceVisibilityFlags.ClockButton; } }
     public IPopup.OnCanCloseChangedEvent OnCanCloseChanged;
 
     private void Start()

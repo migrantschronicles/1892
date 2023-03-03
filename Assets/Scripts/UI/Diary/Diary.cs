@@ -210,6 +210,7 @@ public class Diary : MonoBehaviour
         }
 
         pagesController.SetTrigger(isPageToRight ? "FlipLeft" : "FlipRight");
+        AudioManager.Instance.PlayFX(pageClip);
 
         return true;
     }

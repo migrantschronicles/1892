@@ -267,6 +267,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         {
             // Finish the animators
             FinishAnimators();
+            AudioManager.Instance.PlayCutTypewriter();
             return;
         }
 

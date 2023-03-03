@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class MethodManager : MonoBehaviour
 {
+    [SerializeField]
+    private AudioClip selectMethodClip;
+
     private TransportationMethodBox methodBox;
     private TransportationRouteInfo routeInfo;
 
@@ -31,6 +34,7 @@ public class MethodManager : MonoBehaviour
     {
         if(routeInfo != null)
         {
+            AudioManager.Instance.PlayFX(selectMethodClip);
             if (!NewGameManager.Instance.LocationManager.IsFromEuropeToAmerica(routeInfo.FromLocation, routeInfo.ToLocation))
             {
                 // Travel inside continent.

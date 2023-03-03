@@ -11,6 +11,8 @@ public class Map : MonoBehaviour
     private GameObject transportationMethodsPrefab;
     [SerializeField]
     private ShipIconManager shipMarker;
+    [SerializeField]
+    private AudioClip selectLocationClip;
 
     private MapLocationMarker[] locationMarkers;
     private MapTransportationMethods transportationMethods;
@@ -64,6 +66,8 @@ public class Map : MonoBehaviour
             StartCoroutine(CloseTransporationMethods(transportationMethods));
             transportationMethods = null;
         }
+
+        AudioManager.Instance.PlayFX(selectLocationClip);
 
         if(!NewGameManager.Instance.CanTravelTo(marker.LocationName) || NewGameManager.Instance.ShipManager.IsTravellingInShip)
         {

@@ -26,11 +26,49 @@ public class AudioManager : MonoBehaviour
     private Coroutine fadeMusicCoroutine;
     private Coroutine playMusicCoroutine;
 
+    public float MusicVolume 
+    { 
+        get
+        {
+            MusicMixer.GetFloat("MusicVolume", out float currentVolume);
+            float normalized = ConvertMixerToNormalized(currentVolume);
+            return Mathf.Abs(normalized) < 0.0005f ? 0.0f : normalized;
+        }
+        set
+        {
+            float mixerVolume = ConvertNormalizedToMixer(value);
+            MusicMixer.SetFloat("MusicVolume", mixerVolume);
+        }
+    }
+
+    public float SFXVolume
+    {
+        get
+        {
+            SFXMixer.GetFloat("FXVolume", out float currentVolume);
+            float normalized = ConvertMixerToNormalized(currentVolume);
+            return Mathf.Abs(normalized) < 0.0005f ? 0.0f : normalized;
+        }
+        set
+        {
+            float mixerVolume = ConvertNormalizedToMixer(value);
+            SFXMixer.SetFloat("FXVolume", mixerVolume);
+        }
+    }
+
     private AudioMixer MusicMixer
     {
         get
         {
             return musicSource.outputAudioMixerGroup.audioMixer;
+        }
+    }
+
+    private AudioMixer SFXMixer
+    {
+        get
+        {
+            return fxSource.outputAudioMixerGroup.audioMixer;
         }
     }
 
@@ -161,8 +199,7 @@ public class AudioManager : MonoBehaviour
     private IEnumerator StartMusicFade(float targetVolume)
     {
         float currentTime = 0;
-        MusicMixer.GetFloat("MusicVolume", out float currentVolume);
-        currentVolume = Mathf.Pow(10, currentVolume / 20);
+        float currentVolume = MusicVolume;
         float targetValue = Mathf.Clamp(targetVolume, 0.0001f, 1);
         while(currentTime < musicFadeTime)
         {
@@ -177,7 +214,16 @@ public class AudioManager : MonoBehaviour
 
     private void SetMusicVolume(float volume)
     {
-        volume = Mathf.Clamp(volume, 0.001f, 1);
-        MusicMixer.SetFloat("MusicVolume", Mathf.Log10(volume) * 20);
+        MusicMixer.SetFloat("MusicVolume", ConvertNormalizedToMixer(volume));
+    }
+
+    private float ConvertNormalizedToMixer(float normalized)
+    {
+        return Mathf.Log10(Mathf.Clamp(normalized, 0.0001f, 1)) * 20;
+    }
+
+    private float ConvertMixerToNormalized(float mixer)
+    {
+        return Mathf.Pow(10, mixer / 20);
     }
 }

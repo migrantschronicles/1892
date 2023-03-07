@@ -497,6 +497,7 @@ public class NewGameManager : MonoBehaviour
             return;
         }
 
+        ShipManager.WantsToVisitStopover = true;
         SceneManager.LoadScene("LoadingScene");
     }
 
@@ -505,11 +506,12 @@ public class NewGameManager : MonoBehaviour
      */
     public void ReturnToShip()
     {
-        if(!ShipManager.WasStopoverDay)
+        if(!ShipManager.IsStopoverDay)
         {
             return;
         }
 
+        ShipManager.HasVisitedStopover = true;
         SceneManager.LoadScene("LoadingScene");
     }
 
@@ -532,7 +534,21 @@ public class NewGameManager : MonoBehaviour
 
     public void OnLoadedShip()
     {
-        SetPaused(false);
+        if(RemainingTime > 0)
+        {
+            SetPaused(false);
+        } 
+        else
+        {
+            // A hack, since CanEndDay() checks whether the game is running
+            StartCoroutine(EndDayNextFrame());
+        }
+    }
+
+    private IEnumerator EndDayNextFrame()
+    {
+        yield return null;
+        LevelInstance.Instance.OpenEndDayPopup();
     }
 
     public void OnLoadedStopover()

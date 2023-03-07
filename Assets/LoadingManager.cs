@@ -30,8 +30,16 @@ public class LoadingManager : MonoBehaviour
             }
             else if(NewGameManager.Instance.ShipManager.IsStopoverDay)
             {
-                // Player wants to go to stopover.
-                loadSceneName = NewGameManager.Instance.ShipManager.StopoverLocation;
+                if(NewGameManager.Instance.ShipManager.HasVisitedStopover)
+                {
+                    // Return to the ship.
+                    loadSceneName = "Ship";
+                }
+                else
+                {
+                    // Player wants to go to stopover.
+                    loadSceneName = NewGameManager.Instance.ShipManager.StopoverLocation;
+                }
             }
             else
             {

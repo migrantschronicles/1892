@@ -44,7 +44,7 @@ public class MapShipRoute : MonoBehaviour
 
         Vector3 localPoint = currentCP.InverseTransformPoint(traveledRouteRT.position);
 
-        traveledRouteimage.GetComponent<Image>().fillAmount = 1 - ((localPoint.x / currentCP.sizeDelta.x) + 0.5f);
+        traveledRouteimage.GetComponent<Image>().fillAmount = currentCP.GetComponent<MapShipControlPoint>().fillAmount;  //((localPoint.x / currentCP.sizeDelta.x) + 0.5f);
 
         /*if(NewGameManager.Instance.DaysInCity )
         traveledRouteimage.GetComponent<Image>().fillAmount = (float)(NewGameManager.Instance.DaysInCity / 10);*/

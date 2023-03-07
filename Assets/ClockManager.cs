@@ -12,6 +12,11 @@ public class ClockManager : MonoBehaviour
     public float minuteOffset = 13.193f;
     public float hourOffset = 101.601f;
 
+    public Vector3 startPoint = new Vector3(175, 161, 0);
+    public Vector3 controlPoint1 = new Vector3(175, 35.6f, 0);
+    public Vector3 endPoint = new Vector3(205, 99.6f, 0);
+    
+
     void Start() 
     {
         OnTimeChangedEvent(NewGameManager.Instance.hour, NewGameManager.Instance.minutes);
@@ -32,9 +37,9 @@ public class ClockManager : MonoBehaviour
         hourHandle.rotation = Quaternion.Euler(0, 0, hourHandle.rotation.z - (hour * (360 / 12) + (minutes * 0.5f)) + hourOffset);
 
         // Moving the knob with the day.
-        Vector3 startPoint = new Vector3(175, 161, 0);
+        /*Vector3 startPoint = new Vector3(175, 161, 0);
         Vector3 endPoint = new Vector3(205, 99.6f, 0);
-        Vector3 controlPoint1 = new Vector3(175, 35.6f, 0);
+        Vector3 controlPoint1 = new Vector3(175, 35.6f, 0);*/
         //Vector3 controlPoint2 = new Vector3(140, 10.5f, 0);
 
 

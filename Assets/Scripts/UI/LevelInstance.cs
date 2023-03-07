@@ -181,6 +181,8 @@ public class LevelInstance : MonoBehaviour
     private GameObject startDayHostelPrefab;
     [SerializeField]
     private GameObject visitCityPopupPrefab;
+    [SerializeField]
+    private GameObject returnFromStopoverPrefab;
 #if DEBUG && ENABLE_DEVELOPER_MENU
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -1216,9 +1218,13 @@ public class LevelInstance : MonoBehaviour
     public void OpenEndDayPopup()
     {
         GameObject popup;
-        if(levelMode == LevelInstanceMode.Ship || NewGameManager.Instance.ShipManager.IsStopoverDay)
+        if(levelMode == LevelInstanceMode.Ship)
         {
             popup = endDayShipPopupPrefab;
+        }
+        else if(NewGameManager.Instance.ShipManager.IsStopoverDay)
+        {
+            popup = returnFromStopoverPrefab;
         }
         else
         {
@@ -1311,6 +1317,12 @@ public class LevelInstance : MonoBehaviour
             StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
             popup.OnStartDay += (p) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
         }
+    }
+
+    public void OnReturnFromStopover()
+    {
+        NewGameManager.Instance.SetPaused(true);
+        NewGameManager.Instance.ReturnToShip();
     }
 
     public void SetInterfaceVisibilityFlags(InterfaceVisibilityFlags flags)

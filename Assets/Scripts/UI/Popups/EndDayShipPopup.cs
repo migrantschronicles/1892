@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EndDayShipPopup : EndDaySleepPopupBase
 {
-    public bool CanClose { get { return NewGameManager.Instance.RemainingTime > 0; } }
+    public override bool CanClose { get { return NewGameManager.Instance.RemainingTime > 0; } }
     public IPopup.OnCanCloseChangedEvent OnCanCloseChanged;
 
     private void Start()

@@ -28,6 +28,11 @@ public class LocalizationManager
         }
     }
 
+    public Language Language { get; private set; } = Language.English;
+
+    public delegate void OnLanguageChangedEvent(Language language);
+    public event OnLanguageChangedEvent OnLanguageChanged;
+
     public string GetLocalizedString(LocalizedString localizedString)
     {
         return localizedString.GetLocalizedString();
@@ -45,6 +50,12 @@ public class LocalizationManager
 
     public bool ChangeLanguage(Language language)
     {
+        if(language == Language)
+        {
+            return true;
+        }
+
+        Language = language;
         string languageCode = "";
         switch(language)
         {
@@ -65,6 +76,7 @@ public class LocalizationManager
                 if(locale.Identifier == identifier)
                 {
                     LocalizationSettings.SelectedLocale = locale;
+                    OnLanguageChanged?.Invoke(Language);
                     return true;
                 }
             }

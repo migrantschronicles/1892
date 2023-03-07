@@ -184,6 +184,7 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
             OnHeightChanged?.Invoke(this, oldHeight, newHeight);
         }
 
+        ///@todo Also check if the DialogChat it belongs to is active and the DialogSystem is active
         if(DialogSystem.Instance.FlowPlayer.PausedOn == FlowObject)
         {
             // Just in case the language changed for bubbles before the current one.

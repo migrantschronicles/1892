@@ -179,6 +179,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
 
     private void OnChatHeightChanged(float height)
     {
+        ///@todo Check if the chat that changed is the current visible
         RectTransform contentTransform = content.GetComponent<RectTransform>();
         contentTransform.sizeDelta = new Vector2(contentTransform.sizeDelta.x, height);
         contentTransform.anchoredPosition = new Vector2(contentTransform.anchoredPosition.x, Mathf.Max(0, height - 800));

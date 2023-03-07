@@ -86,7 +86,6 @@ public class NewGameManager : MonoBehaviour
     public bool wantsEndOfDay = false;
 
     public bool IsPaused { get { return !gameRunning; } }
-    public GameObject pauseIcon;
 
     public delegate void OnPauseChangedEvent(bool paused);
     public event OnPauseChangedEvent OnPauseChanged;
@@ -599,9 +598,7 @@ public class NewGameManager : MonoBehaviour
     public void SetPaused(bool paused)
     {
         gameRunning = !paused;
-        if (pauseIcon==null)
-            pauseIcon = GameObject.FindGameObjectWithTag("pauseIcon");
-        pauseIcon.GetComponent<Image>().enabled = (!pauseIcon.GetComponent<Image>().enabled);
+        
         OnPauseChanged?.Invoke(!gameRunning);
     }
 

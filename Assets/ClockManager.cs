@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ClockManager : MonoBehaviour
 {
@@ -15,12 +16,17 @@ public class ClockManager : MonoBehaviour
     public Vector3 startPoint = new Vector3(175, 161, 0);
     public Vector3 controlPoint1 = new Vector3(175, 35.6f, 0);
     public Vector3 endPoint = new Vector3(205, 99.6f, 0);
-    
+
+    public GameObject pauseIcon;
+
+
 
     void Start() 
     {
         OnTimeChangedEvent(NewGameManager.Instance.hour, NewGameManager.Instance.minutes);
-        NewGameManager.Instance.onTimeChanged += OnTimeChangedEvent;        
+        OnPauseChangedEvent(NewGameManager.Instance.IsPaused);
+        NewGameManager.Instance.onTimeChanged += OnTimeChangedEvent;
+        NewGameManager.Instance.OnPauseChanged += OnPauseChangedEvent;
     }
 
     private void OnDestroy()
@@ -28,9 +34,14 @@ public class ClockManager : MonoBehaviour
         if(NewGameManager.Instance)
         {
             NewGameManager.Instance.onTimeChanged -= OnTimeChangedEvent;
+            NewGameManager.Instance.OnPauseChanged -= OnPauseChangedEvent;
         }
     }
 
+    private void OnPauseChangedEvent(bool paused) 
+    {
+        pauseIcon.GetComponent<Image>().enabled = (paused);
+    }
     private void OnTimeChangedEvent(int hour, int minutes)
     {
         minuteHandle.rotation = Quaternion.Euler(0, 0, minuteHandle.rotation.z - (minutes * (360 / 60)) + minuteOffset);

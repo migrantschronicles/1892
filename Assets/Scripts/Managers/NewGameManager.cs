@@ -123,7 +123,7 @@ public class NewGameManager : MonoBehaviour
     public TextAsset transportationTableCSV;
 
     // Conditions
-    public DialogConditionProvider conditions = new DialogConditionProvider();
+    public DialogConditionProvider conditions { get { return GetComponent<DialogConditionProvider>(); } }
 
     public IEnumerable<DiaryEntry> DiaryEntries { get { return diaryEntries; } }
 
@@ -230,6 +230,7 @@ public class NewGameManager : MonoBehaviour
             DontDestroyOnLoad(this);
             inventory.Initialize();
             transportationInfo.Initialize(transportationTableCSV);
+            HealthStatus.Init(PlayableCharacterData.protagonistData);
             conditions.Init();
         }
         else
@@ -478,6 +479,7 @@ public class NewGameManager : MonoBehaviour
 
         // Reset values
         DaysInCity = 0;
+        onNewDay?.Invoke();
         SetPaused(true);
 
         // Load level

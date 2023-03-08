@@ -327,11 +327,6 @@ public class HealthStatus : MonoBehaviour
     public float HomesicknessHungryIncrease { get { return homesicknessHungryIncrease; } }
     public float HomesicknessSeasickIncrease { get { return homesicknessSeasickIncrease; } }
 
-    private void Start()
-    {
-        Init(NewGameManager.Instance.PlayableCharacterData.protagonistData);
-    }
-
     public void Init(IEnumerable<ProtagonistData> characterData)
     {
         foreach(ProtagonistData character in characterData)

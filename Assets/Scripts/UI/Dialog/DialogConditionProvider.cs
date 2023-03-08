@@ -35,6 +35,7 @@ using UnityEngine;
  * There are also special conditions for game stats. These conditions need to start with 'game:'.
  * Then you can specify which key you want to check for. These are currently supported:
  *      * 'daysincity' [int]: How many consecutive days the player spent in the current city (or the ship).
+ *      * 'money' [int]: The amount of money the player has.
  * After that (for int and float keys) you can add a comparison. The same comparisons are supported as the health conditions.  
  * Examples of a game condition:
  *      * 'game:daysincity>2': Checks if the player has spent more than 2 days in the current city / on the ship.
@@ -397,6 +398,10 @@ public class DialogConditionProvider
         if(key.Equals("daysincity", StringComparison.OrdinalIgnoreCase))
         {
             return Compare(NewGameManager.Instance.DaysInCity, operation, int.Parse(value));
+        }
+        else if(key.Equals("money", StringComparison.OrdinalIgnoreCase))
+        {
+            return Compare(NewGameManager.Instance.money, operation, int.Parse(value));
         }
 
         return false;

@@ -1035,6 +1035,15 @@ public class NewGameManager : MonoBehaviour
             return false;
         }
 
+        foreach(var journey in journeys)
+        {
+            if(journey.destination == to)
+            {
+                // Cannot travel back.
+                return false;
+            }
+        }
+
         return true;
     }
 

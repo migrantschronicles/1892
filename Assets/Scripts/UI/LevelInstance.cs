@@ -183,6 +183,8 @@ public class LevelInstance : MonoBehaviour
     private GameObject visitCityPopupPrefab;
     [SerializeField]
     private GameObject returnFromStopoverPrefab;
+    [SerializeField]
+    private GameObject shipArrivedPrefab;
 #if DEBUG && ENABLE_DEVELOPER_MENU
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -1291,7 +1293,10 @@ public class LevelInstance : MonoBehaviour
         yield return new WaitForSeconds(nightTransitionTime);
         Destroy(nightTransition);
 
-        NewGameManager.Instance.OnSleepInShip(endOfDayHealthData);
+        if(NewGameManager.Instance.OnSleepInShip(endOfDayHealthData))
+        {
+            yield break;
+        }
 
         if (NewGameManager.Instance.ShipManager.IsStopoverDay)
         {
@@ -1328,5 +1333,16 @@ public class LevelInstance : MonoBehaviour
     public void SetInterfaceVisibilityFlags(InterfaceVisibilityFlags flags)
     {
         ui.SetUIElementsVisible(flags);
+    }
+
+    public void OnShipArrived()
+    {
+        GameObject popupGO = ShowPopup(shipArrivedPrefab);
+        ShipArrivedPopup popup = popupGO.GetComponent<ShipArrivedPopup>();
+        popup.OnLeaveShip += (_) =>
+        {
+            PopPopup();
+            NewGameManager.Instance.OnLeaveShip();
+        };
     }
 }

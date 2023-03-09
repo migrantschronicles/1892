@@ -402,7 +402,10 @@ public class NewGameManager : MonoBehaviour
         StartNewDay();
     }
 
-    public void OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)
+    /**
+     * @return True if the player reached the destination, false otherwise
+     */
+    public bool OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)
     {
         HealthStatus.OnEndOfDay(endOfDayHealthData);
         StartNewDay();
@@ -410,8 +413,17 @@ public class NewGameManager : MonoBehaviour
         if(ShipManager.HasReachedDestination)
         {
             // Ship travel finished, arrived in Elis island.
-            SceneManager.LoadScene("LoadingScene");
+            SetPaused(true);
+            LevelInstance.Instance.OnShipArrived();
+            return true;
         }
+
+        return false;
+    }
+
+    public void OnLeaveShip()
+    {
+        SceneManager.LoadScene("LoadingScene");
     }
     
     public void StartNewDay() 

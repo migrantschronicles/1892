@@ -180,6 +180,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject startDayHostelPrefab;
     [SerializeField]
+    private GameObject startDayShipPrefab;
+    [SerializeField]
     private GameObject visitCityPopupPrefab;
     [SerializeField]
     private GameObject returnFromStopoverPrefab;
@@ -1318,8 +1320,8 @@ public class LevelInstance : MonoBehaviour
         else
         {
             // Normal day on ship.
-            GameObject popupGO = ShowPopup(startDayHostelPrefab);
-            StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
+            GameObject popupGO = ShowPopup(startDayShipPrefab);
+            StartDayShipPopup popup = popupGO.GetComponent<StartDayShipPopup>();
             popup.OnStartDay += (p) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
         }
     }

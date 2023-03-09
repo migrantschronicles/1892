@@ -269,8 +269,7 @@ public class PlayerInventory
 
     public int GetBagCount()
     {
-        ///@todo
-        return 1;
+        return 3;
     }
 
     public int GetAvailableSlotCount()

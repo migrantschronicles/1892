@@ -122,7 +122,7 @@ public class Shop : MonoBehaviour
         transferRightButton.onClick.AddListener(OnTransferRight);
 
         Basket.SetBagCount(1);
-        Luggage.SetBagCount(3);
+        Luggage.SetBagCount(NewGameManager.Instance.inventory.GetBagCount());
 
         Basket.onItemAmountChanged += OnBasketItemAmountChanged;
         Luggage.onItemAmountChanged += OnLuggageItemAmountChanged;

@@ -27,16 +27,20 @@ public class HealthStatus_Hungry
     private int requiredFoodAmount = 0;
     
     public int DaysWithoutEnoughFood { get; private set; }
-    public int NextRequiredFoodAmount { get {
+    public int NextRequiredFoodAmount 
+    { 
+        get 
+        {
             // Every day the character needs the double amount plus one for this day.
-            int nextRequiredFoodAmount = requiredFoodAmount * 2 + 1;
+            int nextRequiredFoodAmount = requiredFoodAmount * 2;
             if (healthData.CholeraStatus.IsSick)
             {
                 // Sick people need double food amount
                 nextRequiredFoodAmount *= 2;
             }
             return nextRequiredFoodAmount;
-        } }
+        } 
+    }
 
     
 

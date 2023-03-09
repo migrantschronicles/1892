@@ -232,6 +232,7 @@ public class NewGameManager : MonoBehaviour
             transportationInfo.Initialize(transportationTableCSV);
             HealthStatus.Init(PlayableCharacterData.protagonistData);
             conditions.Init();
+            money = PlayableCharacterData.startMoney;
         }
         else
         {

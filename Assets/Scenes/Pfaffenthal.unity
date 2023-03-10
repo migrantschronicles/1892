@@ -449,11 +449,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0370cd67adad92c439fa40d27c316d14, type: 3}
---- !u!1 &132157616 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 382247920086119625, guid: 0370cd67adad92c439fa40d27c316d14, type: 3}
-  m_PrefabInstance: {fileID: 132157615}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &209564951
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -761,6 +756,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &410028631 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1250723598692139401, guid: 559c2db872bbe1f449a45a2273a72221, type: 3}
+  m_PrefabInstance: {fileID: 611884163}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &470167451
 GameObject:
   m_ObjectHideFlags: 0
@@ -1387,7 +1387,15 @@ PrefabInstance:
     - target: {fileID: 2921716783291830012, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
       propertyPath: leftDialogPrefab
       value: 
-      objectReference: {fileID: 5812616804861438825, guid: 764a52434bd704040b273a7da37718f8, type: 3}
+      objectReference: {fileID: 410028631}
+    - target: {fileID: 2921716783291830012, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
+      propertyPath: hideObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2921716783291830012, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
+      propertyPath: hideObjects.Array.data[0]
+      value: 
+      objectReference: {fileID: 410028631}
     - target: {fileID: 4829605349635600267, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
       propertyPath: mode
       value: 3
@@ -1395,7 +1403,7 @@ PrefabInstance:
     - target: {fileID: 4829605349635600267, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
       propertyPath: spriteContainer
       value: 
-      objectReference: {fileID: 132157616}
+      objectReference: {fileID: 410028631}
     - target: {fileID: 4829605349635600267, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
       propertyPath: normalizedPosition.y
       value: 1.1

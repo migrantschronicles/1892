@@ -198,15 +198,21 @@ public class DialogChat : MonoBehaviour
 
     private void OnBubbleHeightChanged(DialogBubble bubble, float oldHeight, float newHeight)
     {
-        ///@todo Only accounts if it's the last bubble.
-        if(bubble.gameObject != entries[entries.Count - 1].bubble)
-        {
-            Debug.LogError($"{bubble.name} is not the last added bubble, but changed it's height");
-        }
-
         float adjustment = newHeight - oldHeight;
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y + adjustment);
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
+
+        if(bubble.gameObject != entries[entries.Count - 1].bubble)
+        {
+            // This is not the last bubble, so update every bubble that comes after.
+            int bubbleIndex = entries.FindIndex(entry => entry.bubble == bubble.gameObject/*ReferenceEquals(entry.bubble, bubble)*/);
+            for(int i = bubbleIndex + 1; i < entries.Count; ++i)
+            {
+                RectTransform bubbleTransform = entries[i].bubble.GetComponent<RectTransform>();
+                bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, bubbleTransform.anchoredPosition.y - adjustment);
+            }
+        }
+
         OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
     }
 
@@ -465,6 +471,7 @@ public class DialogChat : MonoBehaviour
 
                 answer.transform.SetParent(null, false);
                 DialogSystem.Instance.UnregisterAnimator(answer);
+                entries.RemoveAll(entry => entry.bubble == answer.gameObject);
                 Destroy(answer.gameObject);
             }
             else

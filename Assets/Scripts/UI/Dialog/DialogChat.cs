@@ -38,6 +38,7 @@ public class DialogChat : MonoBehaviour
     public bool IsWaitingForDecision { get { return currentAnswers.Count > 0; } }
     public float Height { get { return rectTransform.sizeDelta.y; } }
     public Dialog CurrentDialog { get { return currentDialog; } }
+    public IFlowObject PausedOn { get { return pausedOn; } }
     public bool WantsRestart
     {
         get

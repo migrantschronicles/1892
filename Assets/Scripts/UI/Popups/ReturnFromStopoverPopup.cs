@@ -10,6 +10,8 @@ public class ReturnFromStopoverPopup : MonoBehaviour, IPopup
 
     public bool CanClose { get { return false; } }
     public bool CanStayInCity { get { return NewGameManager.Instance.RemainingTime > 0; } }
+    public IPopup.OnPopupAction OnBoard;
+    public IPopup.OnPopupAction OnStay;
 
     private void Start()
     {
@@ -40,11 +42,11 @@ public class ReturnFromStopoverPopup : MonoBehaviour, IPopup
 
     public void OnBoardClicked()
     {
-        LevelInstance.Instance.OnReturnFromStopover(false);
+        OnBoard?.Invoke(this);
     }
 
     public void OnStayInCityClicked()
     {
-        LevelInstance.Instance.PopPopup();
+        OnStay?.Invoke(this);
     }
 }

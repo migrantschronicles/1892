@@ -33,11 +33,18 @@ public class HealthStatus_Hungry
         {
             // Every day the character needs the double amount plus one for this day.
             int nextRequiredFoodAmount = requiredFoodAmount * 2;
+            if(requiredFoodAmount == 0)
+            {
+                // If the character is not hungry at all, he requires 1 the next time.
+                nextRequiredFoodAmount = 1;
+            }
+
             if (healthData.CholeraStatus.IsSick)
             {
                 // Sick people need double food amount
                 nextRequiredFoodAmount *= 2;
             }
+
             return nextRequiredFoodAmount;
         } 
     }

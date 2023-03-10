@@ -149,8 +149,6 @@ public class AudioManager : MonoBehaviour
             playMusicCoroutine = null;
         }
 
-        SetMusicVolume(1.0f);
-
         currentMusicClips = new List<AudioClip>(clips);
         if(currentMusicClips != null && currentMusicClips.Count > 0)
         {
@@ -176,14 +174,29 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    public void StopMusic()
+    {
+        if(playMusicCoroutine != null)
+        {
+            StopCoroutine(playMusicCoroutine);
+            playMusicCoroutine = null;
+        }
+        musicSource.Stop();
+    }
+
     public void FadeOutMusic()
     {
+        // Music is not faded out on level loads, because apparently it is running on the game thread
+        StopMusic();
+        /*
         if(musicSource.isPlaying && fadeMusicCoroutine == null)
         {
             fadeMusicCoroutine = StartCoroutine(StartMusicFadeOut());
         }
+        */
     }
 
+    /*
     private IEnumerator StartMusicFadeOut()
     {
         yield return StartMusicFade(0.0f);
@@ -211,11 +224,7 @@ public class AudioManager : MonoBehaviour
 
         fadeMusicCoroutine = null;
     }
-
-    private void SetMusicVolume(float volume)
-    {
-        MusicMixer.SetFloat("MusicVolume", ConvertNormalizedToMixer(volume));
-    }
+    */
 
     private float ConvertNormalizedToMixer(float normalized)
     {

@@ -27,6 +27,11 @@ public class LanguageFlag : MonoBehaviour
         OnLanguageChanged(LocalizationManager.Instance.Language);
     }
 
+    private void OnEnable()
+    {
+        OnLanguageChanged(LocalizationManager.Instance.Language);
+    }
+
     private void OnDestroy()
     {
         if(LocalizationManager.Instance != null)

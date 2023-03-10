@@ -187,6 +187,8 @@ public class LevelInstance : MonoBehaviour
     private GameObject returnFromStopoverPrefab;
     [SerializeField]
     private GameObject shipArrivedPrefab;
+    [SerializeField]
+    private GameObject endDayStopoverPrefab;
 #if DEBUG && ENABLE_DEVELOPER_MENU
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -1228,7 +1230,7 @@ public class LevelInstance : MonoBehaviour
         }
         else if(NewGameManager.Instance.ShipManager.IsStopoverDay)
         {
-            popup = returnFromStopoverPrefab;
+            popup = endDayStopoverPrefab;
         }
         else
         {
@@ -1313,10 +1315,6 @@ public class LevelInstance : MonoBehaviour
                 PopPopup();
             };
         }
-        else if(NewGameManager.Instance.ShipManager.WasStopoverDay && levelMode != LevelInstanceMode.Ship)
-        {
-            NewGameManager.Instance.ReturnToShip();
-        }
         else
         {
             // Normal day on ship.
@@ -1326,10 +1324,10 @@ public class LevelInstance : MonoBehaviour
         }
     }
 
-    public void OnReturnFromStopover()
+    public void OnReturnFromStopover(bool wantsEndOfDay)
     {
         NewGameManager.Instance.SetPaused(true);
-        NewGameManager.Instance.ReturnToShip();
+        NewGameManager.Instance.ReturnToShip(wantsEndOfDay);
     }
 
     public void SetInterfaceVisibilityFlags(InterfaceVisibilityFlags flags)

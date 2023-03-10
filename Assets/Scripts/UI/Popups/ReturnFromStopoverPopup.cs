@@ -40,7 +40,7 @@ public class ReturnFromStopoverPopup : MonoBehaviour, IPopup
 
     public void OnBoardClicked()
     {
-        LevelInstance.Instance.OnReturnFromStopover();
+        LevelInstance.Instance.OnReturnFromStopover(false);
     }
 
     public void OnStayInCityClicked()

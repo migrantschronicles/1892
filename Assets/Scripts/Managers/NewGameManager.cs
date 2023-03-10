@@ -519,7 +519,7 @@ public class NewGameManager : MonoBehaviour
     /**
      * Called if the player spend the day in the stopover location and now returns to the ship. 
      */
-    public void ReturnToShip()
+    public void ReturnToShip(bool endOfDay)
     {
         if(!ShipManager.IsStopoverDay)
         {
@@ -527,6 +527,15 @@ public class NewGameManager : MonoBehaviour
         }
 
         ShipManager.HasVisitedStopover = true;
+        if(endOfDay)
+        {
+            hour = hoursPerDay;
+            minutes = 0;
+            seconds = 0;
+            onTimeChanged?.Invoke(hour, minutes);
+            wantsEndOfDay = endOfDay;
+        }
+
         SceneManager.LoadScene("LoadingScene");
     }
 
@@ -549,7 +558,7 @@ public class NewGameManager : MonoBehaviour
 
     public void OnLoadedShip()
     {
-        if(RemainingTime > 0)
+        if(RemainingTime > 0 && !wantsEndOfDay)
         {
             SetPaused(false);
         } 
@@ -564,6 +573,7 @@ public class NewGameManager : MonoBehaviour
     {
         yield return null;
         LevelInstance.Instance.OpenEndDayPopup();
+        wantsEndOfDay = false;
     }
 
     public void OnLoadedStopover()

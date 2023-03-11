@@ -27,16 +27,27 @@ public class HealthStatus_Hungry
     private int requiredFoodAmount = 0;
     
     public int DaysWithoutEnoughFood { get; private set; }
-    public int NextRequiredFoodAmount { get {
+    public int NextRequiredFoodAmount 
+    { 
+        get 
+        {
             // Every day the character needs the double amount plus one for this day.
-            int nextRequiredFoodAmount = requiredFoodAmount * 2 + 1;
+            int nextRequiredFoodAmount = requiredFoodAmount * 2;
+            if(requiredFoodAmount == 0)
+            {
+                // If the character is not hungry at all, he requires 1 the next time.
+                nextRequiredFoodAmount = 1;
+            }
+
             if (healthData.CholeraStatus.IsSick)
             {
                 // Sick people need double food amount
                 nextRequiredFoodAmount *= 2;
             }
+
             return nextRequiredFoodAmount;
-        } }
+        } 
+    }
 
     
 
@@ -326,11 +337,6 @@ public class HealthStatus : MonoBehaviour
     public IEnumerable<ProtagonistHealthData> Characters { get { return characters; } }
     public float HomesicknessHungryIncrease { get { return homesicknessHungryIncrease; } }
     public float HomesicknessSeasickIncrease { get { return homesicknessSeasickIncrease; } }
-
-    private void Start()
-    {
-        Init(NewGameManager.Instance.PlayableCharacterData.protagonistData);
-    }
 
     public void Init(IEnumerable<ProtagonistData> characterData)
     {

@@ -346,16 +346,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         animators.Clear();
     }
 
-    public bool IsCurrentBranch(DialogAnswerBubble bubble)
-    {
-        if(currentChat)
-        {
-            return currentChat.IsCurrentBranch(bubble);
-        }
-
-        return false;
-    }
-
     public void OnDialogLine(string technicalName)
     {
         NewGameManager.Instance.HealthStatus.OnDialogLine(IsRight(technicalName));
@@ -366,5 +356,35 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     {
         NewGameManager.Instance.HealthStatus.OnDialogDecision();
         onDialogDecision?.Invoke();
+    }
+
+    public bool IsCurrentBranch(DialogAnswerBubble bubble)
+    {
+        if(!gameObject.activeSelf)
+        {
+            return false;
+        }
+
+        if (currentChat && currentChat.IsWaitingForDecision)
+        {
+            return currentChat.IsCurrentBranch(bubble);
+        }
+
+        return false;
+    }
+
+    public bool IsFlowObjectActive(IFlowObject flowObject)
+    {
+        if(!gameObject.activeSelf)
+        {
+            return false;
+        }
+
+        if(!currentChat)
+        {
+            return false;
+        }
+
+        return currentChat.PausedOn == flowObject && !currentChat.IsWaitingForDecision;
     }
 }

@@ -74,6 +74,7 @@ public class NewGameManager : MonoBehaviour
     public event OnRouteDiscoveredEvent OnRouteDiscovered;
 
     public LocationManager LocationManager { get { return GetComponent<LocationManager>(); } }
+    public RouteManager RouteManager { get { return GetComponent<RouteManager>();  } }
 
     // Game Stats
     public bool gameRunning = true;
@@ -122,7 +123,7 @@ public class NewGameManager : MonoBehaviour
     public TextAsset transportationTableCSV;
 
     // Conditions
-    public DialogConditionProvider conditions = new DialogConditionProvider();
+    public DialogConditionProvider conditions { get { return GetComponent<DialogConditionProvider>(); } }
 
     public IEnumerable<DiaryEntry> DiaryEntries { get { return diaryEntries; } }
 
@@ -229,7 +230,9 @@ public class NewGameManager : MonoBehaviour
             DontDestroyOnLoad(this);
             inventory.Initialize();
             transportationInfo.Initialize(transportationTableCSV);
+            HealthStatus.Init(PlayableCharacterData.protagonistData);
             conditions.Init();
+            money = PlayableCharacterData.startMoney;
         }
         else
         {
@@ -340,9 +343,8 @@ public class NewGameManager : MonoBehaviour
 
     public void DiscoverRoute(string from, string to, TransportationMethod method)
     {
-        if(!transportationInfo.IsRouteDiscovered(from, to, method))
+        if (RouteManager.DiscoverRoute(from, to, method))
         {
-            transportationInfo.DiscoverRoute(from, to, method);
             OnRouteDiscovered?.Invoke(from, to, method);
         }
     }
@@ -400,7 +402,10 @@ public class NewGameManager : MonoBehaviour
         StartNewDay();
     }
 
-    public void OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)
+    /**
+     * @return True if the player reached the destination, false otherwise
+     */
+    public bool OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)
     {
         HealthStatus.OnEndOfDay(endOfDayHealthData);
         StartNewDay();
@@ -408,8 +413,17 @@ public class NewGameManager : MonoBehaviour
         if(ShipManager.HasReachedDestination)
         {
             // Ship travel finished, arrived in Elis island.
-            SceneManager.LoadScene("LoadingScene");
+            SetPaused(true);
+            LevelInstance.Instance.OnShipArrived();
+            return true;
         }
+
+        return false;
+    }
+
+    public void OnLeaveShip()
+    {
+        SceneManager.LoadScene("LoadingScene");
     }
     
     public void StartNewDay() 
@@ -478,6 +492,7 @@ public class NewGameManager : MonoBehaviour
 
         // Reset values
         DaysInCity = 0;
+        onNewDay?.Invoke();
         SetPaused(true);
 
         // Load level
@@ -504,7 +519,7 @@ public class NewGameManager : MonoBehaviour
     /**
      * Called if the player spend the day in the stopover location and now returns to the ship. 
      */
-    public void ReturnToShip()
+    public void ReturnToShip(bool endOfDay)
     {
         if(!ShipManager.IsStopoverDay)
         {
@@ -512,6 +527,15 @@ public class NewGameManager : MonoBehaviour
         }
 
         ShipManager.HasVisitedStopover = true;
+        if(endOfDay)
+        {
+            hour = hoursPerDay;
+            minutes = 0;
+            seconds = 0;
+            onTimeChanged?.Invoke(hour, minutes);
+            wantsEndOfDay = endOfDay;
+        }
+
         SceneManager.LoadScene("LoadingScene");
     }
 
@@ -534,7 +558,7 @@ public class NewGameManager : MonoBehaviour
 
     public void OnLoadedShip()
     {
-        if(RemainingTime > 0)
+        if(RemainingTime > 0 && !wantsEndOfDay)
         {
             SetPaused(false);
         } 
@@ -549,13 +573,14 @@ public class NewGameManager : MonoBehaviour
     {
         yield return null;
         LevelInstance.Instance.OpenEndDayPopup();
+        wantsEndOfDay = false;
     }
 
     public void OnLoadedStopover()
     {
         // Add the journey
         Journey journey = new Journey();
-        journey.destination = LevelInstance.Instance.LocationName;
+        journey.destination = ShipManager.StopoverLocation;
         journey.method = TransportationMethod.Ship;
         journeys.Add(journey);
 
@@ -567,7 +592,7 @@ public class NewGameManager : MonoBehaviour
     {
         // Add the journey
         Journey journey = new Journey();
-        journey.destination = LevelInstance.Instance.LocationName;
+        journey.destination = "ElisIsland";
         journey.method = TransportationMethod.Ship;
         journeys.Add(journey);
 
@@ -939,15 +964,21 @@ public class NewGameManager : MonoBehaviour
 
         foreach(Journey journey in journeys)
         {
-            if(transportationInfo.HasRouteInfo(journey.destination, location))
+            if(!((ShipManager.HasVisitedStopover || ShipManager.WantsToVisitStopover) && ShipManager.StopoverLocation == journey.destination))
             {
-                return LocationDiscoveryStatus.Discovered;
+                if (RouteManager.IsRouteDiscovered(journey.destination, location))
+                {
+                    return LocationDiscoveryStatus.Discovered;
+                }
             }
         }
 
-        if(transportationInfo.HasRouteInfo(LevelInstance.Instance.LocationName, location))
+        if(!ShipManager.IsStopoverDay)
         {
-            return LocationDiscoveryStatus.Discovered;
+            if (RouteManager.IsRouteDiscovered(LevelInstance.Instance.LocationName, location))
+            {
+                return LocationDiscoveryStatus.Discovered;
+            }
         }
         
         return LocationDiscoveryStatus.Undiscovered;
@@ -957,33 +988,59 @@ public class NewGameManager : MonoBehaviour
     {
         if(from == LevelInstance.Instance.LocationName)
         {
-            return LocationDiscoveryStatus.Discovered;
+            if(ShipManager.IsStopoverDay)
+            {
+                // If it's the stopover day, don't show any routes.
+                // If the player stays on the ship, this does not matter anyway.
+                return LocationDiscoveryStatus.Undiscovered;
+            }
+            else
+            {
+                // If it's a normal day in a city, determine if the route is discovered.
+                // Since the player can't go back, the routes from this city can only be discovered.
+                if(RouteManager.IsRouteDiscovered(from, to))
+                {
+                    // The route is discovered
+                    return LocationDiscoveryStatus.Discovered;
+                }
+
+                // The route is not discovered yet.
+                return LocationDiscoveryStatus.Undiscovered;
+            }
         }
         else if(to == LevelInstance.Instance.LocationName)
         {
+            if(ShipManager.IsStopoverDay)
+            {
+                // If it's the stopover day, it could be that the player discovered another transportation method.
+                return RouteManager.IsRouteDiscovered(from, to) ? LocationDiscoveryStatus.Discovered : LocationDiscoveryStatus.Undiscovered;
+            }
+
             if(journeys.Count > 1 && journeys[journeys.Count - 2].destination == from)
             {
+                // This is the route the player came from.
                 return LocationDiscoveryStatus.Current;
             }
         }
 
-        string last = null;
-        for (int i = 0; i < journeys.Count; ++i)
+        for(int i = 0; i < journeys.Count - 1; ++i)
         {
-            Journey journey = journeys[i];
-            if (last == from)
+            if (journeys[i].destination == from && journeys[i + 1].destination == to)
             {
-                if (journey.destination == to)
-                {
-                    return LocationDiscoveryStatus.Traveled;
-                }
-                else
-                {
-                    return LocationDiscoveryStatus.Discovered;
-                }
+                // The player traveled this route
+                return LocationDiscoveryStatus.Traveled;
             }
+        }
 
-            last = journey.destination;
+        for(int i = journeys.Count - 1; i >= 0; --i)
+        {
+            if (journeys[i].destination == from)
+            {
+                // The route starts from a location where the player was.
+                // The route could be discovered by the player or not yet discovered.
+                // All other cases are already handled.
+                return RouteManager.IsRouteDiscovered(from, to) ? LocationDiscoveryStatus.Discovered : LocationDiscoveryStatus.Undiscovered;
+            }
         }
 
         return LocationDiscoveryStatus.Undiscovered;
@@ -997,10 +1054,19 @@ public class NewGameManager : MonoBehaviour
             return false;
         }
 
-        if(method != TransportationMethod.None && !transportationInfo.IsRouteDiscovered(from, to, method))
+        if(method != TransportationMethod.None && !RouteManager.IsRouteDiscovered(from, to, method))
         {
             // Not yet discovered
             return false;
+        }
+
+        foreach(var journey in journeys)
+        {
+            if(journey.destination == to)
+            {
+                // Cannot travel back.
+                return false;
+            }
         }
 
         return true;

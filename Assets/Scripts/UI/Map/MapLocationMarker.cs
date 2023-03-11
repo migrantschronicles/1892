@@ -90,6 +90,20 @@ public class MapLocationMarker : MonoBehaviour
         initialImageScale = transform.localScale;
         OnZoomChanged(mapZoom.ZoomLevel);
         UpdateIcon();
+        NewGameManager.Instance.OnRouteDiscovered += OnRouteDiscovered;
+    }
+
+    private void OnDestroy()
+    {
+        if(NewGameManager.Instance)
+        {
+            NewGameManager.Instance.OnRouteDiscovered -= OnRouteDiscovered;
+        }
+    }
+
+    private void OnRouteDiscovered(string from, string to, TransportationMethod method)
+    {
+        UpdateIcon();
     }
 
     private void UpdateIcon()

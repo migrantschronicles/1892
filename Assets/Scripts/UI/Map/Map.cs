@@ -52,6 +52,11 @@ public class Map : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        CloseTransportationMethodsImmediately();
+    }
+
     public void OnLocationMarkerClicked(MapLocationMarker marker)
     {
         if(transportationMethods != null)
@@ -63,7 +68,7 @@ public class Map : MonoBehaviour
             }
 
             // Start anim
-            StartCoroutine(CloseTransporationMethods(transportationMethods));
+            StartCoroutine(CloseTransportationMethods(transportationMethods));
             transportationMethods = null;
         }
 
@@ -84,7 +89,7 @@ public class Map : MonoBehaviour
         transportationMethods.Open();
     }
 
-    private IEnumerator CloseTransporationMethods(MapTransportationMethods methods)
+    private IEnumerator CloseTransportationMethods(MapTransportationMethods methods)
     {
         methods.Close();
         while(!methods.IsClosed())

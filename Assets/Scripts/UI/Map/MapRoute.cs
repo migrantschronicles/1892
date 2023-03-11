@@ -21,6 +21,20 @@ public class MapRoute : MonoBehaviour
     private void Start()
     {
         UpdateImage();
+        NewGameManager.Instance.OnRouteDiscovered += OnRouteDiscovered;
+    }
+
+    private void OnDestroy()
+    {
+        if(NewGameManager.Instance)
+        {
+            NewGameManager.Instance.OnRouteDiscovered -= OnRouteDiscovered;
+        }
+    }
+
+    private void OnRouteDiscovered(string from, string to, TransportationMethod method)
+    {
+        UpdateImage();
     }
 
     private void UpdateImage()

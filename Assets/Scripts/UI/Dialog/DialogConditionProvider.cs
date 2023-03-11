@@ -35,14 +35,20 @@ using UnityEngine;
  * There are also special conditions for game stats. These conditions need to start with 'game:'.
  * Then you can specify which key you want to check for. These are currently supported:
  *      * 'daysincity' [int]: How many consecutive days the player spent in the current city (or the ship).
+ *      * 'money' [int]: The amount of money the player has.
  * After that (for int and float keys) you can add a comparison. The same comparisons are supported as the health conditions.  
  * Examples of a game condition:
  *      * 'game:daysincity>2': Checks if the player has spent more than 2 days in the current city / on the ship.
  *      
  * Warning: It is expected that you don't have errors in the condition and follow exactly the rules, i.e. no whitespaces, nothing other than expected.
  */
-public class DialogConditionProvider
+public class DialogConditionProvider : MonoBehaviour
 {
+    [SerializeField]
+    private string moneyConditionArticy;
+    [SerializeField]
+    private string daysInCityConditionArticy;
+
     class OnConditionsChangedEventData
     {
         public OnConditionsChangedEvent onConditionsChanged;
@@ -72,6 +78,49 @@ public class DialogConditionProvider
                 ArticyGlobalVariables.Default.Notifications.AddListener(condition, OnArticyVariableChanged);
             }
         }
+
+        NewGameManager.Instance.onMoneyChanged += OnMoneyChanged;
+        NewGameManager.Instance.onNewDay += OnNewDay;
+    }
+
+    private void Start()
+    {
+        foreach (var status in NewGameManager.Instance.HealthStatus.Characters)
+        {
+            status.onHealthChanged += OnHealthChanged;
+        }
+    }
+
+    private void OnMoneyChanged(int money)
+    {
+        ///@todo Uncomment once implemented
+        //ArticyGlobalVariables.Default.SetVariableByString(moneyConditionArticy, money);
+    }
+
+    private void OnNewDay()
+    {
+        ArticyGlobalVariables.Default.SetVariableByString(daysInCityConditionArticy, NewGameManager.Instance.DaysInCity);
+    }
+
+    private string GetArticyPrefix(string protagonistName)
+    {
+        switch(protagonistName)
+        {
+            case "Mattis": return "Matti";
+            case "Mreis": return "Mrei";
+        }
+
+        return protagonistName;
+    }
+
+    private void OnHealthChanged(ProtagonistHealthData data)
+    {
+        string articyPrefix = GetArticyPrefix(data.CharacterData.name);
+        ArticyGlobalVariables.Default.SetVariableByString($"Health.{articyPrefix}DaysHungry", data.HungryStatus.DaysWithoutEnoughFood);
+        ArticyGlobalVariables.Default.SetVariableByString($"Health.{articyPrefix}DaysSick", data.CholeraStatus.DaysSick);
+        ArticyGlobalVariables.Default.SetVariableByString($"Health.{articyPrefix}Exposed", data.CholeraStatus.IsExposed);
+        ArticyGlobalVariables.Default.SetVariableByString($"Health.{articyPrefix}Homesickness", data.HomesickessStatus.ValueInt);
+        ArticyGlobalVariables.Default.SetVariableByString($"Health.{articyPrefix}Sick", data.CholeraStatus.IsSick);
     }
 
     private void OnArticyVariableChanged(string condition, object value)
@@ -397,6 +446,10 @@ public class DialogConditionProvider
         if(key.Equals("daysincity", StringComparison.OrdinalIgnoreCase))
         {
             return Compare(NewGameManager.Instance.DaysInCity, operation, int.Parse(value));
+        }
+        else if(key.Equals("money", StringComparison.OrdinalIgnoreCase))
+        {
+            return Compare(NewGameManager.Instance.money, operation, int.Parse(value));
         }
 
         return false;

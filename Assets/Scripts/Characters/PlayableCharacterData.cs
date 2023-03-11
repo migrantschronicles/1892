@@ -68,6 +68,8 @@ public class PlayableCharacterData : ScriptableObject
     public SceneCharacterPrefab[] scenePrefabs;
     [Tooltip("The data about the characters")]
     public ProtagonistData[] protagonistData;
+    [Tooltip("The amount of money the player starts with")]
+    public int startMoney;
 
     public ProtagonistData GetProtagonistDataByName(string name)
     {

@@ -180,9 +180,15 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject startDayHostelPrefab;
     [SerializeField]
+    private GameObject startDayShipPrefab;
+    [SerializeField]
     private GameObject visitCityPopupPrefab;
     [SerializeField]
     private GameObject returnFromStopoverPrefab;
+    [SerializeField]
+    private GameObject shipArrivedPrefab;
+    [SerializeField]
+    private GameObject endDayStopoverPrefab;
 #if DEBUG && ENABLE_DEVELOPER_MENU
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -1224,7 +1230,7 @@ public class LevelInstance : MonoBehaviour
         }
         else if(NewGameManager.Instance.ShipManager.IsStopoverDay)
         {
-            popup = returnFromStopoverPrefab;
+            popup = endDayStopoverPrefab;
         }
         else
         {
@@ -1291,7 +1297,10 @@ public class LevelInstance : MonoBehaviour
         yield return new WaitForSeconds(nightTransitionTime);
         Destroy(nightTransition);
 
-        NewGameManager.Instance.OnSleepInShip(endOfDayHealthData);
+        if(NewGameManager.Instance.OnSleepInShip(endOfDayHealthData))
+        {
+            yield break;
+        }
 
         if (NewGameManager.Instance.ShipManager.IsStopoverDay)
         {
@@ -1306,27 +1315,34 @@ public class LevelInstance : MonoBehaviour
                 PopPopup();
             };
         }
-        else if(NewGameManager.Instance.ShipManager.WasStopoverDay && levelMode != LevelInstanceMode.Ship)
-        {
-            NewGameManager.Instance.ReturnToShip();
-        }
         else
         {
             // Normal day on ship.
-            GameObject popupGO = ShowPopup(startDayHostelPrefab);
-            StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
+            GameObject popupGO = ShowPopup(startDayShipPrefab);
+            StartDayShipPopup popup = popupGO.GetComponent<StartDayShipPopup>();
             popup.OnStartDay += (p) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
         }
     }
 
-    public void OnReturnFromStopover()
+    public void OnReturnFromStopover(bool wantsEndOfDay)
     {
         NewGameManager.Instance.SetPaused(true);
-        NewGameManager.Instance.ReturnToShip();
+        NewGameManager.Instance.ReturnToShip(wantsEndOfDay);
     }
 
     public void SetInterfaceVisibilityFlags(InterfaceVisibilityFlags flags)
     {
         ui.SetUIElementsVisible(flags);
+    }
+
+    public void OnShipArrived()
+    {
+        GameObject popupGO = ShowPopup(shipArrivedPrefab);
+        ShipArrivedPopup popup = popupGO.GetComponent<ShipArrivedPopup>();
+        popup.OnLeaveShip += (_) =>
+        {
+            PopPopup();
+            NewGameManager.Instance.OnLeaveShip();
+        };
     }
 }

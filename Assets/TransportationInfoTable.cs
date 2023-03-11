@@ -12,11 +12,6 @@ public class TransportationRouteInfo
     public int cost;
     public bool isDiscoverable;
 
-    /// A flag whether this route was discovered by the player in a dialog.
-    public bool WasDiscovered { get; set; }
-    /// True if the flag was discovered by the player or is discovered by default.
-    public bool IsDiscovered { get { return !isDiscoverable || WasDiscovered; } }
-
     public override string ToString() 
     {
         return $"Transportation Route Info: {FromLocation}, {ToLocation}, {method}, {time}, {cost}, {isDiscoverable}";
@@ -28,6 +23,8 @@ public class TransportationInfoTable
 {
 
     List<TransportationRouteInfo> transportationInfo = new List<TransportationRouteInfo>(); 
+
+    public IEnumerable<TransportationRouteInfo> TransportationInfo { get { return transportationInfo; } }
     
     public void Initialize(TextAsset infoTable) // infoTable is a CSV file with routes info.
     {
@@ -89,31 +86,6 @@ public class TransportationInfoTable
                 {
                     return true;
                 }
-            }
-        }
-
-        return false;
-    }
-
-    public void DiscoverRoute(string from, string to, TransportationMethod method)
-    {
-        foreach(TransportationRouteInfo route in transportationInfo)
-        {
-            if(route.FromLocation == from && route.ToLocation == to && route.method == method)
-            {
-                route.WasDiscovered = true;
-                return;
-            }
-        }
-    }
-
-    public bool IsRouteDiscovered(string from, string to, TransportationMethod method)
-    {
-        foreach (TransportationRouteInfo route in transportationInfo)
-        {
-            if (route.FromLocation == from && route.ToLocation == to && route.method == method)
-            {
-                return route.IsDiscovered;
             }
         }
 

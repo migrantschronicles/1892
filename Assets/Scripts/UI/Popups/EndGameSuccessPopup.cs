@@ -4,18 +4,15 @@ using UnityEngine;
 
 public class EndGameSuccessPopup : MonoBehaviour, IPopup
 {
-    public event IPopup.OnPopupAction OnEndGame;
-    public event IPopup.OnPopupAction OnDownloadPDF;
-
     public bool CanClose { get { return false; } }
 
     public void OnEndGameClicked()
     {
-        OnEndGame?.Invoke(this);
+        NewGameManager.Instance.EndGameAndReturnToMainMenu();
     }
 
     public void OnDownloadPDFClicked()
     {
-        OnDownloadPDF?.Invoke(this);
+        //OnDownloadPDF?.Invoke(this);
     }
 }

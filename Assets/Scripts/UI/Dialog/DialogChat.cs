@@ -238,7 +238,8 @@ public class DialogChat : MonoBehaviour
                 pausedOn is ItemAdded || 
                 pausedOn is ItemRemoved ||
                 pausedOn is Money_Removed ||
-                pausedOn is Money_Received) && 
+                pausedOn is Money_Received ||
+                pausedOn is End_of_Game) && 
                 !handledTemplate;
         }
 
@@ -377,6 +378,11 @@ public class DialogChat : MonoBehaviour
         {
             int amount = moneyReceived.Template.MoneyAdded.MoneyAdded;
             NewGameManager.Instance.SetMoney(NewGameManager.Instance.money + amount);
+            OnTemplateHandled();
+        }
+        else if(pausedOn is End_of_Game endOfGame)
+        {
+            NewGameManager.Instance.OnEndOfGame(endOfGame.Template.EndOfGame.GoodEnding);
             OnTemplateHandled();
         }
     }

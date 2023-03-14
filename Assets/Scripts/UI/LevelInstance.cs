@@ -189,6 +189,10 @@ public class LevelInstance : MonoBehaviour
     private GameObject shipArrivedPrefab;
     [SerializeField]
     private GameObject endDayStopoverPrefab;
+    [SerializeField]
+    private GameObject endGameSuccessPrefab;
+    [SerializeField]
+    private GameObject endGameFailurePrefab;
 #if DEBUG && ENABLE_DEVELOPER_MENU
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -1344,5 +1348,11 @@ public class LevelInstance : MonoBehaviour
             PopPopup();
             NewGameManager.Instance.OnLeaveShip();
         };
+    }
+
+    public void OnEndOfGame(bool success)
+    {
+        GameObject prefab = success ? endGameSuccessPrefab : endGameFailurePrefab;
+        ShowPopup(prefab);
     }
 }

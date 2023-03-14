@@ -125,7 +125,7 @@ public class DiaryPages : MonoBehaviour
 
         if(animated)
         {
-            currentAnimators.AddRange(diaryPage.CreateAnimators());
+            //currentAnimators.AddRange(diaryPage.CreateAnimators());
         }
     }
 
@@ -152,7 +152,7 @@ public class DiaryPages : MonoBehaviour
         lastAddedPage.onStatusChanged += OnDiaryContentPageStatusChanged;
 
         DiaryContentPage currentPage = LevelInstance.Instance.IngameDiary.Diary.CurrentPage;
-        if (currentPage && currentPage.ContentPages == contentPages)
+        if (LevelInstance.Instance.IngameDiary.gameObject.activeSelf && currentPage && currentPage.ContentPages == contentPages)
         {
             // The diary is already opened.
             OnDiaryContentPageStatusChanged(OpenStatus.Opened);
@@ -174,9 +174,16 @@ public class DiaryPages : MonoBehaviour
 
             if (currentAnimators.Count > 0)
             {
-                StartAnimator(currentAnimators[0]);
+                //StartAnimator(currentAnimators[0]);
+                //StartCoroutine(StartAnimatorNextFrame(currentAnimators[0]));
             }
         }
+    }
+
+    private IEnumerator StartAnimatorNextFrame(ElementAnimator animator)
+    {
+        yield return null;
+        StartAnimator(animator);
     }
 
     private GameObject AddDrawingToPage(GameObject page, DiaryPageDrawing drawing)

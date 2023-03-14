@@ -85,6 +85,7 @@ public class NewGameManager : MonoBehaviour
     public int hour;
     public int day = 0;
     public bool wantsEndOfDay = false;
+    public bool wantsEndGame = false;
 
     public bool IsPaused { get { return !gameRunning; } }
 
@@ -941,6 +942,7 @@ public class NewGameManager : MonoBehaviour
     public void OnEndOfGame(bool success)
     {
         SetPaused(true);
+        wantsEndGame = true;
         LevelInstance.Instance.OnEndOfGame(success);
     }
 

@@ -8,7 +8,7 @@ public class EndGameSuccessPopup : MonoBehaviour, IPopup
 
     public void OnEndGameClicked()
     {
-        NewGameManager.Instance.EndGameAndReturnToMainMenu();
+        LevelInstance.Instance.ShowEndGameEntry();
     }
 
     public void OnDownloadPDFClicked()

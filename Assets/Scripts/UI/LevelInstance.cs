@@ -11,6 +11,7 @@ using UnityEngine.Rendering.Universal;
 using Articy.Unity;
 using Articy.Unity.Interfaces;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public enum Mode
 {
@@ -129,6 +130,10 @@ public class LevelInstance : MonoBehaviour
     private string defaultScene;
     [SerializeField]
     private DiaryEntry diaryEntry;
+    [SerializeField]
+    private DiaryEntry endGamePositiveEntry;
+    [SerializeField]
+    private DiaryEntry endGameNegativeEntry;
     [SerializeField]
     private AudioClip[] musicClips;
     [SerializeField]
@@ -451,6 +456,13 @@ public class LevelInstance : MonoBehaviour
 
                 case Mode.Diary:
                 {
+                    if (NewGameManager.Instance.wantsEndGame)
+                    {
+                        // The back button was pressed on the last end game diary entry, so return to the main menu.
+                        NewGameManager.Instance.EndGameAndReturnToMainMenu();
+                        return;
+                    }
+
                     // An overlay over the diary can only happen if it's a popup.
                     ui.HideDiary(false);
                     SetBackButtonVisible(true);
@@ -1208,14 +1220,7 @@ public class LevelInstance : MonoBehaviour
     public GameObject ShowPopup(GameObject prefab)
     {
         // Clear all the popups 
-        if(mode == Mode.Popup || overlayMode == OverlayMode.Popup)
-        {
-            while(PopupManager.Count > 0)
-            {
-                OnBack();
-            }
-        }
-
+        ClearPopups();
         return PushPopup(prefab);
     }
 
@@ -1223,6 +1228,18 @@ public class LevelInstance : MonoBehaviour
     {
         Debug.Assert(mode == Mode.Popup || overlayMode == OverlayMode.Popup);
         OnBack();
+    }
+
+    public void ClearPopups()
+    {
+        // Clear all the popups 
+        if (mode == Mode.Popup || overlayMode == OverlayMode.Popup)
+        {
+            while (PopupManager.Count > 0)
+            {
+                OnBack();
+            }
+        }
     }
 
     public void OpenEndDayPopup()
@@ -1354,5 +1371,16 @@ public class LevelInstance : MonoBehaviour
     {
         GameObject prefab = success ? endGameSuccessPrefab : endGameFailurePrefab;
         ShowPopup(prefab);
+    }
+
+    public void ShowEndGameEntry()
+    {
+        ClearPopups();
+
+        bool positive = NewGameManager.Instance.HealthStatus.Characters.Max(data => data.HomesickessStatus.Value) <= 5.0f;
+        DiaryEntry entry = positive ? endGamePositiveEntry : endGameNegativeEntry;
+        NewGameManager.Instance.AddDiaryEntry(entry);
+        // Since EndGameSuccessPopup is only triggered from dialogs, the mode is still dialogs, so it should open immediately.
+        OpenDiary(DiaryPageLink.Diary);
     }
 }

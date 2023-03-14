@@ -93,8 +93,7 @@ public class DialogConditionProvider : MonoBehaviour
 
     private void OnMoneyChanged(int money)
     {
-        ///@todo Uncomment once implemented
-        //ArticyGlobalVariables.Default.SetVariableByString(moneyConditionArticy, money);
+        ArticyGlobalVariables.Default.SetVariableByString(moneyConditionArticy, money);
     }
 
     private void OnNewDay()

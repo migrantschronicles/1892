@@ -149,6 +149,7 @@ public class HealthStatus_Cholera
                     {
                         // The character was exposed and is now actually sick
                         status = CholeraStatus.Sick;
+                        daysSick = 1;
                     }
                     else
                     {

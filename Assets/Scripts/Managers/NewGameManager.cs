@@ -935,7 +935,21 @@ public class NewGameManager : MonoBehaviour
     public void OnProtagonistDied(ProtagonistData protagonist)
     {
         Debug.Log($"{protagonist.name} died");
-        ///@todo
+        OnEndOfGame(false);
+    }
+
+    public void OnEndOfGame(bool success)
+    {
+        SetPaused(true);
+        LevelInstance.Instance.OnEndOfGame(success);
+    }
+
+    public void EndGameAndReturnToMainMenu()
+    {
+        AudioManager.Instance.StopMusic();
+        Destroy(AudioManager.Instance.gameObject);
+        Destroy(gameObject);
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void SetCurrency(Currency currency)

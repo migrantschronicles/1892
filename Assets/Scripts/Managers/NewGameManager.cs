@@ -940,6 +940,7 @@ public class NewGameManager : MonoBehaviour
 
     public void OnEndOfGame(bool success)
     {
+        SetPaused(true);
         LevelInstance.Instance.OnEndOfGame(success);
     }
 

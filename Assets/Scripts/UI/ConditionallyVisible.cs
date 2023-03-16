@@ -15,6 +15,11 @@ public class ConditionallyVisible : MonoBehaviour
 
     private void OnConditionChanged(object context)
     {
+        UpdateCondition();
+    }
+
+    public void UpdateCondition()
+    {
         gameObject.SetActive(condition.Test());
     }
 }

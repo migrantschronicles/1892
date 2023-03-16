@@ -15,6 +15,7 @@ public class Scene : MonoBehaviour
     public GameObject SpawnedCharacter { get { return characterSpawn.SpawnedCharacter; } }
     public GameObject Interactables { get { return interactables; } }
     public PlayableCharacterSpawn PlayableCharacterSpawn { get { return characterSpawn; } }
+    public int DaysInScene { get; private set; }
 
     private void Start()
     {
@@ -43,10 +44,33 @@ public class Scene : MonoBehaviour
         {
             characterSpawn.TrySpawn();
         }
+
+        if(active)
+        {
+            DaysInScene = 0;
+            NewGameManager.Instance.onNewDay += OnNewDay;
+        }
+        else
+        {
+            NewGameManager.Instance.onNewDay -= OnNewDay;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if(NewGameManager.Instance)
+        {
+            NewGameManager.Instance.onNewDay -= OnNewDay;
+        }
     }
 
     public void SetPlayableCharacterVisible(bool visible)
     {
         characterSpawn.SetCharactersVisible(visible);
+    }
+
+    private void OnNewDay()
+    {
+        ++DaysInScene;
     }
 }

@@ -491,7 +491,10 @@ public class LevelInstance : MonoBehaviour
                             // Reactivate all the characters that were hidden during the dialog.
                             foreach (GameObject go in currentHiddenObjects)
                             {
-                                go.SetActive(true);
+                                if(go)
+                                {
+                                    go.SetActive(true);
+                                }
                             }
                             currentHiddenObjects = null;
                         }
@@ -704,7 +707,10 @@ public class LevelInstance : MonoBehaviour
         currentHiddenObjects = button.HideObjects;
         foreach (GameObject go in currentHiddenObjects)
         {
-            go.SetActive(false);
+            if(go)
+            {
+                go.SetActive(false);
+            }
         }
 
         // Set foreground scene

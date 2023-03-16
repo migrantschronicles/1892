@@ -89,7 +89,7 @@ public class Shop : MonoBehaviour
     
     public ScrollableInventoryManager HighlightedInventoryManager { get; private set; }
     private bool OnlyAcceptsItem { get { return freeShop; } }
-    private bool CanClose { get { return !freeShop; } }
+    private bool CanClose { get { return !freeShop || LevelInstance.Instance.Mode == Mode.Shop; } }
 
     private bool CanAccept
     {

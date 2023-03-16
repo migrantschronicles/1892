@@ -988,7 +988,14 @@ public class NewGameManager : MonoBehaviour
         if(currency != CurrentCurrency)
         {
             CurrentCurrency = currency;
+            switch(CurrentCurrency)
+            {
+                case Currency.Franc: money *= 2; break;
+                case Currency.Dollar: money /= 2; break;
+            }
+
             onCurrencyChanged?.Invoke(CurrentCurrency);
+            onMoneyChanged?.Invoke(money);
         }
     }
 

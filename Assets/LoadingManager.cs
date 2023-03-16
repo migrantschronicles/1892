@@ -57,24 +57,6 @@ public class LoadingManager : MonoBehaviour
                 if(Time.time - startTime >= minimumLoadingTime)
                 {
                     op.allowSceneActivation = true;
-
-                    if(loadSceneName == NewGameManager.Instance.nextLocation)
-                    {
-                        // Else it is a special map (ship, stopover).
-                        NewGameManager.Instance.OnBeforeSceneActivation();
-                    }
-                    else if(loadSceneName == "Ship")
-                    {
-                        NewGameManager.Instance.OnLoadedShip();
-                    }
-                    else if(loadSceneName == NewGameManager.Instance.ShipManager.StopoverLocation)
-                    {
-                        NewGameManager.Instance.OnLoadedStopover();
-                    }
-                    else if(loadSceneName == "ElisIsland")
-                    {
-                        NewGameManager.Instance.OnLoadedElisIsland();
-                    }
                 }
             }
 

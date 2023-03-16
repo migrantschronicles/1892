@@ -18,17 +18,6 @@ public class ForegroundScene : MonoBehaviour
     private GameObject rightCharacter;
     private IAnimationController[] rightAnimController;
 
-    private void Start()
-    {
-        UpdatePosition();
-    }
-
-    private void Update()
-    {
-        transform.position = new Vector3(LevelInstance.Instance.MainCamera.transform.position.x, 
-            LevelInstance.Instance.MainCamera.transform.position.y, 0.0f);
-    }
-
     private void UpdatePosition()
     {
         RectTransform dialogRect = DialogSystem.Instance.GetComponent<RectTransform>();

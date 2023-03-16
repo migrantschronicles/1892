@@ -194,6 +194,10 @@ public class DialogChat : MonoBehaviour
     {
         // Call instructions on the last paused object, if there are any.
         DialogSystem.Instance.FlowPlayer.FinishCurrentPausedObject();
+        if(currentDialog != null && currentDialog.setFinishedConditions != null)
+        {
+            NewGameManager.Instance.conditions.AddConditions(currentDialog.setFinishedConditions);
+        }
     }
 
     private void OnBubbleHeightChanged(DialogBubble bubble, float oldHeight, float newHeight)

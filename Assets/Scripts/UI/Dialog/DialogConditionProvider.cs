@@ -49,6 +49,8 @@ public class DialogConditionProvider : MonoBehaviour
     private string moneyConditionArticy;
     [SerializeField]
     private string daysInCityConditionArticy;
+    [SerializeField]
+    private bool verbose = false;
 
     class OnConditionsChangedEventData
     {
@@ -125,6 +127,11 @@ public class DialogConditionProvider : MonoBehaviour
 
     private void OnArticyVariableChanged(string condition, object value)
     {
+        if(verbose)
+        {
+            Debug.Log($"On Articy Condition changed: {condition} ({value})");
+        }
+        
         if((bool) value)
         {
             // If the new value is true, add it to our conditions.
@@ -175,6 +182,22 @@ public class DialogConditionProvider : MonoBehaviour
         }
     }
 
+    public void RemoveOnConditionChanged(string condition, OnConditionsChangedEvent onConditionsChanged)
+    {
+        if(onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChangedEventData changedEvent))
+        {
+            changedEvent.onConditionsChanged -= onConditionsChanged;
+        }
+    }
+
+    public void RemoveOnConditionsChanged(IEnumerable<string> conditions, OnConditionsChangedEvent onConditionsChanged)
+    {
+        foreach(string condition in conditions)
+        {
+            RemoveOnConditionChanged(condition, onConditionsChanged);
+        }
+    }
+
     /**
      * Adds a condition to the list.
      * @param global True if it should be added to the global list, false for the local one.
@@ -184,6 +207,11 @@ public class DialogConditionProvider : MonoBehaviour
         if (string.IsNullOrWhiteSpace(condition))
         {
             return;
+        }
+
+        if(verbose)
+        {
+            Debug.Log($"Add condition {condition} {global}");
         }
 
         if(ArticyGlobalVariables.VariableNames.Contains(condition))
@@ -246,6 +274,11 @@ public class DialogConditionProvider : MonoBehaviour
         if(string.IsNullOrWhiteSpace(condition))
         {
             return;
+        }
+
+        if(verbose)
+        {
+            Debug.Log($"Remove condition {condition}");
         }
 
         // Set the condition to false in articy
@@ -317,7 +350,10 @@ public class DialogConditionProvider : MonoBehaviour
                     {
                         case Operation.Greater: operation = Operation.GreaterEqual; break;
                         case Operation.Less: operation = Operation.LessEqual; break;
-                        case Operation.None: operation = Operation.Equals; break;
+                        case Operation.None:
+                            key = condition[..i];
+                            operation = Operation.Equals; 
+                            break;
                     }
                     break;
 

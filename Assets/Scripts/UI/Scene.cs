@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Scene : MonoBehaviour
@@ -72,5 +73,21 @@ public class Scene : MonoBehaviour
     private void OnNewDay()
     {
         ++DaysInScene;
+    }
+
+    public bool HasInteractable(GameObject interactable)
+    {
+        if(interactables)
+        {
+            Transform parent = interactable.transform;
+            while(parent && parent != interactables.transform)
+            {
+                parent = parent.transform.parent;
+            }
+
+            return parent && parent.gameObject == interactables;
+        }
+
+        return false;
     }
 }

@@ -9,8 +9,30 @@ public class ConditionallyVisible : MonoBehaviour
 
     private void Start()
     {
-        OnConditionChanged(null);
         NewGameManager.Instance.conditions.AddOnConditionsChanged(condition.GetAllConditions(), OnConditionChanged);
+        LevelInstance.Instance.onSceneChanged += OnSceneChanged;
+        OnConditionChanged(null);
+    }
+
+    private void OnDestroy()
+    {
+        if(NewGameManager.Instance)
+        {
+            NewGameManager.Instance.conditions.RemoveOnConditionsChanged(condition.GetAllConditions(), OnConditionChanged);
+        }
+
+        if(LevelInstance.Instance)
+        {
+            LevelInstance.Instance.onSceneChanged -= OnSceneChanged;
+        }
+    }
+
+    private void OnSceneChanged(Scene scene)
+    {
+        if(scene.HasInteractable(gameObject))
+        {
+            UpdateCondition();
+        }
     }
 
     private void OnConditionChanged(object context)
@@ -20,6 +42,11 @@ public class ConditionallyVisible : MonoBehaviour
 
     public void UpdateCondition()
     {
+        if(gameObject.name == "Day2Button")
+        {
+            Debug.Log(NewGameManager.Instance.DaysInCity);
+            Debug.Log(NewGameManager.Instance.conditions.HasCondition("Misc.ImmigrationRelative"));
+        }
         gameObject.SetActive(condition.Test());
     }
 }

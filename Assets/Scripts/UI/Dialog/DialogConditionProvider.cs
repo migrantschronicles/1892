@@ -37,6 +37,7 @@ using UnityEngine;
  *      * 'daysincity' [int]: How many consecutive days the player spent in the current city (or the ship).
  *      * 'money' [int]: The amount of money the player has.
  *      * 'daysinscene' [int]: How many consecutive days the player spent in the current scene.
+ *      * 'cantravelto' [Location]: Whether you can travel to Location
  * After that (for int and float keys) you can add a comparison. The same comparisons are supported as the health conditions.  
  * Examples of a game condition:
  *      * 'game:daysincity>2': Checks if the player has spent more than 2 days in the current city / on the ship.
@@ -490,6 +491,10 @@ public class DialogConditionProvider : MonoBehaviour
         else if(key.Equals("daysinscene", StringComparison.OrdinalIgnoreCase))
         {
             return Compare(LevelInstance.Instance.CurrentScene ? LevelInstance.Instance.CurrentScene.DaysInScene : 0, operation, int.Parse(value));
+        }
+        else if(key.Equals("cantravelto", StringComparison.OrdinalIgnoreCase))
+        {
+            return NewGameManager.Instance.CanTravelTo(value);
         }
 
         return false;

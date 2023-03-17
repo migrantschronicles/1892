@@ -42,11 +42,6 @@ public class ConditionallyVisible : MonoBehaviour
 
     public void UpdateCondition()
     {
-        if(gameObject.name == "Day2Button")
-        {
-            Debug.Log(NewGameManager.Instance.DaysInCity);
-            Debug.Log(NewGameManager.Instance.conditions.HasCondition("Misc.ImmigrationRelative"));
-        }
         gameObject.SetActive(condition.Test());
     }
 }

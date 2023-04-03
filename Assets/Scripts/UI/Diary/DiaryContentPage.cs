@@ -92,6 +92,13 @@ public class DiaryContentPage : MonoBehaviour
     {
         Debug.Assert(Status == OpenStatus.Closed);
         gameObject.SetActive(true);
+        // Animator etc is still not activated, only next frame
+        LevelInstance.Instance.StartCoroutine(OpenImmediatelyNextFrame());
+    }
+
+    private IEnumerator OpenImmediatelyNextFrame()
+    {
+        yield return null;
         animator.SetTrigger("OpenImmediately");
         Status = OpenStatus.Opened;
     }
@@ -102,11 +109,17 @@ public class DiaryContentPage : MonoBehaviour
         {
             case OpenStatus.Closed:
                 gameObject.SetActive(true);
-                Status = OpenStatus.Opening;
-                animator.SetTrigger("OpenToLeft");
-                watchAnimationCoroutine = StartCoroutine(WatchAnimation());
+                LevelInstance.Instance.StartCoroutine(OpenToLeftNextFrame());
                 break;
         }
+    }
+
+    private IEnumerator OpenToLeftNextFrame()
+    {
+        yield return null;
+        Status = OpenStatus.Opening;
+        animator.SetTrigger("OpenToLeft");
+        watchAnimationCoroutine = StartCoroutine(WatchAnimation());
     }
 
     public void OpenToRight()
@@ -115,11 +128,17 @@ public class DiaryContentPage : MonoBehaviour
         {
             case OpenStatus.Closed:
                 gameObject.SetActive(true);
-                Status = OpenStatus.Opening;
-                animator.SetTrigger("OpenToRight");
-                watchAnimationCoroutine = StartCoroutine(WatchAnimation());
+                LevelInstance.Instance.StartCoroutine(OpenToRightNextFrame());
                 break;
         }
+    }
+
+    private IEnumerator OpenToRightNextFrame()
+    {
+        yield return null;
+        Status = OpenStatus.Opening;
+        animator.SetTrigger("OpenToRight");
+        watchAnimationCoroutine = StartCoroutine(WatchAnimation());
     }
 
     public void CloseImmediately()

@@ -125,7 +125,7 @@ public class DiaryPages : MonoBehaviour
 
         if(animated)
         {
-            //currentAnimators.AddRange(diaryPage.CreateAnimators());
+            currentAnimators.AddRange(diaryPage.CreateAnimators());
         }
     }
 
@@ -174,16 +174,9 @@ public class DiaryPages : MonoBehaviour
 
             if (currentAnimators.Count > 0)
             {
-                //StartAnimator(currentAnimators[0]);
-                //StartCoroutine(StartAnimatorNextFrame(currentAnimators[0]));
+                StartAnimator(currentAnimators[0]);
             }
         }
-    }
-
-    private IEnumerator StartAnimatorNextFrame(ElementAnimator animator)
-    {
-        yield return null;
-        StartAnimator(animator);
     }
 
     private GameObject AddDrawingToPage(GameObject page, DiaryPageDrawing drawing)

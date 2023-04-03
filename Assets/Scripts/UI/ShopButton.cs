@@ -10,6 +10,8 @@ public class ShopButton : MonoBehaviour
 
     private Button button;
 
+    public Shop Shop { get { return shop; } }
+
     private void Awake()
     {
         button = GetComponent<Button>();

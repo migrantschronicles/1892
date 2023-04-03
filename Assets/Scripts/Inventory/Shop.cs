@@ -169,6 +169,12 @@ public class Shop : MonoBehaviour
         UpdateDynamics();
     }
 
+    public void AddItem(Item item)
+    {
+        OnBasketItemAmountChanged(item, 1);
+        UpdateDynamics();
+    }
+
     private void OnBasketItemAmountChanged(Item item, int amount)
     {
         if(basketItems.TryGetValue(item, out int currentAmount))

@@ -254,6 +254,16 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;   
+    }
+
     void Update() 
     {
         if (gameRunning)
@@ -264,6 +274,27 @@ public class NewGameManager : MonoBehaviour
         if(wantsEndOfDay && CanEndDay())
         {
             EndDay();
+        }
+    }
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == nextLocation)
+        {
+            // Else it is a special map (ship, stopover).
+            OnBeforeSceneActivation();
+        }
+        else if (scene.name == "Ship")
+        {
+            OnLoadedShip();
+        }
+        else if (scene.name == ShipManager.StopoverLocation)
+        {
+            OnLoadedStopover();
+        }
+        else if (scene.name == "ElisIsland")
+        {
+            OnLoadedElisIsland();
         }
     }
 
@@ -959,7 +990,14 @@ public class NewGameManager : MonoBehaviour
         if(currency != CurrentCurrency)
         {
             CurrentCurrency = currency;
+            switch(CurrentCurrency)
+            {
+                case Currency.Franc: money *= 2; break;
+                case Currency.Dollar: money /= 2; break;
+            }
+
             onCurrencyChanged?.Invoke(CurrentCurrency);
+            onMoneyChanged?.Invoke(money);
         }
     }
 

@@ -83,21 +83,31 @@ public class Shop : MonoBehaviour
     private InventorySlot selectedItem;
     private bool selectedItemIsInLuggage = false;
     private Dictionary<Item, int> basketItems = new Dictionary<Item, int>();
+    private Item providesItem;
 
     public delegate void OnTradeAcceptedEvent();
     public event OnTradeAcceptedEvent onTradeAccepted;
     
     public ScrollableInventoryManager HighlightedInventoryManager { get; private set; }
-    private bool OnlyAcceptsItem { get { return freeShop; } }
-    private bool CanClose { get { return !freeShop; } }
+    private bool OnlyAcceptsItem { get { return freeShop && acceptableItem.type != AcceptableItemType.None; } }
+    private bool CanClose { get { return !freeShop || LevelInstance.Instance.Mode == Mode.Shop; } }
 
     private bool CanAccept
     {
         get
         {
-            if(freeShop || OnlyAcceptsItem)
+            if(OnlyAcceptsItem)
             {
                 return HasAcceptableItem();
+            }
+            else if(freeShop)
+            {
+                if(providesItem)
+                {
+                    return HasTakenItem();
+                }
+
+                return true;
             }
 
             int price = CalculatePrice();
@@ -145,6 +155,7 @@ public class Shop : MonoBehaviour
 
     public void InitItemAdded(Item item)
     {
+        providesItem = item;
         freeShop = true;
         OnBasketItemAmountChanged(item, 1);
         UpdateDynamics();
@@ -563,6 +574,16 @@ public class Shop : MonoBehaviour
             }
 
             return false;
+        }
+
+        return true;
+    }
+
+    private bool HasTakenItem()
+    {
+        if(freeShop && providesItem)
+        {
+            return Luggage.HasItem(providesItem);
         }
 
         return true;

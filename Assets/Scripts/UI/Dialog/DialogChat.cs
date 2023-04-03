@@ -194,6 +194,10 @@ public class DialogChat : MonoBehaviour
     {
         // Call instructions on the last paused object, if there are any.
         DialogSystem.Instance.FlowPlayer.FinishCurrentPausedObject();
+        if(currentDialog != null && currentDialog.setFinishedConditions != null)
+        {
+            NewGameManager.Instance.conditions.AddConditions(currentDialog.setFinishedConditions);
+        }
     }
 
     private void OnBubbleHeightChanged(DialogBubble bubble, float oldHeight, float newHeight)
@@ -239,7 +243,8 @@ public class DialogChat : MonoBehaviour
                 pausedOn is ItemRemoved ||
                 pausedOn is Money_Removed ||
                 pausedOn is Money_Received ||
-                pausedOn is End_of_Game) && 
+                pausedOn is End_of_Game ||
+                pausedOn is MoneyExchange) && 
                 !handledTemplate;
         }
 
@@ -383,6 +388,11 @@ public class DialogChat : MonoBehaviour
         else if(pausedOn is End_of_Game endOfGame)
         {
             NewGameManager.Instance.OnEndOfGame(endOfGame.Template.EndOfGame.GoodEnding);
+            OnTemplateHandled();
+        }
+        else if(pausedOn is MoneyExchange)
+        {
+            NewGameManager.Instance.SetCurrency(Currency.Dollar);
             OnTemplateHandled();
         }
     }

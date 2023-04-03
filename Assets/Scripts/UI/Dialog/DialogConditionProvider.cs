@@ -36,6 +36,8 @@ using UnityEngine;
  * Then you can specify which key you want to check for. These are currently supported:
  *      * 'daysincity' [int]: How many consecutive days the player spent in the current city (or the ship).
  *      * 'money' [int]: The amount of money the player has.
+ *      * 'daysinscene' [int]: How many consecutive days the player spent in the current scene.
+ *      * 'cantravelto' [Location]: Whether you can travel to Location
  * After that (for int and float keys) you can add a comparison. The same comparisons are supported as the health conditions.  
  * Examples of a game condition:
  *      * 'game:daysincity>2': Checks if the player has spent more than 2 days in the current city / on the ship.
@@ -48,6 +50,8 @@ public class DialogConditionProvider : MonoBehaviour
     private string moneyConditionArticy;
     [SerializeField]
     private string daysInCityConditionArticy;
+    [SerializeField]
+    private bool verbose = false;
 
     class OnConditionsChangedEventData
     {
@@ -93,8 +97,7 @@ public class DialogConditionProvider : MonoBehaviour
 
     private void OnMoneyChanged(int money)
     {
-        ///@todo Uncomment once implemented
-        //ArticyGlobalVariables.Default.SetVariableByString(moneyConditionArticy, money);
+        ArticyGlobalVariables.Default.SetVariableByString(moneyConditionArticy, money);
     }
 
     private void OnNewDay()
@@ -125,6 +128,11 @@ public class DialogConditionProvider : MonoBehaviour
 
     private void OnArticyVariableChanged(string condition, object value)
     {
+        if(verbose)
+        {
+            Debug.Log($"On Articy Condition changed: {condition} ({value})");
+        }
+        
         if((bool) value)
         {
             // If the new value is true, add it to our conditions.
@@ -175,6 +183,22 @@ public class DialogConditionProvider : MonoBehaviour
         }
     }
 
+    public void RemoveOnConditionChanged(string condition, OnConditionsChangedEvent onConditionsChanged)
+    {
+        if(onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChangedEventData changedEvent))
+        {
+            changedEvent.onConditionsChanged -= onConditionsChanged;
+        }
+    }
+
+    public void RemoveOnConditionsChanged(IEnumerable<string> conditions, OnConditionsChangedEvent onConditionsChanged)
+    {
+        foreach(string condition in conditions)
+        {
+            RemoveOnConditionChanged(condition, onConditionsChanged);
+        }
+    }
+
     /**
      * Adds a condition to the list.
      * @param global True if it should be added to the global list, false for the local one.
@@ -184,6 +208,11 @@ public class DialogConditionProvider : MonoBehaviour
         if (string.IsNullOrWhiteSpace(condition))
         {
             return;
+        }
+
+        if(verbose)
+        {
+            Debug.Log($"Add condition {condition} {global}");
         }
 
         if(ArticyGlobalVariables.VariableNames.Contains(condition))
@@ -246,6 +275,11 @@ public class DialogConditionProvider : MonoBehaviour
         if(string.IsNullOrWhiteSpace(condition))
         {
             return;
+        }
+
+        if(verbose)
+        {
+            Debug.Log($"Remove condition {condition}");
         }
 
         // Set the condition to false in articy
@@ -317,7 +351,10 @@ public class DialogConditionProvider : MonoBehaviour
                     {
                         case Operation.Greater: operation = Operation.GreaterEqual; break;
                         case Operation.Less: operation = Operation.LessEqual; break;
-                        case Operation.None: operation = Operation.Equals; break;
+                        case Operation.None:
+                            key = condition[..i];
+                            operation = Operation.Equals; 
+                            break;
                     }
                     break;
 
@@ -450,6 +487,14 @@ public class DialogConditionProvider : MonoBehaviour
         else if(key.Equals("money", StringComparison.OrdinalIgnoreCase))
         {
             return Compare(NewGameManager.Instance.money, operation, int.Parse(value));
+        }
+        else if(key.Equals("daysinscene", StringComparison.OrdinalIgnoreCase))
+        {
+            return Compare(LevelInstance.Instance.CurrentScene ? LevelInstance.Instance.CurrentScene.DaysInScene : 0, operation, int.Parse(value));
+        }
+        else if(key.Equals("cantravelto", StringComparison.OrdinalIgnoreCase))
+        {
+            return NewGameManager.Instance.CanTravelTo(value);
         }
 
         return false;

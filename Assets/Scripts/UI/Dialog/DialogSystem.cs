@@ -216,9 +216,14 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         {
             // The dialog is paused on the dialog (first fragment), so continue to 
             // the first dialog fragment.
-            ///@todo Handle multiple branches
-            Debug.Assert(branches.Count == 1);
-            StartCoroutine(SetStartOnDelayed(branches[0].Target as IArticyObject));
+            foreach(Branch branch in branches)
+            {
+                if(branch.IsValid)
+                {
+                    StartCoroutine(SetStartOnDelayed(branch.Target as IArticyObject));
+                    break;
+                }
+            }
             return;
         }
 

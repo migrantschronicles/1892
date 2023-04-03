@@ -32,6 +32,8 @@ public class Interface : MonoBehaviour
     [SerializeField]
     private Text locationText;
     [SerializeField]
+    private Text locationTextMapUI;
+    [SerializeField]
     private Text dateText;
     [SerializeField]
     private GameObject clockButton;
@@ -106,6 +108,7 @@ public class Interface : MonoBehaviour
     private void OnLocationChanged(string location)
     {
         locationText.text = NewGameManager.Instance.LocationManager.GetLocalizedName(location);
+        locationTextMapUI.text = NewGameManager.Instance.LocationManager.GetLocalizedName(location);
     }
 
     /**

@@ -14,20 +14,9 @@ public class ForegroundScene : MonoBehaviour
     private Vector2 worldPadding = new Vector2(0.5f, 0.0f);
 
     private GameObject leftCharacter;
-    private IAnimationController leftAnimController;
+    private IAnimationController[] leftAnimController;
     private GameObject rightCharacter;
-    private IAnimationController rightAnimController;
-
-    private void Start()
-    {
-        UpdatePosition();
-    }
-
-    private void Update()
-    {
-        transform.position = new Vector3(LevelInstance.Instance.MainCamera.transform.position.x, 
-            LevelInstance.Instance.MainCamera.transform.position.y, 0.0f);
-    }
+    private IAnimationController[] rightAnimController;
 
     private void UpdatePosition()
     {
@@ -84,7 +73,7 @@ public class ForegroundScene : MonoBehaviour
         UpdateCharacter(ref rightCharacter, ref rightAnimController, rightPrefab, right);
     }
 
-    private void UpdateCharacter(ref GameObject character, ref IAnimationController animController, GameObject prefab, Transform parent)
+    private void UpdateCharacter(ref GameObject character, ref IAnimationController[] animController, GameObject prefab, Transform parent)
     {
         if(character != prefab)
         {
@@ -98,7 +87,7 @@ public class ForegroundScene : MonoBehaviour
             {
                 character = Instantiate(prefab, parent);
                 SetLayer(character, LayerMask.NameToLayer("Foreground"));
-                animController = character.GetComponent<IAnimationController>();
+                animController = character.GetComponentsInChildren<IAnimationController>();
                 UpdatePosition();
             }
         }
@@ -117,25 +106,25 @@ public class ForegroundScene : MonoBehaviour
     {
         if(!DialogSystem.Instance.IsRight(speakerTechnicalName))
         {
-            if(leftAnimController)
+            foreach(IAnimationController controller in leftAnimController)
             {
-                leftAnimController.TalkIfNotTalking();
+                controller.TalkIfNotTalking();
             }
         }
         else
         {
-            if(rightAnimController)
+            foreach (IAnimationController controller in rightAnimController)
             {
-                rightAnimController.TalkIfNotTalking();
+                controller.TalkIfNotTalking();
             }
         }
     }
 
     public void OnDialogDecision()
     {
-        if(rightAnimController)
+        foreach (IAnimationController controller in rightAnimController)
         {
-            rightAnimController.TalkIfNotTalking();
+            controller.TalkIfNotTalking();
         }
     }
 

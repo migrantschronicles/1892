@@ -9,11 +9,38 @@ public class ConditionallyVisible : MonoBehaviour
 
     private void Start()
     {
-        OnConditionChanged(null);
         NewGameManager.Instance.conditions.AddOnConditionsChanged(condition.GetAllConditions(), OnConditionChanged);
+        LevelInstance.Instance.onSceneChanged += OnSceneChanged;
+        OnConditionChanged(null);
+    }
+
+    private void OnDestroy()
+    {
+        if(NewGameManager.Instance)
+        {
+            NewGameManager.Instance.conditions.RemoveOnConditionsChanged(condition.GetAllConditions(), OnConditionChanged);
+        }
+
+        if(LevelInstance.Instance)
+        {
+            LevelInstance.Instance.onSceneChanged -= OnSceneChanged;
+        }
+    }
+
+    private void OnSceneChanged(Scene scene)
+    {
+        if(scene.HasInteractable(gameObject))
+        {
+            UpdateCondition();
+        }
     }
 
     private void OnConditionChanged(object context)
+    {
+        UpdateCondition();
+    }
+
+    public void UpdateCondition()
     {
         gameObject.SetActive(condition.Test());
     }

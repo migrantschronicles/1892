@@ -91,11 +91,19 @@ public class DiaryPages : MonoBehaviour
 
     private void UpdateButtons()
     {
-        DiaryContentPage currentPage = LevelInstance.Instance.IngameDiary.Diary.CurrentPage;
-        if(currentPage && currentPage.ContentPages == contentPages)
+        if(NewGameManager.Instance.wantsEndGame)
         {
-            prevPageButton.gameObject.SetActive(!currentPage.IsFirstPageOfContentPages);
-            nextPageButton.gameObject.SetActive(!currentPage.IsLastPageOfContentPages);
+            nextPageButton.gameObject.SetActive(false);
+            prevPageButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            DiaryContentPage currentPage = LevelInstance.Instance.IngameDiary.Diary.CurrentPage;
+            if (currentPage && currentPage.ContentPages == contentPages)
+            {
+                prevPageButton.gameObject.SetActive(!currentPage.IsFirstPageOfContentPages);
+                nextPageButton.gameObject.SetActive(!currentPage.IsLastPageOfContentPages);
+            }
         }
     }
 

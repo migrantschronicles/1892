@@ -56,5 +56,9 @@ public class DiaryMarker : MonoBehaviour
         Sprite sprite = closed ? closedSprite : (active ? activeSprite : defaultSprite);
         image.sprite = sprite;
         rectTransform.sizeDelta = sprite.rect.size;
+        if (NewGameManager.Instance.wantsEndGame)
+        {
+            GetComponent<Button>().interactable = false;
+        }
     }
 }

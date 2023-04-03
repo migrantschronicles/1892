@@ -55,7 +55,7 @@ public class DiaryPages : MonoBehaviour
     {
         prevPageButton.onClick.AddListener(OpenPrevDoublePage);
         nextPageButton.onClick.AddListener(OpenNextDoublePage);
-        contentLeftButton.onClick.AddListener(() => { Debug.Log("qwer"); StopAnimators(true); });
+        contentLeftButton.onClick.AddListener(() => StopAnimators(true));
         contentRightButton.onClick.AddListener(() => StopAnimators(true));
         contentPages.onActiveStatusChanged += OnContentPagesActiveStatusChanged;
     }
@@ -146,8 +146,7 @@ public class DiaryPages : MonoBehaviour
             lastAddedPage = null;
         }
 
-        ///@todo Change this to the real date. Localize this?
-        string date = Time.time.ToString();
+        string date = NewGameManager.Instance.date.ToString("d MMMM yyyy");
         entry.leftPage.Date = date;
         entry.rightPage.Date = date;
 

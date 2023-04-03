@@ -45,7 +45,7 @@ public class DiaryContentPage : MonoBehaviour
     {
         get
         {
-            return GetComponentInParent<DiaryContentPages>();
+            return GetComponentInParent<DiaryContentPages>(true);
         }
     }
 

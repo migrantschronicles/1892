@@ -55,7 +55,7 @@ public class DiaryPages : MonoBehaviour
     {
         prevPageButton.onClick.AddListener(OpenPrevDoublePage);
         nextPageButton.onClick.AddListener(OpenNextDoublePage);
-        contentLeftButton.onClick.AddListener(() => StopAnimators(true));
+        contentLeftButton.onClick.AddListener(() => { Debug.Log("qwer"); StopAnimators(true); });
         contentRightButton.onClick.AddListener(() => StopAnimators(true));
         contentPages.onActiveStatusChanged += OnContentPagesActiveStatusChanged;
     }

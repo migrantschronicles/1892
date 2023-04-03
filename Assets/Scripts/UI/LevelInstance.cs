@@ -418,6 +418,13 @@ public class LevelInstance : MonoBehaviour
 
                 case OverlayMode.Diary:
                 {
+                    if (NewGameManager.Instance.wantsEndGame)
+                    {
+                        // The back button was pressed on the last end game diary entry, so return to the main menu.
+                        NewGameManager.Instance.EndGameAndReturnToMainMenu();
+                        return;
+                    }
+
                     // The map was open, hide it.
                     AudioManager.Instance.PlayFX(ui.IngameDiary.Diary.closeClip);
                     ui.CloseDiaryImmediately();
@@ -456,13 +463,6 @@ public class LevelInstance : MonoBehaviour
 
                 case Mode.Diary:
                 {
-                    if (NewGameManager.Instance.wantsEndGame)
-                    {
-                        // The back button was pressed on the last end game diary entry, so return to the main menu.
-                        NewGameManager.Instance.EndGameAndReturnToMainMenu();
-                        return;
-                    }
-
                     // An overlay over the diary can only happen if it's a popup.
                     ui.HideDiary(false);
                     SetBackButtonVisible(true);

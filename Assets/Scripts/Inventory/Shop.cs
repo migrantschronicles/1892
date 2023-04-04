@@ -85,7 +85,7 @@ public class Shop : MonoBehaviour
     private Dictionary<Item, int> basketItems = new Dictionary<Item, int>();
     private Item providesItem;
 
-    public delegate void OnTradeAcceptedEvent();
+    public delegate void OnTradeAcceptedEvent(Dictionary<Item, int> transfers);
     public event OnTradeAcceptedEvent onTradeAccepted;
     
     public ScrollableInventoryManager HighlightedInventoryManager { get; private set; }
@@ -405,11 +405,12 @@ public class Shop : MonoBehaviour
             AudioManager.Instance.PlayFX(acceptTransferClip);
         }
 
+        Dictionary<Item, int> transfers = new Dictionary<Item, int>(transferChanges);
         Basket.ApplyGhostMode();
         Luggage.ApplyGhostMode();
         StopTransfer();
 
-        onTradeAccepted?.Invoke();
+        onTradeAccepted?.Invoke(transfers);
     }
 
     private void CancelTransfer()

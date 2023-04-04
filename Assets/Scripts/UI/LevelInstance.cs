@@ -825,7 +825,7 @@ public class LevelInstance : MonoBehaviour
         OpenShop(shop);
     }
 
-    private void OnTradeAccepted()
+    private void OnTradeAccepted(Dictionary<Item, int> transfers)
     {
         IEnumerable<SetCondition> setConditions = currentShop.AcceptableItemSetConditions;
         NewGameManager.Instance.conditions.AddConditions(setConditions);

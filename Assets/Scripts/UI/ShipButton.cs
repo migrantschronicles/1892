@@ -10,6 +10,8 @@ public class ShipButton : MonoBehaviour
     private GameObject boardPopupPrefab;
     [SerializeField]
     private GameObject returnFromStopoverPrefab;
+    [SerializeField]
+    private GameObject unableShipPrefab;
 
     public void OnClick()
     {
@@ -37,19 +39,33 @@ public class ShipButton : MonoBehaviour
         else
         {
             // The first time the player is boarding the ship.
-            GameObject popupGO = LevelInstance.Instance.ShowPopup(boardPopupPrefab);
-            BoardPopup popup = popupGO.GetComponent<BoardPopup>();
-            popup.OnStayInCity += (_) =>
+            bool canTravel = NewGameManager.Instance.HealthStatus.CanTravel();
+            if (canTravel)
             {
-                NewGameManager.Instance.SetPaused(false);
-                LevelInstance.Instance.PopPopup();
-            };
-            popup.OnBoard += (_) =>
+                GameObject popupGO = LevelInstance.Instance.ShowPopup(boardPopupPrefab);
+                BoardPopup popup = popupGO.GetComponent<BoardPopup>();
+                popup.OnStayInCity += (_) =>
+                {
+                    NewGameManager.Instance.SetPaused(false);
+                    LevelInstance.Instance.PopPopup();
+                };
+                popup.OnBoard += (_) =>
+                {
+                    NewGameManager.Instance.SetPaused(false);
+                    LevelInstance.Instance.PopPopup();
+                    NewGameManager.Instance.GoToLocation("NewYorkCity", TransportationMethod.Ship);
+                };
+            }
+            else
             {
-                NewGameManager.Instance.SetPaused(false);
-                LevelInstance.Instance.PopPopup();
-                NewGameManager.Instance.GoToLocation("NewYorkCity", TransportationMethod.Ship);
-            };
+                GameObject popupGO = LevelInstance.Instance.ShowPopup(unableShipPrefab);
+                UnableShipPopup popup = popupGO.GetComponent<UnableShipPopup>();
+                popup.OnGoBack += (_) =>
+                {
+                    NewGameManager.Instance.SetPaused(false);
+                    LevelInstance.Instance.PopPopup();
+                };
+            }
         }
     }
 }

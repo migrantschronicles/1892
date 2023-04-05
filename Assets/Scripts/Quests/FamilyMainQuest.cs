@@ -8,7 +8,7 @@ public class FamilyMainQuest : MonoBehaviour
     [SerializeField]
     private Quest familyMainQuest;
     [SerializeField]
-    private DateTime failedDate = new DateTime(1892, 6, 24);
+    private DateTime failedDate = new DateTime(1892, 9, 10);
 
     private void Start()
     {

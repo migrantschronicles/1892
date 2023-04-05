@@ -150,8 +150,6 @@ public class NewGameManager : MonoBehaviour
     public delegate void OnQuestFinishedEvent(Quest quest);
     public event OnQuestFinishedEvent onQuestFinished;
 
-    public Quest TEST_Quest;
-
     // Stealing
     [Tooltip("The probability (weight) that money can be stolen")]
     public float moneyStolenProbabilityWeight = 5.0f;
@@ -246,11 +244,6 @@ public class NewGameManager : MonoBehaviour
         if (!isInitialized)
         {
             Initialize();
-
-            if(TEST_Quest)
-            {
-                AddQuest(TEST_Quest);
-            }
         }
     }
 
@@ -355,6 +348,12 @@ public class NewGameManager : MonoBehaviour
         journey.destination = LevelInstance.Instance.LocationName;
         ///@todo
         journeys.Add(journey);
+
+        // Add main quest
+        if(PlayableCharacterData.mainQuest)
+        {
+            AddQuest(PlayableCharacterData.mainQuest);
+        }
 
         InitAfterLoad();
         isInitialized = true;
@@ -709,7 +708,7 @@ public class NewGameManager : MonoBehaviour
             // Quest is already finished
             FinishQuest(quest);
         }
-        else
+        else if(!quest.FinishedCondition.IsEmpty())
         {
             // Listen to changes to conditions.
             conditions.AddOnConditionsChanged(quest.FinishedCondition.GetAllConditions(), OnQuestConditionsChanged, quest);
@@ -739,6 +738,11 @@ public class NewGameManager : MonoBehaviour
 
     private bool EvaluateQuestFinishedCondition(Quest quest)
     {
+        if(quest.FinishedCondition.IsEmpty())
+        {
+            return false;
+        }
+
         return quest.FinishedCondition.Test();
     }
 

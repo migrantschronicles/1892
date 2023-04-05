@@ -11,27 +11,27 @@ public class QuestLog : MonoBehaviour
 
     private void Start()
     {
-        NewGameManager.Instance.onQuestAdded += OnQuestAdded;
-        NewGameManager.Instance.onQuestFinished += OnQuestFinished;
+        NewGameManager.Instance.QuestManager.onQuestAdded += OnQuestAdded;
+        NewGameManager.Instance.QuestManager.onQuestFinished += OnQuestFinished;
 
-        foreach(Quest quest in NewGameManager.Instance.FinishedMainQuests)
+        foreach(Quest quest in NewGameManager.Instance.QuestManager.FinishedMainQuests)
         {
             mainQuestsPanel.OnQuestAdded(quest);
             mainQuestsPanel.OnQuestFinished(quest);
         }
 
-        foreach (Quest quest in NewGameManager.Instance.FinishedSideQuests)
+        foreach (Quest quest in NewGameManager.Instance.QuestManager.FinishedSideQuests)
         {
             sideQuestsPanel.OnQuestAdded(quest);
             sideQuestsPanel.OnQuestFinished(quest);
         }
 
-        foreach (Quest quest in NewGameManager.Instance.MainQuests)
+        foreach (Quest quest in NewGameManager.Instance.QuestManager.MainQuests)
         {
             mainQuestsPanel.OnQuestAdded(quest);
         }
 
-        foreach (Quest quest in NewGameManager.Instance.SideQuests)
+        foreach (Quest quest in NewGameManager.Instance.QuestManager.SideQuests)
         {
             sideQuestsPanel.OnQuestAdded(quest);
         }
@@ -41,8 +41,8 @@ public class QuestLog : MonoBehaviour
     {
         if(NewGameManager.Instance)
         {
-            NewGameManager.Instance.onQuestAdded -= OnQuestAdded;
-            NewGameManager.Instance.onQuestFinished -= OnQuestFinished;
+            NewGameManager.Instance.QuestManager.onQuestAdded -= OnQuestAdded;
+            NewGameManager.Instance.QuestManager.onQuestFinished -= OnQuestFinished;
         }
     }
 

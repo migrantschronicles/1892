@@ -36,6 +36,10 @@ public class DiaryMarker : MonoBehaviour
     {
         image = GetComponent<Image>();
         rectTransform = GetComponent<RectTransform>();
+    }
+
+    private void Start()
+    {
         UpdateSprite();
     }
 

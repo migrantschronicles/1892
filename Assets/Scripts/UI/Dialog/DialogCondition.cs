@@ -69,6 +69,11 @@ public class DialogCondition
     {
         return Children.Select(value => value.Condition).Where(condition => !string.IsNullOrWhiteSpace(condition));
     }
+
+    public bool IsEmpty()
+    {
+        return Children.Length == 0 || !Children.Any(condition => !string.IsNullOrWhiteSpace(condition.Condition));
+    }
 }
 
 [System.Serializable]

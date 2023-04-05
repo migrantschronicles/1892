@@ -128,29 +128,10 @@ public class NewGameManager : MonoBehaviour
 
     public IEnumerable<DiaryEntry> DiaryEntries { get { return diaryEntries; } }
 
-    // Quests
-    private List<Quest> mainQuests = new List<Quest>();
-    private List<Quest> sideQuests = new List<Quest>();
-    private List<Quest> finishedMainQuests = new List<Quest>();
-    private List<Quest> finishedSideQuests = new List<Quest>();
-
-    public IEnumerable<Quest> MainQuests { get { return mainQuests; } } 
-    public IEnumerable<Quest> SideQuests { get { return sideQuests; } }
-    public IEnumerable<Quest> FinishedMainQuests { get { return finishedMainQuests; } }
-    public IEnumerable<Quest> FinishedSideQuests { get { return finishedSideQuests; } }
-    public IEnumerable<Quest> MainQuestsIncludingFinished { get { return mainQuests.Concat(finishedMainQuests); } }
-    public IEnumerable<Quest> SideQuestsIncludingFinished { get { return sideQuests.Concat(finishedSideQuests); } }
+    public QuestManager QuestManager { get { return GetComponent<QuestManager>(); } }
 
     public delegate void OnTimeChangedEvent(int hour, int minutes);
     public event OnTimeChangedEvent onTimeChanged;
-
-    public delegate void OnQuestAddedEvent(Quest quest);
-    public event OnQuestAddedEvent onQuestAdded;
-
-    public delegate void OnQuestFinishedEvent(Quest quest);
-    public event OnQuestFinishedEvent onQuestFinished;
-
-    public Quest TEST_Quest;
 
     // Stealing
     [Tooltip("The probability (weight) that money can be stolen")]
@@ -246,11 +227,6 @@ public class NewGameManager : MonoBehaviour
         if (!isInitialized)
         {
             Initialize();
-
-            if(TEST_Quest)
-            {
-                AddQuest(TEST_Quest);
-            }
         }
     }
 
@@ -355,6 +331,12 @@ public class NewGameManager : MonoBehaviour
         journey.destination = LevelInstance.Instance.LocationName;
         ///@todo
         journeys.Add(journey);
+
+        // Add main quest
+        if(PlayableCharacterData.mainQuest)
+        {
+            QuestManager.AddQuest(PlayableCharacterData.mainQuest);
+        }
 
         InitAfterLoad();
         isInitialized = true;
@@ -657,118 +639,6 @@ public class NewGameManager : MonoBehaviour
         gameRunning = !paused;
         
         OnPauseChanged?.Invoke(!gameRunning);
-    }
-
-#if UNITY_EDITOR
-    private void ValidateQuest(Quest quest)
-    {
-        if(string.IsNullOrWhiteSpace(quest.Id))
-        {
-            Debug.LogError($"{quest.name} has no id");
-        }
-
-        if(quest.Title == null || quest.Title.IsEmpty)
-        {
-            Debug.LogError($"{quest.name} has no title set");
-        }
-    }
-#endif
-
-    public bool AddQuest(Quest quest)
-    {
-#if UNITY_EDITOR
-        ValidateQuest(quest);
-#endif
-
-        if(HasQuest(quest))
-        {
-            return false;
-        }
-
-        switch(quest.Type)
-        {
-            case QuestType.MainQuest:
-                mainQuests.Add(quest);
-                break;
-
-            case QuestType.SideQuest:
-                sideQuests.Add(quest);
-                break;
-        }
-
-        OnQuestAdded(quest);
-        return true;
-    }
-
-    private void OnQuestAdded(Quest quest)
-    {
-        onQuestAdded?.Invoke(quest);
-
-        if(EvaluateQuestFinishedCondition(quest))
-        {
-            // Quest is already finished
-            FinishQuest(quest);
-        }
-        else
-        {
-            // Listen to changes to conditions.
-            conditions.AddOnConditionsChanged(quest.FinishedCondition.GetAllConditions(), OnQuestConditionsChanged, quest);
-        }
-    }
-
-    private void OnQuestConditionsChanged(object context)
-    {
-        Quest quest = (Quest)context;
-        if(EvaluateQuestFinishedCondition(quest))
-        {
-            FinishQuest(quest);
-        }
-    }
-
-    public void FinishQuest(Quest quest)
-    {
-        GetQuestList(quest.Type).Remove(quest);
-        GetQuestList(quest.Type, true).Add(quest);
-        OnQuestFinished(quest);
-    }
-
-    private void OnQuestFinished(Quest quest)
-    {
-        onQuestFinished?.Invoke(quest);
-    }
-
-    private bool EvaluateQuestFinishedCondition(Quest quest)
-    {
-        return quest.FinishedCondition.Test();
-    }
-
-    public bool HasQuest(Quest quest, bool includeFinished = false)
-    {
-        return IsQuestActive(quest) || (includeFinished && IsQuestFinished(quest));
-    }
-
-    public bool IsQuestActive(Quest quest)
-    {
-        return GetQuestList(quest.Type).Contains(quest);
-    }
-
-    public bool IsQuestFinished(Quest quest)
-    {
-        return GetQuestList(quest.Type, true).Contains(quest);
-    }
-
-    private List<Quest> GetQuestList(QuestType type, bool finished = false)
-    {
-        switch(type)
-        {
-            case QuestType.SideQuest:
-                return finished ? finishedSideQuests : sideQuests;
-
-            case QuestType.MainQuest:
-                return finished ? finishedMainQuests : mainQuests;
-        }
-
-        return null;
     }
 
     /**

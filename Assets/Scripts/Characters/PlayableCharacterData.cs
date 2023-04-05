@@ -70,6 +70,8 @@ public class PlayableCharacterData : ScriptableObject
     public ProtagonistData[] protagonistData;
     [Tooltip("The amount of money the player starts with")]
     public int startMoney;
+    [Tooltip("The main quest")]
+    public Quest mainQuest;
 
     public ProtagonistData GetProtagonistDataByName(string name)
     {

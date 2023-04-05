@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 4835187160314046443}
   - component: {fileID: 8398521171185746556}
   - component: {fileID: 8582959655663477331}
+  - component: {fileID: 932188109867846364}
+  - component: {fileID: 1154804200615929995}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: GameManager
@@ -65,6 +67,7 @@ MonoBehaviour:
   hour: 0
   day: 0
   wantsEndOfDay: 0
+  wantsEndGame: 0
   food: 100
   money: 100
   dateStr: 
@@ -81,7 +84,6 @@ MonoBehaviour:
   foodItem: {fileID: 11400000, guid: d0da3f17cbf50b4489fad218310ebd38, type: 2}
   TEST_ParisEntry: {fileID: 11400000, guid: 60f758239ba07fd41a9b62d3ca8c3e57, type: 2}
   transportationTableCSV: {fileID: 4900000, guid: 918e8838e62393747a0f2689dc606655, type: 3}
-  TEST_Quest: {fileID: 0}
   moneyStolenProbabilityWeight: 5
   moneyStolenProbabilityCurve:
     serializedVersion: 2
@@ -523,3 +525,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moneyConditionArticy: Misc.Money
   daysInCityConditionArticy: Misc.daysincity
+  verbose: 0
+--- !u!114 &932188109867846364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89a9a5e2a6c33c748a865d9e726a3bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1154804200615929995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2de8b51f13a6161489b1e5f4ef8f54af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  familyMainQuest: {fileID: 11400000, guid: 8d71618ffaf4d5945be8d4ddb0f791a7, type: 2}

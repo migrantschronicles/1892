@@ -184,6 +184,9 @@ public class NewGameManager : MonoBehaviour
     public PlayableCharacterData TEST_PlayableCharacter;
     public PlayableCharacterData PlayableCharacterData { get { return TEST_PlayableCharacter; } }
 
+    public delegate void OnLocationChanged(string location);
+    public event OnLocationChanged onLocationChanged;
+
     public static NewGameManager Instance { get; private set; }
 
     /**
@@ -272,6 +275,8 @@ public class NewGameManager : MonoBehaviour
         {
             OnLoadedElisIsland();
         }
+
+        onLocationChanged?.Invoke(scene.name);
     }
 
     private bool CanEndDay()

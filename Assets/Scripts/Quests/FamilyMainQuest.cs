@@ -7,8 +7,9 @@ public class FamilyMainQuest : MonoBehaviour
 {
     [SerializeField]
     private Quest familyMainQuest;
-    [SerializeField]
+
     private DateTime failedDate = new DateTime(1892, 9, 10);
+    private string targetLocation = "NewYorkCity";
 
     private void Start()
     {
@@ -28,6 +29,7 @@ public class FamilyMainQuest : MonoBehaviour
         if(NewGameManager.Instance)
         {
             NewGameManager.Instance.onDateChanged -= OnDateChanged;
+            NewGameManager.Instance.onLocationChanged -= OnLocationChanged;
         }
     }
 
@@ -50,6 +52,7 @@ public class FamilyMainQuest : MonoBehaviour
     private void OnQuestStarted()
     {
         NewGameManager.Instance.onDateChanged += OnDateChanged;
+        NewGameManager.Instance.onLocationChanged += OnLocationChanged;
     }
 
     private void OnDateChanged(DateTime date)
@@ -63,5 +66,25 @@ public class FamilyMainQuest : MonoBehaviour
     private void OnQuestFailed()
     {
         NewGameManager.Instance.QuestManager.FailQuest(familyMainQuest);
+        NewGameManager.Instance.onDateChanged -= OnDateChanged;
+        NewGameManager.Instance.onLocationChanged -= OnLocationChanged;
+    }
+    
+    private void OnLocationChanged(string location)
+    {
+        if(location == targetLocation)
+        { 
+            if(NewGameManager.Instance.QuestManager.IsQuestActive(familyMainQuest))
+            {
+                OnQuestFinished();
+            }
+        }
+    }
+
+    private void OnQuestFinished()
+    {
+        NewGameManager.Instance.QuestManager.FinishQuest(familyMainQuest);
+        NewGameManager.Instance.onDateChanged -= OnDateChanged;
+        NewGameManager.Instance.onLocationChanged -= OnLocationChanged;
     }
 }

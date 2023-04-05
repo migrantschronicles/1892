@@ -30,4 +30,18 @@ public class QuestsPanel : MonoBehaviour
 
         Debug.Assert(false);
     }
+
+    public void OnQuestFailed(Quest quest)
+    {
+        foreach(QuestEntry entry in quests)
+        {
+            if(entry.Quest == quest)
+            {
+                entry.MarkFailed();
+                return;
+            }
+        }
+
+        Debug.Assert(false);
+    }
 }

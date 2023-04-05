@@ -7,6 +7,8 @@ public class QuestEntry : MonoBehaviour
 {
     [SerializeField]
     private Color finishedForegroundColor = Color.black;
+    [SerializeField]
+    private Color failedForegroundColor = Color.black;
 
     private Quest quest;
     public Quest Quest
@@ -29,5 +31,10 @@ public class QuestEntry : MonoBehaviour
     public void MarkFinished()
     {
         titleText.color = finishedForegroundColor;
+    }
+
+    public void MarkFailed()
+    {
+        titleText.color = failedForegroundColor;
     }
 }

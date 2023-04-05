@@ -13,6 +13,7 @@ public class QuestLog : MonoBehaviour
     {
         NewGameManager.Instance.QuestManager.onQuestAdded += OnQuestAdded;
         NewGameManager.Instance.QuestManager.onQuestFinished += OnQuestFinished;
+        NewGameManager.Instance.QuestManager.onQuestFailed += OnQuestFailed;
 
         foreach(Quest quest in NewGameManager.Instance.QuestManager.FinishedMainQuests)
         {
@@ -34,6 +35,18 @@ public class QuestLog : MonoBehaviour
         foreach (Quest quest in NewGameManager.Instance.QuestManager.SideQuests)
         {
             sideQuestsPanel.OnQuestAdded(quest);
+        }
+
+        foreach(Quest quest in NewGameManager.Instance.QuestManager.FailedMainQuests)
+        {
+            mainQuestsPanel.OnQuestAdded(quest);
+            mainQuestsPanel.OnQuestFailed(quest);
+        }
+
+        foreach (Quest quest in NewGameManager.Instance.QuestManager.FailedSideQuests)
+        {
+            sideQuestsPanel.OnQuestAdded(quest);
+            sideQuestsPanel.OnQuestFailed(quest);
         }
     }
 
@@ -59,5 +72,10 @@ public class QuestLog : MonoBehaviour
     private void OnQuestFinished(Quest quest)
     {
         GetPanelForQuest(quest).OnQuestFinished(quest);
+    }
+
+    private void OnQuestFailed(Quest quest)
+    {
+        GetPanelForQuest(quest).OnQuestFailed(quest);
     }
 }

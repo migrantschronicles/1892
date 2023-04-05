@@ -5,23 +5,35 @@ using UnityEngine;
 
 public class QuestManager : MonoBehaviour
 {
+    public enum QuestListType
+    {
+        Added,
+        Finished,
+        Failed
+    }
+
     private List<Quest> mainQuests = new ();
     private List<Quest> sideQuests = new ();
     private List<Quest> finishedMainQuests = new ();
     private List<Quest> finishedSideQuests = new ();
+    private List<Quest> failedMainQuests = new();
+    private List<Quest> failedSideQuests = new();
 
     public IEnumerable<Quest> MainQuests { get { return mainQuests; } }
     public IEnumerable<Quest> SideQuests { get { return sideQuests; } }
     public IEnumerable<Quest> FinishedMainQuests { get { return finishedMainQuests; } }
     public IEnumerable<Quest> FinishedSideQuests { get { return finishedSideQuests; } }
-    public IEnumerable<Quest> MainQuestsIncludingFinished { get { return mainQuests.Concat(finishedMainQuests); } }
-    public IEnumerable<Quest> SideQuestsIncludingFinished { get { return sideQuests.Concat(finishedSideQuests); } }
+    public IEnumerable<Quest> FailedMainQuests { get { return failedMainQuests; } }
+    public IEnumerable<Quest> FailedSideQuests { get { return failedSideQuests; } }
 
     public delegate void OnQuestAddedEvent(Quest quest);
     public event OnQuestAddedEvent onQuestAdded;
 
     public delegate void OnQuestFinishedEvent(Quest quest);
     public event OnQuestFinishedEvent onQuestFinished;
+
+    public delegate void OnQuestFailedEvent(Quest quest);
+    public event OnQuestFailedEvent onQuestFailed;
 
 #if UNITY_EDITOR
     private void ValidateQuest(Quest quest)
@@ -92,7 +104,7 @@ public class QuestManager : MonoBehaviour
     public void FinishQuest(Quest quest)
     {
         GetQuestList(quest.Type).Remove(quest);
-        GetQuestList(quest.Type, true).Add(quest);
+        GetQuestList(quest.Type, QuestListType.Finished).Add(quest);
         OnQuestFinished(quest);
     }
 
@@ -111,9 +123,21 @@ public class QuestManager : MonoBehaviour
         return quest.FinishedCondition.Test();
     }
 
-    public bool HasQuest(Quest quest, bool includeFinished = false)
+    public void FailQuest(Quest quest)
     {
-        return IsQuestActive(quest) || (includeFinished && IsQuestFinished(quest));
+        GetQuestList(quest.Type).Remove(quest);
+        GetQuestList(quest.Type, QuestListType.Failed).Add(quest);
+        OnQuestFailed(quest);
+    }
+
+    private void OnQuestFailed(Quest quest)
+    {
+        onQuestFailed?.Invoke(quest);
+    }
+
+    public bool HasQuest(Quest quest, bool includeFinished = false, bool includeFailed = false)
+    {
+        return IsQuestActive(quest) || (includeFinished && IsQuestFinished(quest)) || (includeFailed && IsQuestFailed(quest));
     }
 
     public bool IsQuestActive(Quest quest)
@@ -123,18 +147,35 @@ public class QuestManager : MonoBehaviour
 
     public bool IsQuestFinished(Quest quest)
     {
-        return GetQuestList(quest.Type, true).Contains(quest);
+        return GetQuestList(quest.Type, QuestListType.Finished).Contains(quest);
     }
 
-    private List<Quest> GetQuestList(QuestType type, bool finished = false)
+    public bool IsQuestFailed(Quest quest)
+    {
+        return GetQuestList(quest.Type, QuestListType.Failed).Contains(quest);
+    }
+
+    private List<Quest> GetQuestList(QuestType type, QuestListType listType = QuestListType.Added)
     {
         switch (type)
         {
             case QuestType.SideQuest:
-                return finished ? finishedSideQuests : sideQuests;
+                switch(listType)
+                {
+                    case QuestListType.Added: return sideQuests;
+                    case QuestListType.Finished: return finishedSideQuests;
+                    case QuestListType.Failed: return failedSideQuests;
+                }
+                break;
 
             case QuestType.MainQuest:
-                return finished ? finishedMainQuests : mainQuests;
+                switch (listType)
+                {
+                    case QuestListType.Added: return mainQuests;
+                    case QuestListType.Finished: return finishedMainQuests;
+                    case QuestListType.Failed: return failedMainQuests;
+                }
+                break;
         }
 
         return null;

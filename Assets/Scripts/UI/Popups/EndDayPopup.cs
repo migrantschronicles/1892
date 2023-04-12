@@ -15,9 +15,8 @@ public class EndDayPopup : MonoBehaviour, IPopup
     [SerializeField]
     private GameObject endDayOutsidePrefab;
 
-    public bool CanClose { get { return NewGameManager.Instance.RemainingTime > 0; } }
+    public bool CanClose { get { return true; } }
     public InterfaceVisibilityFlags InterfaceVisibilityFlags { get { return InterfaceVisibilityFlags.ClockButton; } }
-    public IPopup.OnCanCloseChangedEvent OnCanCloseChanged;
 
     private void Start()
     {
@@ -30,38 +29,6 @@ public class EndDayPopup : MonoBehaviour, IPopup
 
         descriptionLocalizeEvent.StringReference.Arguments = new List<object> { hostelPopup.HostelFee.ToString() };
         descriptionLocalizeEvent.RefreshString();
-    }
-
-    private void OnEnable()
-    {
-        NewGameManager.Instance.onTimeChanged += OnTimeChanged;
-        OnTimeChanged(NewGameManager.Instance.hour, NewGameManager.Instance.minutes);
-    }
-
-    private void OnDisable()
-    {
-        if(NewGameManager.Instance)
-        {
-            NewGameManager.Instance.onTimeChanged -= OnTimeChanged;
-        }
-    }
-
-    private void OnTimeChanged(int hour, int minute)
-    {
-        if (!CanClose)
-        {
-            OnCanCloseChanged?.Invoke(this, false);
-        }
-    }
-
-    public void AddOnCanCloseChangedListener(IPopup.OnCanCloseChangedEvent onCanCloseChanged) 
-    {
-        OnCanCloseChanged += onCanCloseChanged;
-    }
-    
-    public void RemoveOnCanCloseChangedListener(IPopup.OnCanCloseChangedEvent onCanCloseChanged) 
-    { 
-        OnCanCloseChanged -= onCanCloseChanged;
     }
 
     public void OnHostel()

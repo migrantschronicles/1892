@@ -35,14 +35,4 @@ public class Blur : MonoBehaviour
             colorAdjustments.colorFilter.value = targetColor;
         }
     }
-
-    /**
-     * Sets the fade amount for the depth of field and darken (if enabled).
-     */
-    public void SetFadeAmount(float amount)
-    {
-        gameObject.SetActive(true);
-        dof.active = false;
-        colorAdjustments.colorFilter.value = Color.Lerp(Color.white, targetColor, amount);
-    }
 }

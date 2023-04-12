@@ -77,26 +77,15 @@ public class NewGameManager : MonoBehaviour
     public RouteManager RouteManager { get { return GetComponent<RouteManager>();  } }
 
     // Game Stats
-    public bool gameRunning = true;
-    public float timeSpeed = 0.1f;
-    public int hoursPerDay = 10;
-    public float seconds;
-    public int minutes;
-    public int hour;
     public int day = 0;
     public bool wantsEndOfDay = false;
     public bool wantsEndGame = false;
 
-    public bool IsPaused { get { return !gameRunning; } }
-
-    public delegate void OnPauseChangedEvent(bool paused);
-    public event OnPauseChangedEvent OnPauseChanged;
-
-    public int food;
     public int money;
     // Date
     public DateTime date = new DateTime(1892, 6, 21);
     public string dateStr;
+    private int travelCountToday = 0;
 
     // UI 
     public Sprite traveledCityMarker;
@@ -129,9 +118,6 @@ public class NewGameManager : MonoBehaviour
     public IEnumerable<DiaryEntry> DiaryEntries { get { return diaryEntries; } }
 
     public QuestManager QuestManager { get { return GetComponent<QuestManager>(); } }
-
-    public delegate void OnTimeChangedEvent(int hour, int minutes);
-    public event OnTimeChangedEvent onTimeChanged;
 
     // Stealing
     [Tooltip("The probability (weight) that money can be stolen")]
@@ -166,9 +152,6 @@ public class NewGameManager : MonoBehaviour
     public delegate void OnDiaryEntryAdded(DiaryEntry entry);
     public event OnDiaryEntryAdded onDiaryEntryAdded;
 
-    public delegate void OnFoodChangedDelegate(int food);
-    public event OnFoodChangedDelegate onFoodChanged;
-
     public delegate void OnMoneyChangedDelegate(int money);
     public event OnMoneyChangedDelegate onMoneyChanged;
 
@@ -188,22 +171,6 @@ public class NewGameManager : MonoBehaviour
     public event OnLocationChanged onLocationChanged;
 
     public static NewGameManager Instance { get; private set; }
-
-    /**
-     * @return The remaining time (in seconds in real time) of the day.
-     */
-    public float RemainingTime
-    {
-        get
-        {
-            if(hour >= hoursPerDay)
-            {
-                return 0.0f;
-            }
-
-            return (((hoursPerDay - 1) - hour) * 3600 + (60 - minutes) * 60 + (60 - seconds)) / timeSpeed;
-        }
-    }
 
     void Awake()
     {
@@ -245,11 +212,6 @@ public class NewGameManager : MonoBehaviour
 
     void Update() 
     {
-        if (gameRunning)
-        {
-            AdvanceTime(0, 0, Time.deltaTime * timeSpeed);
-        }
-
         if(wantsEndOfDay && CanEndDay())
         {
             EndDay();
@@ -281,7 +243,7 @@ public class NewGameManager : MonoBehaviour
 
     private bool CanEndDay()
     {
-        return gameRunning && LevelInstance.Instance.Mode == Mode.None;
+        return LevelInstance.Instance.Mode == Mode.None;
     }
     
     private void EndDay()
@@ -290,48 +252,8 @@ public class NewGameManager : MonoBehaviour
         wantsEndOfDay = false;
     }
 
-    public void AdvanceTime(int hours, int minutes = 0, float seconds = 0)
-    {
-        if(wantsEndOfDay)
-        {
-            // Don't need to advance time if we are already waiting to close dialog to end the day.
-            return;
-        }
-
-        this.seconds += seconds;
-        if(this.seconds >= 60)
-        {
-            this.minutes += (int)(this.seconds / 60);
-            this.seconds %= 60;
-        }
-
-        this.minutes += minutes;
-        if(this.minutes >= 60)
-        {
-            this.hour += (int)(this.minutes / 60);
-            this.minutes %= 60;
-        }
-
-        hour += hours;
-        if(hour >= hoursPerDay)
-        {
-            if (CanEndDay())
-            {
-                EndDay();
-            }
-            else
-            {
-                wantsEndOfDay = true;
-            }
-        }
-
-        onTimeChanged?.Invoke(hour, this.minutes);
-    }
-
     private void Initialize()
     {
-        SetMorningTime();
-
         Journey journey = new Journey();
         journey.destination = LevelInstance.Instance.LocationName;
         ///@todo
@@ -366,12 +288,6 @@ public class NewGameManager : MonoBehaviour
         {
             OnRouteDiscovered?.Invoke(from, to, method);
         }
-    }
-
-    private void SetFood(int newFood)
-    {
-        food = Mathf.Max(newFood, 0);
-        onFoodChanged?.Invoke(food);
     }
 
     public void SetMoney(int newMoney)
@@ -432,7 +348,6 @@ public class NewGameManager : MonoBehaviour
         if(ShipManager.HasReachedDestination)
         {
             // Ship travel finished, arrived in Elis island.
-            SetPaused(true);
             LevelInstance.Instance.OnShipArrived();
             return true;
         }
@@ -449,18 +364,10 @@ public class NewGameManager : MonoBehaviour
     {
         day++;
         ++DaysInCity;
+        travelCountToday = 0;
         SetDate(date.AddDays(1));
-        SetMorningTime();
         Vibrate();
         onNewDay?.Invoke();
-    }
-
-    public void SetMorningTime() 
-    {
-        seconds = 0;
-        hour = 0;
-        minutes = 0;
-        onTimeChanged?.Invoke(hour, minutes);
     }
 
     public static void Vibrate()
@@ -475,6 +382,14 @@ public class NewGameManager : MonoBehaviour
         if(nextLocation != null)
         {
             // Already travelling
+            return;
+        }
+
+        if(travelCountToday > 0)
+        {
+            // Cannot travel again today
+            ///@todo show popup
+            Debug.Log("Cannot travel again today");
             return;
         }
 
@@ -506,13 +421,12 @@ public class NewGameManager : MonoBehaviour
 
             // Remove required costs.
             SetMoney(money - routeInfo.cost);
-            ///@todo Advance days
+            ++travelCountToday;
         }
 
         // Reset values
         DaysInCity = 0;
         onNewDay?.Invoke();
-        SetPaused(true);
 
         // Load level
         nextLocation = name;
@@ -548,10 +462,6 @@ public class NewGameManager : MonoBehaviour
         ShipManager.HasVisitedStopover = true;
         if(endOfDay)
         {
-            hour = hoursPerDay;
-            minutes = 0;
-            seconds = 0;
-            onTimeChanged?.Invoke(hour, minutes);
             wantsEndOfDay = endOfDay;
         }
 
@@ -571,17 +481,11 @@ public class NewGameManager : MonoBehaviour
 
         nextLocation = null;
         nextMethod = TransportationMethod.None;
-        SetMorningTime();
-        SetPaused(false);
     }
 
     public void OnLoadedShip()
     {
-        if(RemainingTime > 0 && !wantsEndOfDay)
-        {
-            SetPaused(false);
-        } 
-        else
+        if(wantsEndOfDay)
         {
             // A hack, since CanEndDay() checks whether the game is running
             StartCoroutine(EndDayNextFrame());
@@ -602,9 +506,6 @@ public class NewGameManager : MonoBehaviour
         journey.destination = ShipManager.StopoverLocation;
         journey.method = TransportationMethod.Ship;
         journeys.Add(journey);
-
-        SetMorningTime();
-        SetPaused(false);
     }
 
     public void OnLoadedElisIsland()
@@ -617,7 +518,6 @@ public class NewGameManager : MonoBehaviour
 
         nextLocation = null;
         nextMethod = TransportationMethod.None;
-        SetPaused(false);
         DaysInCity = 0;
         ShipManager.EndTravellingInShip();
     }
@@ -637,13 +537,6 @@ public class NewGameManager : MonoBehaviour
         PDFBuilder builder = new PDFBuilder();
         builder.Generate(new DiaryEntryData { entry = TEST_ParisEntry });
         Debug.Log("Finished PDF generating");
-    }
-
-    public void SetPaused(bool paused)
-    {
-        gameRunning = !paused;
-        
-        OnPauseChanged?.Invoke(!gameRunning);
     }
 
     /**
@@ -847,7 +740,6 @@ public class NewGameManager : MonoBehaviour
 
     public void OnEndOfGame(bool success)
     {
-        SetPaused(true);
         wantsEndGame = true;
         LevelInstance.Instance.OnEndOfGame(success);
     }

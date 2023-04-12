@@ -147,8 +147,6 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private Camera uiCamera;
     [SerializeField]
-    private float EndOfDayFadeTime = 20.0f;
-    [SerializeField]
     private LevelInstanceMode levelMode = LevelInstanceMode.Default;
     [SerializeField]
     private GameObject roomButtonPrefab;
@@ -214,11 +212,10 @@ public class LevelInstance : MonoBehaviour
     private bool startedPlayingMusic = false;
     private Mode mode = Mode.None;
     private DraggedItem draggedItem;
-    private bool isEndOfDayFade = false;
     private Room currentRoom;
     private GameObject seasicknessScene;
     private float seasicknessSceneTimer = -1.0f;
-    private float nextSeasicknessRemainingTime = -1.0f;
+    private float nextSeasicknessTimer = -1.0f;
     private bool wantsToShowSeasickness = false;
     private bool hasShownIntroductoryDialog = false;
     private GameObject nightTransition;
@@ -296,7 +293,6 @@ public class LevelInstance : MonoBehaviour
             return;
         }
 
-        NewGameManager.Instance.onTimeChanged += OnTimeChanged;
         NewGameManager.Instance.onNewDay += OnNewDay;
         backButton.onClick.AddListener(OnBack);
         blur.SetEnabled(false);
@@ -332,7 +328,6 @@ public class LevelInstance : MonoBehaviour
             ui.OpenDiaryImmediately(DiaryPageLink.Diary);
             sceneInteractables.SetActive(false);
             mode = Mode.Diary;
-            NewGameManager.Instance.SetPaused(true);
         }
         else
         {
@@ -350,14 +345,13 @@ public class LevelInstance : MonoBehaviour
         }
 
         NewGameManager.Instance.HealthStatus.SetIsOnShip(levelMode == LevelInstanceMode.Ship);
-        nextSeasicknessRemainingTime = NewGameManager.Instance.RemainingTime - seasicknessSceneFrequency;
+        nextSeasicknessTimer = seasicknessSceneFrequency;
     }
 
     private void OnDestroy()
     {
         if(NewGameManager.Instance)
         {
-            NewGameManager.Instance.onTimeChanged -= OnTimeChanged;
             NewGameManager.Instance.onNewDay -= OnNewDay;
         }
     }
@@ -370,6 +364,20 @@ public class LevelInstance : MonoBehaviour
             if(seasicknessSceneTimer >= seasicknessSceneTime)
             {
                 ShowSeasicknessScene(false);
+            }
+        }
+
+        if(nextSeasicknessTimer > 0.0f)
+        {
+            nextSeasicknessTimer -= Time.deltaTime;
+            if(nextSeasicknessTimer <= 0.0f)
+            {
+                ProtagonistHealthData mainHealthData = NewGameManager.Instance.HealthStatus.GetMainHealthStatus();
+                if (mainHealthData.SeasicknessStatus.IsCurrentlySeasick)
+                {
+                    nextSeasicknessTimer = -1.0f;
+                    ShowSeasicknessScene(true);
+                }
             }
         }
 
@@ -551,7 +559,6 @@ public class LevelInstance : MonoBehaviour
 
                     if(wantsToContinueGame)
                     {
-                        NewGameManager.Instance.SetPaused(false);
                         wantsToContinueGame = true;
                     }
 
@@ -571,72 +578,14 @@ public class LevelInstance : MonoBehaviour
                 sceneInteractables.SetActive(true);
 
                 mode = Mode.None;
-                UpdateEndOfDayFade();
                 UpdateShowSeasickness();
             }
         }
     }
 
-    private void OnTimeChanged(int hour, int minute)
-    {
-        if(isEndOfDayFade)
-        {
-            if (NewGameManager.Instance.RemainingTime > EndOfDayFadeTime)
-            {
-                // Time was reset -> new day
-                isEndOfDayFade = false;
-                UpdateEndOfDayFade();
-            }
-            else if(NewGameManager.Instance.RemainingTime == 0)
-            {
-                // Reset blur.
-                isEndOfDayFade = false;
-            }
-            else
-            {
-                UpdateEndOfDayFade();
-            }
-        }
-        else
-        {
-            if (NewGameManager.Instance.RemainingTime <= EndOfDayFadeTime)
-            {
-                // Start fading to end of day.
-                isEndOfDayFade = true;
-                UpdateEndOfDayFade();
-            }
-        }
-
-        ProtagonistHealthData mainHealthData = NewGameManager.Instance.HealthStatus.GetMainHealthStatus();
-        if(mainHealthData.SeasicknessStatus.IsCurrentlySeasick)
-        {
-            if(NewGameManager.Instance.RemainingTime <= nextSeasicknessRemainingTime)
-            {
-                ShowSeasicknessScene(true);
-            }
-        }
-    }
-
-    private void UpdateEndOfDayFade()
-    {
-        if(mode != Mode.None)
-        {
-            blur.SetEnabled(true);
-        }
-        else if (isEndOfDayFade)
-        {
-            float amount = 1.0f - Mathf.Clamp01(NewGameManager.Instance.RemainingTime / EndOfDayFadeTime);
-            blur.SetFadeAmount(amount);
-        }
-        else
-        {
-            blur.SetEnabled(false);
-        }
-    }
-
     private void OnNewDay()
     {
-        nextSeasicknessRemainingTime = NewGameManager.Instance.RemainingTime - seasicknessSceneFrequency;
+        nextSeasicknessTimer = seasicknessSceneFrequency;
     }
 
     public bool HasScene(string name)
@@ -856,7 +805,6 @@ public class LevelInstance : MonoBehaviour
             ui.SetDiaryOpened(type);
             mode = Mode.Diary;
             sceneInteractables.SetActive(false);
-            NewGameManager.Instance.SetPaused(true);
         }
 
         AudioManager.Instance.PlayFX(ui.IngameDiary.Diary.openClip);
@@ -880,8 +828,6 @@ public class LevelInstance : MonoBehaviour
                     blur.SetEnabled(false);
                     sceneInteractables.SetActive(true);
                     mode = Mode.None;
-                    NewGameManager.Instance.SetPaused(false);
-                    UpdateEndOfDayFade();
                     UpdateShowSeasickness();
 
                     if(introductoryDialogButton != null && !hasShownIntroductoryDialog)
@@ -1144,16 +1090,13 @@ public class LevelInstance : MonoBehaviour
                 seasicknessScene.SetActive(true);
             }
 
-            NewGameManager.Instance.SetPaused(true);
             seasicknessSceneTimer = 0.0f;
         }
         else
         {
             seasicknessScene.SetActive(false);
-            NewGameManager.Instance.SetPaused(false);
-            NewGameManager.Instance.AdvanceTime(1);
             seasicknessSceneTimer = -1.0f;
-            nextSeasicknessRemainingTime = NewGameManager.Instance.RemainingTime - seasicknessSceneFrequency;
+            nextSeasicknessTimer = seasicknessSceneFrequency;
         }
 
         wantsToShowSeasickness = false;
@@ -1265,7 +1208,6 @@ public class LevelInstance : MonoBehaviour
         }
 
         ShowPopup(popup);
-        NewGameManager.Instance.SetPaused(true);
         wantsToContinueGame = true;
     }
 
@@ -1277,8 +1219,6 @@ public class LevelInstance : MonoBehaviour
 
     private IEnumerator SleepOutsideTransition(List<EndOfDayHealthData> endOfDayHealthData)
     {
-        ///@todo close all mode
-        NewGameManager.Instance.SetPaused(true);
         nightTransition = Instantiate(nightTransitionPrefab, canvas.transform);
         yield return new WaitForSeconds(nightTransitionTime);
         Destroy(nightTransition);
@@ -1287,7 +1227,7 @@ public class LevelInstance : MonoBehaviour
         GameObject popupGO = ShowPopup(startDayOutsidePrefab);
         StartDayOutsidePopup popup = popupGO.GetComponent<StartDayOutsidePopup>();
         popup.Init(stolenItems);
-        popup.OnStartDay += (p) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
+        popup.OnStartDay += (p) => { PopPopup(); };
     }
 
     public void OnSleepInHostel(List<EndOfDayHealthData> endOfDayHealthData, int cost, int boughtFoodAmount)
@@ -1298,8 +1238,6 @@ public class LevelInstance : MonoBehaviour
 
     private IEnumerator SleepInHostelTransition(List<EndOfDayHealthData> endOfDayHealthData, int cost, int boughtFoodAmount)
     {
-        ///@todo close all mode
-        NewGameManager.Instance.SetPaused(true);
         nightTransition = Instantiate(nightTransitionPrefab, canvas.transform);
         yield return new WaitForSeconds(nightTransitionTime);
         Destroy(nightTransition);
@@ -1307,7 +1245,7 @@ public class LevelInstance : MonoBehaviour
         NewGameManager.Instance.OnSleepInHostel(endOfDayHealthData, cost, boughtFoodAmount);
         GameObject popupGO = ShowPopup(startDayHostelPrefab);
         StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
-        popup.OnStartDay += (p) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
+        popup.OnStartDay += (p) => { PopPopup(); };
     }
 
     public void OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)
@@ -1318,8 +1256,6 @@ public class LevelInstance : MonoBehaviour
 
     private IEnumerator SleepInShipTransition(List<EndOfDayHealthData> endOfDayHealthData)
     {
-        ///@todo close all mode
-        NewGameManager.Instance.SetPaused(true);
         nightTransition = Instantiate(nightTransitionPrefab, canvas.transform);
         yield return new WaitForSeconds(nightTransitionTime);
         Destroy(nightTransition);
@@ -1335,7 +1271,7 @@ public class LevelInstance : MonoBehaviour
             GameObject popupGO = ShowPopup(visitCityPopupPrefab);
             VisitCityPopup popup = popupGO.GetComponent<VisitCityPopup>();
             popup.SetDestinationCity(NewGameManager.Instance.ShipManager.StopoverLocation);
-            popup.OnStayOnBoard += (_) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
+            popup.OnStayOnBoard += (_) => { PopPopup(); };
             popup.OnVisit += (_) =>
             {
                 NewGameManager.Instance.VisitStopover();
@@ -1347,13 +1283,12 @@ public class LevelInstance : MonoBehaviour
             // Normal day on ship.
             GameObject popupGO = ShowPopup(startDayShipPrefab);
             StartDayShipPopup popup = popupGO.GetComponent<StartDayShipPopup>();
-            popup.OnStartDay += (p) => { PopPopup(); NewGameManager.Instance.SetPaused(false); };
+            popup.OnStartDay += (p) => { PopPopup(); };
         }
     }
 
     public void OnReturnFromStopover(bool wantsEndOfDay)
     {
-        NewGameManager.Instance.SetPaused(true);
         NewGameManager.Instance.ReturnToShip(wantsEndOfDay);
     }
 

@@ -15,9 +15,6 @@ public class ShipButton : MonoBehaviour
 
     public void OnClick()
     {
-        // Pause the game, otherwise we would need to handle what happens if the player has the popup open too long.
-        NewGameManager.Instance.SetPaused(true);
-
         // Go to ship
         if (NewGameManager.Instance.ShipManager.IsStopoverDay)
         {
@@ -26,12 +23,10 @@ public class ShipButton : MonoBehaviour
             ReturnFromStopoverPopup popup = popupGO.GetComponent<ReturnFromStopoverPopup>();
             popup.OnStay += (_) =>
             {
-                NewGameManager.Instance.SetPaused(false);
                 LevelInstance.Instance.PopPopup();
             };
             popup.OnBoard += (_) =>
             {
-                NewGameManager.Instance.SetPaused(false);
                 LevelInstance.Instance.PopPopup();
                 LevelInstance.Instance.OnReturnFromStopover(false);
             };
@@ -46,12 +41,10 @@ public class ShipButton : MonoBehaviour
                 BoardPopup popup = popupGO.GetComponent<BoardPopup>();
                 popup.OnStayInCity += (_) =>
                 {
-                    NewGameManager.Instance.SetPaused(false);
                     LevelInstance.Instance.PopPopup();
                 };
                 popup.OnBoard += (_) =>
                 {
-                    NewGameManager.Instance.SetPaused(false);
                     LevelInstance.Instance.PopPopup();
                     NewGameManager.Instance.GoToLocation("NewYorkCity", TransportationMethod.Ship);
                 };
@@ -62,7 +55,6 @@ public class ShipButton : MonoBehaviour
                 UnableShipPopup popup = popupGO.GetComponent<UnableShipPopup>();
                 popup.OnGoBack += (_) =>
                 {
-                    NewGameManager.Instance.SetPaused(false);
                     LevelInstance.Instance.PopPopup();
                 };
             }

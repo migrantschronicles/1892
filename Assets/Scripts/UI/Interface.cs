@@ -39,8 +39,6 @@ public class Interface : MonoBehaviour
     private GameObject clockButton;
     [SerializeField]
     private IngameDiary ingameDiary;
-    [SerializeField]
-    private GameObject pauseFrame;
 
     public IngameDiary IngameDiary { get { return ingameDiary; } }
     private bool TreatDiaryAsButton { get { return IngameDiary.Diary.Status == OpenStatus.Closed; } }
@@ -62,15 +60,11 @@ public class Interface : MonoBehaviour
     private void Start()
     {
         NewGameManager.Instance.onDateChanged += OnDateChanged;
-        NewGameManager.Instance.onFoodChanged += OnFoodChanged;
         NewGameManager.Instance.onMoneyChanged += OnMoneyChanged;
-        NewGameManager.Instance.OnPauseChanged += OnPauseChanged;
 
         OnMoneyChanged(NewGameManager.Instance.money);
-        OnFoodChanged(NewGameManager.Instance.food);
         OnDateChanged(NewGameManager.Instance.date);
         OnLocationChanged(LevelInstance.Instance.LocationName);
-        OnPauseChanged(NewGameManager.Instance.IsPaused);
     }
 
     private void OnDestroy()
@@ -78,25 +72,13 @@ public class Interface : MonoBehaviour
         if(NewGameManager.Instance)
         {
             NewGameManager.Instance.onDateChanged -= OnDateChanged;
-            NewGameManager.Instance.onFoodChanged -= OnFoodChanged;
             NewGameManager.Instance.onMoneyChanged -= OnMoneyChanged;
-            NewGameManager.Instance.OnPauseChanged -= OnPauseChanged;
         }
-    }
-
-    private void OnPauseChanged(bool paused)
-    {
-        pauseFrame.gameObject.SetActive(paused);
     }
 
     private void OnMoneyChanged(int money)
     {
         moneyText.text = money.ToString();
-    }
-
-    private void OnFoodChanged(int food)
-    {
-        foodText.text = food.ToString();
     }
 
     private void OnDateChanged(DateTime date)

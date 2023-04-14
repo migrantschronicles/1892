@@ -12,6 +12,9 @@ public class QuestManager : MonoBehaviour
         Failed
     }
 
+    [SerializeField]
+    private Quest[] quests;
+
     private List<Quest> mainQuests = new ();
     private List<Quest> sideQuests = new ();
     private List<Quest> finishedMainQuests = new ();
@@ -56,7 +59,7 @@ public class QuestManager : MonoBehaviour
         ValidateQuest(quest);
 #endif
 
-        if (HasQuest(quest))
+        if (HasQuest(quest, true, true))
         {
             return false;
         }
@@ -101,11 +104,16 @@ public class QuestManager : MonoBehaviour
         }
     }
 
-    public void FinishQuest(Quest quest)
+    public bool FinishQuest(Quest quest)
     {
-        GetQuestList(quest.Type).Remove(quest);
-        GetQuestList(quest.Type, QuestListType.Finished).Add(quest);
-        OnQuestFinished(quest);
+        if(GetQuestList(quest.Type).Remove(quest))
+        {
+            GetQuestList(quest.Type, QuestListType.Finished).Add(quest);
+            OnQuestFinished(quest);
+            return true;
+        }
+
+        return false;
     }
 
     private void OnQuestFinished(Quest quest)
@@ -123,11 +131,16 @@ public class QuestManager : MonoBehaviour
         return quest.FinishedCondition.Test();
     }
 
-    public void FailQuest(Quest quest)
+    public bool FailQuest(Quest quest)
     {
-        GetQuestList(quest.Type).Remove(quest);
-        GetQuestList(quest.Type, QuestListType.Failed).Add(quest);
-        OnQuestFailed(quest);
+        if(GetQuestList(quest.Type).Remove(quest))
+        {
+            GetQuestList(quest.Type, QuestListType.Failed).Add(quest);
+            OnQuestFailed(quest);
+            return true;
+        }
+
+        return false;
     }
 
     private void OnQuestFailed(Quest quest)
@@ -179,5 +192,10 @@ public class QuestManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public Quest GetQuestById(string id)
+    {
+        return quests.FirstOrDefault(x => x.Id == id);
     }
 }

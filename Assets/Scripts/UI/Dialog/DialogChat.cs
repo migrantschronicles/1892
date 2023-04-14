@@ -244,7 +244,9 @@ public class DialogChat : MonoBehaviour
                 pausedOn is Money_Removed ||
                 pausedOn is Money_Received ||
                 pausedOn is End_of_Game ||
-                pausedOn is MoneyExchange) && 
+                pausedOn is MoneyExchange ||
+                pausedOn is QuestAdded ||
+                pausedOn is QuestFinished) && 
                 !handledTemplate;
         }
 
@@ -394,6 +396,30 @@ public class DialogChat : MonoBehaviour
         {
             NewGameManager.Instance.SetCurrency(Currency.Dollar);
             OnTemplateHandled();
+        }
+        else if(pausedOn is QuestAdded questAdded)
+        {
+            ///@todo
+            Quest quest = NewGameManager.Instance.QuestManager.GetQuestById("");
+            if(quest)
+            {
+                if(NewGameManager.Instance.QuestManager.AddQuest(quest))
+                {
+                    LevelInstance.Instance.OnQuestAdded(quest);
+                }
+            }
+        }
+        else if(pausedOn is QuestFinished questFinished)
+        {
+            ///@todo
+            Quest quest = NewGameManager.Instance.QuestManager.GetQuestById("");
+            if(quest)
+            {
+                if (NewGameManager.Instance.QuestManager.FinishQuest(quest))
+                {
+                    LevelInstance.Instance.OnQuestFinished(quest);
+                }
+            }
         }
     }
 

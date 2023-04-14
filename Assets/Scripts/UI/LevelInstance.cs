@@ -196,6 +196,10 @@ public class LevelInstance : MonoBehaviour
     private GameObject endGameSuccessPrefab;
     [SerializeField]
     private GameObject endGameFailurePrefab;
+    [SerializeField]
+    private GameObject questAddedPrefab;
+    [SerializeField]
+    private GameObject questFinishedPrefab;
 #if DEBUG && ENABLE_DEVELOPER_MENU
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -1323,5 +1327,19 @@ public class LevelInstance : MonoBehaviour
         NewGameManager.Instance.AddDiaryEntry(entry);
         // Since EndGameSuccessPopup is only triggered from dialogs, the mode is still dialogs, so it should open immediately.
         OpenDiary(DiaryPageLink.Diary);
+    }
+
+    public void OnQuestAdded(Quest quest)
+    {
+        GameObject popupGO = PushPopup(questAddedPrefab);
+        NewQuestPopup popup = popupGO.GetComponent<NewQuestPopup>();
+        popup.OnAccept += (_) => { PopPopup(); };
+    }
+
+    public void OnQuestFinished(Quest quest)
+    {
+        GameObject popupGO = PushPopup(questFinishedPrefab);
+        QuestFinishedPopup popup = popupGO.GetComponent<QuestFinishedPopup>();
+        popup.OnAccept += (_) => { PopPopup(); };
     }
 }

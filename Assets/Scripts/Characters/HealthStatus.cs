@@ -437,16 +437,16 @@ public class HealthStatus : MonoBehaviour
             }
         }
 
-        // If responsibleCharacter is not null, it means that at least one character is hungry for more than 2 days, so the player can only start 2 dialogs.
+        // If responsibleCharacter is not null, it means that at least one character is hungry for more than 2 days, so the player can only start 1 dialogs.
         if(responsibleCharacter != null)
         {
-            if(dialogsStartedToday > 2)
+            if(dialogsStartedToday > 1)
             {
                 return responsibleCharacter;
             }
         }
 
-        // No character is hungry for more than 2 days or the player has started less than 2 dialogs.
+        // No character is hungry for more than 2 days or the player has started less than 1 dialogs.
         return null;
     }
 

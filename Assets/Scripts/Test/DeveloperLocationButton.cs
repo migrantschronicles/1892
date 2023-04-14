@@ -12,6 +12,8 @@ public class DeveloperLocationButton : MonoBehaviour
     {
         GetComponent<Button>().onClick.AddListener(() =>
         {
+            AudioManager.Instance.StopMusic();
+            Destroy(AudioManager.Instance.gameObject);
             Destroy(NewGameManager.Instance.gameObject);
             /*
             for(int i = 0; i < AudioManager.Instance.transform.childCount; i++)

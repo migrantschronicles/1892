@@ -1,5 +1,5 @@
 // Uncomment to enable developer menu to select location
-//#define ENABLE_DEVELOPER_MENU
+#define ENABLE_DEVELOPER_MENU
 
 using System.Collections;
 using System.Collections.Generic;
@@ -200,11 +200,14 @@ public class LevelInstance : MonoBehaviour
     private GameObject questAddedPrefab;
     [SerializeField]
     private GameObject questFinishedPrefab;
-#if DEBUG && ENABLE_DEVELOPER_MENU
+#if DEBUG
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
 
+#if ENABLE_DEVELOPER_MENU
     private GameObject developerLocationPanel;
+#endif
+
 #endif
 
     private List<Scene> scenes = new List<Scene>();

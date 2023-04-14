@@ -69,10 +69,18 @@ public class DialogButton : MonoBehaviour
 
         if(responsibleCharacter == null)
         {
-            // The dialog can be started normally.
-            savedCanStartToday = true;
-            NewGameManager.Instance.onNewDay += OnNewDay;
-            LevelInstance.Instance.StartDialog(this);
+            if(LevelInstance.Instance.TryCanStartDialog())
+            {
+                // The dialog can be started normally.
+                savedCanStartToday = true;
+                NewGameManager.Instance.onNewDay += OnNewDay;
+                LevelInstance.Instance.StartDialog(this);
+            }
+            else
+            {
+                // You can only talk to 2 people a day
+                LevelInstance.Instance.StartDailyDialogLimitDialog(this);
+            }
         }
         else
         {

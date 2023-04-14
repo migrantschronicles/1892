@@ -155,6 +155,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private ArticyRef sideTooHungryDialog;
     [SerializeField]
+    private ArticyRef dailyDialogLimitDialog;
+    [SerializeField]
     private ArticyRef sickDialog;
     [SerializeField]
     private ArticyRef foreignLanguageDialog;
@@ -166,6 +168,8 @@ public class LevelInstance : MonoBehaviour
     private float seasicknessSceneFrequency = 60.0f;
     [SerializeField]
     private DialogButton introductoryDialogButton;
+    [SerializeField]
+    private int maxDialogsPerDay = -1;
     [SerializeField]
     private GameObject shopPrefab;
     [SerializeField]
@@ -227,6 +231,7 @@ public class LevelInstance : MonoBehaviour
     private bool hasShownIntroductoryDialog = false;
     private GameObject nightTransition;
     private bool wantsToContinueGame = false;
+    private int dialogsToday = 0;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -239,6 +244,8 @@ public class LevelInstance : MonoBehaviour
     public Scene CurrentScene { get { return currentScene; } }
     public LevelInstanceMode LevelMode { get { return levelMode; } }
     public Camera MainCamera { get { return mainCamera; } }
+    public int DialogsToday { get { return dialogsToday; } }
+    public int MaxDialogsPerDay { get { return maxDialogsPerDay; } }
     public PlayableCharacterSpawn PlayableCharacterSpawn
     {
         get
@@ -593,6 +600,7 @@ public class LevelInstance : MonoBehaviour
     private void OnNewDay()
     {
         nextSeasicknessTimer = seasicknessSceneFrequency;
+        dialogsToday = 0;
     }
 
     public bool HasScene(string name)
@@ -722,6 +730,13 @@ public class LevelInstance : MonoBehaviour
     {
         PrepareDialog(button);
         dialogSystem.StartDialog(button, sickDialog.GetObject());
+        OnDialogStarted();
+    }
+
+    public void StartDailyDialogLimitDialog(DialogButton button)
+    {
+        PrepareDialog(button);
+        dialogSystem.StartDialog(button, dailyDialogLimitDialog.GetObject());
         OnDialogStarted();
     }
 
@@ -1344,5 +1359,16 @@ public class LevelInstance : MonoBehaviour
         GameObject popupGO = PushPopup(questFinishedPrefab);
         QuestFinishedPopup popup = popupGO.GetComponent<QuestFinishedPopup>();
         popup.OnAccept += (_) => { PopPopup(); };
+    }
+
+    public bool TryCanStartDialog()
+    {
+        if(maxDialogsPerDay >= 0 && dialogsToday >= maxDialogsPerDay)
+        {
+            return false;
+        }
+
+        ++dialogsToday;
+        return true;
     }
 }

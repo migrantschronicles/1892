@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FirstPageImageTop : FirstPage
+public class FirstPageImageBottom : FirstPage
 {
     [SerializeField]
     private Image image;

@@ -6,19 +6,6 @@ using UnityEngine.Localization;
 public class DiaryEntryManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject firstPagePrefab;
-    [SerializeField]
-    private GameObject firstPageSignatureImagePrefab;
-    [SerializeField]
-    private GameObject fullImagePrefab;
-    [SerializeField]
-    private GameObject fullTextPrefab;
-    [SerializeField]
-    private GameObject imageBottomPrefab;
-    [SerializeField]
-    private GameObject imageTopPrefab;
-
-    [SerializeField]
     private DiaryEntry luxembourgEntry;
     [SerializeField]
     private DiaryEntry parisEntry;

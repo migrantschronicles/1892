@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 8582959655663477331}
   - component: {fileID: 932188109867846364}
   - component: {fileID: 1154804200615929995}
+  - component: {fileID: 6046932576119547423}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: GameManager
@@ -59,16 +60,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   userName: 
-  gameRunning: 1
-  timeSpeed: 500
-  hoursPerDay: 10
-  seconds: 0
-  minutes: 0
-  hour: 0
   day: 0
   wantsEndOfDay: 0
   wantsEndGame: 0
-  food: 100
   money: 100
   dateStr: 
   traveledCityMarker: {fileID: 21300000, guid: 1cc50e2701a9f5146ba127fd140452c3, type: 3}
@@ -538,6 +532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89a9a5e2a6c33c748a865d9e726a3bc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  quests: []
 --- !u!114 &1154804200615929995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -551,3 +546,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   familyMainQuest: {fileID: 11400000, guid: 8d71618ffaf4d5945be8d4ddb0f791a7, type: 2}
+--- !u!114 &6046932576119547423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9685d78f8332a1468c7d0982c30fb28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firstPagePrefab: {fileID: 0}
+  firstPageSignatureImagePrefab: {fileID: 0}
+  fullImagePrefab: {fileID: 0}
+  fullTextPrefab: {fileID: 0}
+  imageBottomPrefab: {fileID: 0}
+  imageTopPrefab: {fileID: 0}
+  transportationFirstDay: []
+  references:
+    version: 2
+    RefIds: []

@@ -262,7 +262,7 @@ public class DiaryEntryManager : MonoBehaviour
                 else
                 {
                     // Someone was hungry.
-                    string localizedName = "";
+                    string localizedName;
                     ProtagonistHealthData mainCharacter = GetMainHealthData(hungryCharacters);
                     if(mainCharacter != null)
                     {
@@ -281,7 +281,7 @@ public class DiaryEntryManager : MonoBehaviour
 
             case SleepMethod.Ship:
             {
-                string localizedDays = $"{daysInCity}";
+                string localizedDays = $"{daysInCity + 1}";
                 if(stopoverLocation != null)
                 {
                     string localizedStopover = NewGameManager.Instance.LocationManager.GetLocalizedName(stopoverLocation);
@@ -497,6 +497,14 @@ public class DiaryEntryManager : MonoBehaviour
 
     private string GenerateText(GeneratedDiaryEntryPurpose purpose)
     {
+        if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship)
+        {
+            string lastNight = GenerateLastNight();
+            string healthStatus = GenerateHealthStatus();
+            string city = GenerateCity();
+            return $"{lastNight} {healthStatus} {city}";
+        }
+
         // Always generate transportation info.
         string transporationInfo = GenerateTransportationInfo();
 

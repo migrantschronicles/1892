@@ -415,15 +415,6 @@ public class LevelInstance : MonoBehaviour
             }
         }
 #endif
-
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            NewGameManager.Instance.DiaryEntryManager.GenerateEntry(GeneratedDiaryEntryPurpose.NewCity);
-        }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            NewGameManager.Instance.DiaryEntryManager.GenerateEntry(GeneratedDiaryEntryPurpose.NewDay);
-        }
     }
 
     private void OnBack()

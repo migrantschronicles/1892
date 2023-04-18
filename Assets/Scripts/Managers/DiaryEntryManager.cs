@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Localization;
-using static UnityEngine.Networking.UnityWebRequest;
+
+public enum GeneratedDiaryEntryPurpose
+{
+    NewCity,
+    NewDay
+}
 
 public class DiaryEntryManager : MonoBehaviour
 {
@@ -490,18 +495,39 @@ public class DiaryEntryManager : MonoBehaviour
         return LocalizationManager.Instance.GetLocalizedString(value);
     }
 
-    public void GenerateEntry()
+    private string GenerateText(GeneratedDiaryEntryPurpose purpose)
     {
-        string transportationInfo = GenerateTransportationInfo();
-        Debug.Log(transportationInfo);
+        // Always generate transportation info.
+        string transporationInfo = GenerateTransportationInfo();
 
-        string lastNight = GenerateLastNight();
-        Debug.Log(lastNight);
+        // Determine if it's a diary entry for when you arrived to a city or on a new day
+        switch (purpose)
+        {
+            case GeneratedDiaryEntryPurpose.NewCity:
+            {
+                // The content for the city.
+                string city = GenerateCity();
 
-        string healthStatus = GenerateHealthStatus();
-        Debug.Log(healthStatus);
+                return $"{transporationInfo} {city}";
+            }
 
-        string city = GenerateCity();
-        Debug.Log(city);
+            case GeneratedDiaryEntryPurpose.NewDay:
+            {
+                // How last night was
+                string lastNight = GenerateLastNight();
+                // Health status
+                string healthStatus = GenerateHealthStatus();
+
+                return $"{transporationInfo} {lastNight} {healthStatus}";
+            }
+        }
+
+        return "";
+    }
+
+    public void GenerateEntry(GeneratedDiaryEntryPurpose purpose)
+    {
+        string text = GenerateText(purpose);
+        Debug.Log(text);
     }
 }

@@ -85,6 +85,7 @@ public class HealthStatus_Homesickness
     
     public float Value { get { return value; } }
     public int ValueInt { get { return Mathf.FloorToInt(value); } }
+    public int DaysSick { get; private set; }
 
     public void OnEndOfDay()
     {
@@ -93,6 +94,15 @@ public class HealthStatus_Homesickness
             // Every 5 days, homesickness is decreased by 1.
             AddValue(-1);
             daysSinceLastDecrease = 0;
+        }
+
+        if(ValueInt > 1)
+        {
+            ++DaysSick;
+        }
+        else
+        {
+            DaysSick = 0;
         }
     }
 

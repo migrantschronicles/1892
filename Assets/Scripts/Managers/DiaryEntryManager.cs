@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Localization;
+using static UnityEngine.Networking.UnityWebRequest;
 
 public class DiaryEntryManager : MonoBehaviour
 {
@@ -105,6 +106,10 @@ public class DiaryEntryManager : MonoBehaviour
     private LocalizedString healthNewProblems;
     [SerializeField]
     private LocalizedString healthExistingProblem;
+    [SerializeField]
+    private LocalizedString cholera;
+    [SerializeField]
+    private LocalizedString homesickness;
     [SerializeField]
     private LocalizedString luxembourg;
     [SerializeField]
@@ -324,21 +329,111 @@ public class DiaryEntryManager : MonoBehaviour
             }
         }));
 
-        string result = "";
-        for(int i = 0; i < localizedItemNames.Count; ++i)
+        return GetEnumerationString(localizedItemNames);
+    }
+
+    class HealthProblem
+    {
+        public string characterName;
+        public string sickness;
+    }
+
+    private string GenerateHealthStatus()
+    {
+        List<ProtagonistHealthData> characters = new List<ProtagonistHealthData>(NewGameManager.Instance.HealthStatus.Characters);
+
+        List<HealthProblem> newProblems = new();
+        for(int i = 0; i < characters.Count; ++i)
         {
-            result += localizedItemNames[i];
-            if (i < localizedItemNames.Count - 2)
+            ProtagonistHealthData character = characters[i];
+            if(character.CholeraStatus.DaysSick == 1)
+            {
+                // Got sick
+                string localizedSickness = LocalizationManager.Instance.GetLocalizedString(cholera);
+                newProblems.Add(new HealthProblem { characterName = character.CharacterData.name, sickness = localizedSickness });
+                characters.RemoveAt(i);
+                --i;
+            }
+            else if(character.HomesickessStatus.DaysSick == 1)
+            {
+                // Got homesick
+                string localizedSickness = LocalizationManager.Instance.GetLocalizedString(homesickness);
+                newProblems.Add(new HealthProblem { characterName = character.CharacterData.name, sickness = localizedSickness });
+                characters.RemoveAt(i);
+                --i;
+            }
+        }
+
+        List<HealthProblem> existingProblems = new();
+        for(int i = 0; i < characters.Count; ++i)
+        {
+            ProtagonistHealthData character = characters[i];
+            if(character.CholeraStatus.DaysSick > 1)
+            {
+                // Still sick
+                string localizedSickness = LocalizationManager.Instance.GetLocalizedString(cholera);
+                existingProblems.Add(new HealthProblem { characterName = character.CharacterData.name, sickness = localizedSickness });
+                characters.RemoveAt(i);
+                --i;
+            }
+            else if(character.HomesickessStatus.DaysSick > 1)
+            {
+                // Still homesick
+                string localizedSickness = LocalizationManager.Instance.GetLocalizedString(homesickness);
+                existingProblems.Add(new HealthProblem { characterName = character.CharacterData.name, sickness = localizedSickness });
+                characters.RemoveAt(i);
+                --i;
+            }
+        }
+
+        if(newProblems.Count == 0 && existingProblems.Count == 0)
+        {
+            return LocalizationManager.Instance.GetLocalizedString(healthNoProblems);
+        }
+
+        string result = "";
+        if(newProblems.Count == 1)
+        {
+            result += LocalizationManager.Instance.GetLocalizedString(healthNewProblem, newProblems[0].characterName, newProblems[9].sickness);
+        }
+        else if(newProblems.Count > 1)
+        {
+            string characterNames = GetEnumerationString(new List<string>(newProblems.Select(problem => problem.characterName)));
+            string sicknesses = GetEnumerationString(new List<string>(newProblems.Select(problem => problem.sickness)));
+            result += LocalizationManager.Instance.GetLocalizedString(healthNewProblems, characterNames, sicknesses);
+        }
+
+        if(existingProblems.Count > 0)
+        {
+            if(result.Length > 0)
+            {
+                result += " ";
+            }
+
+            result += existingProblems
+                .Select(problem => LocalizationManager.Instance.GetLocalizedString(healthExistingProblem, problem.characterName, problem.sickness))
+                .Aggregate((a, b) => $"{a} {b}");
+        }
+
+        return result;
+    }
+
+    private string GetEnumerationString(List<string> values)
+    {
+        string result = "";
+        for (int i = 0; i < values.Count; ++i)
+        {
+            result += values[i];
+            if (i < values.Count - 2)
             {
                 result += ", ";
             }
-            else if (i == localizedItemNames.Count - 2)
+            else if (i == values.Count - 2)
             {
                 string localizedAnd = LocalizationManager.Instance.GetLocalizedString(and);
                 result += $" {localizedAnd} ";
             }
         }
-
         return result;
     }
 
@@ -349,5 +444,8 @@ public class DiaryEntryManager : MonoBehaviour
 
         string lastNight = GenerateLastNight();
         Debug.Log(lastNight);
+
+        string healthStatus = GenerateHealthStatus();
+        Debug.Log(healthStatus);
     }
 }

@@ -501,4 +501,9 @@ public class HealthStatus : MonoBehaviour
             healthData.SetIsOnShip(value);
         }
     }
+
+    public IEnumerable<ProtagonistHealthData> GetHungryCharacters()
+    {
+        return characters.Where(character => character.HungryStatus.DaysWithoutEnoughFood > 0);
+    }
 }

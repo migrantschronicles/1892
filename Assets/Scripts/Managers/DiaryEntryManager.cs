@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Localization;
 
@@ -74,6 +75,8 @@ public class DiaryEntryManager : MonoBehaviour
 
     [SerializeField]
     private LocalizedString and;
+    [SerializeField]
+    private LocalizedString i;
     [SerializeField]
     private LocalizedString[] transportationFirstDay;
     [SerializeField]
@@ -169,7 +172,13 @@ public class DiaryEntryManager : MonoBehaviour
     [SerializeField]
     private LocalizedString philadelphia;
 
-    public string GenerateTransportationInfo()
+    private string GenerateTransportationInfo()
+    {
+        int daysInCity = NewGameManager.Instance.DaysInCity;
+        return GenerateTransportationInfo(daysInCity);
+    }
+
+    private string GenerateTransportationInfo(int daysInCity)
     {
         string localizedLocation = NewGameManager.Instance.LocationManager.GetLocalizedName(LevelInstance.Instance.LocationName);
         if (NewGameManager.Instance.DaysInCity == 0)
@@ -186,9 +195,159 @@ public class DiaryEntryManager : MonoBehaviour
         }
     }
 
+    private string GenerateLastNight()
+    {
+        List<ProtagonistHealthData> hungryCharacters = new List<ProtagonistHealthData>(NewGameManager.Instance.HealthStatus.GetHungryCharacters());
+        SleepMethod sleepMethod = NewGameManager.Instance.LastSleepMethod;
+        List<StolenItemInfo> items = NewGameManager.Instance.LastStolenItems;
+        int daysInCity = NewGameManager.Instance.DaysInCity;
+        string stopoverLocation = NewGameManager.Instance.ShipManager.IsStopoverDay ? NewGameManager.Instance.ShipManager.StopoverLocation : null;
+        return GenerateLastNight(hungryCharacters, sleepMethod, items, daysInCity, stopoverLocation);
+    }
+
+    private string GenerateLastNight(List<ProtagonistHealthData> hungryCharacters, SleepMethod lastSleepMethod, List<StolenItemInfo> lastStolenItems,
+        int daysInCity, string stopoverLocation)
+    {
+        switch(lastSleepMethod)
+        {
+            case SleepMethod.Outside:
+            {
+                if(hungryCharacters.Count == 0)
+                {
+                    if(lastStolenItems.Count == 0)
+                    {
+                        // Nothing got stolen, no one is hungry.
+                        return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideEnoughFoodNothingStolen);
+                    }
+                    else
+                    {
+                        // Something got stolen, but no one is hungry.
+                        string localizedItems = GetLocalizedStolenItems(lastStolenItems);
+                        return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideEnoughFoodStolen, localizedItems);
+                    }
+                }
+                else
+                {
+                    if(lastStolenItems.Count == 0)
+                    {
+                        // Nothing got stolen, but some one is hungry.
+                        return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideNotEnoughFoodNothingStolen);
+                    }
+                    else
+                    {
+                        // Something got stolen and someone is hungry.
+                        string localizedItems = GetLocalizedStolenItems(lastStolenItems);
+                        return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideNotEnoughFoodStolen, localizedItems);
+                    }
+                }
+            }
+
+            case SleepMethod.Hotel:
+            {
+                if(hungryCharacters.Count == 0)
+                {
+                    // Everyone had enough food.
+                    return LocalizationManager.Instance.GetLocalizedString(lastNightHotelEnoughFood);
+                }
+                else
+                {
+                    // Someone was hungry.
+                    string localizedName = "";
+                    ProtagonistHealthData mainCharacter = GetMainHealthData(hungryCharacters);
+                    if(mainCharacter != null)
+                    {
+                        // The main character was hungry.
+                        localizedName = GetNameForCharacter(mainCharacter.CharacterData);
+                    }
+                    else
+                    {
+                        // The side characters were hungry.
+                        localizedName = GetNameForCharacter(hungryCharacters[0].CharacterData);
+                    }
+
+                    return LocalizationManager.Instance.GetLocalizedString(lastNightHotelNotEnoughFood, $"{localizedName}");
+                }
+            }
+
+            case SleepMethod.Ship:
+            {
+                string localizedDays = $"{daysInCity}";
+                if(stopoverLocation != null)
+                {
+                    string localizedStopover = NewGameManager.Instance.LocationManager.GetLocalizedName(stopoverLocation);
+                    return LocalizationManager.Instance.GetLocalizedString(lastNightShipStopoverDay, localizedDays, localizedStopover);
+                }
+                else
+                {
+                    int randomIndex = Random.Range(0, lastNightShip.Length);
+                    return LocalizationManager.Instance.GetLocalizedString(lastNightShip[randomIndex], localizedDays);
+                }
+            }
+        }
+
+        return "";
+    }
+
+    private ProtagonistHealthData GetMainHealthData(IEnumerable<ProtagonistHealthData> characters)
+    {
+        foreach(var character in characters)
+        {
+            if(character.CharacterData.isMainProtagonist)
+            {
+                return character;
+            }
+        }
+
+        return null;
+    }
+
+    private string GetNameForCharacter(ProtagonistData data)
+    {
+        if(data.isMainProtagonist)
+        {
+            return LocalizationManager.Instance.GetLocalizedString(i);
+        }
+
+        return data.name;
+    }
+
+    private string GetLocalizedStolenItems(List<StolenItemInfo> items)
+    {
+        List<string> localizedItemNames = new List<string>(items.Select(item => {
+            if (item.type == StolenItemType.Money)
+            {
+                return $"{item.money} {NewGameManager.Instance.CurrentCurrency}";
+            }
+            else
+            {
+                return LocalizationManager.Instance.GetLocalizedString(item.item.Name);
+            }
+        }));
+
+        string result = "";
+        for(int i = 0; i < localizedItemNames.Count; ++i)
+        {
+            result += localizedItemNames[i];
+            if (i < localizedItemNames.Count - 2)
+            {
+                result += ", ";
+            }
+            else if (i == localizedItemNames.Count - 2)
+            {
+                string localizedAnd = LocalizationManager.Instance.GetLocalizedString(and);
+                result += $" {localizedAnd} ";
+            }
+        }
+
+        return result;
+    }
+
     public void GenerateEntry()
     {
         string transportationInfo = GenerateTransportationInfo();
         Debug.Log(transportationInfo);
+
+        string lastNight = GenerateLastNight();
+        Debug.Log(lastNight);
     }
 }

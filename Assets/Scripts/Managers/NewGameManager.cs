@@ -58,6 +58,14 @@ public enum LocationDiscoveryStatus
     Current
 }
 
+public enum SleepMethod
+{
+    None,
+    Hotel,
+    Outside,
+    Ship
+}
+
 public class NewGameManager : MonoBehaviour
 {
 
@@ -88,16 +96,9 @@ public class NewGameManager : MonoBehaviour
     public string dateStr;
     private int travelCountToday = 0;
 
-    // UI 
-    public Sprite traveledCityMarker;
-    public Sprite currentCityMarker;
-    public Sprite untraveledCityMarker;
-
-    public Sprite traveledCityCapital;
-    public Sprite currentCityCapital;
-    public Sprite untraveledCityCapital;
-
-    public PopupManager popups;
+    // Saved stats 
+    public SleepMethod LastSleepMethod { get; private set; }
+    public List<StolenItemInfo> LastStolenItems { get; private set; }
 
     // Inventory
     public PlayerInventory inventory = new PlayerInventory();
@@ -317,6 +318,8 @@ public class NewGameManager : MonoBehaviour
         HealthStatus.OnEndOfDay(endOfDayHealthData);
         StartNewDay();
         List<StolenItemInfo> stolenItems = StealItems();
+        LastStolenItems = stolenItems;
+        LastSleepMethod = SleepMethod.Outside;
         return stolenItems;
     }
 
@@ -337,6 +340,8 @@ public class NewGameManager : MonoBehaviour
             inventory.AddItem(foodItem, itemsToAdd);
         }
         HealthStatus.OnEndOfDay(endOfDayHealthData);
+        LastStolenItems = null;
+        LastSleepMethod = SleepMethod.Hotel;
         StartNewDay();
     }
 
@@ -346,6 +351,8 @@ public class NewGameManager : MonoBehaviour
     public bool OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)
     {
         HealthStatus.OnEndOfDay(endOfDayHealthData);
+        LastStolenItems = null;
+        LastSleepMethod = SleepMethod.Ship;
         StartNewDay();
 
         if(ShipManager.HasReachedDestination)

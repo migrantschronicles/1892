@@ -437,6 +437,59 @@ public class DiaryEntryManager : MonoBehaviour
         return result;
     }
 
+    private string GenerateCity()
+    {
+        LocalizedString value = null;
+        if (LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship)
+        {
+            switch(NewGameManager.Instance.DaysInCity)
+            {
+                case 0: value = shipDay1; break;
+                case 1: value = shipDay2; break;
+                case 2: value = shipDay3; break;
+                case 3: value = shipDay4; break;
+                case 4: value = shipDay5; break;
+                case 5: value = shipDay6; break;
+                case 6: value = shipDay7; break;
+                case 7: value = shipDay8; break;
+                case 8: value = shipDay9; break;
+                case 9: value = shipDay10; break;
+            }
+        }
+        else
+        {
+            string currentLocation = LevelInstance.Instance.LocationName;
+            switch (currentLocation)
+            {
+                case "Luxembourg": value = luxembourg; break;
+                case "Paris": value = paris; break;
+                case "Brussels": value = brussels; break;
+                case "LeHavre": value = lehavre; break;
+                case "Rotterdam": value = rotterdam; break;
+                case "Bremerhaven": value = bremerhaven; break;
+                case "Antwerp": value = antwerp; break;
+                case "Marseille": value = marseille; break;
+                case "Hamburg": value = hamburg; break;
+                case "Liverpool": value = liverpool; break;
+                case "Southampton": value = southampton; break;
+                case "Genoa": value = genoa; break;
+                case "ElisIsland": value = elisIsland; break;
+                case "NewYorkCity": value = newYorkCity; break;
+                case "Chicago": value = chicago; break;
+                case "Boston": value = boston; break;
+                case "Milwaukee": value = milwaukee; break;
+                case "VillageOfBelgium": value = villageOfBelgium; break;
+                case "Minneapolis": value = minneapolis; break;
+                case "Rollingstone": value = rollingstone; break;
+                case "Dubuque": value = dubuque; break;
+                case "StDonatus": value = stDonatus; break;
+                case "Philadelphia": value = philadelphia; break;
+            }
+        }
+
+        return LocalizationManager.Instance.GetLocalizedString(value);
+    }
+
     public void GenerateEntry()
     {
         string transportationInfo = GenerateTransportationInfo();
@@ -447,5 +500,8 @@ public class DiaryEntryManager : MonoBehaviour
 
         string healthStatus = GenerateHealthStatus();
         Debug.Log(healthStatus);
+
+        string city = GenerateCity();
+        Debug.Log(city);
     }
 }

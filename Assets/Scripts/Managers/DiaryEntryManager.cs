@@ -169,8 +169,26 @@ public class DiaryEntryManager : MonoBehaviour
     [SerializeField]
     private LocalizedString philadelphia;
 
+    public string GenerateTransportationInfo()
+    {
+        string localizedLocation = NewGameManager.Instance.LocationManager.GetLocalizedName(LevelInstance.Instance.LocationName);
+        if (NewGameManager.Instance.DaysInCity == 0)
+        {
+            // The day of the arrival
+            int randomIndex = Random.Range(0, transportationFirstDay.Length);
+            string localizedMethod = NewGameManager.Instance.TransportationManager.GetLocalizedMethod(NewGameManager.Instance.lastMethod);
+            return LocalizationManager.Instance.GetLocalizedString(transportationFirstDay[randomIndex], localizedLocation, localizedMethod);
+        }
+        else
+        {
+            // Other days
+            return LocalizationManager.Instance.GetLocalizedString(transportationOtherDays, localizedLocation);
+        }
+    }
+
     public void GenerateEntry()
     {
-
+        string transportationInfo = GenerateTransportationInfo();
+        Debug.Log(transportationInfo);
     }
 }

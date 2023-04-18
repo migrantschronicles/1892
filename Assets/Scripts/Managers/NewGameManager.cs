@@ -68,6 +68,7 @@ public class NewGameManager : MonoBehaviour
     private List<Journey> journeys = new();
     public string nextLocation { get; private set; }
     public TransportationMethod nextMethod { get; private set; }
+    public TransportationMethod lastMethod { get; private set; } = TransportationMethod.None;
     public ShipManager ShipManager { get { return GetComponent<ShipManager>(); } }
 
     public delegate void OnRouteDiscoveredEvent(string from, string to, TransportationMethod method);
@@ -116,6 +117,8 @@ public class NewGameManager : MonoBehaviour
     public DialogConditionProvider conditions { get { return GetComponent<DialogConditionProvider>(); } }
 
     public IEnumerable<DiaryEntry> DiaryEntries { get { return diaryEntries; } }
+    public DiaryEntryManager DiaryEntryManager { get { return GetComponent<DiaryEntryManager>(); } }
+    public TransportationManager TransportationManager { get { return GetComponent<TransportationManager>(); } }
 
     public QuestManager QuestManager { get { return GetComponent<QuestManager>(); } }
 
@@ -431,6 +434,7 @@ public class NewGameManager : MonoBehaviour
         // Load level
         nextLocation = name;
         nextMethod = method;
+        lastMethod = method;
         AudioManager.Instance.FadeOutMusic();
         SceneManager.LoadScene("LoadingScene");
     }

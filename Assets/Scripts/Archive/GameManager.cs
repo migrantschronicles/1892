@@ -110,7 +110,7 @@ public partial class GameManager : MonoBehaviour
 
         CityManager = new CityMarker(map);
         //NavigationMarker = new //NavigationMarker(map);
-        TransportationManager = new TransportationManager();
+        TransportationManager = new TransportationManagerOld();
         //GlobeDesigner = new //GlobeDesigner(map);
 
         StateManager.CurrentState.FreezeTime = true;

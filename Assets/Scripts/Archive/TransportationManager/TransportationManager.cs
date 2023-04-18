@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class TransportationManager : ITransportationManager
+public class TransportationManagerOld : ITransportationManager
 {
     public IEnumerable<TransportationOld> GetTransportation(string origin, string destination)
     {

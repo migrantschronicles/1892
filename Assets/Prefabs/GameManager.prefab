@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 932188109867846364}
   - component: {fileID: 1154804200615929995}
   - component: {fileID: 6046932576119547423}
+  - component: {fileID: 8569226678293246138}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: GameManager
@@ -558,12 +559,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9685d78f8332a1468c7d0982c30fb28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firstPagePrefab: {fileID: 0}
-  firstPageSignatureImagePrefab: {fileID: 0}
-  fullImagePrefab: {fileID: 0}
-  fullTextPrefab: {fileID: 0}
-  imageBottomPrefab: {fileID: 0}
-  imageTopPrefab: {fileID: 0}
   luxembourgEntry: {fileID: 11400000, guid: 23c9d1a7456c45241a128033b25b5590, type: 2}
   parisEntry: {fileID: 11400000, guid: a80881744818f084ebb5992dd21e0dea, type: 2}
   leHavreEntry: {fileID: 11400000, guid: 71eeba25088aa0f45aec53462303dfca, type: 2}
@@ -606,12 +601,36 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  transportationFirstDay: []
+  transportationFirstDay:
+  - m_TableReference:
+      m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+    m_TableEntryReference:
+      m_KeyId: 72729494465744896
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+    m_TableEntryReference:
+      m_KeyId: 72729767615598592
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  - m_TableReference:
+      m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+    m_TableEntryReference:
+      m_KeyId: 72729941670825984
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
   transportationOtherDays:
     m_TableReference:
-      m_TableCollectionName: 
+      m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
     m_TableEntryReference:
-      m_KeyId: 0
+      m_KeyId: 72730148697477120
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -1009,6 +1028,84 @@ MonoBehaviour:
       m_TableCollectionName: 
     m_TableEntryReference:
       m_KeyId: 0
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  references:
+    version: 2
+    RefIds: []
+--- !u!114 &8569226678293246138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe32658768eac5149b486c605644285a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkingString:
+    m_TableReference:
+      m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
+    m_TableEntryReference:
+      m_KeyId: 45596125647015936
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  tramString:
+    m_TableReference:
+      m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
+    m_TableEntryReference:
+      m_KeyId: 45596237458771968
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  trainString:
+    m_TableReference:
+      m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
+    m_TableEntryReference:
+      m_KeyId: 45596313623138304
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  cartString:
+    m_TableReference:
+      m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
+    m_TableEntryReference:
+      m_KeyId: 45596378005704704
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  shipString:
+    m_TableReference:
+      m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
+    m_TableEntryReference:
+      m_KeyId: 45596432481325056
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  carriageString:
+    m_TableReference:
+      m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
+    m_TableEntryReference:
+      m_KeyId: 45596505227333632
+      m_Key: 
+    m_FallbackState: 0
+    m_WaitForCompletion: 0
+    m_LocalVariables: []
+  ferryString:
+    m_TableReference:
+      m_TableCollectionName: GUID:1e1e66d281c0d9b4b9228f14b38f6d8d
+    m_TableEntryReference:
+      m_KeyId: 49322319454343168
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0

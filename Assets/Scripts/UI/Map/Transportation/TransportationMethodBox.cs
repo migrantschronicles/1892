@@ -17,20 +17,6 @@ public class TransportationMethodBox : MonoBehaviour
     [SerializeField]
     private Image handle;
     [SerializeField]
-    private LocalizedString walkingString;
-    [SerializeField]
-    private LocalizedString tramString;
-    [SerializeField]
-    private LocalizedString trainString;
-    [SerializeField]
-    private LocalizedString cartString;
-    [SerializeField]
-    private LocalizedString shipString;
-    [SerializeField]
-    private LocalizedString carriageString;
-    [SerializeField]
-    private LocalizedString ferryString;
-    [SerializeField]
     private bool useFerry = false;
 
     public TransportationRouteInfo RouteInfo
@@ -68,22 +54,21 @@ public class TransportationMethodBox : MonoBehaviour
 
     private void UpdateTransportationMethod()
     {
-        LocalizedString transportationTitle = null;
         Vector2 normalizedPosition = Vector2.zero;
         switch(method)
         {
-            case TransportationMethod.Walking: transportationTitle = walkingString; normalizedPosition.Set(0, -1); break;
-            case TransportationMethod.Tram: transportationTitle = tramString; normalizedPosition.Set(-1, -1); break;
-            case TransportationMethod.Train: transportationTitle = trainString; normalizedPosition.Set(0, 1); break;
-            case TransportationMethod.Cart: transportationTitle = cartString; normalizedPosition.Set(1, -1); break;
-            case TransportationMethod.Ship: transportationTitle = useFerry ? ferryString : shipString; normalizedPosition.Set(1, 1); break;
-            case TransportationMethod.Carriage: transportationTitle = carriageString; normalizedPosition.Set(-1, 1); break;
+            case TransportationMethod.Walking: normalizedPosition.Set(0, -1); break;
+            case TransportationMethod.Tram: normalizedPosition.Set(-1, -1); break;
+            case TransportationMethod.Train: normalizedPosition.Set(0, 1); break;
+            case TransportationMethod.Cart: normalizedPosition.Set(1, -1); break;
+            case TransportationMethod.Ship: normalizedPosition.Set(1, 1); break;
+            case TransportationMethod.Carriage: normalizedPosition.Set(-1, 1); break;
             default: titleText.text = "NONE"; return;
         }
 
         if(Application.isPlaying)
         {
-            titleText.text = LocalizationManager.Instance.GetLocalizedString(transportationTitle);
+            titleText.text = NewGameManager.Instance.TransportationManager.GetLocalizedMethod(method, useFerry);
         }
         else
         {

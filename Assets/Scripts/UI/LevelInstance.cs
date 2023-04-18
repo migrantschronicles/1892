@@ -415,6 +415,11 @@ public class LevelInstance : MonoBehaviour
             }
         }
 #endif
+
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            NewGameManager.Instance.DiaryEntryManager.GenerateEntry();
+        }
     }
 
     private void OnBack()

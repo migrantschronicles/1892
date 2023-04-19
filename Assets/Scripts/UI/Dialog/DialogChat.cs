@@ -295,41 +295,73 @@ public class DialogChat : MonoBehaviour
         {
             if(destination.Template.Location_Revealed_1.LocationRevealed != null)
             {
-                OnRouteDiscovered(destination.Template.Location_Revealed_1.LocationRevealed,
-                    new Transportation[] {
+                if(destination.Template.Transportation.Transportation != 0 ||
+                    destination.Template.Transportation_02.Transportation != 0 ||
+                    destination.Template.Transportation_3.Transportation != 0)
+                {
+                    OnRouteDiscovered(destination.Template.Location_Revealed_1.LocationRevealed,
+                        new Transportation[] {
                         destination.Template.Transportation.Transportation,
                         destination.Template.Transportation_02.Transportation,
                         destination.Template.Transportation_3.Transportation
-                    });
+                        });
+                }
+                else
+                {
+                    Debug.LogError($"Invalid transporation methods in {LevelInstance.Instance.LocationName}");
+                }
             }
 
             if(destination.Template.Location_Revealed_2.LocationRevealed != null)
             {
-                OnRouteDiscovered(destination.Template.Location_Revealed_2.LocationRevealed,
+                if (destination.Template.Transportation_4.Transportation != 0 ||
+                    destination.Template.Transportation_5.Transportation != 0 ||
+                    destination.Template.Transportation_6.Transportation != 0)
+                {
+                    OnRouteDiscovered(destination.Template.Location_Revealed_2.LocationRevealed,
                     new Transportation[]
                     {
                         destination.Template.Transportation_4.Transportation,
                         destination.Template.Transportation_5.Transportation,
                         destination.Template.Transportation_6.Transportation
                     });
+                }
+                else
+                {
+                    Debug.LogError($"Invalid transporation methods in {LevelInstance.Instance.LocationName}");
+                }
             }
 
             if(destination.Template.Location_Revealed_3.LocationRevealed != null)
             {
-                OnRouteDiscovered(destination.Template.Location_Revealed_3.LocationRevealed,
+                if (destination.Template.Transportation_7.Transportation != 0)
+                {
+                    OnRouteDiscovered(destination.Template.Location_Revealed_3.LocationRevealed,
                     new Transportation[]
                     {
                         destination.Template.Transportation_7.Transportation,
                     });
+                }
+                else
+                {
+                    Debug.LogError($"Invalid transporation methods in {LevelInstance.Instance.LocationName}");
+                }
             }
 
             if(destination.Template.Location_Revealed_4.LocationRevealed != null)
             {
-                OnRouteDiscovered(destination.Template.Location_Revealed_4.LocationRevealed,
+                if (destination.Template.Transportation_8.Transportation != 0)
+                {
+                    OnRouteDiscovered(destination.Template.Location_Revealed_4.LocationRevealed,
                     new Transportation[]
                     {
                         destination.Template.Transportation_8.Transportation,
                     });
+                }
+                else
+                {
+                    Debug.LogError($"Invalid transporation methods in {LevelInstance.Instance.LocationName}");
+                }
             }
         }
         else if(pausedOn is ItemAdded itemAdded)

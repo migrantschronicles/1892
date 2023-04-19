@@ -35,16 +35,31 @@ public class LocalizationManager
 
     public string GetLocalizedString(LocalizedString localizedString)
     {
+        if(localizedString.IsEmpty)
+        {
+            return "";
+        }
+
         return localizedString.GetLocalizedString();
     }
 
     public string GetLocalizedString(LocalizedString localizedString, params object[] args)
     {
+        if (localizedString.IsEmpty)
+        {
+            return "";
+        }
+
         return localizedString.GetLocalizedString(args);
     }
 
     public string GetLocalizedString(LocalizedString localizedString, IList<object> args)
     {
+        if (localizedString.IsEmpty)
+        {
+            return "";
+        }
+
         return localizedString.GetLocalizedString(args);
     }
 

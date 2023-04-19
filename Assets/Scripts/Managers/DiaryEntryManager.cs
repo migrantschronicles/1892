@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Localization;
+using static UnityEngine.Rendering.DebugUI;
 
 public enum GeneratedDiaryEntryPurpose
 {
@@ -533,9 +534,70 @@ public class DiaryEntryManager : MonoBehaviour
         return "";
     }
 
-    public void GenerateEntry(GeneratedDiaryEntryPurpose purpose)
+    private DiaryEntry GetDiaryEntryForCity()
     {
-        string text = GenerateText(purpose);
-        Debug.Log(text);
+        if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship)
+        {
+            switch(NewGameManager.Instance.DaysInCity)
+            {
+                case 0: return shipDay1Entry;
+                case 1: return shipDay2Entry;
+                case 2: return shipDay3Entry;
+                case 3: return shipDay4Entry;
+                case 4: return shipDay5Entry;
+                case 5: return shipDay6Entry;
+                case 6: return shipDay7Entry;
+                case 7: return shipDay8Entry;
+                case 8: return shipDay9Entry;
+                case 9: return shipDay10Entry;
+            }
+        }
+        else
+        {
+            string currentLocation = LevelInstance.Instance.LocationName;
+            switch (currentLocation)
+            {
+                case "Luxembourg": return luxembourgEntry;
+                case "Paris": return parisEntry;
+                case "Brussels": return brusselsEntry;
+                case "LeHavre": return leHavreEntry;
+                case "Rotterdam": return rotterdamEntry;
+                case "Bremerhaven": return bremerhavenEntry;
+                case "Antwerp": return antwerpEntry;
+                case "Marseille": return marseilleEntry;
+                case "Hamburg": return hamburgEntry;
+                case "Liverpool": return liverpoolEntry;
+                case "Southampton": return southamptonEntry;
+                case "Genoa": return genoaEntry;
+                case "ElisIsland": return elisIslandEntry;
+                case "NewYorkCity": return newYorkCityEntry;
+                case "Chicago": return chicagoEntry;
+                case "Boston": return bostonEntry;
+                case "Milwaukee": return milwaukeeEntry;
+                case "VillageOfBelgium": return villageOfBelgiumEntry;
+                case "Minneapolis": return minneapolisEntry;
+                case "Rollingstone": return rollingstoneEntry;
+                case "Dubuque": return dubuqueEntry;
+                case "StDonatus": return stDonatusEntry;
+                case "Philadelphia": return philadelphiaEntry;
+            }
+        }
+
+        return null;
+    }
+
+    public DiaryEntry GenerateEntry(GeneratedDiaryEntryPurpose purpose)
+    {
+        DiaryEntry diaryEntry = GetDiaryEntryForCity();
+        if(!diaryEntry)
+        {
+            Debug.LogError($"Diary entry not found for {LevelInstance.Instance.LocationName}");
+            return null;
+        }
+
+        return diaryEntry;
+
+        //string text = GenerateText(purpose);
+        //Debug.Log(text);
     }
 }

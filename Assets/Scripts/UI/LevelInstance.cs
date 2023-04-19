@@ -1233,6 +1233,23 @@ public class LevelInstance : MonoBehaviour
         wantsToContinueGame = true;
     }
 
+    private void OpenNewDayDiaryEntry()
+    {
+        DiaryEntry newDayEntry = NewGameManager.Instance.DiaryEntryManager.GenerateEntry(GeneratedDiaryEntryPurpose.NewDay);
+        if(!newDayEntry)
+        {
+            return;
+        }
+
+        blur.SetEnabled(true);
+        NewGameManager.Instance.AddDiaryEntry(newDayEntry);
+        backButton.gameObject.SetActive(true);
+        ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+        ui.OpenDiaryImmediately(DiaryPageLink.Diary);
+        sceneInteractables.SetActive(false);
+        mode = Mode.Diary;
+    }
+
     public void OnSleepOutside(List<EndOfDayHealthData> endOfDayHealthData)
     {
         wantsToContinueGame = false;
@@ -1249,7 +1266,7 @@ public class LevelInstance : MonoBehaviour
         GameObject popupGO = ShowPopup(startDayOutsidePrefab);
         StartDayOutsidePopup popup = popupGO.GetComponent<StartDayOutsidePopup>();
         popup.Init(stolenItems);
-        popup.OnStartDay += (p) => { PopPopup(); };
+        popup.OnStartDay += (p) => { PopPopup(); OpenNewDayDiaryEntry(); };
     }
 
     public void OnSleepInHostel(List<EndOfDayHealthData> endOfDayHealthData, int cost, int boughtFoodAmount)
@@ -1267,7 +1284,7 @@ public class LevelInstance : MonoBehaviour
         NewGameManager.Instance.OnSleepInHostel(endOfDayHealthData, cost, boughtFoodAmount);
         GameObject popupGO = ShowPopup(startDayHostelPrefab);
         StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
-        popup.OnStartDay += (p) => { PopPopup(); };
+        popup.OnStartDay += (p) => { PopPopup(); OpenNewDayDiaryEntry(); };
     }
 
     public void OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)

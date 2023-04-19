@@ -9,6 +9,8 @@ public class ImageBottomPage : MonoBehaviour, IDiaryPage
     private Image image;
     [SerializeField]
     private Text text;
+    [SerializeField]
+    private Vector2 textWeight;
 
     private DiaryPageData pageData;
 
@@ -41,5 +43,10 @@ public class ImageBottomPage : MonoBehaviour, IDiaryPage
     private void OnTextChanged(string value)
     {
         text.text = value;
+    }
+
+    public List<Vector2> GetTextFieldWeights()
+    {
+        return new List<Vector2> { textWeight };
     }
 }

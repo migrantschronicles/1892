@@ -10,6 +10,8 @@ public class FirstPageSignatureImage : FirstPage
     private Text signature;
     [SerializeField]
     private Image image;
+    [SerializeField]
+    private Vector2 signatureWeight;
 
     public override IEnumerable<ElementAnimator> CreateAnimators()
     {
@@ -32,5 +34,10 @@ public class FirstPageSignatureImage : FirstPage
     private void OnText2Changed(string value)
     {
         signature.text = value;
+    }
+
+    public override List<Vector2> GetTextFieldWeights()
+    {
+        return new List<Vector2>() { textWeight, signatureWeight };
     }
 }

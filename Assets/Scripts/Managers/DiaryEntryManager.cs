@@ -617,6 +617,73 @@ public class DiaryEntryManager : MonoBehaviour
         diaryEntryData.localizedText = text;
         diaryEntryData.date = NewGameManager.Instance.date;
 
+        // Distribute text to different pages.
+        List<Vector2> leftWeights = diaryEntryData.leftPage.prefab.GetComponent<IDiaryPage>().GetTextFieldWeights();
+        List<Vector2> rightWeights = diaryEntryData.rightPage.prefab.GetComponent<IDiaryPage>().GetTextFieldWeights();
+        if(text.Length < 250)
+        {
+            // If the text is really short, don't distribute it.
+            if(leftWeights.Count > 0)
+            {
+                diaryEntryData.leftPage.Text = text;
+            }
+            else if(rightWeights.Count > 0)
+            {
+                diaryEntryData.rightPage.Text = text;
+            }
+        }
+        else
+        {
+            // The text is long, so distribute the text.
+            float sum = leftWeights.Select(weight => weight.x * weight.y).Sum() + rightWeights.Select(weight => weight.x * weight.y).Sum();
+            int start = 0;
+            for(int i = 0; i < leftWeights.Count; ++i)
+            {
+                float alpha = (leftWeights[i].x * leftWeights[i].y) / sum;
+                int count = start + (int) (text.Length * alpha);
+
+                // Find the next space.
+                while (count < text.Length && !char.IsWhiteSpace(text[count]))
+                {
+                    ++count;
+                }
+
+                string partialText = text.Substring(start, count - start);
+                if (i == 0)
+                {
+                    diaryEntryData.leftPage.Text = partialText;
+                }
+                else
+                {
+                    diaryEntryData.leftPage.Text2 = partialText;
+                }
+                start = count;
+            }
+
+            for(int i = 0; i < rightWeights.Count; ++i)
+            {
+                float alpha = (rightWeights[i].x * rightWeights[i].y) / sum;
+                int count = start + (int)(text.Length * alpha);
+
+                // Find the next space.
+                while (count < text.Length && !char.IsWhiteSpace(text[count]))
+                {
+                    ++count;
+                }
+
+                string partialText = text.Substring(start, count - start);
+                if (i == 0)
+                {
+                    diaryEntryData.rightPage.Text = partialText;
+                }
+                else
+                {
+                    diaryEntryData.rightPage.Text2 = partialText;
+                }
+                start = count;
+            }
+        }
+
         return diaryEntryData;
     }
 }

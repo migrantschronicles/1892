@@ -6,9 +6,11 @@ using UnityEngine.UI;
 public class FirstPage : MonoBehaviour, IDiaryPage
 {
     [SerializeField]
-    private Text dateText;
+    protected Text dateText;
     [SerializeField]
-    private Text text;
+    protected Text text;
+    [SerializeField]
+    protected Vector2 textWeight;
 
     protected DiaryEntryData entryData;
     protected DiaryPageData pageData;
@@ -53,5 +55,10 @@ public class FirstPage : MonoBehaviour, IDiaryPage
     private void OnDateChanged(string date)
     {
         dateText.text = date;
+    }
+
+    public virtual List<Vector2> GetTextFieldWeights()
+    {
+        return new List<Vector2> { textWeight };
     }
 }

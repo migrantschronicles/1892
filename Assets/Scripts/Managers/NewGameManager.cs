@@ -512,6 +512,14 @@ public class NewGameManager : MonoBehaviour
         journey.destination = ShipManager.StopoverLocation;
         journey.method = TransportationMethod.Ship;
         journeys.Add(journey);
+
+        StartCoroutine(OpenNewDayDiaryEntryNextFrame());
+    }
+
+    private IEnumerator OpenNewDayDiaryEntryNextFrame()
+    {
+        yield return null;
+        LevelInstance.Instance.OpenNewDayDiaryEntry();
     }
 
     public void OnLoadedElisIsland()

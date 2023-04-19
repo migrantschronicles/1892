@@ -502,7 +502,7 @@ public class DiaryEntryManager : MonoBehaviour
 
     private string GenerateText(GeneratedDiaryEntryPurpose purpose)
     {
-        if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship)
+        if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship || NewGameManager.Instance.ShipManager.IsStopoverDay)
         {
             string lastNight = GenerateLastNight();
             string healthStatus = GenerateHealthStatus();

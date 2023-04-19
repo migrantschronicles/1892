@@ -1232,7 +1232,7 @@ public class LevelInstance : MonoBehaviour
         wantsToContinueGame = true;
     }
 
-    private void OpenNewDayDiaryEntry()
+    public void OpenNewDayDiaryEntry()
     {
         DiaryEntryData newDayEntry = NewGameManager.Instance.DiaryEntryManager.GenerateEntry(GeneratedDiaryEntryPurpose.NewDay);
         if(newDayEntry == null)
@@ -1309,7 +1309,7 @@ public class LevelInstance : MonoBehaviour
             GameObject popupGO = ShowPopup(visitCityPopupPrefab);
             VisitCityPopup popup = popupGO.GetComponent<VisitCityPopup>();
             popup.SetDestinationCity(NewGameManager.Instance.ShipManager.StopoverLocation);
-            popup.OnStayOnBoard += (_) => { PopPopup(); };
+            popup.OnStayOnBoard += (_) => { PopPopup(); OpenNewDayDiaryEntry(); };
             popup.OnVisit += (_) =>
             {
                 NewGameManager.Instance.VisitStopover();
@@ -1321,7 +1321,7 @@ public class LevelInstance : MonoBehaviour
             // Normal day on ship.
             GameObject popupGO = ShowPopup(startDayShipPrefab);
             StartDayShipPopup popup = popupGO.GetComponent<StartDayShipPopup>();
-            popup.OnStartDay += (p) => { PopPopup(); };
+            popup.OnStartDay += (p) => { PopPopup(); OpenNewDayDiaryEntry(); };
         }
     }
 

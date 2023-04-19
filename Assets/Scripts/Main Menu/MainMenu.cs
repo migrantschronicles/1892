@@ -66,6 +66,7 @@ public class MainMenu : MonoBehaviour
     {
         inLanguageSelection = true;
         diaryAnimator.gameObject.SetActive(false);
+        // Still need to stop books animations
 
 
     }

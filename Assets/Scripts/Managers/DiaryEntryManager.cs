@@ -404,7 +404,7 @@ public class DiaryEntryManager : MonoBehaviour
         string result = "";
         if(newProblems.Count == 1)
         {
-            result += LocalizationManager.Instance.GetLocalizedString(healthNewProblem, newProblems[0].characterName, newProblems[9].sickness);
+            result += LocalizationManager.Instance.GetLocalizedString(healthNewProblem, newProblems[0].characterName, newProblems[0].sickness);
         }
         else if(newProblems.Count > 1)
         {
@@ -513,6 +513,11 @@ public class DiaryEntryManager : MonoBehaviour
         {
             // Special diary entry for pfaffenthal
             return LocalizationManager.Instance.GetLocalizedString(pfaffenthal);
+        }
+        else if(LevelInstance.Instance.LocationName == "ElisIsland")
+        {
+            // Special diary entry for elis island.
+            return LocalizationManager.Instance.GetLocalizedString(elisIsland);
         }
 
         // Always generate transportation info.
@@ -671,7 +676,7 @@ public class DiaryEntryManager : MonoBehaviour
                     ++count;
                 }
 
-                string partialText = text.Substring(start, count - start);
+                string partialText = text.Substring(start, Mathf.Min(count, text.Length) - start);
                 if (i == 0)
                 {
                     diaryEntryData.rightPage.Text = partialText;

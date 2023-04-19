@@ -331,30 +331,9 @@ public class LevelInstance : MonoBehaviour
                 break;
         }
 
-        /*
-        if (diaryEntry)
+        if(LocationName == "Pfaffenthal")
         {
-            blur.SetEnabled(true);
-            NewGameManager.Instance.AddDiaryEntry(diaryEntry);
-            backButton.gameObject.SetActive(true);
-            ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-            ui.OpenDiaryImmediately(DiaryPageLink.Diary);
-            sceneInteractables.SetActive(false);
-            mode = Mode.Diary;
-        }
-        else*/
-        {
-            backButton.gameObject.SetActive(false);
-            ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-            AudioManager.Instance.PlayMusic(musicClips);
-            startedPlayingMusic = true;
-
-            if(introductoryDialogButton)
-            {
-                StartDialog(introductoryDialogButton);
-                introductoryDialogButton.gameObject.SetActive(false);
-                hasShownIntroductoryDialog = true;
-            }
+            OpenNewCityDiaryEntry();
         }
 
         NewGameManager.Instance.HealthStatus.SetIsOnShip(levelMode == LevelInstanceMode.Ship);
@@ -1232,6 +1211,17 @@ public class LevelInstance : MonoBehaviour
         wantsToContinueGame = true;
     }
 
+    private void OpenNewDiaryEntry(DiaryEntryData data)
+    {
+        blur.SetEnabled(true);
+        NewGameManager.Instance.AddDiaryEntry(data);
+        backButton.gameObject.SetActive(true);
+        ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+        ui.OpenDiaryImmediately(DiaryPageLink.Diary);
+        sceneInteractables.SetActive(false);
+        mode = Mode.Diary;
+    }
+
     public void OpenNewDayDiaryEntry()
     {
         DiaryEntryData newDayEntry = NewGameManager.Instance.DiaryEntryManager.GenerateEntry(GeneratedDiaryEntryPurpose.NewDay);
@@ -1240,13 +1230,18 @@ public class LevelInstance : MonoBehaviour
             return;
         }
 
-        blur.SetEnabled(true);
-        NewGameManager.Instance.AddDiaryEntry(newDayEntry);
-        backButton.gameObject.SetActive(true);
-        ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-        ui.OpenDiaryImmediately(DiaryPageLink.Diary);
-        sceneInteractables.SetActive(false);
-        mode = Mode.Diary;
+        OpenNewDiaryEntry(newDayEntry);
+    }
+
+    public void OpenNewCityDiaryEntry()
+    {
+        DiaryEntryData newEntry = NewGameManager.Instance.DiaryEntryManager.GenerateEntry(GeneratedDiaryEntryPurpose.NewCity);
+        if(newEntry == null)
+        {
+            return;
+        }
+
+        OpenNewDiaryEntry(newEntry);
     }
 
     public void OnSleepOutside(List<EndOfDayHealthData> endOfDayHealthData)

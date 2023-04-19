@@ -487,6 +487,14 @@ public class NewGameManager : MonoBehaviour
 
         nextLocation = null;
         nextMethod = TransportationMethod.None;
+
+        StartCoroutine(OpenNewCityDiaryEntryNextFrame());
+    }
+
+    private IEnumerator OpenNewCityDiaryEntryNextFrame()
+    {
+        yield return null;
+        LevelInstance.Instance.OpenNewCityDiaryEntry();
     }
 
     public void OnLoadedShip()
@@ -495,6 +503,10 @@ public class NewGameManager : MonoBehaviour
         {
             // A hack, since CanEndDay() checks whether the game is running
             StartCoroutine(EndDayNextFrame());
+        }
+        else if(DaysInCity == 0)
+        {
+            StartCoroutine(OpenNewCityDiaryEntryNextFrame());
         }
     }
 
@@ -534,6 +546,8 @@ public class NewGameManager : MonoBehaviour
         nextMethod = TransportationMethod.None;
         DaysInCity = 0;
         ShipManager.EndTravellingInShip();
+
+        StartCoroutine(OpenNewCityDiaryEntryNextFrame());
     }
 
     public void AddDiaryEntry(DiaryEntryData entry)

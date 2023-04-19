@@ -281,7 +281,12 @@ public class DialogChat : MonoBehaviour
         popup.OnAccepted += (popup) =>
         {
             LevelInstance.Instance.PopPopup();
+            if (locationName == "Luxembourg")
+            {
+                LevelInstance.Instance.OpenDiary();
+            }
         };
+        
     }
 
     private void HandleTemplate()

@@ -8,6 +8,8 @@ public class FullTextPage : MonoBehaviour, IDiaryPage
     [SerializeField]
     private Text text;
 
+    private DiaryPageData pageData;
+
     public virtual IEnumerable<ElementAnimator> CreateAnimators()
     {
         return new List<ElementAnimator>()
@@ -16,16 +18,23 @@ public class FullTextPage : MonoBehaviour, IDiaryPage
         };
     }
 
+    private void OnDestroy()
+    {
+        if(pageData != null)
+        {
+            pageData.OnTextChanged -= OnTextChanged;
+        }
+    }
+
     public virtual void SetData(DiaryEntryData entryData, DiaryPageData data)
     {
-        if(entryData.HasOverrides)
-        {
+        pageData = data;
+        text.text = data.Text;
+        data.OnTextChanged += OnTextChanged;
+    }
 
-        }
-        else
-        {
-            text.text = LocalizationManager.Instance.GetLocalizedString(data.text);
-            data.text.StringChanged += value => text.text = value;
-        }
+    private void OnTextChanged(string value)
+    {
+        text.text = value;
     }
 }

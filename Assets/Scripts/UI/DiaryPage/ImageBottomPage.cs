@@ -10,6 +10,16 @@ public class ImageBottomPage : MonoBehaviour, IDiaryPage
     [SerializeField]
     private Text text;
 
+    private DiaryPageData pageData;
+
+    private void OnDestroy()
+    {
+        if (pageData != null)
+        {
+            pageData.OnTextChanged -= OnTextChanged;
+        }
+    }
+
     public IEnumerable<ElementAnimator> CreateAnimators()
     {
         return new List<ElementAnimator>()
@@ -19,11 +29,17 @@ public class ImageBottomPage : MonoBehaviour, IDiaryPage
         };
     }
 
-    public void SetData(DiaryPageData data)
+    public void SetData(DiaryEntryData entryData, DiaryPageData data)
     {
+        pageData = data;
         image.sprite = data.image;
         image.preserveAspect = true;
-        text.text = LocalizationManager.Instance.GetLocalizedString(data.text);
-        data.text.StringChanged += value => text.text = value;
+        text.text = data.Text;
+        data.OnTextChanged += OnTextChanged;
+    }
+
+    private void OnTextChanged(string value)
+    {
+        text.text = value;
     }
 }

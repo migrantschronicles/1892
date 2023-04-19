@@ -20,12 +20,17 @@ public class FirstPageSignatureImage : FirstPage
         });
     }
 
-    public override void SetData(DiaryPageData data)
+    public override void SetData(DiaryEntryData entryData, DiaryPageData data)
     {
-        base.SetData(data);
-        signature.text = LocalizationManager.Instance.GetLocalizedString(data.text2);
-        data.text2.StringChanged += value => signature.text = value;
+        base.SetData(entryData, data);
+        signature.text = data.Text2;
+        data.OnText2Changed += OnText2Changed;
         image.sprite = data.image;
         image.preserveAspect = true;
+    }
+
+    private void OnText2Changed(string value)
+    {
+        signature.text = value;
     }
 }

@@ -146,12 +146,10 @@ public class DiaryPages : MonoBehaviour
             lastAddedPage = null;
         }
 
-        entry.date = NewGameManager.Instance.date;
-
         GameObject newContentPageGO = Instantiate(contentPagePrefab, contentParent.transform);
         DiaryContentPage newContentPage = newContentPageGO.GetComponent<DiaryContentPage>();
-        CreatePageContent(entry, entry.entry.leftPage, newContentPage.LeftPage.transform, true);
-        CreatePageContent(entry, entry.entry.rightPage, newContentPage.RightPage.transform, true);
+        CreatePageContent(entry, entry.leftPage, newContentPage.LeftPage.transform, true);
+        CreatePageContent(entry, entry.rightPage, newContentPage.RightPage.transform, true);
 
         lastAddedPage = newContentPage;
         lastAddedPage.onStatusChanged += OnDiaryContentPageStatusChanged;
@@ -309,8 +307,8 @@ public class DiaryPages : MonoBehaviour
         {
             GameObject newContentPageGO = Instantiate(contentPagePrefab, contentParent.transform);
             DiaryContentPage newContentPage = newContentPageGO.GetComponent<DiaryContentPage>();
-            CreatePageContent(entry, entry.entry.leftPage, newContentPage.LeftPage.transform, false);
-            CreatePageContent(entry, entry.entry.rightPage, newContentPage.RightPage.transform, false);
+            CreatePageContent(entry, entry.leftPage, newContentPage.LeftPage.transform, false);
+            CreatePageContent(entry, entry.rightPage, newContentPage.RightPage.transform, false);
             screenshotPage = newContentPage;
         }
 

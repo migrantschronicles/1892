@@ -10,6 +10,9 @@ public class FirstPage : MonoBehaviour, IDiaryPage
     [SerializeField]
     private Text text;
 
+    protected DiaryEntryData entryData;
+    protected DiaryPageData pageData;
+
     public virtual IEnumerable<ElementAnimator> CreateAnimators()
     {
         return new List<ElementAnimator>()
@@ -19,10 +22,36 @@ public class FirstPage : MonoBehaviour, IDiaryPage
         };
     }
 
-    public virtual void SetData(DiaryPageData data)
+    private void OnDestroy()
     {
-        text.text = LocalizationManager.Instance.GetLocalizedString(data.text);
-        data.text.StringChanged += value => text.text = value;
-        dateText.text = data.Date;
+        if(entryData != null)
+        {
+            entryData.OnDateChanged -= OnDateChanged;
+        }
+
+        if(pageData != null)
+        {
+            pageData.OnTextChanged -= OnTextChanged;
+        }
+    }
+
+    public virtual void SetData(DiaryEntryData entryData, DiaryPageData data)
+    {
+        this.entryData = entryData;
+        this.pageData = data;
+        text.text = data.Text;
+        data.OnTextChanged += OnTextChanged;
+        dateText.text = entryData.LocalizedDate;
+        entryData.OnDateChanged += OnDateChanged;
+    }
+
+    private void OnTextChanged(string value)
+    {
+        text.text = value;
+    }
+
+    private void OnDateChanged(string date)
+    {
+        dateText.text = date;
     }
 }

@@ -14,6 +14,8 @@ public enum GeneratedDiaryEntryPurpose
 public class DiaryEntryManager : MonoBehaviour
 {
     [SerializeField]
+    private DiaryEntry pfaffenthalEntry;
+    [SerializeField]
     private DiaryEntry luxembourgEntry;
     [SerializeField]
     private DiaryEntry parisEntry;
@@ -116,6 +118,8 @@ public class DiaryEntryManager : MonoBehaviour
     private LocalizedString cholera;
     [SerializeField]
     private LocalizedString homesickness;
+    [SerializeField]
+    private LocalizedString pfaffenthal;
     [SerializeField]
     private LocalizedString luxembourg;
     [SerializeField]
@@ -505,6 +509,11 @@ public class DiaryEntryManager : MonoBehaviour
             string city = GenerateCity();
             return $"{lastNight} {healthStatus} {city}";
         }
+        else if(LevelInstance.Instance.LocationName == "Pfaffenthal")
+        {
+            // Special diary entry for pfaffenthal
+            return LocalizationManager.Instance.GetLocalizedString(pfaffenthal);
+        }
 
         // Always generate transportation info.
         string transporationInfo = GenerateTransportationInfo();
@@ -557,6 +566,7 @@ public class DiaryEntryManager : MonoBehaviour
             string currentLocation = LevelInstance.Instance.LocationName;
             switch (currentLocation)
             {
+                case "Pfaffenthal": return pfaffenthalEntry;
                 case "Luxembourg": return luxembourgEntry;
                 case "Paris": return parisEntry;
                 case "Brussels": return brusselsEntry;
@@ -596,10 +606,16 @@ public class DiaryEntryManager : MonoBehaviour
         }
 
         // Create a copy to not modify the asset.
-        DiaryEntryData diaryEntryData = new DiaryEntryData { entry = diaryEntry };
+        DiaryEntryData diaryEntryData = new DiaryEntryData 
+        { 
+            entry = diaryEntry,
+            leftPage = diaryEntry.leftPage.Clone(),
+            rightPage = diaryEntry.rightPage.Clone()
+        };
 
-        //string text = GenerateText(purpose);
-        //Debug.Log(text);
+        string text = GenerateText(purpose);
+        diaryEntryData.localizedText = text;
+        diaryEntryData.date = NewGameManager.Instance.date;
 
         return diaryEntryData;
     }

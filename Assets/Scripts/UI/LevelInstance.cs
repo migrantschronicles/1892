@@ -129,8 +129,6 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private string defaultScene;
     [SerializeField]
-    private DiaryEntry diaryEntry;
-    [SerializeField]
     private DiaryEntry endGamePositiveEntry;
     [SerializeField]
     private DiaryEntry endGameNegativeEntry;
@@ -333,6 +331,7 @@ public class LevelInstance : MonoBehaviour
                 break;
         }
 
+        /*
         if (diaryEntry)
         {
             blur.SetEnabled(true);
@@ -343,7 +342,7 @@ public class LevelInstance : MonoBehaviour
             sceneInteractables.SetActive(false);
             mode = Mode.Diary;
         }
-        else
+        else*/
         {
             backButton.gameObject.SetActive(false);
             ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
@@ -1359,7 +1358,8 @@ public class LevelInstance : MonoBehaviour
 
         bool positive = NewGameManager.Instance.HealthStatus.Characters.Max(data => data.HomesickessStatus.Value) <= 5.0f;
         DiaryEntry entry = positive ? endGamePositiveEntry : endGameNegativeEntry;
-        NewGameManager.Instance.AddDiaryEntry(entry);
+        //NewGameManager.Instance.AddDiaryEntry(entry);
+        ///@todo Auto generate end entries
         // Since EndGameSuccessPopup is only triggered from dialogs, the mode is still dialogs, so it should open immediately.
         OpenDiary(DiaryPageLink.Diary);
     }

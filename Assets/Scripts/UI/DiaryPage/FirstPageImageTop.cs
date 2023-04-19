@@ -17,9 +17,9 @@ public class FirstPageImageBottom : FirstPage
         });
     }
 
-    public override void SetData(DiaryPageData data)
+    public override void SetData(DiaryEntryData entryData, DiaryPageData data)
     {
-        base.SetData(data);
+        base.SetData(entryData, data);
         image.sprite = data.image;
         image.preserveAspect = true;
     }

@@ -49,11 +49,16 @@ public class DiaryPageDrawing
 public class DiaryPageData
 {
     public GameObject prefab;
-    public LocalizedString text;
-    public LocalizedString text2;
     public Sprite image;
     [Tooltip("A list of sketch drawings that can be added to the page. If drawing.image is null, no sketch drawing is added.")]
     public DiaryPageDrawing[] drawings;
+
+    public string Text { get; set; }
+    public string Text2 { get; set; }
+
+    public delegate void OnTextChangedEvent(string text);
+    public event OnTextChangedEvent OnTextChanged;
+    public event OnTextChangedEvent OnText2Changed;
 
     public bool IsValid
     {
@@ -61,6 +66,19 @@ public class DiaryPageData
         {
             return prefab != null;
         }
+    }
+
+    public DiaryPageData Clone()
+    {
+        DiaryPageData newData = new DiaryPageData
+        {
+            prefab = prefab,
+            image = image,
+            drawings = drawings,
+            Text = Text,
+            Text2 = Text2
+        };
+        return newData;
     }
 }
 
@@ -77,12 +95,13 @@ public class DiaryEntry : ScriptableObject
 public class DiaryEntryData
 {
     public DiaryEntry entry;
-    public string textLeft;
-    public string textLeft2;
-    public string textRight;
-    public string textRight2;
+    public DiaryPageData leftPage;
+    public DiaryPageData rightPage;
     public string localizedText;
     public DateTime date;
+
+    public delegate void OnDateChangedEvent(string date);
+    public event OnDateChangedEvent OnDateChanged;
 
     public string LocalizedDate
     {
@@ -90,42 +109,5 @@ public class DiaryEntryData
         {
             return date != null ? date.ToString("d MMMM yyyy") : "";
         }
-    }
-
-    public bool HasOverrides
-    {
-        get
-        {
-            return !string.IsNullOrEmpty(textLeft) || !string.IsNullOrEmpty(textLeft2) || !string.IsNullOrEmpty(textRight) ||
-                !string.IsNullOrEmpty(textRight); 
-        }
-    }
-    
-    public string GetTextForPage(DiaryPageData page)
-    {
-        if(page == entry.leftPage)
-        {
-            return textLeft;
-        }
-        else if(page == entry.rightPage)
-        {
-            return textRight;
-        }
-
-        return "";
-    }
-
-    public string GetText2ForPage(DiaryPageData page)
-    {
-        if (page == entry.leftPage)
-        {
-            return textLeft2;
-        }
-        else if (page == entry.rightPage)
-        {
-            return textRight2;
-        }
-
-        return "";
     }
 }

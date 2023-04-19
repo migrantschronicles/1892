@@ -197,6 +197,16 @@ public class Diary : MonoBehaviour
                 isPageToRight = false;
             }
         }
+        else
+        {
+            int nextSiblingIndex = page.transform.GetSiblingIndex();
+            int currentSiblingIndex = currentPage.transform.GetSiblingIndex();
+            if (nextSiblingIndex < currentSiblingIndex ||
+                (nextSiblingIndex == currentSiblingIndex && nextPage.transform.GetSiblingIndex() < currentPage.transform.GetSiblingIndex()))
+            {
+                isPageToRight = false;
+            }
+        }
 
         if(isPageToRight)
         {

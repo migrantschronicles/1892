@@ -1235,8 +1235,8 @@ public class LevelInstance : MonoBehaviour
 
     private void OpenNewDayDiaryEntry()
     {
-        DiaryEntry newDayEntry = NewGameManager.Instance.DiaryEntryManager.GenerateEntry(GeneratedDiaryEntryPurpose.NewDay);
-        if(!newDayEntry)
+        DiaryEntryData newDayEntry = NewGameManager.Instance.DiaryEntryManager.GenerateEntry(GeneratedDiaryEntryPurpose.NewDay);
+        if(newDayEntry == null)
         {
             return;
         }

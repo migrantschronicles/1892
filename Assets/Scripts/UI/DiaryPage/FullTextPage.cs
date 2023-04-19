@@ -16,9 +16,16 @@ public class FullTextPage : MonoBehaviour, IDiaryPage
         };
     }
 
-    public virtual void SetData(DiaryPageData data)
+    public virtual void SetData(DiaryEntryData entryData, DiaryPageData data)
     {
-        text.text = LocalizationManager.Instance.GetLocalizedString(data.text);
-        data.text.StringChanged += value => text.text = value;
+        if(entryData.HasOverrides)
+        {
+
+        }
+        else
+        {
+            text.text = LocalizationManager.Instance.GetLocalizedString(data.text);
+            data.text.StringChanged += value => text.text = value;
+        }
     }
 }

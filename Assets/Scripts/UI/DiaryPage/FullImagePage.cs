@@ -16,7 +16,7 @@ public class FullImagePage : MonoBehaviour, IDiaryPage
         };
     }
 
-    public void SetData(DiaryPageData data)
+    public void SetData(DiaryEntryData entryData, DiaryPageData data)
     {
         image.sprite = data.image;
         image.preserveAspect = true;

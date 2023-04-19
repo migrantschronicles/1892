@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,9 +55,6 @@ public class DiaryPageData
     [Tooltip("A list of sketch drawings that can be added to the page. If drawing.image is null, no sketch drawing is added.")]
     public DiaryPageDrawing[] drawings;
 
-    // Not set in the inspector, but in DiaryPages. Can be used from DiaryPage to set the date.
-    public string Date { get; set; }
-
     public bool IsValid
     {
         get
@@ -73,4 +71,61 @@ public class DiaryEntry : ScriptableObject
     public DiaryPageData leftPage;
     [Tooltip("The right page for this entry")]
     public DiaryPageData rightPage;
+}
+
+[System.Serializable]
+public class DiaryEntryData
+{
+    public DiaryEntry entry;
+    public string textLeft;
+    public string textLeft2;
+    public string textRight;
+    public string textRight2;
+    public string localizedText;
+    public DateTime date;
+
+    public string LocalizedDate
+    {
+        get
+        {
+            return date != null ? date.ToString("d MMMM yyyy") : "";
+        }
+    }
+
+    public bool HasOverrides
+    {
+        get
+        {
+            return !string.IsNullOrEmpty(textLeft) || !string.IsNullOrEmpty(textLeft2) || !string.IsNullOrEmpty(textRight) ||
+                !string.IsNullOrEmpty(textRight); 
+        }
+    }
+    
+    public string GetTextForPage(DiaryPageData page)
+    {
+        if(page == entry.leftPage)
+        {
+            return textLeft;
+        }
+        else if(page == entry.rightPage)
+        {
+            return textRight;
+        }
+
+        return "";
+    }
+
+    public string GetText2ForPage(DiaryPageData page)
+    {
+        if (page == entry.leftPage)
+        {
+            return textLeft2;
+        }
+        else if (page == entry.rightPage)
+        {
+            return textRight2;
+        }
+
+        return "";
+    }
 }

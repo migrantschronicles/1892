@@ -18,11 +18,6 @@ public enum TransportationMethod
     Train
 }
 
-public class DiaryEntryData
-{
-    public DiaryEntry entry;
-}
-
 public class Journey
 {
     public string destination;
@@ -107,7 +102,7 @@ public class NewGameManager : MonoBehaviour
     public ItemManager ItemManager { get { return GetComponent<ItemManager>(); } }
 
     // Diary entries
-    private List<DiaryEntry> diaryEntries = new List<DiaryEntry>();
+    private List<DiaryEntryData> diaryEntries = new List<DiaryEntryData>();
     public DiaryEntry TEST_ParisEntry;
 
     // Map routes 
@@ -117,7 +112,7 @@ public class NewGameManager : MonoBehaviour
     // Conditions
     public DialogConditionProvider conditions { get { return GetComponent<DialogConditionProvider>(); } }
 
-    public IEnumerable<DiaryEntry> DiaryEntries { get { return diaryEntries; } }
+    public IEnumerable<DiaryEntryData> DiaryEntries { get { return diaryEntries; } }
     public DiaryEntryManager DiaryEntryManager { get { return GetComponent<DiaryEntryManager>(); } }
     public TransportationManager TransportationManager { get { return GetComponent<TransportationManager>(); } }
 
@@ -153,7 +148,7 @@ public class NewGameManager : MonoBehaviour
     public event OnCurrencyChangedEvent onCurrencyChanged;
 
     // Events
-    public delegate void OnDiaryEntryAdded(DiaryEntry entry);
+    public delegate void OnDiaryEntryAdded(DiaryEntryData entry);
     public event OnDiaryEntryAdded onDiaryEntryAdded;
 
     public delegate void OnMoneyChangedDelegate(int money);
@@ -533,7 +528,7 @@ public class NewGameManager : MonoBehaviour
         ShipManager.EndTravellingInShip();
     }
 
-    public void AddDiaryEntry(DiaryEntry entry)
+    public void AddDiaryEntry(DiaryEntryData entry)
     {
         diaryEntries.Add(entry);
         if(onDiaryEntryAdded != null)

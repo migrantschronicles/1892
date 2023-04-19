@@ -586,7 +586,7 @@ public class DiaryEntryManager : MonoBehaviour
         return null;
     }
 
-    public DiaryEntry GenerateEntry(GeneratedDiaryEntryPurpose purpose)
+    public DiaryEntryData GenerateEntry(GeneratedDiaryEntryPurpose purpose)
     {
         DiaryEntry diaryEntry = GetDiaryEntryForCity();
         if(!diaryEntry)
@@ -595,9 +595,12 @@ public class DiaryEntryManager : MonoBehaviour
             return null;
         }
 
-        return diaryEntry;
+        // Create a copy to not modify the asset.
+        DiaryEntryData diaryEntryData = new DiaryEntryData { entry = diaryEntry };
 
         //string text = GenerateText(purpose);
         //Debug.Log(text);
+
+        return diaryEntryData;
     }
 }

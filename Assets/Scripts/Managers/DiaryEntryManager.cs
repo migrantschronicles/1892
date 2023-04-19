@@ -504,6 +504,12 @@ public class DiaryEntryManager : MonoBehaviour
     {
         if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship || NewGameManager.Instance.ShipManager.IsStopoverDay)
         {
+            if(NewGameManager.Instance.DaysInCity == 0)
+            {
+                // On first day, only city
+                return LocalizationManager.Instance.GetLocalizedString(shipDay1);
+            }
+
             string lastNight = GenerateLastNight();
             string healthStatus = GenerateHealthStatus();
             string city = GenerateCity();

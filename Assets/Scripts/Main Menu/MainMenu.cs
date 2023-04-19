@@ -65,6 +65,9 @@ public class MainMenu : MonoBehaviour
     public void OpenLanguageSelection() 
     {
         inLanguageSelection = true;
+        diaryAnimator.gameObject.SetActive(false);
+
+
     }
 
     public void CloseLanguageSelection()

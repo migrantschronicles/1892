@@ -399,26 +399,38 @@ public class DialogChat : MonoBehaviour
         }
         else if(pausedOn is QuestAdded questAdded)
         {
-            ///@todo
-            Quest quest = NewGameManager.Instance.QuestManager.GetQuestById("");
+            Quest quest = NewGameManager.Instance.QuestManager.GetQuestById(questAdded.Template.QuestAdded.QuestAdded);
+            bool handled = false;
             if(quest)
             {
                 if(NewGameManager.Instance.QuestManager.AddQuest(quest))
                 {
                     LevelInstance.Instance.OnQuestAdded(quest);
+                    handled = true;
                 }
+            }
+
+            if(!handled)
+            {
+                OnTemplateHandled();
             }
         }
         else if(pausedOn is QuestFinished questFinished)
         {
-            ///@todo
-            Quest quest = NewGameManager.Instance.QuestManager.GetQuestById("");
-            if(quest)
+            Quest quest = NewGameManager.Instance.QuestManager.GetQuestById(questFinished.Template.QuestFinished.QuestFinished);
+            bool handled = false;
+            if (quest)
             {
                 if (NewGameManager.Instance.QuestManager.FinishQuest(quest))
                 {
                     LevelInstance.Instance.OnQuestFinished(quest);
+                    handled = true;
                 }
+            }
+
+            if(!handled)
+            {
+                OnTemplateHandled();
             }
         }
     }

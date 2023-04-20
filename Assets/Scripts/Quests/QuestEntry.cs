@@ -9,6 +9,8 @@ public class QuestEntry : MonoBehaviour
     private Color finishedForegroundColor = Color.black;
     [SerializeField]
     private Color failedForegroundColor = Color.black;
+    [SerializeField]
+    private Text titleText;
 
     private Quest quest;
     public Quest Quest
@@ -19,13 +21,6 @@ public class QuestEntry : MonoBehaviour
             quest = value;
             titleText.text = LocalizationManager.Instance.GetLocalizedString(quest.Title);
         }
-    }
-
-    private Text titleText;
-
-    private void Awake()
-    {
-        titleText = GetComponent<Text>();
     }
 
     public void MarkFinished()

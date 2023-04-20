@@ -240,6 +240,11 @@ public class IngameDiary : MonoBehaviour
         NewGameManager.Instance.GeneratePDF();
     }
 
+    public void GenerateGeoJSON()
+    {
+        NewGameManager.Instance.GenerateGeoJSON();
+    }
+
     public void SetMarkersClosed()
     {
         diary.SetMarkersClosed(true);

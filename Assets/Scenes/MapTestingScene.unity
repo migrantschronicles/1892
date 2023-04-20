@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44402242, g: 0.49316543, b: 0.5722324, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -365,25 +365,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   userName: 
-  currentLocation: Luxembourg
-  visitedLocationsStr: []
-  gameRunning: 1
-  timeSpeed: 0.1
-  hoursPerDay: 10
-  seconds: 0
-  minutes: 0
-  hour: 0
   day: 0
-  food: 0
+  wantsEndOfDay: 0
+  wantsEndGame: 0
   money: 0
   dateStr: 
-  traveledCityMarker: {fileID: 21300000, guid: 1cc50e2701a9f5146ba127fd140452c3, type: 3}
-  currentCityMarker: {fileID: 21300000, guid: 6609fb5a690da2f489e60a524ed1e35c, type: 3}
-  untraveledCityMarker: {fileID: 21300000, guid: 328a9ac03decfc042bd2593c041b18fe, type: 3}
-  traveledCityCapital: {fileID: 21300000, guid: 5bc75da8283307247926c55292479306, type: 3}
-  currentCityCapital: {fileID: 21300000, guid: 7f77ee98104aff34dbdb673c31a66013, type: 3}
-  untraveledCityCapital: {fileID: 21300000, guid: 1026717aa652e78499167d95ff15ac66, type: 3}
-  popups: {fileID: 0}
   inventory:
     startItems:
     - {fileID: 11400000, guid: f164922e1f30dcb40bbb41e6d06ab3cc, type: 2}
@@ -401,7 +387,6 @@ MonoBehaviour:
   foodItem: {fileID: 0}
   TEST_ParisEntry: {fileID: 0}
   transportationTableCSV: {fileID: 0}
-  TEST_Quest: {fileID: 0}
   moneyStolenProbabilityWeight: 5
   moneyStolenProbabilityCurve:
     serializedVersion: 2
@@ -466,6 +451,18 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1468428080795278559, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1468428080795278559, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1468428080795278559, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1596725859423760390, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -505,6 +502,14 @@ PrefabInstance:
     - target: {fileID: 2703274216477583273, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
       propertyPath: shipRoutesIndex
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2708345137871457683, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2708345137871457683, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2753937065456259658, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
       propertyPath: m_AnchorMax.y
@@ -604,6 +609,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5247124859444182337, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291874603730089445, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291874603730089445, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5291874603730089445, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5478874913827266837, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
@@ -742,6 +759,14 @@ PrefabInstance:
       propertyPath: transportationTableCSV
       value: 
       objectReference: {fileID: 4900000, guid: 918e8838e62393747a0f2689dc606655, type: 3}
+    - target: {fileID: 8684521078472631465, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8684521078472631465, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9123930225560335390, guid: 8d7920c388e2a1048b4284d2b15d0089, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

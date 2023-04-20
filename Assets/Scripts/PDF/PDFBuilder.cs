@@ -2,6 +2,8 @@ using UnityEngine;
 using System.IO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Newtonsoft.Json;
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
 using PdfSharp.Pdf;
 using sharpPDF;
@@ -94,7 +96,7 @@ class WinPDFPlatform : IPDFPlatform
 
     public WinPDFPlatform(string path)
     {
-        sharpPdfDocument = new pdfDocument("Migrants Chronicles", "TH Köln");
+        sharpPdfDocument = new pdfDocument("Migrants Chronicles", "TH Kï¿½ln");
         FontSize = 12;
         outputPath = path;
     }
@@ -477,7 +479,7 @@ public class PDFBuilder
         // Responsible for generating the pdf based on the state.
         // Maybe outsource this to a thread, since it will take some time?
         string filePath = GenerateFilePath();
-        Debug.Log($"Generating pdf document at {filePath}");
+        UnityEngine.Debug.Log($"Generating pdf document at {filePath}");
 
         IPDFPlatform pdf = CreatePlatform(filePath);
         //pdf.LoadFont("AlegreyaSans-Black.ttf");
@@ -513,4 +515,33 @@ public class PDFBuilder
         return Path.Combine(OutputPath, $"MigrantsChronicles-{time.Year}-{time.Month}-{time.Day}-{time.Hour}-{time.Minute}.pdf");
 #endif
     }
+
+    public void GenerateGeoJSON()
+    {
+        List<double[]> coordinatesList = NewGameManager.Instance.locationsCoordinates;
+
+        var feature = new
+        {
+            type = "Feature",
+            geometry = new
+            {
+                type = "LineString",
+                coordinates = coordinatesList
+            },
+            properties = new { }
+        };
+
+        var featureCollection = new
+        {
+            type = "FeatureCollection",
+            features = new[] { feature }
+        };
+
+        string json = JsonConvert.SerializeObject(featureCollection, Formatting.Indented);
+        UnityEngine.Debug.Log(json);
+
+        System.IO.File.WriteAllText(@"journeytest.geojson", json); // Change filename to student name, Yannik make sure the file downloads with the PDF
+        UnityEngine.Debug.Log("GeoJSON file created successfully");
+    }
 }
+

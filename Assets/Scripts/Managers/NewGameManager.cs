@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 using System.Globalization;
 using System;
+using System.Diagnostics;
 
 public enum TransportationMethod
 {
@@ -73,6 +74,15 @@ public class NewGameManager : MonoBehaviour
     public TransportationMethod nextMethod { get; private set; }
     public TransportationMethod lastMethod { get; private set; } = TransportationMethod.None;
     public ShipManager ShipManager { get { return GetComponent<ShipManager>(); } }
+    public List<double[]> locationsCoordinates = new List<double[]>() // For testing purposes
+    {
+        new double[] { 6.134173, 49.614828 },
+        new double[] {  6.087814 ,49.770628},
+        new double[] { 2.348391 ,48.853495 },
+        new double[] { 4.399708 ,51.221110 },
+        new double[] { -74.039599, 40.699028 }
+
+    };
 
     public delegate void OnRouteDiscoveredEvent(string from, string to, TransportationMethod method);
     public event OnRouteDiscoveredEvent OnRouteDiscovered;
@@ -382,6 +392,10 @@ public class NewGameManager : MonoBehaviour
 #endif
     }
 
+    public void DevGoTo(string name)
+    {
+        SceneManager.LoadScene(name);
+    }
     public void GoToLocation(string name, TransportationMethod method)
     {
         if(nextLocation != null)
@@ -394,7 +408,7 @@ public class NewGameManager : MonoBehaviour
         {
             // Cannot travel again today
             ///@todo show popup
-            Debug.Log("Cannot travel again today");
+            UnityEngine.Debug.Log("Cannot travel again today");
             return;
         }
 
@@ -407,20 +421,20 @@ public class NewGameManager : MonoBehaviour
             // Check prerequisits
             if (!CanTravelTo(name, method))
             {
-                Debug.Log($"Cannot travel to {name} via {method}");
+                UnityEngine.Debug.Log($"Cannot travel to {name} via {method}");
                 return;
             }
 
             TransportationRouteInfo routeInfo = transportationInfo.GetRouteInfo(LevelInstance.Instance.LocationName, name, method);
             if (routeInfo == null)
             {
-                Debug.Log($"No route info found for {name} via {method}");
+                UnityEngine.Debug.Log($"No route info found for {name} via {method}");
                 return;
             }
 
             if (money < routeInfo.cost)
             {
-                Debug.Log($"Not enough money for {name} via {method}");
+                UnityEngine.Debug.Log($"Not enough money for {name} via {method}");
                 return;
             }
 
@@ -561,10 +575,18 @@ public class NewGameManager : MonoBehaviour
 
     public void GeneratePDF()
     {
-        Debug.Log("Generating PDF");
+        UnityEngine.Debug.Log("Generating PDF");
         PDFBuilder builder = new PDFBuilder();
         builder.Generate(new DiaryEntryData { entry = TEST_ParisEntry });
-        Debug.Log("Finished PDF generating");
+        UnityEngine.Debug.Log("Finished PDF generating");
+    }
+
+    public void GenerateGeoJSON()
+    {
+        UnityEngine.Debug.Log("Generating GeoJSON");
+        PDFBuilder builder = new PDFBuilder();
+        builder.GenerateGeoJSON();
+        UnityEngine.Debug.Log("Finished GeoJSON generating");
     }
 
     /**
@@ -762,7 +784,7 @@ public class NewGameManager : MonoBehaviour
 
     public void OnProtagonistDied(ProtagonistData protagonist)
     {
-        Debug.Log($"{protagonist.name} died");
+        UnityEngine.Debug.Log($"{protagonist.name} died");
         OnEndOfGame(false);
     }
 
@@ -936,7 +958,7 @@ public class NewGameManager : MonoBehaviour
             case "ship": return TransportationMethod.Ship;
             case "train": return TransportationMethod.Train;
             case "cart": return TransportationMethod.Cart;
-            default: Debug.Assert(false, $"Invalid transporation method: {method}"); break;
+            default: UnityEngine.Debug.Assert(false, $"Invalid transporation method: {method}"); break;
         }
 
         return TransportationMethod.Walking;

@@ -9,8 +9,6 @@ public class TransportationMethodBox : MonoBehaviour
     [SerializeField]
     private TransportationMethod method;
     [SerializeField]
-    private Text timeText;
-    [SerializeField]
     private Text titleText;
     [SerializeField]
     private Text moneyText;
@@ -23,7 +21,6 @@ public class TransportationMethodBox : MonoBehaviour
     {
         set
         {
-            timeText.text = $"{(int)(value.time / 86400)}d {(int)((value.time % 86400) / 3600)}h {(int)((value.time % 3600) / 60)}m";
             moneyText.text = value.cost.ToString();
         }
     }

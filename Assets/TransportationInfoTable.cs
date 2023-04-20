@@ -8,13 +8,12 @@ public class TransportationRouteInfo
     public string FromLocation;
     public string ToLocation;
     public TransportationMethod method; // Walking, Train, Carriage, etc.
-    public float time; // In seconds
     public int cost;
     public bool isDiscoverable;
 
     public override string ToString() 
     {
-        return $"Transportation Route Info: {FromLocation}, {ToLocation}, {method}, {time}, {cost}, {isDiscoverable}";
+        return $"Transportation Route Info: {FromLocation}, {ToLocation}, {method}, {cost}, {isDiscoverable}";
     }
 }
 
@@ -42,17 +41,13 @@ public class TransportationInfoTable
             string ToLocation = attributes[1];
             string type = attributes[2];
             TransportationMethod method = NewGameManager.GetTransportationMethodByName(type);
-            int hours = int.Parse(attributes[3]);
-            int minutes = int.Parse(attributes[4]);
-            float time = hours * 60 * 60 + minutes * 60;
-            int cost = int.Parse(attributes[5]);
-            bool discoverable = !string.IsNullOrWhiteSpace(attributes[6]);
+            int cost = int.Parse(attributes[3]);
+            bool discoverable = !string.IsNullOrWhiteSpace(attributes[4]);
             TransportationRouteInfo newRouteInfo = new TransportationRouteInfo 
             { 
                 FromLocation = FromLocation, 
                 ToLocation = ToLocation, 
                 method = method, 
-                time = time, 
                 cost = cost, 
                 isDiscoverable = discoverable
             };

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44402242, g: 0.49316543, b: 0.5722324, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2029,9 +2029,9 @@ Transform:
   - {fileID: 354490539}
   - {fileID: 40027839}
   - {fileID: 2030546299}
+  - {fileID: 8780958706966528985}
   - {fileID: 744212109}
   - {fileID: 2063144417}
-  - {fileID: 8780958706966528985}
   - {fileID: 374537025}
   - {fileID: 10062196}
   - {fileID: 1425067449}
@@ -2386,6 +2386,7 @@ GameObject:
   m_Component:
   - component: {fileID: 602016332}
   - component: {fileID: 602016331}
+  - component: {fileID: 602016333}
   m_Layer: 0
   m_Name: Level Manager
   m_TagString: Untagged
@@ -2420,6 +2421,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &602016333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 602016330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2d1dc7d4bf5f2e4784ef1329b53f94f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  savedGameExists: 0
 --- !u!1 &611870978
 GameObject:
   m_ObjectHideFlags: 0
@@ -5712,6 +5726,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1154596962}
   m_CullTransparentMesh: 1
+--- !u!1 &1178897208 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7381078316858095774, guid: ba18f8ea8c14cf241a5ea7356992de9b, type: 3}
+  m_PrefabInstance: {fileID: 7381078316263798037}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1180792988
 GameObject:
   m_ObjectHideFlags: 0
@@ -8542,6 +8561,19 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7381078316858095769, guid: ba18f8ea8c14cf241a5ea7356992de9b, type: 3}
   m_PrefabInstance: {fileID: 7381078316263798037}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1670892945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1178897208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5328c85d9dbd4dd47b4cd930e82833a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sgm: {fileID: 602016333}
 --- !u!1 &1679310177
 GameObject:
   m_ObjectHideFlags: 0
@@ -14178,6 +14210,14 @@ PrefabInstance:
       propertyPath: m_StringReference.m_TableEntryReference.m_KeyId
       value: 54815925766615040
       objectReference: {fileID: 0}
+    - target: {fileID: 7008230756316879920, guid: 039b2b696513f204186f29ad71c26972, type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7008230756316879920, guid: 039b2b696513f204186f29ad71c26972, type: 3}
+      propertyPath: m_Colors.m_NormalColor.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7008230756316879921, guid: 039b2b696513f204186f29ad71c26972, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -14261,6 +14301,10 @@ PrefabInstance:
     - target: {fileID: 7008230756316879921, guid: 039b2b696513f204186f29ad71c26972, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7008230756316879923, guid: 039b2b696513f204186f29ad71c26972, type: 3}
+      propertyPath: m_Color.a
+      value: 0.64705884
       objectReference: {fileID: 0}
     - target: {fileID: 7008230756316879926, guid: 039b2b696513f204186f29ad71c26972, type: 3}
       propertyPath: m_Name
@@ -17607,6 +17651,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1251471757}
     m_Modifications:
+    - target: {fileID: 7381078316858095768, guid: ba18f8ea8c14cf241a5ea7356992de9b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7381078316858095768, guid: ba18f8ea8c14cf241a5ea7356992de9b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7381078316858095768, guid: ba18f8ea8c14cf241a5ea7356992de9b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 602016333}
+    - target: {fileID: 7381078316858095768, guid: ba18f8ea8c14cf241a5ea7356992de9b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7381078316858095768, guid: ba18f8ea8c14cf241a5ea7356992de9b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LoadGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 7381078316858095768, guid: ba18f8ea8c14cf241a5ea7356992de9b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SaveGameManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7381078316858095768, guid: ba18f8ea8c14cf241a5ea7356992de9b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 7381078316858095769, guid: ba18f8ea8c14cf241a5ea7356992de9b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -18794,7 +18866,7 @@ Transform:
   m_Children:
   - {fileID: 5480671866264230441}
   m_Father: {fileID: 527523658}
-  m_RootOrder: 7
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!222 &8830485044736123162
 CanvasRenderer:

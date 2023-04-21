@@ -404,6 +404,8 @@ public class NewGameManager : MonoBehaviour
             return;
         }
 
+        
+
         if(travelCountToday > 0)
         {
             // Cannot travel again today
@@ -452,6 +454,7 @@ public class NewGameManager : MonoBehaviour
         nextMethod = method;
         lastMethod = method;
         AudioManager.Instance.FadeOutMusic();
+        GetComponent<SaveGameManager>().SaveGame();
         SceneManager.LoadScene("LoadingScene");
     }
     

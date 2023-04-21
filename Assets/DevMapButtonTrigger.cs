@@ -8,6 +8,7 @@ public class DevMapButtonTrigger : MonoBehaviour
 
     public void TriggerButtons()
     {
-        buttons.SetActive(!buttons.activeSelf);
+        //buttons.SetActive(!buttons.activeSelf);
+        LevelInstance.Instance.ToggleDeveloperMenu();
     }
 }

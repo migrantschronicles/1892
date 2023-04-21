@@ -376,21 +376,28 @@ public class LevelInstance : MonoBehaviour
 #if DEBUG && ENABLE_DEVELOPER_MENU
         if (Input.GetKeyDown(KeyCode.F10))
         {
-            if (developerLocationPanel)
+            ToggleDeveloperMenu();
+        }
+#endif
+    }
+
+    public void ToggleDeveloperMenu()
+    {
+#if DEBUG && ENABLE_DEVELOPER_MENU
+        if (developerLocationPanel)
+        {
+            if (developerLocationPanel.activeSelf)
             {
-                if(developerLocationPanel.activeSelf)
-                {
-                    developerLocationPanel.SetActive(false);
-                }
-                else
-                {
-                    developerLocationPanel.SetActive(true);
-                }
+                developerLocationPanel.SetActive(false);
             }
             else
             {
-                developerLocationPanel = Instantiate(developerLocationPanelPrefab, canvas.transform);
+                developerLocationPanel.SetActive(true);
             }
+        }
+        else
+        {
+            developerLocationPanel = Instantiate(developerLocationPanelPrefab, canvas.transform);
         }
 #endif
     }

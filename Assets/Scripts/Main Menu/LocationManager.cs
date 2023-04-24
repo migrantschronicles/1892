@@ -73,4 +73,17 @@ public class LocationManager : MonoBehaviour
         Continent next = GetContinent(to);
         return current == Continent.Europe && next == Continent.America;
     }
+
+    public Currency GetCurrencyForLocation(string location)
+    {
+        foreach(LocationInfo info in infos)
+        {
+            if(info.displayName == location)
+            {
+                return info.continent == Continent.America ? Currency.Dollar : Currency.Franc;
+            }
+        }
+
+        return Currency.Franc;
+    }
 }

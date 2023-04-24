@@ -576,6 +576,67 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
+    public DiaryEntryInfo CollectDiaryEntryInfo()
+    {
+        List<ProtagonistHealthData> characters = new List<ProtagonistHealthData>(NewGameManager.Instance.HealthStatus.Characters);
+
+        List<HealthProblem> newProblems = new();
+        for (int i = 0; i < characters.Count; ++i)
+        {
+            ProtagonistHealthData character = characters[i];
+            if (character.CholeraStatus.DaysSick == 1)
+            {
+                // Got sick
+                newProblems.Add(new HealthProblem { character = character.CharacterData, sickness = HealthProblemType.Cholera });
+                characters.RemoveAt(i);
+                --i;
+            }
+            else if (character.HomesickessStatus.DaysSick == 1)
+            {
+                // Got homesick
+                newProblems.Add(new HealthProblem {character = character.CharacterData, sickness = HealthProblemType.Homesickness });
+                characters.RemoveAt(i);
+                --i;
+            }
+        }
+
+        List<HealthProblem> existingProblems = new();
+        for (int i = 0; i < characters.Count; ++i)
+        {
+            ProtagonistHealthData character = characters[i];
+            if (character.CholeraStatus.DaysSick > 1)
+            {
+                // Still sick
+                existingProblems.Add(new HealthProblem {character = character.CharacterData, sickness = HealthProblemType.Cholera });
+                characters.RemoveAt(i);
+                --i;
+            }
+            else if (character.HomesickessStatus.DaysSick > 1)
+            {
+                // Still homesick
+                existingProblems.Add(new HealthProblem {character = character.CharacterData, sickness = HealthProblemType.Homesickness });
+                characters.RemoveAt(i);
+                --i;
+            }
+        }
+
+        return new DiaryEntryInfo
+        {
+            levelMode = LevelInstance.Instance.LevelMode,
+            daysInCity = DaysInCity,
+            locationName = LevelInstance.Instance.LocationName,
+            isStopoverDay = ShipManager.IsStopoverDay,
+            lastSleepMethod = LastSleepMethod,
+            lastStolenItems = LastStolenItems,
+            hungryCharacters = new List<ProtagonistData>(HealthStatus.GetHungryCharacters().Select(character => character.CharacterData)),
+            stopoverLocation = ShipManager.StopoverLocation,
+            newHealthProblems = newProblems,
+            existingHealthProblems = existingProblems,
+            date = date,
+            lastTransportationMethod = lastMethod
+        };
+    }
+
     public void GeneratePDF()
     {
         UnityEngine.Debug.Log("Generating PDF");

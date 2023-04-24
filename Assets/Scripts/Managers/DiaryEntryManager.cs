@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Localization;
-using static UnityEngine.Rendering.DebugUI;
 
 public enum GeneratedDiaryEntryPurpose
 {
@@ -187,20 +186,14 @@ public class DiaryEntryManager : MonoBehaviour
     [SerializeField]
     private LocalizedString philadelphia;
 
-    private string GenerateTransportationInfo()
+    private string GenerateTransportationInfo(DiaryEntryInfo info)
     {
-        int daysInCity = NewGameManager.Instance.DaysInCity;
-        return GenerateTransportationInfo(daysInCity);
-    }
-
-    private string GenerateTransportationInfo(int daysInCity)
-    {
-        string localizedLocation = NewGameManager.Instance.LocationManager.GetLocalizedName(LevelInstance.Instance.LocationName);
-        if (NewGameManager.Instance.DaysInCity == 0)
+        string localizedLocation = NewGameManager.Instance.LocationManager.GetLocalizedName(info.locationName);
+        if (info.daysInCity == 0)
         {
             // The day of the arrival
             int randomIndex = Random.Range(0, transportationFirstDay.Length);
-            string localizedMethod = NewGameManager.Instance.TransportationManager.GetLocalizedMethod(NewGameManager.Instance.lastMethod);
+            string localizedMethod = NewGameManager.Instance.TransportationManager.GetLocalizedMethod(info.lastTransportationMethod);
             return LocalizationManager.Instance.GetLocalizedString(transportationFirstDay[randomIndex], localizedLocation, localizedMethod);
         }
         else
@@ -210,26 +203,15 @@ public class DiaryEntryManager : MonoBehaviour
         }
     }
 
-    private string GenerateLastNight()
+    private string GenerateLastNight(DiaryEntryInfo info)
     {
-        List<ProtagonistHealthData> hungryCharacters = new List<ProtagonistHealthData>(NewGameManager.Instance.HealthStatus.GetHungryCharacters());
-        SleepMethod sleepMethod = NewGameManager.Instance.LastSleepMethod;
-        List<StolenItemInfo> items = NewGameManager.Instance.LastStolenItems;
-        int daysInCity = NewGameManager.Instance.DaysInCity;
-        string stopoverLocation = NewGameManager.Instance.ShipManager.IsStopoverDay ? NewGameManager.Instance.ShipManager.StopoverLocation : null;
-        return GenerateLastNight(hungryCharacters, sleepMethod, items, daysInCity, stopoverLocation);
-    }
-
-    private string GenerateLastNight(List<ProtagonistHealthData> hungryCharacters, SleepMethod lastSleepMethod, List<StolenItemInfo> lastStolenItems,
-        int daysInCity, string stopoverLocation)
-    {
-        switch(lastSleepMethod)
+        switch(info.lastSleepMethod)
         {
             case SleepMethod.Outside:
             {
-                if(hungryCharacters.Count == 0)
+                if(info.hungryCharacters.Count == 0)
                 {
-                    if(lastStolenItems.Count == 0)
+                    if(info.lastStolenItems.Count == 0)
                     {
                         // Nothing got stolen, no one is hungry.
                         return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideEnoughFoodNothingStolen);
@@ -237,13 +219,14 @@ public class DiaryEntryManager : MonoBehaviour
                     else
                     {
                         // Something got stolen, but no one is hungry.
-                        string localizedItems = GetLocalizedStolenItems(lastStolenItems);
+                        Currency currency = NewGameManager.Instance.LocationManager.GetCurrencyForLocation(info.locationName);
+                        string localizedItems = GetLocalizedStolenItems(info.lastStolenItems, currency);
                         return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideEnoughFoodStolen, localizedItems);
                     }
                 }
                 else
                 {
-                    if(lastStolenItems.Count == 0)
+                    if(info.lastStolenItems.Count == 0)
                     {
                         // Nothing got stolen, but some one is hungry.
                         return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideNotEnoughFoodNothingStolen);
@@ -251,7 +234,8 @@ public class DiaryEntryManager : MonoBehaviour
                     else
                     {
                         // Something got stolen and someone is hungry.
-                        string localizedItems = GetLocalizedStolenItems(lastStolenItems);
+                        Currency currency = NewGameManager.Instance.LocationManager.GetCurrencyForLocation(info.locationName);
+                        string localizedItems = GetLocalizedStolenItems(info.lastStolenItems, currency);
                         return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideNotEnoughFoodStolen, localizedItems);
                     }
                 }
@@ -259,7 +243,7 @@ public class DiaryEntryManager : MonoBehaviour
 
             case SleepMethod.Hotel:
             {
-                if(hungryCharacters.Count == 0)
+                if(info.hungryCharacters.Count == 0)
                 {
                     // Everyone had enough food.
                     return LocalizationManager.Instance.GetLocalizedString(lastNightHotelEnoughFood);
@@ -268,16 +252,16 @@ public class DiaryEntryManager : MonoBehaviour
                 {
                     // Someone was hungry.
                     string localizedName;
-                    ProtagonistHealthData mainCharacter = GetMainHealthData(hungryCharacters);
+                    ProtagonistData mainCharacter = GetMainHealthData(info.hungryCharacters);
                     if(mainCharacter != null)
                     {
                         // The main character was hungry.
-                        localizedName = GetNameForCharacter(mainCharacter.CharacterData);
+                        localizedName = GetNameForCharacter(mainCharacter);
                     }
                     else
                     {
                         // The side characters were hungry.
-                        localizedName = GetNameForCharacter(hungryCharacters[0].CharacterData);
+                        localizedName = GetNameForCharacter(info.hungryCharacters[0]);
                     }
 
                     return LocalizationManager.Instance.GetLocalizedString(lastNightHotelNotEnoughFood, $"{localizedName}");
@@ -286,10 +270,10 @@ public class DiaryEntryManager : MonoBehaviour
 
             case SleepMethod.Ship:
             {
-                string localizedDays = $"{daysInCity + 1}";
-                if(stopoverLocation != null)
+                string localizedDays = $"{info.daysInCity + 1}";
+                if(info.stopoverLocation != null)
                 {
-                    string localizedStopover = NewGameManager.Instance.LocationManager.GetLocalizedName(stopoverLocation);
+                    string localizedStopover = NewGameManager.Instance.LocationManager.GetLocalizedName(info.stopoverLocation);
                     return LocalizationManager.Instance.GetLocalizedString(lastNightShipStopoverDay, localizedDays, localizedStopover);
                 }
                 else
@@ -303,11 +287,11 @@ public class DiaryEntryManager : MonoBehaviour
         return "";
     }
 
-    private ProtagonistHealthData GetMainHealthData(IEnumerable<ProtagonistHealthData> characters)
+    private ProtagonistData GetMainHealthData(IEnumerable<ProtagonistData> characters)
     {
         foreach(var character in characters)
         {
-            if(character.CharacterData.isMainProtagonist)
+            if(character.isMainProtagonist)
             {
                 return character;
             }
@@ -326,12 +310,12 @@ public class DiaryEntryManager : MonoBehaviour
         return data.name;
     }
 
-    private string GetLocalizedStolenItems(List<StolenItemInfo> items)
+    private string GetLocalizedStolenItems(List<StolenItemInfo> items, Currency currency)
     {
         List<string> localizedItemNames = new List<string>(items.Select(item => {
             if (item.type == StolenItemType.Money)
             {
-                return $"{item.money} {NewGameManager.Instance.CurrentCurrency}";
+                return $"{item.money} {currency}";
             }
             else
             {
@@ -342,86 +326,50 @@ public class DiaryEntryManager : MonoBehaviour
         return GetEnumerationString(localizedItemNames);
     }
 
-    class HealthProblem
+    private string GetLocalizedHealthProblemType(HealthProblemType type)
     {
-        public string characterName;
-        public string sickness;
+        switch(type)
+        {
+            case HealthProblemType.Cholera: return LocalizationManager.Instance.GetLocalizedString(cholera);
+            case HealthProblemType.Homesickness: return LocalizationManager.Instance.GetLocalizedString(homesickness);
+        }
+
+        return "NONE";
     }
 
-    private string GenerateHealthStatus()
+    private string GenerateHealthStatus(DiaryEntryInfo info)
     {
-        List<ProtagonistHealthData> characters = new List<ProtagonistHealthData>(NewGameManager.Instance.HealthStatus.Characters);
-
-        List<HealthProblem> newProblems = new();
-        for(int i = 0; i < characters.Count; ++i)
-        {
-            ProtagonistHealthData character = characters[i];
-            if(character.CholeraStatus.DaysSick == 1)
-            {
-                // Got sick
-                string localizedSickness = LocalizationManager.Instance.GetLocalizedString(cholera);
-                newProblems.Add(new HealthProblem { characterName = character.CharacterData.name, sickness = localizedSickness });
-                characters.RemoveAt(i);
-                --i;
-            }
-            else if(character.HomesickessStatus.DaysSick == 1)
-            {
-                // Got homesick
-                string localizedSickness = LocalizationManager.Instance.GetLocalizedString(homesickness);
-                newProblems.Add(new HealthProblem { characterName = character.CharacterData.name, sickness = localizedSickness });
-                characters.RemoveAt(i);
-                --i;
-            }
-        }
-
-        List<HealthProblem> existingProblems = new();
-        for(int i = 0; i < characters.Count; ++i)
-        {
-            ProtagonistHealthData character = characters[i];
-            if(character.CholeraStatus.DaysSick > 1)
-            {
-                // Still sick
-                string localizedSickness = LocalizationManager.Instance.GetLocalizedString(cholera);
-                existingProblems.Add(new HealthProblem { characterName = character.CharacterData.name, sickness = localizedSickness });
-                characters.RemoveAt(i);
-                --i;
-            }
-            else if(character.HomesickessStatus.DaysSick > 1)
-            {
-                // Still homesick
-                string localizedSickness = LocalizationManager.Instance.GetLocalizedString(homesickness);
-                existingProblems.Add(new HealthProblem { characterName = character.CharacterData.name, sickness = localizedSickness });
-                characters.RemoveAt(i);
-                --i;
-            }
-        }
-
-        if(newProblems.Count == 0 && existingProblems.Count == 0)
+        if(info.newHealthProblems.Count == 0 && info.existingHealthProblems.Count == 0)
         {
             return LocalizationManager.Instance.GetLocalizedString(healthNoProblems);
         }
 
         string result = "";
-        if(newProblems.Count == 1)
+        if(info.newHealthProblems.Count == 1)
         {
-            result += LocalizationManager.Instance.GetLocalizedString(healthNewProblem, newProblems[0].characterName, newProblems[0].sickness);
+            string localizedName = info.newHealthProblems[0].character.name;
+            string localizedSickness = GetLocalizedHealthProblemType(info.newHealthProblems[0].sickness);
+            result += LocalizationManager.Instance.GetLocalizedString(healthNewProblem, localizedName, localizedSickness);
         }
-        else if(newProblems.Count > 1)
+        else if(info.newHealthProblems.Count > 1)
         {
-            string characterNames = GetEnumerationString(new List<string>(newProblems.Select(problem => problem.characterName)));
-            string sicknesses = GetEnumerationString(new List<string>(newProblems.Select(problem => problem.sickness)));
+            string characterNames = GetEnumerationString(new List<string>(info.newHealthProblems.Select(problem => problem.character.name)));
+            string sicknesses = GetEnumerationString(new List<string>(info.newHealthProblems.Select(problem => 
+                GetLocalizedHealthProblemType(problem.sickness))));
             result += LocalizationManager.Instance.GetLocalizedString(healthNewProblems, characterNames, sicknesses);
         }
 
-        if(existingProblems.Count > 0)
+        if(info.existingHealthProblems.Count > 0)
         {
             if(result.Length > 0)
             {
                 result += " ";
             }
 
-            result += existingProblems
-                .Select(problem => LocalizationManager.Instance.GetLocalizedString(healthExistingProblem, problem.characterName, problem.sickness))
+            result += info.existingHealthProblems
+                .Select(problem => 
+                    LocalizationManager.Instance.GetLocalizedString(healthExistingProblem, problem.character.name, 
+                        GetLocalizedHealthProblemType(problem.sickness)))
                 .Aggregate((a, b) => $"{a} {b}");
         }
 
@@ -447,12 +395,12 @@ public class DiaryEntryManager : MonoBehaviour
         return result;
     }
 
-    private string GenerateCity()
+    private string GenerateCity(DiaryEntryInfo info)
     {
         LocalizedString value = null;
-        if (LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship)
+        if (info.levelMode == LevelInstanceMode.Ship)
         {
-            switch(NewGameManager.Instance.DaysInCity)
+            switch(info.daysInCity)
             {
                 case 0: value = shipDay1; break;
                 case 1: value = shipDay2; break;
@@ -468,8 +416,7 @@ public class DiaryEntryManager : MonoBehaviour
         }
         else
         {
-            string currentLocation = LevelInstance.Instance.LocationName;
-            switch (currentLocation)
+            switch (info.locationName)
             {
                 case "Luxembourg": value = luxembourg; break;
                 case "Paris": value = paris; break;
@@ -500,34 +447,34 @@ public class DiaryEntryManager : MonoBehaviour
         return LocalizationManager.Instance.GetLocalizedString(value);
     }
 
-    private string GenerateText(GeneratedDiaryEntryPurpose purpose)
+    private string GenerateText(DiaryEntryInfo info, GeneratedDiaryEntryPurpose purpose)
     {
-        if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship || NewGameManager.Instance.ShipManager.IsStopoverDay)
+        if(info.levelMode == LevelInstanceMode.Ship || info.isStopoverDay)
         {
-            if(NewGameManager.Instance.DaysInCity == 0)
+            if(info.daysInCity == 0)
             {
                 // On first day, only city
                 return LocalizationManager.Instance.GetLocalizedString(shipDay1);
             }
 
-            string lastNight = GenerateLastNight();
-            string healthStatus = GenerateHealthStatus();
-            string city = GenerateCity();
+            string lastNight = GenerateLastNight(info);
+            string healthStatus = GenerateHealthStatus(info);
+            string city = GenerateCity(info);
             return $"{lastNight} {healthStatus} {city}";
         }
-        else if(LevelInstance.Instance.LocationName == "Pfaffenthal")
+        else if(info.locationName == "Pfaffenthal")
         {
             // Special diary entry for pfaffenthal
             return LocalizationManager.Instance.GetLocalizedString(pfaffenthal);
         }
-        else if(LevelInstance.Instance.LocationName == "ElisIsland")
+        else if(info.locationName == "ElisIsland")
         {
             // Special diary entry for elis island.
             return LocalizationManager.Instance.GetLocalizedString(elisIsland);
         }
 
         // Always generate transportation info.
-        string transporationInfo = GenerateTransportationInfo();
+        string transporationInfo = GenerateTransportationInfo(info);
 
         // Determine if it's a diary entry for when you arrived to a city or on a new day
         switch (purpose)
@@ -535,7 +482,7 @@ public class DiaryEntryManager : MonoBehaviour
             case GeneratedDiaryEntryPurpose.NewCity:
             {
                 // The content for the city.
-                string city = GenerateCity();
+                string city = GenerateCity(info);
 
                 return $"{transporationInfo} {city}";
             }
@@ -543,9 +490,9 @@ public class DiaryEntryManager : MonoBehaviour
             case GeneratedDiaryEntryPurpose.NewDay:
             {
                 // How last night was
-                string lastNight = GenerateLastNight();
+                string lastNight = GenerateLastNight(info);
                 // Health status
-                string healthStatus = GenerateHealthStatus();
+                string healthStatus = GenerateHealthStatus(info);
 
                 return $"{transporationInfo} {lastNight} {healthStatus}";
             }
@@ -554,11 +501,11 @@ public class DiaryEntryManager : MonoBehaviour
         return "";
     }
 
-    private DiaryEntry GetDiaryEntryForCity()
+    private DiaryEntry GetDiaryEntryForCity(DiaryEntryInfo info)
     {
-        if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship)
+        if(info.levelMode == LevelInstanceMode.Ship)
         {
-            switch(NewGameManager.Instance.DaysInCity)
+            switch(info.daysInCity)
             {
                 case 0: return shipDay1Entry;
                 case 1: return shipDay2Entry;
@@ -574,8 +521,7 @@ public class DiaryEntryManager : MonoBehaviour
         }
         else
         {
-            string currentLocation = LevelInstance.Instance.LocationName;
-            switch (currentLocation)
+            switch (info.locationName)
             {
                 case "Pfaffenthal": return pfaffenthalEntry;
                 case "Luxembourg": return luxembourgEntry;
@@ -607,12 +553,12 @@ public class DiaryEntryManager : MonoBehaviour
         return null;
     }
 
-    public DiaryEntryData GenerateEntry(GeneratedDiaryEntryPurpose purpose)
+    public DiaryEntryData GenerateEntry(DiaryEntryInfo info, GeneratedDiaryEntryPurpose purpose)
     {
-        DiaryEntry diaryEntry = GetDiaryEntryForCity();
+        DiaryEntry diaryEntry = GetDiaryEntryForCity(info);
         if(!diaryEntry)
         {
-            Debug.LogError($"Diary entry not found for {LevelInstance.Instance.LocationName}");
+            Debug.LogError($"Diary entry not found for {info.locationName}");
             return null;
         }
 
@@ -624,9 +570,8 @@ public class DiaryEntryManager : MonoBehaviour
             rightPage = diaryEntry.rightPage.Clone()
         };
 
-        string text = GenerateText(purpose);
-        diaryEntryData.localizedText = text;
-        diaryEntryData.date = NewGameManager.Instance.date;
+        string text = GenerateText(info, purpose);
+        diaryEntryData.date = info.date;
 
         // Distribute text to different pages.
         List<Vector2> leftWeights = diaryEntryData.leftPage.prefab.GetComponent<IDiaryPage>().GetTextFieldWeights();

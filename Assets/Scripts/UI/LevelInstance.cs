@@ -1231,7 +1231,8 @@ public class LevelInstance : MonoBehaviour
 
     public void OpenNewDayDiaryEntry()
     {
-        DiaryEntryData newDayEntry = NewGameManager.Instance.DiaryEntryManager.GenerateEntry(GeneratedDiaryEntryPurpose.NewDay);
+        DiaryEntryInfo info = NewGameManager.Instance.CollectDiaryEntryInfo();
+        DiaryEntryData newDayEntry = NewGameManager.Instance.DiaryEntryManager.GenerateEntry(info, GeneratedDiaryEntryPurpose.NewDay);
         if(newDayEntry == null)
         {
             return;
@@ -1242,7 +1243,8 @@ public class LevelInstance : MonoBehaviour
 
     public void OpenNewCityDiaryEntry()
     {
-        DiaryEntryData newEntry = NewGameManager.Instance.DiaryEntryManager.GenerateEntry(GeneratedDiaryEntryPurpose.NewCity);
+        DiaryEntryInfo info = NewGameManager.Instance.CollectDiaryEntryInfo();
+        DiaryEntryData newEntry = NewGameManager.Instance.DiaryEntryManager.GenerateEntry(info, GeneratedDiaryEntryPurpose.NewCity);
         if(newEntry == null)
         {
             return;

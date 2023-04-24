@@ -91,13 +91,41 @@ public class DiaryEntry : ScriptableObject
     public DiaryPageData rightPage;
 }
 
+public enum HealthProblemType
+{
+    Cholera,
+    Homesickness
+}
+
+public class HealthProblem
+{
+    public ProtagonistData character;
+    public HealthProblemType sickness;
+}
+
+[System.Serializable]
+public class DiaryEntryInfo
+{
+    public LevelInstanceMode levelMode;
+    public int daysInCity;
+    public string locationName;
+    public bool isStopoverDay;
+    public SleepMethod lastSleepMethod;
+    public List<StolenItemInfo> lastStolenItems;
+    public List<ProtagonistData> hungryCharacters;
+    public string stopoverLocation;
+    public List<HealthProblem> newHealthProblems;
+    public List<HealthProblem> existingHealthProblems;
+    public DateTime date;
+    public TransportationMethod lastTransportationMethod;
+}
+
 [System.Serializable]
 public class DiaryEntryData
 {
     public DiaryEntry entry;
     public DiaryPageData leftPage;
     public DiaryPageData rightPage;
-    public string localizedText;
     public DateTime date;
 
     public delegate void OnDateChangedEvent(string date);

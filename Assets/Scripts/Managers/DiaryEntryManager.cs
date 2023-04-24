@@ -4,12 +4,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Localization;
 
-public enum GeneratedDiaryEntryPurpose
-{
-    NewCity,
-    NewDay
-}
-
 public class DiaryEntryManager : MonoBehaviour
 {
     [SerializeField]
@@ -447,7 +441,7 @@ public class DiaryEntryManager : MonoBehaviour
         return LocalizationManager.Instance.GetLocalizedString(value);
     }
 
-    private string GenerateText(DiaryEntryInfo info, GeneratedDiaryEntryPurpose purpose)
+    private string GenerateText(DiaryEntryInfo info)
     {
         if(info.levelMode == LevelInstanceMode.Ship || info.isStopoverDay)
         {
@@ -477,7 +471,7 @@ public class DiaryEntryManager : MonoBehaviour
         string transporationInfo = GenerateTransportationInfo(info);
 
         // Determine if it's a diary entry for when you arrived to a city or on a new day
-        switch (purpose)
+        switch (info.purpose)
         {
             case GeneratedDiaryEntryPurpose.NewCity:
             {
@@ -553,7 +547,7 @@ public class DiaryEntryManager : MonoBehaviour
         return null;
     }
 
-    public DiaryEntryData GenerateEntry(DiaryEntryInfo info, GeneratedDiaryEntryPurpose purpose)
+    public DiaryEntryData GenerateEntry(DiaryEntryInfo info)
     {
         DiaryEntry diaryEntry = GetDiaryEntryForCity(info);
         if(!diaryEntry)
@@ -563,27 +557,35 @@ public class DiaryEntryManager : MonoBehaviour
         }
 
         // Create a copy to not modify the asset.
-        DiaryEntryData diaryEntryData = new DiaryEntryData 
-        { 
+        DiaryEntryData diaryEntryData = new DiaryEntryData
+        {
             entry = diaryEntry,
             leftPage = diaryEntry.leftPage.Clone(),
-            rightPage = diaryEntry.rightPage.Clone()
+            rightPage = diaryEntry.rightPage.Clone(),
+            info = info,
+            date = info.date
         };
 
-        string text = GenerateText(info, purpose);
-        diaryEntryData.date = info.date;
+        UpdateDiaryEntry(diaryEntryData);
+
+        return diaryEntryData;
+    }
+
+    public void UpdateDiaryEntry(DiaryEntryData diaryEntryData)
+    {
+        string text = GenerateText(diaryEntryData.info);
 
         // Distribute text to different pages.
         List<Vector2> leftWeights = diaryEntryData.leftPage.prefab.GetComponent<IDiaryPage>().GetTextFieldWeights();
         List<Vector2> rightWeights = diaryEntryData.rightPage.prefab.GetComponent<IDiaryPage>().GetTextFieldWeights();
-        if(text.Length < 250)
+        if (text.Length < 250)
         {
             // If the text is really short, don't distribute it.
-            if(leftWeights.Count > 0)
+            if (leftWeights.Count > 0)
             {
                 diaryEntryData.leftPage.Text = text;
             }
-            else if(rightWeights.Count > 0)
+            else if (rightWeights.Count > 0)
             {
                 diaryEntryData.rightPage.Text = text;
             }
@@ -593,10 +595,10 @@ public class DiaryEntryManager : MonoBehaviour
             // The text is long, so distribute the text.
             float sum = leftWeights.Select(weight => weight.x * weight.y).Sum() + rightWeights.Select(weight => weight.x * weight.y).Sum();
             int start = 0;
-            for(int i = 0; i < leftWeights.Count; ++i)
+            for (int i = 0; i < leftWeights.Count; ++i)
             {
                 float alpha = (leftWeights[i].x * leftWeights[i].y) / sum;
-                int count = start + (int) (text.Length * alpha);
+                int count = start + (int)(text.Length * alpha);
 
                 // Find the next space.
                 while (count < text.Length && !char.IsWhiteSpace(text[count]))
@@ -616,7 +618,7 @@ public class DiaryEntryManager : MonoBehaviour
                 start = count;
             }
 
-            for(int i = 0; i < rightWeights.Count; ++i)
+            for (int i = 0; i < rightWeights.Count; ++i)
             {
                 float alpha = (rightWeights[i].x * rightWeights[i].y) / sum;
                 int count = start + (int)(text.Length * alpha);
@@ -639,7 +641,5 @@ public class DiaryEntryManager : MonoBehaviour
                 start = count;
             }
         }
-
-        return diaryEntryData;
     }
 }

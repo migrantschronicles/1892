@@ -274,6 +274,14 @@ public class NewGameManager : MonoBehaviour
             QuestManager.AddQuest(PlayableCharacterData.mainQuest);
         }
 
+        LocalizationManager.Instance.OnLanguageChanged += (Language language) =>
+        {
+            foreach(DiaryEntryData data in diaryEntries)
+            {
+                DiaryEntryManager.UpdateDiaryEntry(data);
+            }
+        };
+
         InitAfterLoad();
         isInitialized = true;
     }
@@ -576,7 +584,7 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
-    public DiaryEntryInfo CollectDiaryEntryInfo()
+    public DiaryEntryInfo CollectDiaryEntryInfo(GeneratedDiaryEntryPurpose purpose)
     {
         List<ProtagonistHealthData> characters = new List<ProtagonistHealthData>(NewGameManager.Instance.HealthStatus.Characters);
 
@@ -633,7 +641,8 @@ public class NewGameManager : MonoBehaviour
             newHealthProblems = newProblems,
             existingHealthProblems = existingProblems,
             date = date,
-            lastTransportationMethod = lastMethod
+            lastTransportationMethod = lastMethod,
+            purpose = purpose
         };
     }
 

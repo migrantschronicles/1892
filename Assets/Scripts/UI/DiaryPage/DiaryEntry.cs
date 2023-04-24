@@ -53,8 +53,27 @@ public class DiaryPageData
     [Tooltip("A list of sketch drawings that can be added to the page. If drawing.image is null, no sketch drawing is added.")]
     public DiaryPageDrawing[] drawings;
 
-    public string Text { get; set; }
-    public string Text2 { get; set; }
+    private string text;
+    public string Text
+    {
+        get { return text; }
+        set
+        {
+            text = value;
+            OnTextChanged?.Invoke(text);
+        }
+    }
+
+    private string text2;
+    public string Text2
+    {
+        get { return text2; }
+        set
+        {
+            text2 = value;
+            OnText2Changed?.Invoke(text2);
+        }
+    }
 
     public delegate void OnTextChangedEvent(string text);
     public event OnTextChangedEvent OnTextChanged;
@@ -103,6 +122,12 @@ public class HealthProblem
     public HealthProblemType sickness;
 }
 
+public enum GeneratedDiaryEntryPurpose
+{
+    NewCity,
+    NewDay
+}
+
 [System.Serializable]
 public class DiaryEntryInfo
 {
@@ -118,6 +143,7 @@ public class DiaryEntryInfo
     public List<HealthProblem> existingHealthProblems;
     public DateTime date;
     public TransportationMethod lastTransportationMethod;
+    public GeneratedDiaryEntryPurpose purpose;
 }
 
 [System.Serializable]
@@ -127,6 +153,7 @@ public class DiaryEntryData
     public DiaryPageData leftPage;
     public DiaryPageData rightPage;
     public DateTime date;
+    public DiaryEntryInfo info;
 
     public delegate void OnDateChangedEvent(string date);
     public event OnDateChangedEvent OnDateChanged;

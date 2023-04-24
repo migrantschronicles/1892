@@ -8,6 +8,8 @@ public class DiaryContentPages : MonoBehaviour
     private DiaryMarker diaryMarker;
     [SerializeField]
     private GameObject[] requiredObjects;
+    [SerializeField]
+    private bool useLastPage = true;
 
     public delegate void OnActiveStatusChangedEvent(bool active);
     public event OnActiveStatusChangedEvent onActiveStatusChanged;
@@ -22,7 +24,7 @@ public class DiaryContentPages : MonoBehaviour
     {
         get
         {
-            return transform.childCount > 0 ? transform.GetChild(transform.childCount - 1).GetComponent<DiaryContentPage>() : null;
+            return transform.childCount > 0 ? transform.GetChild(useLastPage ? transform.childCount - 1 : 0).GetComponent<DiaryContentPage>() : null;
         }
     }
 

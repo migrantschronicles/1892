@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization;
 
 [System.Serializable]
 public class SceneCharacterPrefab
@@ -22,6 +23,7 @@ public class ProtagonistData
     public string technicalName;
     [Tooltip("The probability of this character to be able to get seasick (0-1).")]
     public float canGetSeasickProbability = 0.5f;
+    public LocalizedString fullName;
     public Sprite neutralPortrait;
     public Sprite angryPortrait;
     public Sprite happyPortrait;

@@ -202,6 +202,8 @@ public class LevelInstance : MonoBehaviour
     private GameObject questAddedPrefab;
     [SerializeField]
     private GameObject questFinishedPrefab;
+    [SerializeField]
+    private GameObject cannotTravelAgainTodayPrefab;
 #if DEBUG
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -1392,5 +1394,15 @@ public class LevelInstance : MonoBehaviour
 
         ++dialogsToday;
         return true;
+    }
+
+    public void OnCannotTravelAgainToday()
+    {
+        GameObject popupGO = PushPopup(cannotTravelAgainTodayPrefab);
+        CannotTravelAgainTodayPopup popup = popupGO.GetComponent<CannotTravelAgainTodayPopup>();
+        popup.OnAccept += (_) =>
+        {
+            PopPopup();
+        };
     }
 }

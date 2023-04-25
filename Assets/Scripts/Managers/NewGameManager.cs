@@ -418,8 +418,7 @@ public class NewGameManager : MonoBehaviour
         if(travelCountToday > 0)
         {
             // Cannot travel again today
-            ///@todo show popup
-            UnityEngine.Debug.Log("Cannot travel again today");
+            LevelInstance.Instance.OnCannotTravelAgainToday();
             return;
         }
 

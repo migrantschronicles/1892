@@ -43,6 +43,7 @@ public class RoomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
             PositionOnSprite positionOnSprite = GetComponent<PositionOnSprite>();
             positionOnSprite.WorldObject = room.gameObject;
+            positionOnSprite.WorldObjectOffset = room.RoomButtonWorldObjectOffset;
         }
     }
 

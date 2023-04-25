@@ -21,12 +21,15 @@ public class Room : MonoBehaviour
     private PlayableCharacterSpawn characterSpawn;
     [SerializeField]
     private LocalizedString roomName;
+    [SerializeField]
+    private Vector2 roomButtonWorldObjectOffset = new Vector2(0, 0);
 
     private bool visited = false;
 
     public LocalizedString RoomName { get { return roomName; } }
     public RoomButton RoomButton { get; set; }
     public PlayableCharacterSpawn PlayableCharacterSpawn { get { return characterSpawn; } }
+    public Vector2 RoomButtonWorldObjectOffset { get { return roomButtonWorldObjectOffset; } }
 
     private void Start()
     {

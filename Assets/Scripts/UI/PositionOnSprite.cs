@@ -33,6 +33,7 @@ public class PositionOnSprite : MonoBehaviour
     public SpriteRenderer Sprite { get { return sprite; } set { sprite = value; } }
     public Vector2 NormalizedPosition { get { return normalizedPosition; } set { normalizedPosition = value; } }
     public GameObject WorldObject { get { return worldObject; } set { worldObject = value; } }
+    public Vector2 WorldObjectOffset { set { worldObjectOffset = value; UpdatePosition(); } }
 
 #if UNITY_EDITOR && UPDATE_POSITION_IN_EDITOR
     private Vector2Int lastResolution;

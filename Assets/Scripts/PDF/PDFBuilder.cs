@@ -366,19 +366,8 @@ public class PDFBuilder
         }
     }
 
-    private void DrawJourneys(IPDFPlatform pdf, Texture2D TEST_Paris, int pageNumber)
+    private void DrawJourneys(IPDFPlatform pdf, List<Journey> journeys, int pageNumber)
     {
-        // Only test data
-        Journey[] journeys = new Journey[] 
-        {
-            /*
-            new Journey { destination = "Pfaffenthal", method = TransportationMethod.Walking, money = 28383 },
-            new Journey { destination = "Brussels", method = TransportationMethod.Walking, money = 28383 },
-            new Journey { destination = "Paris", method = TransportationMethod.Carriage, money = 28383},
-            new Journey { destination = "Antwerp", method = TransportationMethod.Train, money = 28383 }
-            */
-        };
-
         string[] diaryEntries = new string[]
         {
             "PDF/Element 51.png",
@@ -387,7 +376,86 @@ public class PDFBuilder
             "PDF/Element 50.png"
         };
 
-        for (int i = 0; i < journeys.Length; ++i)
+        int journeyIndex = 0;
+        int entryIndex = 0;
+        int i = 0;
+        while(journeyIndex < journeys.Count)
+        {
+            Journey journey = journeys[journeyIndex];
+            if(entryIndex >= journey.diaryEntries.Count)
+            {
+                entryIndex = 0;
+                ++journeyIndex;
+                continue;
+            }
+
+            bool top = i % 2 == 0;
+            if(top)
+            {
+                pdf.AddPage();
+                string background = (entryIndex == journey.diaryEntries.Count - 1 && journeyIndex == journeys.Count - 1) ?
+                    (i == 0 ? "PDF/PDF_Background_3.png" : "PDF/PDF_Background_3.3.png") :
+                    (i == 0 ? "PDF/PDF_Background_3.1.png" : "PDF/PDF_Background_3.2.png");
+                pdf.DrawPNG(background, 0, 0, pdf.PageWidth, pdf.PageHeight);
+                DrawPageNumber(pdf, ++pageNumber);
+            }
+
+            // City Name
+            pdf.FontSize = 15;
+            string cityName = $"{i + 1}. {NewGameManager.Instance.LocationManager.GetLocalizedName(journey.destination)}";
+            pdf.DrawText(cityName, 94, top ? 49 : 457);
+
+            // Screenshot
+            Texture2D screenshot = LevelInstance.Instance.TakeDiaryScreenshot(journey.diaryEntries[entryIndex]);
+            if(screenshot != null)
+            {
+                RectInt screenshotRect = new RectInt(94, top ? 77 : 486, 408, 255);
+                pdf.DrawPNG(screenshot.EncodeToPNG(), screenshotRect.x, screenshotRect.y, screenshotRect.width, screenshotRect.height);
+            }
+
+            // Transport icon
+            if(i > 0 && entryIndex == 0)
+            {
+                string iconPath = "PDF/Methods/";
+                switch (journey.method)
+                {
+                    case TransportationMethod.Walking: iconPath += "PDF_Transportation Icon_6.png"; break;
+                    case TransportationMethod.Train: iconPath += "PDF_Transportation Icon_7.png"; break;
+                    case TransportationMethod.Ship: iconPath += "PDF_Transportation Icon_2.png"; break;
+                    case TransportationMethod.Carriage: iconPath += "PDF_Transportation Icon_4.png"; break;
+                    case TransportationMethod.Cart: iconPath += "PDF_Transportation Icon_3.png"; break;
+                    case TransportationMethod.Tram: iconPath += "PDF_Transportation Icon_5.png"; break;
+                }
+
+                pdf.DrawPNG(iconPath, 275, top ? 13 : 407, 28, 28);
+            }
+
+            // Status
+            pdf.FontSize = 10;
+            int row0Y = top ? 347 : 751;
+            int row1Y = top ? 360 : 764;
+            int row2Y = top ? 372 : 776;
+            // Ingame time frame.
+            pdf.DrawText("02:03:02", 187, row0Y);
+            // Money
+            pdf.DrawText($"{journey.money} LUF", 187, row1Y);
+            // Names
+            pdf.DrawText("Elis Beffort:", 297, row0Y);
+            pdf.DrawText("Mreis Beffort:", 297, row1Y);
+            pdf.DrawText("Matti Beffort:", 297, row2Y);
+            // Health
+            ///@todo
+            pdf.DrawText("healthy", 392, row0Y);
+            pdf.DrawText("bad mental health", 392, row1Y);
+            pdf.DrawText("malnourished", 392, row2Y);
+
+            ++i;
+            ++entryIndex;
+        }
+
+        /*
+
+        for (int i = 0; i < journeys.Count; ++i)
         {
             bool top = i % 2 == 0;
             if(top)
@@ -450,9 +518,10 @@ public class PDFBuilder
             pdf.DrawText("bad mental health", 392, row1Y);
             pdf.DrawText("malnourished", 392, row2Y);
         }
+        */
     }
 
-    public void Generate(DiaryEntryData TEST_ParisEntry)
+    public void Generate(List<Journey> journeys)
     {
         // Responsible for generating the pdf based on the state.
         // Maybe outsource this to a thread, since it will take some time?
@@ -468,7 +537,7 @@ public class PDFBuilder
 
         // Generate the map screenshot
         Texture2D mapScreenshot = LevelInstance.Instance ? LevelInstance.Instance.TakeMapScreenshot() : null;
-        Texture2D TEST_ParisScreenshot = TEST_ParisEntry != null && TEST_ParisEntry.entry != null ? (LevelInstance.Instance ? LevelInstance.Instance.TakeDiaryScreenshot(TEST_ParisEntry) : null) : null;
+        //Texture2D TEST_ParisScreenshot = TEST_ParisEntry != null && TEST_ParisEntry.entry != null ? (LevelInstance.Instance ? LevelInstance.Instance.TakeDiaryScreenshot(TEST_ParisEntry) : null) : null;
 
         // TITLE PAGE
         DrawTitlePage(pdf, pageNumber);
@@ -477,7 +546,7 @@ public class PDFBuilder
         DrawJourneyPage(pdf, mapScreenshot, pageNumber);
 
         // JOURNEYS
-        DrawJourneys(pdf, TEST_ParisScreenshot, pageNumber);
+        DrawJourneys(pdf, journeys, pageNumber);
 
         // OUTRO
         pdf.AddPage();

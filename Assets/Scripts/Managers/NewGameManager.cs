@@ -24,7 +24,7 @@ public class Journey
     public string destination;
     public TransportationMethod method;
     public int money;
-    public DiaryEntryData diaryEntry;
+    public List<DiaryEntryData> diaryEntries = new();
 }
 
 public enum StolenItemType
@@ -265,7 +265,8 @@ public class NewGameManager : MonoBehaviour
     {
         Journey journey = new Journey();
         journey.destination = LevelInstance.Instance.LocationName;
-        ///@todo
+        journey.method = TransportationMethod.None;
+        journey.money = money;
         journeys.Add(journey);
 
         // Add main quest
@@ -508,6 +509,7 @@ public class NewGameManager : MonoBehaviour
         Journey journey = new Journey();
         journey.destination = nextLocation;
         journey.method = nextMethod;
+        journey.money = money;
         journeys.Add(journey);
 
         nextLocation = null;
@@ -548,6 +550,7 @@ public class NewGameManager : MonoBehaviour
         Journey journey = new Journey();
         journey.destination = ShipManager.StopoverLocation;
         journey.method = TransportationMethod.Ship;
+        journey.money = money;
         journeys.Add(journey);
 
         StartCoroutine(OpenNewDayDiaryEntryNextFrame());
@@ -565,6 +568,7 @@ public class NewGameManager : MonoBehaviour
         Journey journey = new Journey();
         journey.destination = "ElisIsland";
         journey.method = TransportationMethod.Ship;
+        journey.money = money;
         journeys.Add(journey);
 
         nextLocation = null;
@@ -578,6 +582,9 @@ public class NewGameManager : MonoBehaviour
     public void AddDiaryEntry(DiaryEntryData entry)
     {
         diaryEntries.Add(entry);
+
+        journeys[journeys.Count - 1].diaryEntries.Add(entry);
+
         if(onDiaryEntryAdded != null)
         {
             onDiaryEntryAdded.Invoke(entry);
@@ -650,7 +657,7 @@ public class NewGameManager : MonoBehaviour
     {
         UnityEngine.Debug.Log("Generating PDF");
         PDFBuilder builder = new PDFBuilder();
-        builder.Generate(new DiaryEntryData { entry = TEST_ParisEntry });
+        builder.Generate(journeys);
         UnityEngine.Debug.Log("Finished PDF generating");
     }
 

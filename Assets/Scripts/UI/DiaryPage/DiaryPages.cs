@@ -303,6 +303,18 @@ public class DiaryPages : MonoBehaviour
 
     public void PrepareForDiaryScreenshot(DiaryEntryData entry)
     {
+        if(screenshotPage)
+        {
+            screenshotPage.gameObject.SetActive(false);
+            Destroy(screenshotPage.gameObject);
+            screenshotPage = null;
+        }
+
+        if(contentPages.CurrentPage)
+        {
+            contentPages.CurrentPage.gameObject.SetActive(false);
+        }
+
         if(entry != null)
         {
             GameObject newContentPageGO = Instantiate(contentPagePrefab, contentParent.transform);
@@ -320,7 +332,13 @@ public class DiaryPages : MonoBehaviour
     {
         if(screenshotPage)
         {
-            Destroy(screenshotPage);
+            screenshotPage.gameObject.SetActive(false);
+            Destroy(screenshotPage.gameObject);
+        }
+
+        if (contentPages.CurrentPage)
+        {
+            contentPages.CurrentPage.gameObject.SetActive(true);
         }
 
         UpdateButtons();

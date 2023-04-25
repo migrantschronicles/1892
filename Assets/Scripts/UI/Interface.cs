@@ -38,6 +38,8 @@ public class Interface : MonoBehaviour
     [SerializeField]
     private GameObject clockButton;
     [SerializeField]
+    private GameObject diaryButton;
+    [SerializeField]
     private IngameDiary ingameDiary;
 
     public IngameDiary IngameDiary { get { return ingameDiary; } }
@@ -101,6 +103,7 @@ public class Interface : MonoBehaviour
         visibilityFlags = flags;
         locationInfo.SetActive((visibilityFlags & InterfaceVisibilityFlags.StatusInfo) != 0);
         clockButton.SetActive((visibilityFlags & InterfaceVisibilityFlags.ClockButton) != 0);
+        diaryButton.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
 
         if(TreatDiaryAsButton)
         {

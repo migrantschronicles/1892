@@ -888,6 +888,7 @@ public class LevelInstance : MonoBehaviour
         ui.PrepareForMapScreenshot();
 
         Texture2D renderedTexture = TakeScreenshot(944, 590);
+        //System.IO.File.WriteAllBytes(Application.persistentDataPath + "/test.png", renderedTexture.EncodeToPNG());
 
         Debug.Log($"Captured map screenshot");
         ui.ResetFromScreenshot();
@@ -921,7 +922,7 @@ public class LevelInstance : MonoBehaviour
         int targetWidth = outputWidth;
         int targetHeight = outputHeight;
         float sourceAspect = (float)Screen.width / Screen.height;
-        float outputAspect = outputWidth / outputHeight;
+        float outputAspect = (float)outputWidth / outputHeight;
         if (!Mathf.Approximately(sourceAspect, outputAspect))
         {
             if (outputAspect > sourceAspect)

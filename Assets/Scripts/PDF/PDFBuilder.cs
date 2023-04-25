@@ -461,6 +461,7 @@ public class PDFBuilder
         UnityEngine.Debug.Log($"Generating pdf document at {filePath}");
 
         IPDFPlatform pdf = CreatePlatform(filePath);
+
         //pdf.LoadFont("AlegreyaSans-Black.ttf");
         //pdf.LoadFont("AlegreyaSans-Regular.ttf");
         //pdf.SetFont("AlegreyaSans-Regular.ttf");

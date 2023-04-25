@@ -652,7 +652,7 @@ public class LevelInstance : MonoBehaviour
     private void OnDialogStarted()
     {
         backButton.gameObject.SetActive(true);
-        ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+        ui.SetUIElementsVisible(InterfaceVisibilityFlags.StatusInfo);
         sceneInteractables.SetActive(false);
         blur.SetEnabled(true);
     }

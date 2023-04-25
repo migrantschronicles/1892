@@ -41,9 +41,16 @@ public class Scene : MonoBehaviour
             interactables.SetActive(active);
         }
 
-        if(active && characterSpawn)
+        if(characterSpawn)
         {
-            characterSpawn.TrySpawn();
+            if(active)
+            {
+                characterSpawn.TrySpawn();
+            }
+            else
+            {
+                characterSpawn.DestroyCharacters();
+            }
         }
 
         if(active)

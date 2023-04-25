@@ -64,6 +64,10 @@ public class Room : MonoBehaviour
         {
             characterSpawn.TrySpawn();
         }
+        else
+        {
+            characterSpawn.DestroyCharacters();
+        }
 
         if(RoomButton)
         {

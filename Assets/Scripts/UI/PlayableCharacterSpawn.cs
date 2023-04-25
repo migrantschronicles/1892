@@ -26,6 +26,15 @@ public class PlayableCharacterSpawn : MonoBehaviour
         return false;
     }
 
+    public void DestroyCharacters()
+    {
+        if(SpawnedCharacter)
+        {
+            Destroy(SpawnedCharacter);
+            SpawnedCharacter = null;
+        }
+    }
+
     public void SetCharactersVisible(bool visible)
     {
         if(SpawnedCharacter)

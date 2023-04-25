@@ -10,7 +10,7 @@ public interface IAnimatedText
 
 public class TextElementAnimator : ElementAnimator
 {
-    private static readonly float defaultTimeForCharacters = 0.1f;
+    private static readonly float defaultTimeForCharacters = 0.03f;
 
     private enum TextMode { Normal, Bold, Italic }
 

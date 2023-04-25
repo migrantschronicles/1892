@@ -13,6 +13,6 @@ public class EndGamePopup : MonoBehaviour, IPopup
 
     public void OnDownloadPDFClicked()
     {
-        //OnDownloadPDF?.Invoke(this);
+        NewGameManager.Instance.GeneratePDF();
     }
 }

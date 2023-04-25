@@ -314,8 +314,6 @@ public class PDFBuilder
         }
     }
 
-    private int pageNumber = 0;
-
     private IPDFPlatform CreatePlatform(string outputPath)
     {
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
@@ -333,7 +331,7 @@ public class PDFBuilder
         pdf.FontSize = oldFontSize;
     }
 
-    private void DrawTitlePage(IPDFPlatform pdf)
+    private void DrawTitlePage(IPDFPlatform pdf, int pageNumber)
     {
         pdf.AddPage();
         pdf.DrawPNG("PDF/PDF_Background_1.png", 0, 0, pdf.PageWidth, pdf.PageHeight);
@@ -351,11 +349,11 @@ public class PDFBuilder
         DrawPageNumber(pdf, ++pageNumber);
     }
 
-    private void DrawJourneyPage(IPDFPlatform pdf, Texture2D mapScreenshot)
+    private void DrawJourneyPage(IPDFPlatform pdf, Texture2D mapScreenshot, int pageNumber)
     {
         pdf.AddPage();
         pdf.FontSize = 12;
-        pdf.DrawPNG("PDF/PDF_Background_2.png", 0, 0, pdf.PageWidth, pdf.PageHeight);
+        pdf.DrawPNG("PDF/PDF_Background_2_1.png", 0, 0, pdf.PageWidth, pdf.PageHeight);
         // Screenshot
         RectInt screenshotRect = new RectInt(61, 102, 472, 295);
         if(mapScreenshot != null)
@@ -366,29 +364,9 @@ public class PDFBuilder
         {
             pdf.DrawPNG("PDF/Diary-Book_Route.png", screenshotRect.x, screenshotRect.y, screenshotRect.width, screenshotRect.height);
         }
-        // Official documents
-        pdf.DrawText("10", 408, 534);
-        // Personal items
-        pdf.DrawText("10", 408, 560);
-        // Religious items
-        pdf.DrawText("10", 408, 586);
-        // Clothing
-        pdf.DrawText("10", 408, 613);
-        // Food
-        pdf.DrawText("10", 408, 639);
-        // Medicine
-        pdf.DrawText("10", 408, 666);
-        // Items of worth
-        pdf.DrawText("10", 408, 692);
-        // Souvenirs
-        pdf.DrawText("10", 408, 718);
-        // Heirlooms
-        pdf.DrawText("10", 408, 745);
-        // Page Number
-        DrawPageNumber(pdf, ++pageNumber);
     }
 
-    private void DrawJourneys(IPDFPlatform pdf, Texture2D TEST_Paris)
+    private void DrawJourneys(IPDFPlatform pdf, Texture2D TEST_Paris, int pageNumber)
     {
         // Only test data
         Journey[] journeys = new Journey[] 
@@ -478,6 +456,7 @@ public class PDFBuilder
     {
         // Responsible for generating the pdf based on the state.
         // Maybe outsource this to a thread, since it will take some time?
+        int pageNumber = 0;
         string filePath = GenerateFilePath();
         UnityEngine.Debug.Log($"Generating pdf document at {filePath}");
 
@@ -491,13 +470,13 @@ public class PDFBuilder
         Texture2D TEST_ParisScreenshot = TEST_ParisEntry != null && TEST_ParisEntry.entry != null ? (LevelInstance.Instance ? LevelInstance.Instance.TakeDiaryScreenshot(TEST_ParisEntry) : null) : null;
 
         // TITLE PAGE
-        DrawTitlePage(pdf);
+        DrawTitlePage(pdf, pageNumber);
 
         // JOURNEY
-        DrawJourneyPage(pdf, mapScreenshot);
+        DrawJourneyPage(pdf, mapScreenshot, pageNumber);
 
         // JOURNEYS
-        DrawJourneys(pdf, TEST_ParisScreenshot);
+        DrawJourneys(pdf, TEST_ParisScreenshot, pageNumber);
 
         // OUTRO
         pdf.AddPage();

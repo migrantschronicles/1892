@@ -10,14 +10,8 @@ public class PlayerInventory
 
     private Dictionary<Item, int> items = new Dictionary<Item, int>();
 
-    public delegate void OnItemAddedEvent(Item item);
-    public OnItemAddedEvent onItemAdded;
-
-    public delegate void OnItemRemovedEvent(Item item);
-    public OnItemRemovedEvent onItemRemoved;
-
-    public delegate void OnItemsChanged(IEnumerable<KeyValuePair<Item, int>> items);
-    public OnItemsChanged onItemsChanged;
+    public delegate void OnItemAmountChangedEvent(Item item, int changedAmount, int totalAmount);
+    public event OnItemAmountChangedEvent onItemAmountChanged;
 
     public IEnumerable<KeyValuePair<Item, int>> Items { get { return items; } }
 
@@ -62,10 +56,14 @@ public class PlayerInventory
                         }
                     }
                 }
+
+                // Broadcast 
+                onItemAmountChanged.Invoke(item, Mathf.Min(-currentAmount, changedAmount), Mathf.Max(newAmount, 0));
             }
             else
             {
                 items[item] = newAmount;
+                onItemAmountChanged?.Invoke(item, changedAmount, newAmount);
             }
         }
         else
@@ -88,6 +86,8 @@ public class PlayerInventory
             {
                 NewGameManager.Instance.conditions.AddConditions(item.SetConditions, true);
             }
+
+            onItemAmountChanged?.Invoke(item, changedAmount, changedAmount);
         }
     }
 

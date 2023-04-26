@@ -63,10 +63,12 @@ public class Interface : MonoBehaviour
     {
         NewGameManager.Instance.onDateChanged += OnDateChanged;
         NewGameManager.Instance.onMoneyChanged += OnMoneyChanged;
+        NewGameManager.Instance.inventory.onItemAmountChanged += OnItemAmountChanged;
 
         OnMoneyChanged(NewGameManager.Instance.money);
         OnDateChanged(NewGameManager.Instance.date);
         OnLocationChanged(LevelInstance.Instance.LocationName);
+        foodText.text = NewGameManager.Instance.inventory.GetItemTypeCount(ItemType.Food).ToString();
     }
 
     private void OnDestroy()
@@ -75,6 +77,7 @@ public class Interface : MonoBehaviour
         {
             NewGameManager.Instance.onDateChanged -= OnDateChanged;
             NewGameManager.Instance.onMoneyChanged -= OnMoneyChanged;
+            NewGameManager.Instance.inventory.onItemAmountChanged -= OnItemAmountChanged;
         }
     }
 
@@ -93,6 +96,15 @@ public class Interface : MonoBehaviour
     {
         locationText.text = NewGameManager.Instance.LocationManager.GetLocalizedName(location);
         locationTextMapUI.text = NewGameManager.Instance.LocationManager.GetLocalizedName(location);
+    }
+
+    private void OnItemAmountChanged(Item item, int changedAmount, int totalAmount)
+    {
+        if(item.category && item.category.type == ItemType.Food)
+        {
+            int totalFood = NewGameManager.Instance.inventory.GetItemTypeCount(ItemType.Food);
+            foodText.text = totalFood.ToString();
+        }
     }
 
     /**

@@ -43,7 +43,7 @@ public class ShipMovement : MonoBehaviour
     public Vector2 ZoomBounds { get { return zoomBounds; } }
     public float ZoomValue { get { return zoomValue; } }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
     [SerializeField]
     private float mouseSpeedMultiplier = 0.1f;
     [SerializeField]
@@ -136,7 +136,7 @@ public class ShipMovement : MonoBehaviour
     private bool CheckTouchInterruption()
     {
         if(Input.touchCount > 0
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
             || Input.GetMouseButton(0) || !Mathf.Approximately(Input.mouseScrollDelta.y, 0.0f)
 #endif
             )
@@ -191,7 +191,7 @@ public class ShipMovement : MonoBehaviour
                 ZoomToViewportCenter(deltaDistance * zoomMultiplier);
             }
         }
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
         else
         {
             if (Input.GetMouseButton(0))

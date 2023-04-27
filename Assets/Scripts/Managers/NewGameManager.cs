@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 using System.Globalization;
 using System;
-using System.Diagnostics;
 
 public enum TransportationMethod
 {
@@ -298,6 +297,18 @@ public class NewGameManager : MonoBehaviour
         {
             InitAfterLoad();
         }
+    }
+
+    public void LoadFromSaveGame(SaveData saveGame)
+    {
+        userName = saveGame.username;
+        SetDate(saveGame.date);
+        SetMoney(saveGame.money);
+    }
+
+    public void CreateSaveGame()
+    {
+
     }
 
     public void DiscoverRoute(string from, string to, TransportationMethod method)

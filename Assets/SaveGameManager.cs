@@ -11,7 +11,6 @@ public class SaveData
     public string username;
     public DateTime date;
     public int money;
-    public int food;
 
     public string levelName;
 
@@ -19,7 +18,7 @@ public class SaveData
 
 public class SaveGameManager : MonoBehaviour
 {
-    public bool savedGameExists = false;
+    public bool SavedGameExists { get; private set; } = false;
     private SaveData saveData;
 
     private string filePath;
@@ -31,11 +30,11 @@ public class SaveGameManager : MonoBehaviour
 
         if (File.Exists(filePath))
         {
-            savedGameExists = true;
+            SavedGameExists = true;
         }
         else
         {
-            savedGameExists = false;
+            SavedGameExists = false;
         }
     }
 
@@ -44,7 +43,6 @@ public class SaveGameManager : MonoBehaviour
         saveData.username = NewGameManager.Instance.userName;
         saveData.date = NewGameManager.Instance.date;
         saveData.money = NewGameManager.Instance.money;
-        //saveData.food = NewGameManager.Instance.food;
         saveData.levelName = NewGameManager.Instance.nextLocation;
         Debug.Log(saveData.levelName);
 
@@ -55,18 +53,18 @@ public class SaveGameManager : MonoBehaviour
 
     public void LoadGame()
     {
+        StartCoroutine(LoadGameAsync());
+    }
+
+    private IEnumerator LoadGameAsync()
+    {
         string jsonData = File.ReadAllText(filePath);
         saveData = JsonUtility.FromJson<SaveData>(jsonData);
 
-
-        // Error happening: Should load the gamemanager after the load scene
-        /*NewGameManager.Instance.username = saveData.username;
-         * NewGameManager.Instance.date = saveData.date;
-        NewGameManager.Instance.money = saveData.money;*/
-        //NewGameManager.Instance.food = saveData.food;
-
+        DontDestroyOnLoad(this);
         SceneManager.LoadScene(saveData.levelName);
-        Debug.Log("Game Loaded");
-        
+        yield return null;
+        NewGameManager.Instance.LoadFromSaveGame(saveData);
+        Destroy(gameObject);
     }
 }

@@ -6,6 +6,8 @@ using UnityEngine.Localization;
 [CreateAssetMenu(fileName = "NewItem", menuName = "ScriptableObjects/Item", order = 1)]
 public class Item : ScriptableObject
 {
+    [Tooltip("The id")]
+    public string id;
     [Tooltip("The name of the item")]
     public LocalizedString Name;
     [Tooltip("The description of the item")]

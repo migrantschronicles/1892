@@ -26,4 +26,17 @@ public class ItemManager : MonoBehaviour
 
         return null;
     }
+
+    public Item GetItemById(string id)
+    {
+        foreach(Item item in items)
+        {
+            if(item.id == id)
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
 }

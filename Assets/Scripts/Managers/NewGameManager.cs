@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 using System.Globalization;
 using System;
-using System.Diagnostics;
 
 public enum TransportationMethod
 {
@@ -86,14 +85,12 @@ public class NewGameManager : MonoBehaviour
     public RouteManager RouteManager { get { return GetComponent<RouteManager>();  } }
 
     // Game Stats
-    public int day = 0;
     public bool wantsEndOfDay = false;
     public bool wantsEndGame = false;
 
     public int money;
     // Date
     public DateTime date = new DateTime(1892, 6, 21);
-    public string dateStr;
     private int travelCountToday = 0;
 
     // Saved stats 
@@ -106,10 +103,6 @@ public class NewGameManager : MonoBehaviour
     public Item foodItem;
     public ItemManager ItemManager { get { return GetComponent<ItemManager>(); } }
 
-    // Diary entries
-    private List<DiaryEntryData> diaryEntries = new List<DiaryEntryData>();
-    public DiaryEntry TEST_ParisEntry;
-
     // Map routes 
     public TransportationInfoTable transportationInfo { get; private set; } = new TransportationInfoTable();
     public TextAsset transportationTableCSV;
@@ -117,7 +110,6 @@ public class NewGameManager : MonoBehaviour
     // Conditions
     public DialogConditionProvider conditions { get { return GetComponent<DialogConditionProvider>(); } }
 
-    public IEnumerable<DiaryEntryData> DiaryEntries { get { return diaryEntries; } }
     public DiaryEntryManager DiaryEntryManager { get { return GetComponent<DiaryEntryManager>(); } }
     public TransportationManager TransportationManager { get { return GetComponent<TransportationManager>(); } }
 
@@ -143,6 +135,14 @@ public class NewGameManager : MonoBehaviour
 
     // Health
     public HealthStatus HealthStatus { get { return GetComponent<HealthStatus>(); } }
+
+    public IEnumerable<DiaryEntryData> DiaryEntries
+    { 
+        get 
+        { 
+            return journeys.Select(journey => journey.diaryEntries).SelectMany(entries => entries); 
+        }
+    }
 
     // Stats
     public int DaysInCity { get; private set; }
@@ -231,7 +231,11 @@ public class NewGameManager : MonoBehaviour
         }
         else if (scene.name == "Ship")
         {
-            OnLoadedShip();
+            if(nextLocation == "NewYorkCity" && nextMethod == TransportationMethod.Ship)
+            {
+                OnLoadedShip();
+            }
+            // Else the ship is loaded via save game
         }
         else if (scene.name == ShipManager.StopoverLocation)
         {
@@ -239,7 +243,11 @@ public class NewGameManager : MonoBehaviour
         }
         else if (scene.name == "ElisIsland")
         {
-            OnLoadedElisIsland();
+            if (nextLocation == "NewYorkCity" && nextMethod == TransportationMethod.Ship)
+            {
+                OnLoadedElisIsland();
+            }
+            // Else ElisIsland is loaded via save game
         }
 
         onLocationChanged?.Invoke(scene.name);
@@ -272,10 +280,7 @@ public class NewGameManager : MonoBehaviour
 
         LocalizationManager.Instance.OnLanguageChanged += (Language language) =>
         {
-            foreach(DiaryEntryData data in diaryEntries)
-            {
-                DiaryEntryManager.UpdateDiaryEntry(data);
-            }
+            journeys.ForEach(journey => journey.diaryEntries.ForEach(entry => DiaryEntryManager.UpdateDiaryEntry(entry)));
         };
 
         InitAfterLoad();
@@ -293,6 +298,173 @@ public class NewGameManager : MonoBehaviour
         {
             InitAfterLoad();
         }
+    }
+
+    public void LoadFromSaveGame(SaveData saveGame)
+    {
+        switch(saveGame.levelName)
+        {
+            case "Ship":
+                nextLocation = "NewYorkCity";
+                nextMethod = TransportationMethod.Ship;
+                SaveDataJourney lastJourney = saveGame.journeys.LastOrDefault();
+                ShipManager.StartTravellingInShip(lastJourney != null ? lastJourney.destination : "");
+                break;
+        }
+        ///@todo Handle Ship ( nextLocation to NewYork, nextMethod, ShipManager.STartTravelling)
+        userName = saveGame.username;
+        lastMethod = saveGame.lastMethod;
+        SetMoney(saveGame.money);
+        SetDate(saveGame.date);
+
+        journeys.Clear();
+        foreach(SaveDataJourney journey in saveGame.journeys)
+        {
+            List<DiaryEntryData> diaryEntries = new(journey.diaryEntries.Select(entry => DiaryEntryManager.GenerateEntry(entry)));
+            journeys.Add(new Journey
+            {
+                destination = journey.destination,
+                method = journey.method,
+                money = journey.money,
+                diaryEntries = diaryEntries
+            });
+
+            foreach(DiaryEntryData entry in diaryEntries)
+            {
+                onDiaryEntryAdded?.Invoke(entry);
+            }
+        }
+
+        foreach(SaveDataItem saveItem in saveGame.items)
+        {
+            Item item = ItemManager.GetItemById(saveItem.id);
+            if(item != null)
+            {
+                inventory.AddItem(item, saveItem.amount);
+            }
+            else
+            {
+                Debug.LogError($"Item {saveItem.id} from savegame not found");
+            }
+        }
+
+        conditions.LoadFromSaveData(saveGame.conditions);
+
+        foreach(SaveDataQuest saveQuest in saveGame.quests)
+        {
+            Quest quest = QuestManager.GetQuestById(saveQuest.id);
+            if(quest != null)
+            {
+                QuestManager.AddQuest(quest);
+                switch (saveQuest.type)
+                {
+                    case SaveDataQuest.Type.Finished:
+                        QuestManager.FinishQuest(quest);
+                        break;
+
+                    case SaveDataQuest.Type.Failed:
+                        QuestManager.FailQuest(quest);
+                        break;
+                }
+            }
+            else
+            {
+                Debug.LogError($"Quest {saveQuest.id} from savegame not found");
+            }
+        }
+
+        HealthStatus.LoadFromSaveData(saveGame.health);
+
+        CurrentCurrency = saveGame.currency;
+        onCurrencyChanged?.Invoke(CurrentCurrency);
+
+        foreach(RouteManager.DiscoveredRoute route in RouteManager.Routes)
+        {
+            if(RouteManager.DiscoverRoute(route.from, route.to, route.method))
+            {
+                OnRouteDiscovered?.Invoke(route.from, route.to, route.method);
+            }
+        }
+
+        journeys.Add(new Journey
+        {
+            destination = saveGame.levelName,
+            money = money,
+            method = saveGame.lastMethod
+        });
+        LevelInstance.Instance.OpenNewCityDiaryEntry();
+
+        onLocationChanged?.Invoke(saveGame.levelName);
+    }
+
+    public void SaveGame(SaveData saveGame)
+    {
+        saveGame.version = SaveGameVersion.V1;
+        ///@todo selected character
+        saveGame.username = userName;
+        saveGame.money = money;
+        saveGame.date = date;
+
+        switch(SceneManager.GetActiveScene().name)
+        {
+            case "ElisIsland":
+                saveGame.lastMethod = TransportationMethod.Ship;
+                saveGame.levelName = "ElisIsland";
+                break;
+
+            case "Ship":
+                saveGame.lastMethod = TransportationMethod.None;
+                saveGame.levelName = "Ship";
+                break;
+
+            default:
+                saveGame.lastMethod = nextMethod; // Is still set during travel
+                saveGame.levelName = nextLocation; // Is still set during travel
+                break;
+        }
+
+        saveGame.journeys = new List<SaveDataJourney>(journeys.Select(journey => new SaveDataJourney
+        {
+            destination = journey.destination,
+            method = journey.method,
+            money = journey.money,
+            diaryEntries = new List<DiaryEntryInfo>(journey.diaryEntries.Select(entry => entry.info))
+        }));
+
+        foreach (var item in inventory.Items)
+        {
+            saveGame.items.Add(new SaveDataItem { id = item.Key.id, amount = item.Value });
+        }
+
+        saveGame.conditions = conditions.CreateSaveData();
+
+        foreach (Quest quest in QuestManager.MainQuests)
+        {
+            saveGame.quests.Add(new SaveDataQuest { id = quest.Id, type = SaveDataQuest.Type.Started });
+        }
+        foreach (Quest quest in QuestManager.SideQuests)
+        {
+            saveGame.quests.Add(new SaveDataQuest { id = quest.Id, type = SaveDataQuest.Type.Started });
+        }
+        foreach (Quest quest in QuestManager.FinishedMainQuests)
+        {
+            saveGame.quests.Add(new SaveDataQuest { id = quest.Id, type = SaveDataQuest.Type.Finished });
+        }
+        foreach (Quest quest in QuestManager.FinishedSideQuests)
+        {
+            saveGame.quests.Add(new SaveDataQuest { id = quest.Id, type = SaveDataQuest.Type.Finished });
+        }
+        foreach (Quest quest in QuestManager.FailedMainQuests)
+        {
+            saveGame.quests.Add(new SaveDataQuest { id = quest.Id, type = SaveDataQuest.Type.Failed });
+        }
+        foreach (Quest quest in QuestManager.FailedSideQuests)
+        {
+            saveGame.quests.Add(new SaveDataQuest { id = quest.Id, type = SaveDataQuest.Type.Failed });
+        }
+        saveGame.health = HealthStatus.CreateSaveData();
+        saveGame.currency = CurrentCurrency;
+        saveGame.routes = RouteManager.Routes;
     }
 
     public void DiscoverRoute(string from, string to, TransportationMethod method)
@@ -313,7 +485,6 @@ public class NewGameManager : MonoBehaviour
     {
         DateTimeFormatInfo dateFormat = CultureInfo.CurrentCulture.DateTimeFormat;
         date = newDate;
-        //dateStr = date.ToString("dd'st', MMMM, yyyy"); //);
         onDateChanged?.Invoke(date);
     }
 
@@ -381,7 +552,6 @@ public class NewGameManager : MonoBehaviour
     
     public void StartNewDay() 
     {
-        day++;
         ++DaysInCity;
         travelCountToday = 0;
         SetDate(date.AddDays(1));
@@ -408,9 +578,7 @@ public class NewGameManager : MonoBehaviour
             return;
         }
 
-
-
-        if (travelCountToday > 0)
+        if(travelCountToday > 0)
         {
             // Cannot travel again today
             LevelInstance.Instance.OnCannotTravelAgainToday();
@@ -420,6 +588,11 @@ public class NewGameManager : MonoBehaviour
         if (LocationManager.IsFromEuropeToAmerica(LevelInstance.Instance.LocationName, name))
         {
             ShipManager.StartTravellingInShip();
+
+            // Load level
+            nextLocation = name;
+            nextMethod = method;
+            lastMethod = method;
         }
         else
         {
@@ -446,16 +619,20 @@ public class NewGameManager : MonoBehaviour
             // Remove required costs.
             SetMoney(money - routeInfo.cost);
             ++travelCountToday;
+
+            // Load level
+            nextLocation = name;
+            nextMethod = method;
+            lastMethod = method;
+
+            // For now only in normal cities
+            GetComponent<SaveGameManager>().SaveGame();
         }
 
         // Reset values
         DaysInCity = 0;
         onNewDay?.Invoke();
 
-        // Load level
-        nextLocation = name;
-        nextMethod = method;
-        lastMethod = method;
         AudioManager.Instance.FadeOutMusic();
 
         // Add new location coordinates to GeoJSON
@@ -463,9 +640,6 @@ public class NewGameManager : MonoBehaviour
         locationsCoordinates.Add(new double[] { nextLocationMarker.lon, nextLocationMarker.lat });
         UnityEngine.Debug.Log("Added " + nextLocationMarker.name + " to GeoJson coordinates.");
 
-
-        // Save city
-        GetComponent<SaveGameManager>().SaveGame();
         SceneManager.LoadScene("LoadingScene");
     }
     
@@ -535,6 +709,13 @@ public class NewGameManager : MonoBehaviour
         }
         else if(DaysInCity == 0)
         {
+            // Add the journey
+            Journey journey = new Journey();
+            journey.destination = nextLocation;
+            journey.method = nextMethod;
+            journey.money = money;
+            journeys.Add(journey);
+
             StartCoroutine(OpenNewCityDiaryEntryNextFrame());
         }
     }
@@ -566,6 +747,8 @@ public class NewGameManager : MonoBehaviour
 
     public void OnLoadedElisIsland()
     {
+        GetComponent<SaveGameManager>().SaveGame();
+
         // Add the journey
         Journey journey = new Journey();
         journey.destination = "ElisIsland";
@@ -583,8 +766,6 @@ public class NewGameManager : MonoBehaviour
 
     public void AddDiaryEntry(DiaryEntryData entry)
     {
-        diaryEntries.Add(entry);
-
         journeys[journeys.Count - 1].diaryEntries.Add(entry);
 
         if(onDiaryEntryAdded != null)

@@ -76,6 +76,18 @@ public class HealthStatus_Hungry
             healthData.OnDayWithoutEnoughFood(DaysWithoutEnoughFood);
         }
     }
+
+    public void Save(SaveDataHealthPerCharacter health)
+    {
+        health.requiredFoodAmount = requiredFoodAmount;
+        health.daysWithoutEnoughFood = DaysWithoutEnoughFood;
+    }
+
+    public void Load(SaveDataHealthPerCharacter health)
+    {
+        requiredFoodAmount = health.requiredFoodAmount;
+        DaysWithoutEnoughFood = health.daysWithoutEnoughFood;
+    }
 }
 
 public class HealthStatus_Homesickness
@@ -110,11 +122,23 @@ public class HealthStatus_Homesickness
     {
         value = Mathf.Clamp(value + change, 1, 10);
     }
+
+    public void Save(SaveDataHealthPerCharacter health)
+    {
+        health.homesickness = value;
+        health.homesicknessDaysSinceLastDecrease = daysSinceLastDecrease;
+    }
+
+    public void Load(SaveDataHealthPerCharacter health)
+    {
+        value = health.homesickness;
+        daysSinceLastDecrease = health.homesicknessDaysSinceLastDecrease;
+    }
 }
 
 public class HealthStatus_Cholera
 {
-    enum CholeraStatus
+    public enum CholeraStatus
     {
         Healthy,
         Exposed,
@@ -180,6 +204,20 @@ public class HealthStatus_Cholera
                 break;
         }
     }
+
+    public void Save(SaveDataHealthPerCharacter health)
+    {
+        health.choleraStatus = status;
+        health.choleraDaysSinceExposed = daysSinceExposed;
+        health.choleraDaysSick = daysSick;
+    }
+
+    public void Load(SaveDataHealthPerCharacter health)
+    {
+        status = health.choleraStatus;
+        daysSinceExposed = health.choleraDaysSinceExposed;
+        daysSick = health.choleraDaysSick;
+    }
 }
 
 public class HealthStatus_Seasickness
@@ -215,6 +253,16 @@ public class HealthStatus_Seasickness
         {
             healthData.OnSeasickDay();
         }
+    }
+
+    public void Save(SaveDataHealthPerCharacter health)
+    {
+        health.canGetSeasick = canGetSeasick;
+    }
+
+    public void Load(SaveDataHealthPerCharacter health)
+    {
+        canGetSeasick = health.canGetSeasick;
     }
 }
 
@@ -322,6 +370,26 @@ public class ProtagonistHealthData
     public void SetIsOnShip(bool value)
     {
         seasicknessStatus.SetIsOnShip(value);
+    }
+
+    public SaveDataHealthPerCharacter Save()
+    {
+        SaveDataHealthPerCharacter health = new SaveDataHealthPerCharacter();
+        hungryStatus.Save(health);
+        homesicknessStatus.Save(health);
+        choleraStatus.Save(health);
+        seasicknessStatus.Save(health);
+        health.characterName = CharacterData.name;
+        return health;
+    }
+
+    public void Load(SaveDataHealthPerCharacter health)
+    {
+        hungryStatus.Load(health);
+        homesicknessStatus.Load(health);
+        choleraStatus.Load(health);
+        seasicknessStatus.Load(health);
+        OnHealthChanged();
     }
 }
 
@@ -515,5 +583,25 @@ public class HealthStatus : MonoBehaviour
     public IEnumerable<ProtagonistHealthData> GetHungryCharacters()
     {
         return characters.Where(character => character.HungryStatus.DaysWithoutEnoughFood > 0);
+    }
+
+    public List<SaveDataHealthPerCharacter> CreateSaveData()
+    {
+        return new List<SaveDataHealthPerCharacter>(characters.Select(character => character.Save()));
+    }
+
+    public void LoadFromSaveData(List<SaveDataHealthPerCharacter> saveData)
+    {
+        saveData.ForEach(health => {
+            ProtagonistHealthData character = characters.First(character => character.CharacterData.name == health.characterName);
+            if(character != null)
+            {
+                character.Load(health);
+            }
+            else
+            {
+                Debug.LogError($"Could not find character {health.characterName} of savegame");
+            }
+        });
     }
 }

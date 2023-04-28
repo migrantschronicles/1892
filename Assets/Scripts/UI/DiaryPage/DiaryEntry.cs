@@ -136,11 +136,11 @@ public class DiaryEntryInfo
     public string locationName;
     public bool isStopoverDay;
     public SleepMethod lastSleepMethod;
-    public List<StolenItemInfo> lastStolenItems;
-    public List<ProtagonistData> hungryCharacters;
+    public List<StolenItemInfo> lastStolenItems = new();
+    public List<ProtagonistData> hungryCharacters = new();
     public string stopoverLocation;
-    public List<HealthProblem> newHealthProblems;
-    public List<HealthProblem> existingHealthProblems;
+    public List<HealthProblem> newHealthProblems = new();
+    public List<HealthProblem> existingHealthProblems = new();
     public DateTime date;
     public TransportationMethod lastTransportationMethod;
     public GeneratedDiaryEntryPurpose purpose;

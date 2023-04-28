@@ -67,6 +67,11 @@ public class SaveDataJourney
     public List<DiaryEntryInfo> diaryEntries;
 }
 
+public enum SaveGameVersion
+{
+    V1
+}
+
 [System.Serializable]
 public class SaveData
 {
@@ -83,7 +88,7 @@ public class SaveData
     public List<RouteManager.DiscoveredRoute> routes = new();
 
     public string levelName;
-    public int version;
+    public SaveGameVersion version;
 }
 
 public class SaveGameManager : MonoBehaviour

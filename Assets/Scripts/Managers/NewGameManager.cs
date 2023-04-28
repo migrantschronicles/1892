@@ -236,7 +236,11 @@ public class NewGameManager : MonoBehaviour
         }
         else if (scene.name == "Ship")
         {
-            OnLoadedShip();
+            if(nextLocation == "NewYorkCity" && nextMethod == TransportationMethod.Ship)
+            {
+                OnLoadedShip();
+            }
+            // Else the ship is loaded via save game
         }
         else if (scene.name == ShipManager.StopoverLocation)
         {
@@ -244,7 +248,11 @@ public class NewGameManager : MonoBehaviour
         }
         else if (scene.name == "ElisIsland")
         {
-            OnLoadedElisIsland();
+            if (nextLocation == "NewYorkCity" && nextMethod == TransportationMethod.Ship)
+            {
+                OnLoadedElisIsland();
+            }
+            // Else ElisIsland is loaded via save game
         }
 
         onLocationChanged?.Invoke(scene.name);
@@ -299,12 +307,22 @@ public class NewGameManager : MonoBehaviour
 
     public void LoadFromSaveGame(SaveData saveGame)
     {
+        switch(saveGame.levelName)
+        {
+            case "Ship":
+                nextLocation = "NewYorkCity";
+                nextMethod = TransportationMethod.Ship;
+                SaveDataJourney lastJourney = saveGame.journeys.LastOrDefault();
+                ShipManager.StartTravellingInShip(lastJourney != null ? lastJourney.destination : "");
+                break;
+        }
         ///@todo Handle Ship ( nextLocation to NewYork, nextMethod, ShipManager.STartTravelling)
         userName = saveGame.username;
         lastMethod = saveGame.lastMethod;
         SetMoney(saveGame.money);
         SetDate(saveGame.date);
 
+        journeys.Clear();
         foreach(SaveDataJourney journey in saveGame.journeys)
         {
             List<DiaryEntryData> diaryEntries = new(journey.diaryEntries.Select(entry => DiaryEntryManager.GenerateEntry(entry)));
@@ -380,16 +398,35 @@ public class NewGameManager : MonoBehaviour
             method = saveGame.lastMethod
         });
         LevelInstance.Instance.OpenNewCityDiaryEntry();
+
+        onLocationChanged?.Invoke(saveGame.levelName);
     }
 
     public void SaveGame(SaveData saveGame)
     {
-        saveGame.version = 1;
+        saveGame.version = SaveGameVersion.V1;
         ///@todo selected character
         saveGame.username = userName;
-        saveGame.lastMethod = nextMethod; // Is still set during travel
         saveGame.money = money;
         saveGame.date = date;
+
+        switch(SceneManager.GetActiveScene().name)
+        {
+            case "ElisIsland":
+                saveGame.lastMethod = TransportationMethod.Ship;
+                saveGame.levelName = "ElisIsland";
+                break;
+
+            case "Ship":
+                saveGame.lastMethod = TransportationMethod.None;
+                saveGame.levelName = "Ship";
+                break;
+
+            default:
+                saveGame.lastMethod = nextMethod; // Is still set during travel
+                saveGame.levelName = nextLocation; // Is still set during travel
+                break;
+        }
 
         saveGame.journeys = new List<SaveDataJourney>(journeys.Select(journey => new SaveDataJourney
         {
@@ -432,7 +469,6 @@ public class NewGameManager : MonoBehaviour
         }
         saveGame.health = HealthStatus.CreateSaveData();
         saveGame.currency = CurrentCurrency;
-        saveGame.levelName = nextLocation; // Is still set during travel
         saveGame.routes = RouteManager.Routes;
     }
 
@@ -557,6 +593,11 @@ public class NewGameManager : MonoBehaviour
         if(LocationManager.IsFromEuropeToAmerica(LevelInstance.Instance.LocationName, name))
         {
             ShipManager.StartTravellingInShip();
+
+            // Load level
+            nextLocation = name;
+            nextMethod = method;
+            lastMethod = method;
         }
         else
         {
@@ -583,18 +624,21 @@ public class NewGameManager : MonoBehaviour
             // Remove required costs.
             SetMoney(money - routeInfo.cost);
             ++travelCountToday;
+
+            // Load level
+            nextLocation = name;
+            nextMethod = method;
+            lastMethod = method;
+
+            // For now only in normal cities
+            GetComponent<SaveGameManager>().SaveGame();
         }
 
         // Reset values
         DaysInCity = 0;
         onNewDay?.Invoke();
 
-        // Load level
-        nextLocation = name;
-        nextMethod = method;
-        lastMethod = method;
         AudioManager.Instance.FadeOutMusic();
-        GetComponent<SaveGameManager>().SaveGame();
         SceneManager.LoadScene("LoadingScene");
     }
     
@@ -664,6 +708,13 @@ public class NewGameManager : MonoBehaviour
         }
         else if(DaysInCity == 0)
         {
+            // Add the journey
+            Journey journey = new Journey();
+            journey.destination = nextLocation;
+            journey.method = nextMethod;
+            journey.money = money;
+            journeys.Add(journey);
+
             StartCoroutine(OpenNewCityDiaryEntryNextFrame());
         }
     }
@@ -695,6 +746,8 @@ public class NewGameManager : MonoBehaviour
 
     public void OnLoadedElisIsland()
     {
+        GetComponent<SaveGameManager>().SaveGame();
+
         // Add the journey
         Journey journey = new Journey();
         journey.destination = "ElisIsland";

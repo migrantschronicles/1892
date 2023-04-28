@@ -47,7 +47,12 @@ public class ShipManager : MonoBehaviour
 
     public void StartTravellingInShip()
     {
-        FromLocation = LevelInstance.Instance.LocationName;
+        StartTravellingInShip(LevelInstance.Instance.LocationName);
+    }
+
+    public void StartTravellingInShip(string fromLocation)
+    {
+        FromLocation = fromLocation;
         currentShipRoute = GetShipRoute(FromLocation);
     }
 

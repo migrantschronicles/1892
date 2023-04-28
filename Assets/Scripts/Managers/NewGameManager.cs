@@ -75,12 +75,7 @@ public class NewGameManager : MonoBehaviour
     public ShipManager ShipManager { get { return GetComponent<ShipManager>(); } }
     public List<double[]> locationsCoordinates = new List<double[]>() // For testing purposes
     {
-        new double[] { 6.134173, 49.614828 },
-        new double[] {  6.087814 ,49.770628},
-        new double[] { 2.348391 ,48.853495 },
-        new double[] { 4.399708 ,51.221110 },
-        new double[] { -74.039599, 40.699028 }
-
+        new double[] {6.1328, 49.615891}
     };
 
     public delegate void OnRouteDiscoveredEvent(string from, string to, TransportationMethod method);
@@ -577,7 +572,7 @@ public class NewGameManager : MonoBehaviour
     }
     public void GoToLocation(string name, TransportationMethod method)
     {
-        if(nextLocation != null)
+        if (nextLocation != null)
         {
             // Already travelling
             return;
@@ -590,7 +585,7 @@ public class NewGameManager : MonoBehaviour
             return;
         }
 
-        if(LocationManager.IsFromEuropeToAmerica(LevelInstance.Instance.LocationName, name))
+        if (LocationManager.IsFromEuropeToAmerica(LevelInstance.Instance.LocationName, name))
         {
             ShipManager.StartTravellingInShip();
 
@@ -639,6 +634,12 @@ public class NewGameManager : MonoBehaviour
         onNewDay?.Invoke();
 
         AudioManager.Instance.FadeOutMusic();
+
+        // Add new location coordinates to GeoJSON
+        MapLocationMarker nextLocationMarker = GameObject.FindGameObjectWithTag("Locations").transform.GetComponentInParent<Map>().GetLocationMarkerByName(nextLocation).GetComponent<MapLocationMarker>();
+        locationsCoordinates.Add(new double[] { nextLocationMarker.lon, nextLocationMarker.lat });
+        UnityEngine.Debug.Log("Added " + nextLocationMarker.name + " to GeoJson coordinates.");
+
         SceneManager.LoadScene("LoadingScene");
     }
     

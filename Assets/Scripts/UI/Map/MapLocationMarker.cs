@@ -15,9 +15,9 @@ public class MapLocationMarker : MonoBehaviour
 
     //GeoJSON
     [SerializeField]
-    private double lat;
+    public double lat;
     [SerializeField]
-    private double lon;
+    public double lon;
 
     [SerializeField]
     private Sprite currentMarker;

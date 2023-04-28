@@ -545,4 +545,71 @@ public class DialogConditionProvider : MonoBehaviour
             }
         }
     }
+
+    public List<SaveDataCondition> CreateSaveData()
+    {
+        List<SaveDataCondition> saveConditions = new();
+
+        foreach(string condition in ArticyGlobalVariables.VariableNames)
+        {
+            if(ArticyGlobalVariables.Default.IsVariableOfTypeBoolean(condition))
+            {
+                bool value = ArticyGlobalVariables.Default.GetVariableByString<bool>(condition);
+                saveConditions.Add(new SaveDataCondition { name = condition, type = SaveDataCondition.Type.Bool, valueBool = value, articy = true });
+            }
+            else if(ArticyGlobalVariables.Default.IsVariableOfTypeInteger(condition))
+            {
+                int value = ArticyGlobalVariables.Default.GetVariableByString<int>(condition);
+                saveConditions.Add(new SaveDataCondition { name = condition, type = SaveDataCondition.Type.Int, valueInt = value, articy = true });
+            }
+            else if(ArticyGlobalVariables.Default.IsVariableOfTypeString(condition))
+            {
+                string value = ArticyGlobalVariables.Default.GetVariableByString<string>(condition);
+                saveConditions.Add(new SaveDataCondition { name = condition, type = SaveDataCondition.Type.String, valueString = value, articy = true });
+            }
+        }
+
+        foreach(string condition in globalConditions)
+        {
+            if(!ArticyGlobalVariables.VariableNames.Contains(condition))
+            {
+                saveConditions.Add(new SaveDataCondition { name = condition, type = SaveDataCondition.Type.Bool, valueBool = true, articy = false });
+            }
+        }
+
+        return saveConditions;
+    }
+
+    public void LoadFromSaveData(List<SaveDataCondition> saveConditions)
+    {
+        foreach(SaveDataCondition condition in saveConditions)
+        {
+            if(condition.articy)
+            {
+                switch(condition.type)
+                {
+                    case SaveDataCondition.Type.Bool:
+                        ArticyGlobalVariables.Default.SetVariableByString(condition.name, condition.valueBool);
+                        break;
+
+                    case SaveDataCondition.Type.Int:
+                        ArticyGlobalVariables.Default.SetVariableByString(condition.name, condition.valueInt);
+                        break;
+
+                    case SaveDataCondition.Type.String:
+                        ArticyGlobalVariables.Default.SetVariableByString(condition.name, condition.valueString);
+                        break;
+                }
+            }
+            else
+            {
+                globalConditions.Add(condition.name);
+
+                if (onConditionsChangedListeners.TryGetValue(condition.name, out OnConditionsChangedEventData onConditionsChanged))
+                {
+                    onConditionsChanged.onConditionsChanged?.Invoke(onConditionsChanged.context);
+                }
+            }
+        }
+    }
 }

@@ -6,27 +6,95 @@ using System;
 using UnityEngine.SceneManagement;
 
 [System.Serializable]
+public class SaveDataItem
+{
+    public string id;
+    public int amount;
+}
+
+[System.Serializable]
+public class SaveDataQuest
+{
+    public enum Type
+    {
+        Started,
+        Failed,
+        Finished
+    }
+
+    public string id;
+    public Type type;
+}
+
+[System.Serializable]
+public class SaveDataHealthPerCharacter
+{
+    public int requiredFoodAmount;
+    public int daysWithoutEnoughFood;
+    public float homesickness;
+    public int homesicknessDaysSinceLastDecrease;
+    public HealthStatus_Cholera.CholeraStatus choleraStatus;
+    public int choleraDaysSinceExposed;
+    public int choleraDaysSick;
+    public bool canGetSeasick;
+    public string characterName;
+}
+
+[System.Serializable]
+public class SaveDataCondition
+{
+    public enum Type
+    {
+        Bool,
+        Int,
+        String
+    }
+
+    public Type type;
+    public string name;
+    public bool valueBool;
+    public int valueInt;
+    public string valueString;
+    public bool articy;
+}
+
+[System.Serializable]
+public class SaveDataJourney
+{
+    public string destination;
+    public TransportationMethod method;
+    public int money;
+    public List<DiaryEntryInfo> diaryEntries;
+}
+
+[System.Serializable]
 public class SaveData
 {
     public string username;
     public DateTime date;
     public int money;
+    public TransportationMethod lastMethod;
+    public Currency currency;
+    public List<SaveDataItem> items = new();
+    public List<SaveDataQuest> quests = new();
+    public List<SaveDataHealthPerCharacter> health = new();
+    public List<SaveDataCondition> conditions = new();
+    public List<SaveDataJourney> journeys = new();
+    public List<RouteManager.DiscoveredRoute> routes = new();
 
     public string levelName;
-
+    public int version;
 }
 
 public class SaveGameManager : MonoBehaviour
 {
     public bool SavedGameExists { get; private set; } = false;
-    private SaveData saveData;
 
     private string filePath;
 
     private void Start()
     {
         filePath = Application.persistentDataPath + "/savedata.json";
-        saveData = new SaveData();
 
         if (File.Exists(filePath))
         {
@@ -40,15 +108,11 @@ public class SaveGameManager : MonoBehaviour
 
     public void SaveGame()
     {
-        saveData.username = NewGameManager.Instance.userName;
-        saveData.date = NewGameManager.Instance.date;
-        saveData.money = NewGameManager.Instance.money;
-        saveData.levelName = NewGameManager.Instance.nextLocation;
-        Debug.Log(saveData.levelName);
+        SaveData saveGame = new SaveData();
+        NewGameManager.Instance.SaveGame(saveGame);
 
-        string jsonData = JsonUtility.ToJson(saveData);
+        string jsonData = JsonUtility.ToJson(saveGame);
         File.WriteAllText(filePath, jsonData);
-        Debug.Log("Game Saved");
     }
 
     public void LoadGame()
@@ -59,7 +123,7 @@ public class SaveGameManager : MonoBehaviour
     private IEnumerator LoadGameAsync()
     {
         string jsonData = File.ReadAllText(filePath);
-        saveData = JsonUtility.FromJson<SaveData>(jsonData);
+        SaveData saveData = JsonUtility.FromJson<SaveData>(jsonData);
 
         DontDestroyOnLoad(this);
         SceneManager.LoadScene(saveData.levelName);

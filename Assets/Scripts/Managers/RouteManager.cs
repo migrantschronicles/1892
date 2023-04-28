@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RouteManager : MonoBehaviour
 {
-    class DiscoveredRoute
+    public class DiscoveredRoute
     {
         public string from;
         public string to;
@@ -12,6 +12,8 @@ public class RouteManager : MonoBehaviour
     }
 
     private List<DiscoveredRoute> routes = new();
+
+    public List<DiscoveredRoute> Routes { get { return routes; } }
 
     private void Start()
     {

@@ -25,6 +25,14 @@ public class Map : MonoBehaviour
         }
     }
 
+    public MapLocationMarker GetLocationMarkerByName(string name)
+    {
+        foreach (MapLocationMarker location in locationMarkers) {
+            if(location.name == name) return location;
+        }
+        return null;
+    }
+
     public GameObject CurrentFocusObject
     {
         get

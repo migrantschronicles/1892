@@ -63,7 +63,7 @@ public class TransportationMethodBox : MonoBehaviour
             default: titleText.text = "NONE"; return;
         }
 
-        if(Application.isPlaying)
+        if(Application.isPlaying && NewGameManager.Instance)
         {
             titleText.text = NewGameManager.Instance.TransportationManager.GetLocalizedMethod(method, useFerry);
         }

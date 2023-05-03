@@ -268,38 +268,47 @@ public class DialogChat : MonoBehaviour
         return method;
     }
 
-    private void OnRouteDiscovered(ArticyObject location, IEnumerable<Transportation> value)
+    private bool OnRouteDiscovered(ArticyObject location, IEnumerable<Transportation> value)
     {
-        GameObject popupGO = LevelInstance.Instance.PushPopup(DialogSystem.Instance.DiscoveredRoutePopup);
-        DiscoveredRoutePopup popup = popupGO.GetComponent<DiscoveredRoutePopup>();
+        string currentLocation = LevelInstance.Instance.LocationName;
         string locationName = NewGameManager.Instance.LocationManager.GetLocationByTechnicalName(location.TechnicalName);
         IEnumerable<TransportationMethod> methods = value
             .Where(enumValue => enumValue != 0)
-            .Select(enumValue => ConvertArticyMethodToTransportationMethod(enumValue));
-        popup.Init(locationName, methods);
-        methods.ToList().ForEach(method => NewGameManager.Instance.DiscoverRoute(LevelInstance.Instance.LocationName, locationName, method));
-        popup.OnAccepted += (popup) =>
+            .Select(enumValue => ConvertArticyMethodToTransportationMethod(enumValue))
+            .Where(method => !NewGameManager.Instance.RouteManager.IsRouteDiscovered(currentLocation, locationName, method));
+        if(methods != null && methods.Any())
         {
-            LevelInstance.Instance.PopPopup();
-            if (locationName == "Luxembourg")
+            GameObject popupGO = LevelInstance.Instance.PushPopup(DialogSystem.Instance.DiscoveredRoutePopup);
+            DiscoveredRoutePopup popup = popupGO.GetComponent<DiscoveredRoutePopup>();
+            popup.Init(locationName, methods);
+            methods.ToList().ForEach(method => NewGameManager.Instance.DiscoverRoute(currentLocation, locationName, method));
+            popup.OnAccepted += (popup) =>
             {
-                LevelInstance.Instance.OpenDiary();
-            }
-        };
-        
+                LevelInstance.Instance.PopPopup();
+                if (locationName == "Luxembourg")
+                {
+                    LevelInstance.Instance.OpenDiary();
+                }
+            };
+
+            return true;
+        }
+
+        return false;
     }
 
     private void HandleTemplate()
     {
         if(pausedOn is Destination destination)
         {
+            bool hasPopup = false;
             if(destination.Template.Location_Revealed_1.LocationRevealed != null)
             {
                 if(destination.Template.Transportation.Transportation != 0 ||
                     destination.Template.Transportation_02.Transportation != 0 ||
                     destination.Template.Transportation_3.Transportation != 0)
                 {
-                    OnRouteDiscovered(destination.Template.Location_Revealed_1.LocationRevealed,
+                    hasPopup |= OnRouteDiscovered(destination.Template.Location_Revealed_1.LocationRevealed,
                         new Transportation[] {
                         destination.Template.Transportation.Transportation,
                         destination.Template.Transportation_02.Transportation,
@@ -318,7 +327,7 @@ public class DialogChat : MonoBehaviour
                     destination.Template.Transportation_5.Transportation != 0 ||
                     destination.Template.Transportation_6.Transportation != 0)
                 {
-                    OnRouteDiscovered(destination.Template.Location_Revealed_2.LocationRevealed,
+                    hasPopup |= OnRouteDiscovered(destination.Template.Location_Revealed_2.LocationRevealed,
                     new Transportation[]
                     {
                         destination.Template.Transportation_4.Transportation,
@@ -336,7 +345,7 @@ public class DialogChat : MonoBehaviour
             {
                 if (destination.Template.Transportation_7.Transportation != 0)
                 {
-                    OnRouteDiscovered(destination.Template.Location_Revealed_3.LocationRevealed,
+                    hasPopup |= OnRouteDiscovered(destination.Template.Location_Revealed_3.LocationRevealed,
                     new Transportation[]
                     {
                         destination.Template.Transportation_7.Transportation,
@@ -352,7 +361,7 @@ public class DialogChat : MonoBehaviour
             {
                 if (destination.Template.Transportation_8.Transportation != 0)
                 {
-                    OnRouteDiscovered(destination.Template.Location_Revealed_4.LocationRevealed,
+                    hasPopup |= OnRouteDiscovered(destination.Template.Location_Revealed_4.LocationRevealed,
                     new Transportation[]
                     {
                         destination.Template.Transportation_8.Transportation,
@@ -362,6 +371,11 @@ public class DialogChat : MonoBehaviour
                 {
                     Debug.LogError($"Invalid transporation methods in {LevelInstance.Instance.LocationName}");
                 }
+            }
+
+            if(!hasPopup)
+            {
+                OnTemplateHandled();
             }
         }
         else if(pausedOn is ItemAdded itemAdded)

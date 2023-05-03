@@ -189,6 +189,12 @@ public class NewGameManager : MonoBehaviour
             HealthStatus.Init(PlayableCharacterData.protagonistData);
             conditions.Init();
             money = PlayableCharacterData.startMoney;
+
+            Journey journey = new Journey();
+            journey.destination = SceneManager.GetActiveScene().name;
+            journey.method = TransportationMethod.None;
+            journey.money = money;
+            journeys.Add(journey);
         }
         else
         {
@@ -266,12 +272,6 @@ public class NewGameManager : MonoBehaviour
 
     private void Initialize()
     {
-        Journey journey = new Journey();
-        journey.destination = LevelInstance.Instance.LocationName;
-        journey.method = TransportationMethod.None;
-        journey.money = money;
-        journeys.Add(journey);
-
         // Add main quest
         if(PlayableCharacterData.mainQuest)
         {

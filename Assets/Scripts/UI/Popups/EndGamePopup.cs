@@ -6,9 +6,11 @@ public class EndGamePopup : MonoBehaviour, IPopup
 {
     public bool CanClose { get { return false; } }
 
+    public string TechnicalName { get; set; }
+
     public void OnEndGameClicked()
     {
-        NewGameManager.Instance.EndGameAndReturnToMainMenu();
+        LevelInstance.Instance.OpenEndGameDiaryEntry(TechnicalName);
     }
 
     public void OnDownloadPDFClicked()

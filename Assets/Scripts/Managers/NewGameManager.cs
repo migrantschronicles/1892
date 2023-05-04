@@ -1051,10 +1051,10 @@ public class NewGameManager : MonoBehaviour
         OnEndOfGame(false);
     }
 
-    public void OnEndOfGame(bool success)
+    public void OnEndOfGame(bool success, string technicalName = "")
     {
         wantsEndGame = true;
-        LevelInstance.Instance.OnEndOfGame(success);
+        LevelInstance.Instance.OnEndOfGame(success, technicalName);
     }
 
     public void EndGameAndReturnToMainMenu()

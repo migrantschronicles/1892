@@ -62,16 +62,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   userName: 
-  day: 0
   wantsEndOfDay: 0
   wantsEndGame: 0
   money: 100
-  dateStr: 
   inventory:
     startItems: []
   foodCategory: {fileID: 11400000, guid: 5be223bfefe0c634e8939e07736e02f5, type: 2}
   foodItem: {fileID: 11400000, guid: d0da3f17cbf50b4489fad218310ebd38, type: 2}
-  TEST_ParisEntry: {fileID: 11400000, guid: 60f758239ba07fd41a9b62d3ca8c3e57, type: 2}
   transportationTableCSV: {fileID: 4900000, guid: 918e8838e62393747a0f2689dc606655, type: 3}
   moneyStolenProbabilityWeight: 5
   moneyStolenProbabilityCurve:
@@ -1138,6 +1135,732 @@ MonoBehaviour:
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
+  endGameEntries:
+  - technicalName: stucklen_ellisisland_homesick
+    hasHomesicknessVariant: 0
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78288258950434816
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: stucklen_ellisisland_criminal
+    hasHomesicknessVariant: 0
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78288436319162368
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: jhoss_newyork
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78288837579837440
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78288947667734528
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: stieglitz_newyork_creation
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78289045537624064
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78289078110588928
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: olive_boston_education
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78289227671080960
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78289271434448896
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: olive_boston_asylum
+    hasHomesicknessVariant: 0
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78289466356338688
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: gottfried_philadelphia_achievement
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78289596811776000
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78289634178830336
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: gottfried_philadelphia_love
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78289765473128448
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78289787690356736
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: sundance_philadelphia_corruption
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78289914400280576
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78289953117900800
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: sundance_philadelphia_beneficience
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290082847723520
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290127433175040
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: bluvstein_albany_corruption
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290224204156928
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290248203964416
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: bluvstein_albany_death
+    hasHomesicknessVariant: 0
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290369037668352
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: theo_albany_domesticity
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290468027437056
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290497534365696
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: theo_albany_liberation
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290603880943616
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290634998484992
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: lyons_detroit_corruption
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290762836676608
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290786463191040
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: tesla_chicago_education
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290881346736128
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78290902876098560
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: wright_chicago_creation
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291011630206976
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291043435614208
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: schinner_milwaukee_liesbeth
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291142756732928
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291168115494912
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: schinner_milwaukee_service
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291268069953536
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291304640090112
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: whittaker_belgium
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291393542557696
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291428464332800
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: buffalo_dubuque_creation
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291704982212608
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291725525913600
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: buffalo_dubuque_achievement
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291850381955072
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291873370935296
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: reverend_stdonatus
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78291983232339968
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78292024198107136
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: houdini_rollingstone
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78292236836737024
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78292258181550080
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+  - technicalName: michel_minnesota
+    hasHomesicknessVariant: 1
+    neutral:
+      m_TableReference:
+        m_TableCollectionName: 
+      m_TableEntryReference:
+        m_KeyId: 0
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    positive:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78292372400836608
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
+    negative:
+      m_TableReference:
+        m_TableCollectionName: GUID:d6416964d6495284f875ca0ca7fa010a
+      m_TableEntryReference:
+        m_KeyId: 78292400666251264
+        m_Key: 
+      m_FallbackState: 0
+      m_WaitForCompletion: 0
+      m_LocalVariables: []
   references:
     version: 2
     RefIds: []
@@ -1231,4 +1954,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2d1dc7d4bf5f2e4784ef1329b53f94f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  savedGameExists: 0

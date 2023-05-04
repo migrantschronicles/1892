@@ -129,10 +129,6 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private string defaultScene;
     [SerializeField]
-    private DiaryEntry endGamePositiveEntry;
-    [SerializeField]
-    private DiaryEntry endGameNegativeEntry;
-    [SerializeField]
     private AudioClip[] musicClips;
     [SerializeField]
     private GameObject draggedItemPrefab;
@@ -529,7 +525,14 @@ public class LevelInstance : MonoBehaviour
                     break;
 
                 case Mode.Diary:
-                    if(ui.IngameDiary.Diary.IsAnimationInProgress)
+                    if (NewGameManager.Instance.wantsEndGame)
+                    {
+                        // The back button was pressed on the last end game diary entry, so return to the main menu.
+                        NewGameManager.Instance.EndGameAndReturnToMainMenu();
+                        return;
+                    }
+
+                    if (ui.IngameDiary.Diary.IsAnimationInProgress)
                     {
                         return;
                     }
@@ -1256,6 +1259,21 @@ public class LevelInstance : MonoBehaviour
         OpenNewDiaryEntry(newEntry);
     }
 
+    public void OpenEndGameDiaryEntry(string technicalName)
+    {
+        ClearPopups();
+
+        DiaryEntryInfo info = NewGameManager.Instance.CollectDiaryEntryInfo(GeneratedDiaryEntryPurpose.EndGame);
+        info.endGameEntryTechnicalName = technicalName;
+        DiaryEntryData newEntry = NewGameManager.Instance.DiaryEntryManager.GenerateEntry(info);
+        if(newEntry == null)
+        {
+            return;
+        }
+
+        OpenNewDiaryEntry(newEntry);
+    }
+
     public void OnSleepOutside(List<EndOfDayHealthData> endOfDayHealthData)
     {
         wantsToContinueGame = false;
@@ -1353,22 +1371,20 @@ public class LevelInstance : MonoBehaviour
         };
     }
 
-    public void OnEndOfGame(bool success)
+    public void OnEndOfGame(bool success, string technicalName)
     {
-        GameObject prefab = success ? endGameSuccessPrefab : endGameFailurePrefab;
-        ShowPopup(prefab);
-    }
-
-    public void ShowEndGameEntry()
-    {
-        ClearPopups();
-
-        bool positive = NewGameManager.Instance.HealthStatus.Characters.Max(data => data.HomesickessStatus.Value) <= 5.0f;
-        DiaryEntry entry = positive ? endGamePositiveEntry : endGameNegativeEntry;
-        //NewGameManager.Instance.AddDiaryEntry(entry);
-        ///@todo Auto generate end entries
-        // Since EndGameSuccessPopup is only triggered from dialogs, the mode is still dialogs, so it should open immediately.
-        OpenDiary(DiaryPageLink.Diary);
+        if(success)
+        {
+            GameObject popupGO = ShowPopup(endGameSuccessPrefab);
+            EndGameSuccessPopup popup = popupGO.GetComponent<EndGameSuccessPopup>();
+            popup.TechnicalName = technicalName;
+        }
+        else
+        {
+            GameObject popupGO = ShowPopup(endGameFailurePrefab);
+            EndGamePopup popup = popupGO.GetComponent<EndGamePopup>();
+            popup.TechnicalName = technicalName;
+        }
     }
 
     public void OnQuestAdded(Quest quest)

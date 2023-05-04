@@ -4,6 +4,16 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Localization;
 
+[System.Serializable]
+public class EndGameDiaryEntryData
+{
+    public string technicalName;
+    public bool hasHomesicknessVariant;
+    public LocalizedString neutral;
+    public LocalizedString positive;
+    public LocalizedString negative;
+}
+
 public class DiaryEntryManager : MonoBehaviour
 {
     [SerializeField]
@@ -179,6 +189,16 @@ public class DiaryEntryManager : MonoBehaviour
     private LocalizedString stDonatus;
     [SerializeField]
     private LocalizedString philadelphia;
+    [SerializeField]
+    private EndGameDiaryEntryData[] endGameEntries;
+
+    public bool IsPositiveEnding 
+    { 
+        get
+        {
+            return NewGameManager.Instance.HealthStatus.Characters.Max(data => data.HomesickessStatus.Value) <= 5.0f;
+        }
+    }
 
     private string GenerateTransportationInfo(DiaryEntryInfo info)
     {
@@ -441,8 +461,27 @@ public class DiaryEntryManager : MonoBehaviour
         return LocalizationManager.Instance.GetLocalizedString(value);
     }
 
+    private EndGameDiaryEntryData FindEndGameDiaryEntryData(string technicalName)
+    {
+        return endGameEntries.FirstOrDefault(data => data.technicalName == technicalName);
+    }
+
     private string GenerateText(DiaryEntryInfo info)
     {
+        if(info.purpose == GeneratedDiaryEntryPurpose.EndGame)
+        {
+            // Generate end game entry
+            EndGameDiaryEntryData data = FindEndGameDiaryEntryData(info.endGameEntryTechnicalName);
+            if(data != null)
+            {
+                LocalizedString localizedString = data.hasHomesicknessVariant ? (IsPositiveEnding ? data.positive : data.negative) : data.neutral;
+                return LocalizationManager.Instance.GetLocalizedString(localizedString);
+            }
+
+            Debug.LogError($"Cannot find end game diary entry for {info.endGameEntryTechnicalName}");
+            return "";
+        }
+
         if(info.levelMode == LevelInstanceMode.Ship || info.isStopoverDay)
         {
             if(info.daysInCity == 0)

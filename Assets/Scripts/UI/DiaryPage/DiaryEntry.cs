@@ -125,7 +125,8 @@ public class HealthProblem
 public enum GeneratedDiaryEntryPurpose
 {
     NewCity,
-    NewDay
+    NewDay,
+    EndGame
 }
 
 [System.Serializable]
@@ -144,6 +145,7 @@ public class DiaryEntryInfo
     public DateTime date;
     public TransportationMethod lastTransportationMethod;
     public GeneratedDiaryEntryPurpose purpose;
+    public string endGameEntryTechnicalName;
 }
 
 [System.Serializable]

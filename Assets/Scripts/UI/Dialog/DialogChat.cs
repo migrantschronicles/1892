@@ -440,7 +440,7 @@ public class DialogChat : MonoBehaviour
         }
         else if(pausedOn is End_of_Game endOfGame)
         {
-            NewGameManager.Instance.OnEndOfGame(endOfGame.Template.EndOfGame.GoodEnding);
+            NewGameManager.Instance.OnEndOfGame(endOfGame.Template.EndOfGame.GoodEnding, endOfGame.Template.EndOfGame.EndingName);
             OnTemplateHandled();
         }
         else if(pausedOn is MoneyExchange)

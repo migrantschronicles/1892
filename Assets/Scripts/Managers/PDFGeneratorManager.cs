@@ -104,7 +104,9 @@ public class PDFGeneratorManager : MonoBehaviour
 
         Texture2D renderedTexture = TakeScreenshot(pdfCamera, 816, 510);
 
+        leftPageContent.SetActive(false);
         Destroy(leftPageContent);
+        rightPageContent.SetActive(false);
         Destroy(rightPageContent);
 
         diaryContent.SetActive(false);

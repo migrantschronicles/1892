@@ -73,10 +73,6 @@ public class NewGameManager : MonoBehaviour
     public TransportationMethod nextMethod { get; private set; }
     public TransportationMethod lastMethod { get; private set; } = TransportationMethod.None;
     public ShipManager ShipManager { get { return GetComponent<ShipManager>(); } }
-    public List<double[]> locationsCoordinates = new List<double[]>() // For testing purposes
-    {
-        new double[] {6.1328, 49.615891}
-    };
 
     public delegate void OnRouteDiscoveredEvent(string from, string to, TransportationMethod method);
     public event OnRouteDiscoveredEvent OnRouteDiscovered;
@@ -113,6 +109,7 @@ public class NewGameManager : MonoBehaviour
     public DiaryEntryManager DiaryEntryManager { get { return GetComponent<DiaryEntryManager>(); } }
     public TransportationManager TransportationManager { get { return GetComponent<TransportationManager>(); } }
 
+    public GeoJSONManager GeoJSONManager { get { return GetComponent<GeoJSONManager>(); } }
     public QuestManager QuestManager { get { return GetComponent<QuestManager>(); } }
 
     // Stealing
@@ -566,10 +563,6 @@ public class NewGameManager : MonoBehaviour
 #endif
     }
 
-    public void DevGoTo(string name)
-    {
-        SceneManager.LoadScene(name);
-    }
     public void GoToLocation(string name, TransportationMethod method)
     {
         if (nextLocation != null)
@@ -599,20 +592,20 @@ public class NewGameManager : MonoBehaviour
             // Check prerequisits
             if (!CanTravelTo(name, method))
             {
-                UnityEngine.Debug.Log($"Cannot travel to {name} via {method}");
+                Debug.Log($"Cannot travel to {name} via {method}");
                 return;
             }
 
             TransportationRouteInfo routeInfo = transportationInfo.GetRouteInfo(LevelInstance.Instance.LocationName, name, method);
             if (routeInfo == null)
             {
-                UnityEngine.Debug.Log($"No route info found for {name} via {method}");
+                Debug.Log($"No route info found for {name} via {method}");
                 return;
             }
 
             if (money < routeInfo.cost)
             {
-                UnityEngine.Debug.Log($"Not enough money for {name} via {method}");
+                Debug.Log($"Not enough money for {name} via {method}");
                 return;
             }
 
@@ -634,11 +627,6 @@ public class NewGameManager : MonoBehaviour
         onNewDay?.Invoke();
 
         AudioManager.Instance.FadeOutMusic();
-
-        // Add new location coordinates to GeoJSON
-        MapLocationMarker nextLocationMarker = GameObject.FindGameObjectWithTag("Locations").transform.GetComponentInParent<Map>().GetLocationMarkerByName(nextLocation).GetComponent<MapLocationMarker>();
-        locationsCoordinates.Add(new double[] { nextLocationMarker.lon, nextLocationMarker.lat });
-        UnityEngine.Debug.Log("Added " + nextLocationMarker.name + " to GeoJson coordinates.");
 
         SceneManager.LoadScene("LoadingScene");
     }
@@ -838,18 +826,11 @@ public class NewGameManager : MonoBehaviour
 
     public void GeneratePDF()
     {
-        UnityEngine.Debug.Log("Generating PDF");
+        Debug.Log("Generating PDF");
         PDFBuilder builder = new PDFBuilder();
         builder.Generate(journeys);
-        UnityEngine.Debug.Log("Finished PDF generating");
-    }
-
-    public void GenerateGeoJSON()
-    {
-        UnityEngine.Debug.Log("Generating GeoJSON");
-        PDFBuilder builder = new PDFBuilder();
-        builder.GenerateGeoJSON();
-        UnityEngine.Debug.Log("Finished GeoJSON generating");
+        builder.GenerateGeoJSON(journeys);
+        Debug.Log("Finished PDF generating");
     }
 
     /**
@@ -1047,7 +1028,7 @@ public class NewGameManager : MonoBehaviour
 
     public void OnProtagonistDied(ProtagonistData protagonist)
     {
-        UnityEngine.Debug.Log($"{protagonist.name} died");
+        Debug.Log($"{protagonist.name} died");
         OnEndOfGame(false);
     }
 
@@ -1221,7 +1202,7 @@ public class NewGameManager : MonoBehaviour
             case "ship": return TransportationMethod.Ship;
             case "train": return TransportationMethod.Train;
             case "cart": return TransportationMethod.Cart;
-            default: UnityEngine.Debug.Assert(false, $"Invalid transporation method: {method}"); break;
+            default: Debug.Assert(false, $"Invalid transporation method: {method}"); break;
         }
 
         return TransportationMethod.Walking;

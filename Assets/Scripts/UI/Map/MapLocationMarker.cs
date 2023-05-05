@@ -12,13 +12,6 @@ public enum LocationMarkerScaling
 
 public class MapLocationMarker : MonoBehaviour
 {
-
-    //GeoJSON
-    [SerializeField]
-    public double lat;
-    [SerializeField]
-    public double lon;
-
     [SerializeField]
     private Sprite currentMarker;
     [SerializeField]

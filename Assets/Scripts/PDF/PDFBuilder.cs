@@ -66,6 +66,11 @@ interface IPDFPlatform
     void SetFont(string fontFile);
 }
 
+interface IGeoJSONPlatform
+{
+    void WriteGeoJSON(string json);
+}
+
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
 /**
  * PDF generation happens in 2 phases:
@@ -168,6 +173,21 @@ class WinPDFPlatform : IPDFPlatform
     public void LoadFont(string fontFile)
     {
         // not supported
+    }
+}
+
+class WinGeoJSONPlatform : IGeoJSONPlatform
+{
+    private string filePath;
+
+    public WinGeoJSONPlatform(string path)
+    {
+        filePath = path;
+    }
+
+    public void WriteGeoJSON(string json)
+    {
+        File.WriteAllText(filePath, json);
     }
 }
 #elif UNITY_ANDROID || UNITY_IOS
@@ -300,6 +320,22 @@ class MobilePDFPlatform : IPDFPlatform
         }
     }
 }
+
+class MobileGeoJSONPlatform : IGeoJSONPlatform
+{
+    private string filePath;
+
+    public MobileGeoJSONPlatform(string path)
+    {
+        filePath = path;
+    }
+
+    public void WriteGeoJSON(string json)
+    {
+        File.WriteAllText(filePath, json);
+        NativeFilePicker.Permission permission = NativeFilePicker.ExportFile(filePath, (success) => Debug.Log("GeoJSON Exported: " + success));
+    }
+}
 #else
 #error PDF Platform not supported
 #endif
@@ -320,6 +356,15 @@ public class PDFBuilder
         return new WinPDFPlatform(outputPath);
 #elif UNITY_ANDROID || UNITY_IOS
         return new MobilePDFPlatform(outputPath);
+#endif
+    }
+
+    private IGeoJSONPlatform CreateGeoJSONPlatform(string outputPath)
+    {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+        return new WinGeoJSONPlatform(outputPath);
+#elif UNITY_ANDROID || UNITY_IOS
+        return new MobileGeoJSONPlatform(outputPath);
 #endif
     }
 
@@ -368,14 +413,6 @@ public class PDFBuilder
 
     private void DrawJourneys(IPDFPlatform pdf, List<Journey> journeys, int pageNumber)
     {
-        string[] diaryEntries = new string[]
-        {
-            "PDF/Element 51.png",
-            "PDF/Element 48.png",
-            "PDF/Element 49.png",
-            "PDF/Element 50.png"
-        };
-
         int journeyIndex = 0;
         int entryIndex = 0;
         int i = 0;
@@ -452,73 +489,6 @@ public class PDFBuilder
             ++i;
             ++entryIndex;
         }
-
-        /*
-
-        for (int i = 0; i < journeys.Count; ++i)
-        {
-            bool top = i % 2 == 0;
-            if(top)
-            {
-                pdf.AddPage();
-                string background = i == journeys.Length - 1 ?
-                    (i == 0 ? "PDF/PDF_Background_3.png" : "PDF/PDF_Background_3.3.png") :
-                    (i == 0 ? "PDF/PDF_Background_3.1.png" : "PDF/PDF_Background_3.2.png");
-                pdf.DrawPNG(background, 0, 0, pdf.PageWidth, pdf.PageHeight);
-                DrawPageNumber(pdf, ++pageNumber);
-            }
-
-            // City Name
-            pdf.FontSize = 15;
-            string cityName = $"{i + 1}. {journeys[i].destination}";
-            pdf.DrawText(cityName, 94, top ? 49 : 457);
-
-            // Screenshot
-            RectInt screenshotRect = new RectInt(94, top ? 77 : 486, 408, 255);
-            if(TEST_Paris != null && journeys[i].destination == "Paris")
-            {
-                pdf.DrawPNG(TEST_Paris.EncodeToPNG(), screenshotRect.x, screenshotRect.y, screenshotRect.width, screenshotRect.height);
-            }
-            else
-            {
-                pdf.DrawPNG(diaryEntries[i], screenshotRect.x, screenshotRect.y, screenshotRect.width, screenshotRect.height);
-            }
-
-            // Transport icon
-            if (i > 0)
-            {
-                string iconPath = "PDF/Methods/";
-                switch(journeys[i].method)
-                {
-                    case TransportationMethod.Walking: iconPath += "PDF_Transportation Icon_6.png"; break;
-                    case TransportationMethod.Train: iconPath += "PDF_Transportation Icon_7.png"; break;
-                    case TransportationMethod.Ship: iconPath += "PDF_Transportation Icon_2.png"; break;
-                    case TransportationMethod.Carriage: iconPath += "PDF_Transportation Icon_4.png"; break;
-                        ///@todo
-                }
-
-                pdf.DrawPNG(iconPath, 275, top ? 13 : 407, 28, 28);
-            }
-
-            // Status
-            pdf.FontSize = 10;
-            int row0Y = top ? 347 : 751;
-            int row1Y = top ? 360 : 764;
-            int row2Y = top ? 372 : 776;
-            // Ingame time frame.
-            pdf.DrawText("02:03:02", 187, row0Y);
-            // Money
-            pdf.DrawText($"{journeys[i].money} LUF", 187, row1Y);
-            // Names
-            pdf.DrawText("Elis Beffort:", 297, row0Y);
-            pdf.DrawText("Mreis Beffort:", 297, row1Y);
-            pdf.DrawText("Matti Beffort:", 297, row2Y);
-            // Health
-            pdf.DrawText("healthy", 392, row0Y);
-            pdf.DrawText("bad mental health", 392, row1Y);
-            pdf.DrawText("malnourished", 392, row2Y);
-        }
-        */
     }
 
     public void Generate(List<Journey> journeys)
@@ -537,7 +507,6 @@ public class PDFBuilder
 
         // Generate the map screenshot
         Texture2D mapScreenshot = LevelInstance.Instance ? LevelInstance.Instance.TakeMapScreenshot() : null;
-        //Texture2D TEST_ParisScreenshot = TEST_ParisEntry != null && TEST_ParisEntry.entry != null ? (LevelInstance.Instance ? LevelInstance.Instance.TakeDiaryScreenshot(TEST_ParisEntry) : null) : null;
 
         // TITLE PAGE
         DrawTitlePage(pdf, pageNumber);
@@ -565,9 +534,9 @@ public class PDFBuilder
 #endif
     }
 
-    public void GenerateGeoJSON()
+    public void GenerateGeoJSON(List<Journey> journeys)
     {
-        List<double[]> coordinatesList = NewGameManager.Instance.locationsCoordinates;
+        List<double[]> coordinatesList = NewGameManager.Instance.GeoJSONManager.GenerateRoute(journeys);
 
         var feature = new
         {
@@ -587,10 +556,20 @@ public class PDFBuilder
         };
 
         string json = JsonConvert.SerializeObject(featureCollection, Formatting.Indented);
-        UnityEngine.Debug.Log(json);
 
-        System.IO.File.WriteAllText(@"journeytest.geojson", json); // Change filename to student name, Yannik make sure the file downloads with the PDF
-        UnityEngine.Debug.Log("GeoJSON file created successfully");
+        string outputPath = GenerateGeoJSONFilePath();
+        IGeoJSONPlatform platform = CreateGeoJSONPlatform(outputPath);
+        platform.WriteGeoJSON(json);
+    }
+
+    private string GenerateGeoJSONFilePath()
+    {
+#if DEBUG
+        return Path.Combine(OutputPath, "MigrantsChronicles.geojson");
+#else
+        DateTime time = DateTime.Now;
+        return Path.Combine(OutputPath, $"MigrantsChronicles-{time.Year}-{time.Month}-{time.Day}-{time.Hour}-{time.Minute}.geojson");
+#endif
     }
 }
 

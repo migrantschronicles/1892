@@ -243,8 +243,11 @@ public class LevelInstance : MonoBehaviour
     public Scene CurrentScene { get { return currentScene; } }
     public LevelInstanceMode LevelMode { get { return levelMode; } }
     public Camera MainCamera { get { return mainCamera; } }
+    public Camera UICamera { get { return uiCamera; } }
     public int DialogsToday { get { return dialogsToday; } }
     public int MaxDialogsPerDay { get { return maxDialogsPerDay; } }
+    public bool IsBlurEnabled { get { return blur.IsEnabled; } }
+    public bool AreSceneInteractablesEnabled { get { return sceneInteractables.activeSelf; } }
     public PlayableCharacterSpawn PlayableCharacterSpawn
     {
         get
@@ -308,7 +311,7 @@ public class LevelInstance : MonoBehaviour
 
         NewGameManager.Instance.onNewDay += OnNewDay;
         backButton.onClick.AddListener(OnBack);
-        blur.SetEnabled(false);
+        SetBlurEnabled(false);
         IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
         foregroundScene.gameObject.SetActive(false);
         dialogSystem.gameObject.SetActive(false);
@@ -462,7 +465,7 @@ public class LevelInstance : MonoBehaviour
                     // Readd all the necessary elements for the dialog
                     SetBackButtonVisible(true);
                     ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-                    blur.SetEnabled(true);
+                    SetBlurEnabled(true);
                     dialogSystem.gameObject.SetActive(true);
                     dialogSystem.OnOverlayClosed();
                     foregroundScene.gameObject.SetActive(true);
@@ -579,10 +582,10 @@ public class LevelInstance : MonoBehaviour
             {
                 // Hide everything
                 ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-                blur.SetEnabled(false);
+                SetBlurEnabled(false);
 
                 // Enable the buttons again.
-                sceneInteractables.SetActive(true);
+                SetSceneInteractablesEnabled(true);
 
                 mode = Mode.None;
                 UpdateShowSeasickness();
@@ -659,8 +662,8 @@ public class LevelInstance : MonoBehaviour
     {
         backButton.gameObject.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.StatusInfo);
-        sceneInteractables.SetActive(false);
-        blur.SetEnabled(true);
+        SetSceneInteractablesEnabled(false);
+        SetBlurEnabled(true);
     }
 
     private void PrepareDialog(DialogButton button)
@@ -750,8 +753,8 @@ public class LevelInstance : MonoBehaviour
         currentShop.gameObject.SetActive(true);
         backButton.gameObject.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.StatusInfo);
-        sceneInteractables.SetActive(false);
-        blur.SetEnabled(true);
+        SetSceneInteractablesEnabled(false);
+        SetBlurEnabled(true);
 
         if (dialogSystem.gameObject.activeSelf)
         {
@@ -804,7 +807,7 @@ public class LevelInstance : MonoBehaviour
 
     public void OpenDiary(DiaryPageLink type)
     {
-        blur.SetEnabled(true);
+        SetBlurEnabled(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
 
         if (mode == Mode.Dialog)
@@ -819,7 +822,7 @@ public class LevelInstance : MonoBehaviour
         {
             ui.SetDiaryOpened(type);
             mode = Mode.Diary;
-            sceneInteractables.SetActive(false);
+            SetSceneInteractablesEnabled(false);
         }
 
         AudioManager.Instance.PlayFX(ui.IngameDiary.Diary.openClip);
@@ -840,8 +843,8 @@ public class LevelInstance : MonoBehaviour
                 if (mode == Mode.Diary)
                 {
                     ui.SetUIElementsVisible(InterfaceVisibilityFlags.All);
-                    blur.SetEnabled(false);
-                    sceneInteractables.SetActive(true);
+                    SetBlurEnabled(false);
+                    SetSceneInteractablesEnabled(true);
                     mode = Mode.None;
                     UpdateShowSeasickness();
 
@@ -1037,8 +1040,8 @@ public class LevelInstance : MonoBehaviour
                 {
                     // Nothing is open yet.
                     ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
-                    sceneInteractables.SetActive(false);
-                    blur.SetEnabled(true);
+                    SetSceneInteractablesEnabled(false);
+                    SetBlurEnabled(true);
 
                     mode = Mode.Popup;
                 }
@@ -1101,12 +1104,12 @@ public class LevelInstance : MonoBehaviour
 
     private void OpenNewDiaryEntry(DiaryEntryData data)
     {
-        blur.SetEnabled(true);
+        SetBlurEnabled(true);
         NewGameManager.Instance.AddDiaryEntry(data);
         backButton.gameObject.SetActive(true);
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
         ui.OpenDiaryImmediately(DiaryPageLink.Diary);
-        sceneInteractables.SetActive(false);
+        SetSceneInteractablesEnabled(false);
         mode = Mode.Diary;
     }
 
@@ -1295,5 +1298,15 @@ public class LevelInstance : MonoBehaviour
         {
             PopPopup();
         };
+    }
+
+    public void SetBlurEnabled(bool enabled)
+    {
+        blur.SetEnabled(enabled);
+    }
+
+    public void SetSceneInteractablesEnabled(bool enabled)
+    {
+        sceneInteractables.SetActive(enabled);
     }
 }

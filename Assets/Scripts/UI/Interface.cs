@@ -47,6 +47,8 @@ public class Interface : MonoBehaviour
 
     private InterfaceVisibilityFlags visibilityFlags = InterfaceVisibilityFlags.All;
 
+    public InterfaceVisibilityFlags VisibilityFlags { get { return visibilityFlags; } }
+
     private void Awake()
     {
         ingameDiary.gameObject.SetActive(true);

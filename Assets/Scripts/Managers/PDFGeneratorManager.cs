@@ -1,7 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+
+[System.Serializable]
+public class PDFCityEntry
+{
+    public string location;
+    public Sprite background;
+}
 
 public class PDFGeneratorManager : MonoBehaviour
 {
@@ -27,11 +35,34 @@ public class PDFGeneratorManager : MonoBehaviour
     private GameObject rightPage;
     [SerializeField]
     private DiaryPages diaryPages;
+    [SerializeField]
+    private PDFCityEntry[] cities;
 
-    public Texture2D TakeMapScreenshot()
+    private void Prepare(string locationName)
     {
         pdfCamera.gameObject.SetActive(true);
         pdfCanvas.gameObject.SetActive(true);
+
+        PDFCityEntry city = cities.FirstOrDefault(city => city.location == locationName);
+        if(city != null)
+        {
+            background.sprite = city.background;
+        }
+        else
+        {
+            background.sprite = null;
+        }
+    }
+
+    private void Cleanup()
+    {
+        pdfCamera.gameObject.SetActive(false);
+        pdfCanvas.gameObject.SetActive(false);
+    }
+
+    public Texture2D TakeMapScreenshot()
+    {
+        Prepare(LevelInstance.Instance.LocationName);
         diaryBackground.sprite = diaryBackgroundMap;
 
         mapContent.SetActive(true);
@@ -54,44 +85,39 @@ public class PDFGeneratorManager : MonoBehaviour
             location.UpdateName();
         }
 
-        Texture2D screenshot = TakeScreenshot(944, 590);
+        Texture2D screenshot = TakeScreenshot(pdfCamera, 944, 590);
 
         mapContent.SetActive(false);
-        pdfCamera.gameObject.SetActive(false);
-        pdfCanvas.gameObject.SetActive(false);
+        Cleanup();
 
         return screenshot;
     }
 
     public Texture2D TakeDiaryScreenshot(DiaryEntryData data)
     {
-        pdfCamera.gameObject.SetActive(true);
-        pdfCanvas.gameObject.SetActive(true);
+        Prepare(data.info.locationName);
         diaryBackground.sprite = diaryBackgroundDiary;
 
         diaryContent.SetActive(true);
         GameObject leftPageContent = diaryPages.CreatePageContent(data, data.leftPage, leftPage.transform, false);
         GameObject rightPageContent = diaryPages.CreatePageContent(data, data.rightPage, rightPage.transform, false);
 
-        Texture2D renderedTexture = TakeScreenshot(816, 510);
-
-        diaryContent.SetActive(false);
-        pdfCamera.gameObject.SetActive(false);
-        pdfCanvas.gameObject.SetActive(false);
-
-        System.IO.File.WriteAllBytes(Application.persistentDataPath + "/pdftest.png", renderedTexture.EncodeToPNG());
+        Texture2D renderedTexture = TakeScreenshot(pdfCamera, 816, 510);
 
         Destroy(leftPageContent);
         Destroy(rightPageContent);
 
+        diaryContent.SetActive(false);
+        Cleanup();
+
         return renderedTexture;
     }
 
-    private Texture2D TakeScreenshot(int outputWidth, int outputHeight)
+    public static Texture2D TakeScreenshot(Camera screenshotCamera, int outputWidth, int outputHeight)
     {
         RenderTexture mainTexture = new RenderTexture(Screen.width, Screen.height, 16);
-        pdfCamera.targetTexture = mainTexture;
-        pdfCamera.Render();
+        screenshotCamera.targetTexture = mainTexture;
+        screenshotCamera.Render();
 
         // Set the output size and adjust the image size that is actually rendered (same aspect ratio of screen).
         int targetWidth = outputWidth;
@@ -145,7 +171,7 @@ public class PDFGeneratorManager : MonoBehaviour
         renderedTexture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
 
         RenderTexture.active = null;
-        pdfCamera.targetTexture = null;
+        screenshotCamera.targetTexture = null;
         mainTexture.Release();
 
         return renderedTexture;

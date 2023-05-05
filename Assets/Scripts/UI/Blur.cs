@@ -13,6 +13,8 @@ public class Blur : MonoBehaviour
     private ColorAdjustments colorAdjustments;
     private Color targetColor;
 
+    public bool IsEnabled { get { return gameObject.activeSelf; } }
+
     private void Awake()
     {
         volume = GetComponent<Volume>();

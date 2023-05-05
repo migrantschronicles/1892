@@ -233,6 +233,7 @@ public class LevelInstance : MonoBehaviour
     public static LevelInstance Instance { get { return instance; } }
 
     public IngameDiary IngameDiary { get { return ui.IngameDiary; } }
+    public Interface UI { get { return ui; } }
     public bool IsDragging { get { return draggedItem != null; } }
     public Shop CurrentShop { get { return currentShop; } }
     public Canvas Canvas { get { return canvas; } }

@@ -15,6 +15,14 @@ public class EndGameSuccessPopup : MonoBehaviour, IPopup
 
     public void OnDownloadPDFClicked()
     {
+        StartCoroutine(Test());
+    }
+
+    private IEnumerator Test()
+    {
+        LevelInstance.Instance.UI.OpenDiaryImmediately(DiaryPageLink.Map);
+        yield return null;
         NewGameManager.Instance.GeneratePDF();
+        LevelInstance.Instance.UI.CloseDiaryImmediately();
     }
 }

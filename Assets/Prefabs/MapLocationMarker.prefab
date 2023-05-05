@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1886493726090163899}
   - component: {fileID: 5345830082313927873}
   - component: {fileID: 454339355763647456}
-  - component: {fileID: 7502718383405016680}
   m_Layer: 5
   m_Name: Name
   m_TagString: Untagged
@@ -81,18 +80,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Location
---- !u!114 &7502718383405016680
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5228558326636653896}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a5f3343c403dfb4aac5f92058a53f2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8319612937650391626
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,6 +215,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cef9c78d489c9f4eae895848bd21f00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lat: 0
+  lon: 0
   currentMarker: {fileID: 21300000, guid: 6609fb5a690da2f489e60a524ed1e35c, type: 3}
   currentCapitalMarker: {fileID: 21300000, guid: 7f77ee98104aff34dbdb673c31a66013, type: 3}
   traveledMarker: {fileID: 21300000, guid: 1cc50e2701a9f5146ba127fd140452c3, type: 3}
@@ -242,3 +231,5 @@ MonoBehaviour:
   clampMax: 11
   mapMin: 7
   mapMax: 11
+  nameText: {fileID: 454339355763647456}
+  initialImageScale: {x: 0.053, y: 0.053, z: 1}

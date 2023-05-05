@@ -37,7 +37,7 @@ public class MapRoute : MonoBehaviour
         UpdateImage();
     }
 
-    private void UpdateImage()
+    public void UpdateImage()
     {
         LocationDiscoveryStatus status = NewGameManager.Instance.GetRouteDiscoveryStatus(fromLocation, toLocation);
         Sprite sprite = null;

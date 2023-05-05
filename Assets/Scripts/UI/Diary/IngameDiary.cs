@@ -33,8 +33,6 @@ public class IngameDiary : MonoBehaviour
     [SerializeField]
     private DiaryContentPages immediatelyOpenedPages;
 
-    private DiaryContentPage screenshotPrevPage;
-
     public Diary Diary { get { return diary; } }
 
     private void Awake()
@@ -166,73 +164,6 @@ public class IngameDiary : MonoBehaviour
         diaryAnimator.SetBool("ImmediatelyFix", false);
         StartCoroutine(SwitchKeepOpenAndOpened(false));
         diary.CloseImmediately();
-    }
-
-    public void PrepareForMapScreenshot()
-    {
-        screenshotPrevPage = diary.CurrentPage;
-        if(diary.CurrentPage)
-        {
-            diary.CurrentPage.gameObject.SetActive(false);
-            if(diary.CurrentPage.ContentPages)
-            {
-                diary.CurrentPage.ContentPages.ActiveSilent = false;
-            }
-        }
-
-        mapPages.LastPage.gameObject.SetActive(true);
-        mapPages.ActiveSilent = true;
-        mapPages.GetComponentInChildren<MapZoom>().PrepareForMapScreenshot();
-        mapPages.LastPage.GetComponent<MapPage>().PrepareForMapScreenshot();
-    }
-
-    public void PrepareForDiaryScreenshot(DiaryEntryData data)
-    {
-        screenshotPrevPage = diary.CurrentPage;
-        if (diary.CurrentPage)
-        {
-            diary.CurrentPage.gameObject.SetActive(false);
-            if (diary.CurrentPage.ContentPages)
-            {
-                diary.CurrentPage.ContentPages.ActiveSilent = false;
-            }
-        }
-
-        diaryPages.ActiveSilent = true;
-        diaryPages.GetComponentInChildren<DiaryPages>().PrepareForDiaryScreenshot(data);
-    }
-
-    public void ResetFromScreenshot()
-    {
-        if(mapPages.Active)
-        {
-            mapPages.GetComponentInChildren<MapZoom>().ResetFromScreenshot();
-            mapPages.LastPage.GetComponent<MapPage>().ResetFromScreenshot();
-            mapPages.LastPage.gameObject.SetActive(false);
-            mapPages.ActiveSilent = false;
-        }
-
-        if(diaryPages.Active)
-        {
-            diaryPages.GetComponentInChildren<DiaryPages>().ResetFromScreenshot();
-            diaryPages.ActiveSilent = false;
-        }
-
-        if(screenshotPrevPage)
-        {
-            screenshotPrevPage.gameObject.SetActive(true);
-            screenshotPrevPage.GetComponent<Animator>().SetTrigger("OpenImmediately");
-            if(screenshotPrevPage.ContentPages)
-            {
-                screenshotPrevPage.ContentPages.ActiveSilent = true;
-            }
-
-            screenshotPrevPage = null;
-        }
-        else
-        {
-            Debug.Log("NULL");
-        }
     }
 
     public void GeneratePDF()

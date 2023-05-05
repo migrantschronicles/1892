@@ -49,7 +49,6 @@ public class DiaryPages : MonoBehaviour
 
     private List<ElementAnimator> currentAnimators = new List<ElementAnimator>();
     private DiaryContentPage lastAddedPage;
-    private DiaryContentPage screenshotPage;
 
     private void Awake()
     {
@@ -107,11 +106,11 @@ public class DiaryPages : MonoBehaviour
         }
     }
 
-    private void CreatePageContent(DiaryEntryData entryData, DiaryPageData data, Transform parent, bool animated)
+    public GameObject CreatePageContent(DiaryEntryData entryData, DiaryPageData data, Transform parent, bool animated)
     {
         if(!data.IsValid)
         {
-            return;
+            return null;
         }
 
         GameObject newPageContent = Instantiate(data.prefab, parent);
@@ -135,6 +134,8 @@ public class DiaryPages : MonoBehaviour
         {
             currentAnimators.AddRange(diaryPage.CreateAnimators());
         }
+
+        return newPageContent;
     }
 
     public void AddEntry(DiaryEntryData entry)
@@ -299,48 +300,5 @@ public class DiaryPages : MonoBehaviour
     {
         animator.onFinished += OnAnimatorFinished;
         animator.Start();
-    }
-
-    public void PrepareForDiaryScreenshot(DiaryEntryData entry)
-    {
-        if(screenshotPage)
-        {
-            screenshotPage.gameObject.SetActive(false);
-            Destroy(screenshotPage.gameObject);
-            screenshotPage = null;
-        }
-
-        if(contentPages.CurrentPage)
-        {
-            contentPages.CurrentPage.gameObject.SetActive(false);
-        }
-
-        if(entry != null)
-        {
-            GameObject newContentPageGO = Instantiate(contentPagePrefab, contentParent.transform);
-            DiaryContentPage newContentPage = newContentPageGO.GetComponent<DiaryContentPage>();
-            CreatePageContent(entry, entry.leftPage, newContentPage.LeftPage.transform, false);
-            CreatePageContent(entry, entry.rightPage, newContentPage.RightPage.transform, false);
-            screenshotPage = newContentPage;
-        }
-
-        nextPageButton.gameObject.SetActive(false);
-        prevPageButton.gameObject.SetActive(false);
-    }
-
-    public void ResetFromScreenshot()
-    {
-        if(screenshotPage)
-        {
-            screenshotPage.gameObject.SetActive(false);
-            Destroy(screenshotPage.gameObject);
-        }
-
-        if (contentPages.CurrentPage)
-        {
-            contentPages.CurrentPage.gameObject.SetActive(true);
-        }
-
-        UpdateButtons();
     }
 }

@@ -150,21 +150,6 @@ public class Interface : MonoBehaviour
         ingameDiary.gameObject.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
     }
 
-    public void PrepareForMapScreenshot()
-    {
-        ingameDiary.PrepareForMapScreenshot();
-    }
-
-    public void PrepareForDiaryScreenshot(DiaryEntryData entry)
-    {
-        ingameDiary.PrepareForDiaryScreenshot(entry);
-    }
-
-    public void ResetFromScreenshot()
-    {
-        ingameDiary.ResetFromScreenshot();
-    }
-
     public void HideDiary(bool hide)
     {
         ingameDiary.gameObject.SetActive(!hide);

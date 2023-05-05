@@ -143,6 +143,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private LevelInstanceMode levelMode = LevelInstanceMode.Default;
     [SerializeField]
+    private PDFGeneratorManager pdfGeneratorManager;
+    [SerializeField]
     private GameObject roomButtonPrefab;
     [SerializeField]
     private ArticyRef mainTooHungryDialog;
@@ -875,14 +877,7 @@ public class LevelInstance : MonoBehaviour
 
     public Texture2D TakeDiaryScreenshot(DiaryEntryData entry)
     {
-        ui.PrepareForDiaryScreenshot(entry);
-
-        Texture2D renderedTexture = TakeScreenshot(816, 510);
-
-        Debug.Log($"Captured diary screenshot");
-        ui.ResetFromScreenshot();
-
-        return renderedTexture;
+        return pdfGeneratorManager.TakeDiaryScreenshot(entry);
     }
 
     /**
@@ -891,128 +886,7 @@ public class LevelInstance : MonoBehaviour
      */
     public Texture2D TakeMapScreenshot()
     {
-        ui.PrepareForMapScreenshot();
-
-        Texture2D renderedTexture = TakeScreenshot(944, 590);
-        //System.IO.File.WriteAllBytes(Application.persistentDataPath + "/test.png", renderedTexture.EncodeToPNG());
-
-        Debug.Log($"Captured map screenshot");
-        ui.ResetFromScreenshot();
-
-        return renderedTexture;
-    }
-
-    private Texture2D TakeScreenshot(int outputWidth, int outputHeight)
-    {
-        // Hide ui elements
-        bool wasBackButtonVisible = backButton.gameObject.activeSelf;
-        backButton.gameObject.SetActive(false);
-
-        // Prepare: Render main and ui separately, not as overlay
-        var mainCameraData = mainCamera.GetUniversalAdditionalCameraData();
-        mainCameraData.cameraStack.Remove(uiCamera);
-        var uiCameraData = uiCamera.GetUniversalAdditionalCameraData();
-        uiCameraData.renderType = CameraRenderType.Base;
-
-        // Render the camera view to a new render texture
-        RenderTexture mainTexture = new RenderTexture(Screen.width, Screen.height, 16);
-        mainCamera.targetTexture = mainTexture;
-        mainCamera.Render();
-
-        // Render the ui
-        RenderTexture uiTexture = new RenderTexture(Screen.width, Screen.height, 16);
-        uiCamera.targetTexture = uiTexture;
-        uiCamera.Render();
-
-        // Set the output size and adjust the image size that is actually rendered (same aspect ratio of screen).
-        int targetWidth = outputWidth;
-        int targetHeight = outputHeight;
-        float sourceAspect = (float)Screen.width / Screen.height;
-        float outputAspect = (float)outputWidth / outputHeight;
-        if (!Mathf.Approximately(sourceAspect, outputAspect))
-        {
-            if (outputAspect > sourceAspect)
-            {
-                targetWidth = (int)(targetHeight * sourceAspect);
-            }
-            else if (outputAspect < sourceAspect)
-            {
-                targetHeight = (int)(targetWidth / sourceAspect);
-            }
-        }
-
-        // Resize the screen texture to the new target size
-        RenderTexture resizedTexture = new RenderTexture(targetWidth, targetHeight, 16);
-        RenderTexture.active = resizedTexture;
-        Graphics.Blit(mainTexture, resizedTexture);
-
-        // Read the render texture into a texture.
-        Texture2D renderedTexture = new Texture2D(outputWidth, outputHeight);
-        int destX = 0;
-        int destY = 0;
-        if (!Mathf.Approximately(sourceAspect, outputAspect))
-        {
-            // Adjust the x and y position where the pixel data in the texture is written to.
-            if (outputAspect > sourceAspect)
-            {
-                destX = (int)((outputWidth - (outputHeight * sourceAspect)) / 2);
-            }
-            else if (outputAspect < sourceAspect)
-            {
-                destY = (int)((outputHeight - (outputWidth / sourceAspect)) / 2);
-            }
-
-            // Fill the background transparent
-            Color[] renderedTextureColors = renderedTexture.GetPixels();
-            Color backgroundColor = new Color(0, 0, 0, 0);
-            for (int i = 0; i < renderedTextureColors.Length; ++i)
-            {
-                renderedTextureColors[i] = backgroundColor;
-            }
-            renderedTexture.SetPixels(renderedTextureColors);
-        }
-        renderedTexture.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), destX, destY);
-
-        // Resize the ui texture to the new target size
-        Graphics.Blit(uiTexture, resizedTexture);
-
-        // Read the ui texture into a texture.
-        Texture2D renderedUITexture = new Texture2D(outputWidth, outputHeight);
-        if (!Mathf.Approximately(sourceAspect, outputAspect))
-        {
-            // Fill the background transparent
-            Color[] renderedTextureColors = renderedUITexture.GetPixels();
-            Color backgroundColor = new Color(0, 0, 0, 0);
-            for (int i = 0; i < renderedTextureColors.Length; ++i)
-            {
-                renderedTextureColors[i] = backgroundColor;
-            }
-            renderedUITexture.SetPixels(renderedTextureColors);
-        }
-        renderedUITexture.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), destX, destY);
-        
-        // Blend the textures
-        Color[] mainColors = renderedTexture.GetPixels();
-        Color[] uiColors = renderedUITexture.GetPixels();
-        for(int i = 0; i < mainColors.Length; ++i)
-        {
-            mainColors[i] = Color.Lerp(mainColors[i], uiColors[i], uiColors[i].a);
-        }
-        renderedTexture.SetPixels(mainColors);
-        
-        // Cleanup
-        RenderTexture.active = null;
-        mainCamera.targetTexture = null;
-        uiCamera.targetTexture = null;
-        mainTexture.Release();
-        uiTexture.Release();
-        uiCameraData.renderType = CameraRenderType.Overlay;
-        mainCameraData.cameraStack.Add(uiCamera);
-
-        // Show ui elements again
-        backButton.gameObject.SetActive(wasBackButtonVisible);
-
-        return renderedTexture;
+        return pdfGeneratorManager.TakeMapScreenshot();
     }
 
     public void OnBeginDrag(PointerEventData data, ShopInventorySlot slot)

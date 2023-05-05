@@ -50,7 +50,6 @@ public class MapZoom : MonoBehaviour
     private float autoZoomStart = 1.0f;
     private Vector2 autoZoomNormalizedStartPosition;
     private ScrollRect scrollRect;
-    private float overrideZoom = -1.0f;
     private Vector3 oldPivot;
     private Vector3 oldLocalPosition;
     private Vector3 oldLocalScale;
@@ -83,10 +82,8 @@ public class MapZoom : MonoBehaviour
     public float ZoomLevel { get { return zoomLevel; } }
     public float MinZoomLevel { get { return minZoom; } }
     public float MaxZoomLevel { get { return maxZoom; } }
-    private bool IsAutoZoomInProgress { get { return autoZoomCurrentTime >= 0.0f && overrideZoom < 0.0f; } }
+    private bool IsAutoZoomInProgress { get { return autoZoomCurrentTime >= 0.0f; } }
     public float DefaultZoomLevel { get { return initialZoom; } }
-
-    public bool IsMapScreenshotInProgress { get { return overrideZoom >= 0.0f; } }
 
     private void Awake()
     {
@@ -109,67 +106,64 @@ public class MapZoom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(overrideZoom < 0.0f)
+        if (IsAutoZoomInProgress)
         {
-            if (IsAutoZoomInProgress)
+            autoZoomCurrentTime += Time.deltaTime;
+            GameObject currentFocusObject = map.CurrentFocusObject;
+            if (currentFocusObject)
             {
-                autoZoomCurrentTime += Time.deltaTime;
-                GameObject currentFocusObject = map.CurrentFocusObject;
-                if (currentFocusObject)
+                Vector2 targetMarkerPosition = currentFocusObject.GetComponent<RectTransform>().anchoredPosition;
+                if (autoZoomCurrentTime < initialZoomDuration)
                 {
-                    Vector2 targetMarkerPosition = currentFocusObject.GetComponent<RectTransform>().anchoredPosition;
-                    if (autoZoomCurrentTime < initialZoomDuration)
-                    {
-                        float alpha = autoZoomCurrentTime / initialZoomDuration;
-                        float currentZoomValue = initialZoomCurve.Evaluate(alpha);
-                        float currentZoom = RemapValue(currentZoomValue, 0, 1, autoZoomStart, initialZoomTarget);
-                        SetZoomAtCenter(currentZoom);
+                    float alpha = autoZoomCurrentTime / initialZoomDuration;
+                    float currentZoomValue = initialZoomCurve.Evaluate(alpha);
+                    float currentZoom = RemapValue(currentZoomValue, 0, 1, autoZoomStart, initialZoomTarget);
+                    SetZoomAtCenter(currentZoom);
 
-                        float currentLocationValue = autoZoomLocationCurve.Evaluate(alpha);
-                        Vector2 currentCenter = Vector2.Lerp(autoZoomNormalizedStartPosition, targetMarkerPosition, currentLocationValue);
-                        SetCenter(currentCenter);
-                    }
-                    else
-                    {
-                        autoZoomCurrentTime = -1.0f;
-                        SetCenterToMarker(currentFocusObject);
-                    }
-                }
-            }
-            else
-            {
-                // If this is an editor build, check if the mouse wheel was used (for testing).
-#if UNITY_EDITOR
-                float mouseScroll = Input.mouseScrollDelta.y;
-                if (!Mathf.Approximately(mouseScroll, 0.0f))
-                {
-                    Zoom(mouseScroll, mouseZoomSpeed, Input.mousePosition);
+                    float currentLocationValue = autoZoomLocationCurve.Evaluate(alpha);
+                    Vector2 currentCenter = Vector2.Lerp(autoZoomNormalizedStartPosition, targetMarkerPosition, currentLocationValue);
+                    SetCenter(currentCenter);
                 }
                 else
                 {
-#endif
-                    // In non-editor builds, only touch should be used.
-                    if (Input.touchCount == 2)
-                    {
-                        // Get the current touch positions
-                        Touch t0 = Input.GetTouch(0);
-                        Touch t1 = Input.GetTouch(1);
-
-                        // Get the previous touch positions.
-                        Vector2 t0Prev = t0.position - t0.deltaPosition;
-                        Vector2 t1Prev = t1.position - t1.deltaPosition;
-
-                        // Get the delta distance
-                        float prevTouchDistance = Vector2.Distance(t0Prev, t1Prev);
-                        float touchDistance = Vector2.Distance(t0.position, t1.position);
-                        float deltaDistance = prevTouchDistance - touchDistance;
-                        Vector2 zoomPoint = (t0.position + t1.position) / 2;
-                        Zoom(-deltaDistance, touchZoomSpeed, zoomPoint);
-                    }
-#if UNITY_EDITOR
+                    autoZoomCurrentTime = -1.0f;
+                    SetCenterToMarker(currentFocusObject);
                 }
-#endif
             }
+        }
+        else
+        {
+            // If this is an editor build, check if the mouse wheel was used (for testing).
+#if UNITY_EDITOR
+            float mouseScroll = Input.mouseScrollDelta.y;
+            if (!Mathf.Approximately(mouseScroll, 0.0f))
+            {
+                Zoom(mouseScroll, mouseZoomSpeed, Input.mousePosition);
+            }
+            else
+            {
+#endif
+                // In non-editor builds, only touch should be used.
+                if (Input.touchCount == 2)
+                {
+                    // Get the current touch positions
+                    Touch t0 = Input.GetTouch(0);
+                    Touch t1 = Input.GetTouch(1);
+
+                    // Get the previous touch positions.
+                    Vector2 t0Prev = t0.position - t0.deltaPosition;
+                    Vector2 t1Prev = t1.position - t1.deltaPosition;
+
+                    // Get the delta distance
+                    float prevTouchDistance = Vector2.Distance(t0Prev, t1Prev);
+                    float touchDistance = Vector2.Distance(t0.position, t1.position);
+                    float deltaDistance = prevTouchDistance - touchDistance;
+                    Vector2 zoomPoint = (t0.position + t1.position) / 2;
+                    Zoom(-deltaDistance, touchZoomSpeed, zoomPoint);
+                }
+#if UNITY_EDITOR
+            }
+#endif
         }
     }
 
@@ -346,36 +340,5 @@ public class MapZoom : MonoBehaviour
 
         Rect viewportRect = new Rect(center - normalizedViewportSize / 2, normalizedViewportSize);
         return viewportRect.Overlaps(rect);
-    }
-
-    public void PrepareForMapScreenshot()
-    {
-        oldPivot = rectTransform.pivot;
-        oldLocalPosition = rectTransform.localPosition;
-        oldLocalScale = transform.localScale;
-
-        rectTransform.pivot = mapScreenshotPivot;
-        rectTransform.anchoredPosition = mapScreenshotPosition;
-        transform.localScale = mapScreenshotScale;
-
-        float mapScreenshotZoomLevel = mapScreenshotScale.x / originalScale.x;
-        overrideZoom = mapScreenshotZoomLevel;
-        if (onMapZoomChangedEvent != null)
-        {
-            onMapZoomChangedEvent.Invoke(mapScreenshotZoomLevel);
-        }
-    }
-
-    public void ResetFromScreenshot()
-    {
-        overrideZoom = -1.0f;
-        rectTransform.pivot = oldPivot;
-        rectTransform.localPosition = oldLocalPosition;
-        transform.localScale = oldLocalScale;
-
-        if (onMapZoomChangedEvent != null)
-        {
-            onMapZoomChangedEvent.Invoke(zoomLevel);
-        }
     }
 }

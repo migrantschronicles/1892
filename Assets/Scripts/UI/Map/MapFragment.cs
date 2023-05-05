@@ -63,9 +63,7 @@ public class MapFragment : MonoBehaviour
     { 
         get 
         {
-            return mapZoom.IsMapScreenshotInProgress ?
-                Level == 0 :
-                IsLevelVisible && IsInViewport;
+            return IsLevelVisible && IsInViewport;
         } 
     }
 

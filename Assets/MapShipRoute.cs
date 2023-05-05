@@ -19,16 +19,7 @@ public class MapShipRoute : MonoBehaviour
 
     private void Start()
     {
-        if (NewGameManager.Instance.ShipManager.FromLocation == fromLocation && NewGameManager.Instance.ShipManager.IsTravellingInShip) 
-        {
-            NewGameManager.Instance.onNewDay += UpdateTravelRoute;
-            UpdateTravelRoute();
-        }
-        else
-        {
-            this.gameObject.SetActive(false);
-        }
-
+        UpdateElement();
     }
 
     private void OnDestroy()
@@ -50,4 +41,17 @@ public class MapShipRoute : MonoBehaviour
         traveledRouteimage.GetComponent<Image>().fillAmount = (float)(NewGameManager.Instance.DaysInCity / 10);*/
     }
 
+    public void UpdateElement()
+    {
+        if (NewGameManager.Instance.ShipManager.FromLocation == fromLocation && NewGameManager.Instance.ShipManager.IsTravellingInShip)
+        {
+            gameObject.SetActive(true);
+            NewGameManager.Instance.onNewDay += UpdateTravelRoute;
+            UpdateTravelRoute();
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+    }
 }

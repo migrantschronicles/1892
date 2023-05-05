@@ -50,11 +50,14 @@ public class MapLocationMarker : MonoBehaviour
     private float mapMin = 0.5f;
     [SerializeField]
     private float mapMax = 2.0f;
+    [SerializeField]
+    private Text nameText;
+    [SerializeField]
+    private Vector3 initialImageScale;
 
     private Image image;
     private Button button;
     private MapZoom mapZoom;
-    private Vector3 initialImageScale;
     private Map map;
 
     private Map Map
@@ -92,10 +95,13 @@ public class MapLocationMarker : MonoBehaviour
 
     private void Start()
     {
+        UpdateName();
         mapZoom = GetComponentInParent<MapZoom>();
-        mapZoom.onMapZoomChangedEvent += OnZoomChanged;
-        initialImageScale = transform.localScale;
-        OnZoomChanged(mapZoom.ZoomLevel);
+        if(mapZoom)
+        {
+            mapZoom.onMapZoomChangedEvent += OnZoomChanged;
+            OnZoomChanged(mapZoom.ZoomLevel);
+        }
         UpdateIcon();
         NewGameManager.Instance.OnRouteDiscovered += OnRouteDiscovered;
     }
@@ -113,7 +119,7 @@ public class MapLocationMarker : MonoBehaviour
         UpdateIcon();
     }
 
-    private void UpdateIcon()
+    public void UpdateIcon()
     {
         LocationDiscoveryStatus status = NewGameManager.Instance.GetDiscoveryStatus(LocationName);
         Sprite sprite = null;
@@ -147,11 +153,16 @@ public class MapLocationMarker : MonoBehaviour
                 break;
         }
 
-        image.transform.localScale = initialImageScale / value;
+        transform.localScale = initialImageScale / value;
     }
 
     private void OnClick()
     {
         Map.OnLocationMarkerClicked(this);
+    }
+
+    public void UpdateName()
+    {
+        nameText.text = NewGameManager.Instance.LocationManager.GetLocalizedName(LocationName);
     }
 }

@@ -2,7 +2,6 @@ using UnityEngine;
 using System.IO;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Newtonsoft.Json;
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
 using PdfSharp.Pdf;

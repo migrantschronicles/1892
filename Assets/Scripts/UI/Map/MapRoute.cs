@@ -42,6 +42,12 @@ public class MapRoute : MonoBehaviour
     public void UpdateImage()
     {
         LocationDiscoveryStatus status = NewGameManager.Instance.GetRouteDiscoveryStatus(fromLocation, toLocation);
+        if(bidirectional)
+        {
+            LocationDiscoveryStatus reverseStatus = NewGameManager.Instance.GetRouteDiscoveryStatus(toLocation, fromLocation);
+            status = (LocationDiscoveryStatus) Mathf.Max((int) status, (int) reverseStatus);
+        }
+
         Sprite sprite = null;
         switch(status)
         {

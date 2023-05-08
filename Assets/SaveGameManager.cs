@@ -76,6 +76,7 @@ public enum SaveGameVersion
 public class SaveData
 {
     public string username;
+    public float playtime = 0.0f;
     public DateTime date;
     public int money;
     public TransportationMethod lastMethod;

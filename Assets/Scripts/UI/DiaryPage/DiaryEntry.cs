@@ -129,6 +129,12 @@ public enum GeneratedDiaryEntryPurpose
     EndGame
 }
 
+public class DiaryHealthState
+{
+    public ProtagonistData character;
+    public HealthState healthState;
+}
+
 [System.Serializable]
 public class DiaryEntryInfo
 {
@@ -140,12 +146,14 @@ public class DiaryEntryInfo
     public List<StolenItemInfo> lastStolenItems = new();
     public List<ProtagonistData> hungryCharacters = new();
     public string stopoverLocation;
+    public List<DiaryHealthState> healthStates = new();
     public List<HealthProblem> newHealthProblems = new();
     public List<HealthProblem> existingHealthProblems = new();
     public DateTime date;
     public TransportationMethod lastTransportationMethod;
     public GeneratedDiaryEntryPurpose purpose;
     public string endGameEntryTechnicalName;
+    public float playtime;
 }
 
 [System.Serializable]

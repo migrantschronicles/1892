@@ -84,6 +84,7 @@ public class NewGameManager : MonoBehaviour
     public bool wantsEndOfDay = false;
     public bool wantsEndGame = false;
 
+    private float playtime = 0.0f; 
     public int money;
     // Date
     public DateTime date = new DateTime(1892, 6, 21);
@@ -219,6 +220,8 @@ public class NewGameManager : MonoBehaviour
 
     void Update() 
     {
+        playtime += Time.deltaTime;
+
         if(wantsEndOfDay && CanEndDay())
         {
             EndDay();
@@ -297,6 +300,11 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
+    public void InitNewGame(string username)
+    {
+        userName = username;
+    }
+
     public void LoadFromSaveGame(SaveData saveGame)
     {
         switch(saveGame.levelName)
@@ -310,6 +318,7 @@ public class NewGameManager : MonoBehaviour
         }
         ///@todo Handle Ship ( nextLocation to NewYork, nextMethod, ShipManager.STartTravelling)
         userName = saveGame.username;
+        playtime = saveGame.playtime;
         lastMethod = saveGame.lastMethod;
         SetMoney(saveGame.money);
         SetDate(saveGame.date);
@@ -400,6 +409,7 @@ public class NewGameManager : MonoBehaviour
         ///@todo selected character
         saveGame.username = userName;
         saveGame.money = money;
+        saveGame.playtime = playtime;
         saveGame.date = date;
 
         switch(SceneManager.GetActiveScene().name)
@@ -806,6 +816,12 @@ public class NewGameManager : MonoBehaviour
             }
         }
 
+        List<DiaryHealthState> healthStates = new();
+        foreach(ProtagonistHealthData character in HealthStatus.Characters)
+        {
+            healthStates.Add(new DiaryHealthState { character = character.CharacterData, healthState = character.HealthState });
+        }
+
         return new DiaryEntryInfo
         {
             levelMode = LevelInstance.Instance.LevelMode,
@@ -816,11 +832,13 @@ public class NewGameManager : MonoBehaviour
             lastStolenItems = LastStolenItems,
             hungryCharacters = new List<ProtagonistData>(HealthStatus.GetHungryCharacters().Select(character => character.CharacterData)),
             stopoverLocation = ShipManager.StopoverLocation,
+            healthStates = healthStates,
             newHealthProblems = newProblems,
             existingHealthProblems = existingProblems,
             date = date,
             lastTransportationMethod = lastMethod,
-            purpose = purpose
+            purpose = purpose,
+            playtime = playtime
         };
     }
 
@@ -828,7 +846,7 @@ public class NewGameManager : MonoBehaviour
     {
         Debug.Log("Generating PDF");
         PDFBuilder builder = new PDFBuilder();
-        builder.Generate(journeys);
+        builder.Generate(journeys, userName, playtime);
         builder.GenerateGeoJSON(journeys);
         Debug.Log("Finished PDF generating");
     }

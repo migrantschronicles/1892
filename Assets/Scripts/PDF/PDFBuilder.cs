@@ -375,18 +375,21 @@ public class PDFBuilder
         pdf.FontSize = oldFontSize;
     }
 
-    private void DrawTitlePage(IPDFPlatform pdf, int pageNumber)
+    private void DrawTitlePage(IPDFPlatform pdf, int pageNumber, string username, float playtime)
     {
         pdf.AddPage();
         pdf.DrawPNG("PDF/PDF_Background_1.png", 0, 0, pdf.PageWidth, pdf.PageHeight);
         pdf.FontSize = 15;
         // Date
-        pdf.DrawText("13/10/2022", 305, 343);
+        pdf.DrawText(DateTime.Now.ToString("d MMMM yyyy"), 305, 343);
         // Player name
-        pdf.DrawText("Alina Menten", 305, 367);
+        pdf.DrawText(username, 305, 367);
         //pdf.SetFont("AlegreyaSans-Black.ttf");
         // Overall Playtime
-        pdf.DrawText("02h 28m", 305, 392);
+        int totalMinutes = Mathf.CeilToInt(playtime / 60);
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+        pdf.DrawText(string.Format("{0:00}h {1:00}m", hours, minutes), 305, 392);
         // Character choice
         pdf.DrawPNG("PDF/Frame Character.png", 190, 498, 214, 250);
         // Page Number
@@ -425,6 +428,8 @@ public class PDFBuilder
                 continue;
             }
 
+            DiaryEntryData diaryEntry = journey.diaryEntries[entryIndex];
+
             bool top = i % 2 == 0;
             if(top)
             {
@@ -442,7 +447,7 @@ public class PDFBuilder
             pdf.DrawText(cityName, 94, top ? 49 : 457);
 
             // Screenshot
-            Texture2D screenshot = LevelInstance.Instance.TakeDiaryScreenshot(journey.diaryEntries[entryIndex]);
+            Texture2D screenshot = LevelInstance.Instance.TakeDiaryScreenshot(diaryEntry);
             if(screenshot != null)
             {
                 RectInt screenshotRect = new RectInt(94, top ? 77 : 486, 408, 255);
@@ -472,25 +477,28 @@ public class PDFBuilder
             int row1Y = top ? 360 : 764;
             int row2Y = top ? 372 : 776;
             // Ingame time frame.
-            pdf.DrawText("02:03:02", 187, row0Y);
+            int hours = (int) (diaryEntry.info.playtime / 3600);
+            int minutes = (int)((diaryEntry.info.playtime % 3600) / 60);
+            int seconds = (int)(diaryEntry.info.playtime % 60);
+            pdf.DrawText(string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds), 187, row0Y);
             // Money
             pdf.DrawText($"{journey.money} LUF", 187, row1Y);
             // Names
-            pdf.DrawText("Elis Beffort:", 297, row0Y);
-            pdf.DrawText("Mreis Beffort:", 297, row1Y);
-            pdf.DrawText("Matti Beffort:", 297, row2Y);
-            // Health
-            ///@todo
-            pdf.DrawText("healthy", 392, row0Y);
-            pdf.DrawText("bad mental health", 392, row1Y);
-            pdf.DrawText("malnourished", 392, row2Y);
+            for(int characterIndex = 0; characterIndex < diaryEntry.info.healthStates.Count; ++characterIndex)
+            {
+                DiaryHealthState healthState = diaryEntry.info.healthStates[characterIndex];
+                string fullName = LocalizationManager.Instance.GetLocalizedString(healthState.character.fullName);
+                int y = characterIndex == 0 ? row0Y : (characterIndex == 1 ? row1Y : row2Y);
+                pdf.DrawText(fullName, 297, y);
+                pdf.DrawText(healthState.healthState.ToString(), 392, y);
+            }
 
             ++i;
             ++entryIndex;
         }
     }
 
-    public void Generate(List<Journey> journeys)
+    public void Generate(List<Journey> journeys, string username, float playtime)
     {
         // Responsible for generating the pdf based on the state.
         // Maybe outsource this to a thread, since it will take some time?
@@ -508,7 +516,7 @@ public class PDFBuilder
         Texture2D mapScreenshot = LevelInstance.Instance ? LevelInstance.Instance.TakeMapScreenshot() : null;
 
         // TITLE PAGE
-        DrawTitlePage(pdf, pageNumber);
+        DrawTitlePage(pdf, pageNumber, username, playtime);
 
         // JOURNEY
         DrawJourneyPage(pdf, mapScreenshot, pageNumber);

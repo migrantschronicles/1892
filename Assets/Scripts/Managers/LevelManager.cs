@@ -5,6 +5,32 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
+    public static LevelManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    public void StartNewGame(string username)
+    {
+        StartCoroutine(StartNewGameRoutine(username));
+    }
+
+    private IEnumerator StartNewGameRoutine(string username)
+    {
+        DontDestroyOnLoad(gameObject);
+
+        AudioManager.Instance.FadeOutMusic();
+        SceneManager.LoadScene("Pfaffenthal");
+
+        yield return null;
+
+        NewGameManager.Instance.InitNewGame(username);
+
+        Destroy(gameObject);
+    }
+
     public static void StartLevel(string name)
     {
         SceneManager.LoadScene(sceneName: name);

@@ -1028,7 +1028,6 @@ public class NewGameManager : MonoBehaviour
 
     public void OnProtagonistDied(ProtagonistData protagonist)
     {
-        Debug.Log($"{protagonist.name} died");
         OnEndOfGame(false);
     }
 

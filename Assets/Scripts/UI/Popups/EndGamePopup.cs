@@ -10,7 +10,14 @@ public class EndGamePopup : MonoBehaviour, IPopup
 
     public void OnEndGameClicked()
     {
-        LevelInstance.Instance.OpenEndGameDiaryEntry(TechnicalName);
+        if (string.IsNullOrEmpty(TechnicalName))
+        {
+            NewGameManager.Instance.EndGameAndReturnToMainMenu();
+        }
+        else
+        {
+            LevelInstance.Instance.OpenEndGameDiaryEntry(TechnicalName);
+        }
     }
 
     public void OnDownloadPDFClicked()

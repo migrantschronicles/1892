@@ -17,6 +17,8 @@ public class MapRoute : MonoBehaviour
     private Sprite traveledRoute;
     [SerializeField]
     private Sprite discoveredRoute;
+    [SerializeField]
+    private bool bidirectional;
 
     private void Start()
     {

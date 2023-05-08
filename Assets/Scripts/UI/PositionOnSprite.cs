@@ -22,8 +22,10 @@ public class PositionOnSprite : MonoBehaviour
     private Vector2 normalizedPosition = new Vector2(0.5f, 0.5f);
     [SerializeField]
     private GameObject worldObject;
-    [SerializeField]
+    [SerializeField, Tooltip("The offset applied to the screen coordinates after the world location was transformed to screen coordinates")]
     private Vector2 worldObjectOffset = new Vector2(0, 0);
+    [SerializeField, Tooltip("The offset applied to the world location before it is transformed to screen coordinates")]
+    private Vector3 worldObjectOffsetLocal = new Vector3(0, 0, 0);
     [SerializeField]
     private GameObject spriteContainer;
 
@@ -34,6 +36,7 @@ public class PositionOnSprite : MonoBehaviour
     public Vector2 NormalizedPosition { get { return normalizedPosition; } set { normalizedPosition = value; } }
     public GameObject WorldObject { get { return worldObject; } set { worldObject = value; } }
     public Vector2 WorldObjectOffset { set { worldObjectOffset = value; UpdatePosition(); } }
+    public Vector3 WorldObjectOffsetLocal { set { worldObjectOffsetLocal = value; UpdatePosition(); } }
 
 #if UNITY_EDITOR && UPDATE_POSITION_IN_EDITOR
     private Vector2Int lastResolution;
@@ -214,6 +217,6 @@ public class PositionOnSprite : MonoBehaviour
 
     private void UpdatePositionToWorldPosition(Vector3 worldPosition)
     {
-        rectTransform.anchoredPosition = WorldToAnchoredPosition(worldPosition) + worldObjectOffset;
+        rectTransform.anchoredPosition = WorldToAnchoredPosition(worldPosition + worldObjectOffsetLocal) + worldObjectOffset;
     }
 }

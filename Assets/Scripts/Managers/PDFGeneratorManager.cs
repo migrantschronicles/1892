@@ -170,8 +170,6 @@ public class PDFGeneratorManager : MonoBehaviour
         }
         renderedTexture.ReadPixels(new Rect(0, 0, targetWidth, targetHeight), destX, destY);
 
-        renderedTexture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
-
         RenderTexture.active = null;
         screenshotCamera.targetTexture = null;
         mainTexture.Release();

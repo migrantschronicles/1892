@@ -283,6 +283,16 @@ public class NewGameManager : MonoBehaviour
             journeys.ForEach(journey => journey.diaryEntries.ForEach(entry => DiaryEntryManager.UpdateDiaryEntry(entry)));
         };
 
+        if (PlayerPrefs.HasKey("MusicVolume"))
+        {
+            AudioManager.Instance.MusicVolume = PlayerPrefs.GetFloat("MusicVolume");
+        }
+
+        if (PlayerPrefs.HasKey("SFXVolume"))
+        {
+            AudioManager.Instance.SFXVolume = PlayerPrefs.GetFloat("SFXVolume");
+        }
+
         InitAfterLoad();
         isInitialized = true;
     }

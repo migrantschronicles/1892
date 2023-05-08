@@ -53,6 +53,16 @@ public class MainMenu : MonoBehaviour
         Application.targetFrameRate = 30;
         AudioManager.Instance.PlayMusic(musicClips);
         inLanguageSelection = true;
+
+        if(PlayerPrefs.HasKey("MusicVolume"))
+        {
+            AudioManager.Instance.MusicVolume = PlayerPrefs.GetFloat("MusicVolume");
+        }
+
+        if(PlayerPrefs.HasKey("SFXVolume"))
+        {
+            AudioManager.Instance.SFXVolume = PlayerPrefs.GetFloat("SFXVolume");
+        }
     }
 
     private void Update()

@@ -9,6 +9,8 @@ public class SettingsPage : MonoBehaviour
     [SerializeField]
     private AudioSlider sfxSlider;
 
+    private bool isQuitting = false;
+
     private void Start()
     {
         float musicVolume = AudioManager.Instance.MusicVolume;
@@ -17,6 +19,35 @@ public class SettingsPage : MonoBehaviour
         float sfxVolume = AudioManager.Instance.SFXVolume;
         sfxSlider.Value = sfxVolume;
         sfxSlider.Slider.onValueChanged.AddListener(OnSFXVolumeChanged);
+    }
+
+    private void OnDisable()
+    {
+        SavePrefs();
+    }
+
+    private void OnApplicationFocus(bool focus)
+    {
+        if(!focus)
+        {
+            SavePrefs();
+        }
+    }
+
+    private void SavePrefs()
+    {
+        if(isQuitting)
+        {
+            return;
+        }
+
+        PlayerPrefs.SetFloat("MusicVolume", AudioManager.Instance.MusicVolume);
+        PlayerPrefs.SetFloat("SFXVolume", AudioManager.Instance.SFXVolume);
+    }
+
+    private void OnApplicationQuit()
+    {
+        isQuitting = true;
     }
 
     private void OnMusicVolumeChanged(float volume)

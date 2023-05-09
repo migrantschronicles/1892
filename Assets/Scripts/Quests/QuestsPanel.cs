@@ -23,7 +23,8 @@ public class QuestsPanel : MonoBehaviour
         {
             if(entry.Quest == quest)
             {
-                entry.MarkFinished();
+                Destroy(entry.gameObject);
+                quests.Remove(entry);
                 return;
             }
         }
@@ -37,7 +38,8 @@ public class QuestsPanel : MonoBehaviour
         {
             if(entry.Quest == quest)
             {
-                entry.MarkFailed();
+                Destroy(entry.gameObject);
+                quests.Remove(entry);
                 return;
             }
         }

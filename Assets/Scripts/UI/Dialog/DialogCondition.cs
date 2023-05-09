@@ -55,7 +55,7 @@ public class DialogCondition
                     }
                 }
 
-                return true;
+                return Children.Length == 0;
             }
         }
 

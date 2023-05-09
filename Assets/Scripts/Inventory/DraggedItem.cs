@@ -45,7 +45,11 @@ public class DraggedItem : MonoBehaviour
 
     private void UpdatePosition(PointerEventData data)
     {
-        rectTransform.anchoredPosition = data.position;
+        if(RectTransformUtility.ScreenPointToLocalPointInRectangle(LevelInstance.Instance.CanvasRect, data.position, LevelInstance.Instance.UICamera, out Vector2 localPoint))
+        {
+            rectTransform.anchoredPosition = localPoint;
+        }
+
         Shop currentShop = LevelInstance.Instance.CurrentShop;
         ScrollableInventoryManager highlightedManager = currentShop ? currentShop.HighlightedInventoryManager : null;
         if(lastHighlightedManager && lastHighlightedManager != highlightedManager)

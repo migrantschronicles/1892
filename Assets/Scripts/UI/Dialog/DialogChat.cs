@@ -599,6 +599,7 @@ public class DialogChat : MonoBehaviour
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newSizeY + bubbleTransform.sizeDelta.y + paddingBottom);
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
         OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
+        bubble.SetButtonEnabled(false);
 
         currentAnswers.Clear();
         DialogSystem.Instance.FlowPlayer.Play(bubble.Branch);

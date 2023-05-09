@@ -334,13 +334,13 @@ public class ProtagonistHealthData
 
     private void OnHealthChanged()
     {
-        onHealthChanged?.Invoke(this);
         HealthState newState = CalculateHealthState();
-        if(newState != healthState)
+        if (newState != healthState)
         {
             healthState = newState;
             onHealthStateChanged?.Invoke(this);
         }
+        onHealthChanged?.Invoke(this);
     }
 
     private HealthState CalculateHealthState()

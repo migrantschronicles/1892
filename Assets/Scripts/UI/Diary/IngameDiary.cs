@@ -32,6 +32,8 @@ public class IngameDiary : MonoBehaviour
     private DiaryContentPages settingsPages;
     [SerializeField]
     private DiaryContentPages immediatelyOpenedPages;
+    [SerializeField]
+    private GameObject tempMapButtonsDev;
 
     public Diary Diary { get { return diary; } }
 
@@ -46,6 +48,10 @@ public class IngameDiary : MonoBehaviour
         {
             OpenImmediately(immediatelyOpenedPages);
         }
+
+#if !(DEVELOPMENT_BUILD || UNITY_EDITOR)
+        tempMapButtonsDev.SetActive(false);
+#endif
     }
 
     private void OnEnable()

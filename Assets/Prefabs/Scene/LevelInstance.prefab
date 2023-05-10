@@ -1116,6 +1116,7 @@ MonoBehaviour:
   endGameFailurePrefab: {fileID: 534327458725300546, guid: fa21e57c2290f054591be8ef85af75ef, type: 3}
   questAddedPrefab: {fileID: 534327458725300546, guid: d037160817d72974993a5525bb4e47a8, type: 3}
   questFinishedPrefab: {fileID: 534327458725300546, guid: 34c71fccadd13e34fa4e2b3ad14e34d5, type: 3}
+  questFailedPrefab: {fileID: 534327458725300546, guid: 063e86a5a135bab42aa25b0eb0ead828, type: 3}
   cannotTravelAgainTodayPrefab: {fileID: 534327458725300546, guid: ec5e7f0ce4c619242836502b1a6ff40c, type: 3}
   developerLocationPanelPrefab: {fileID: 3124184666252390237, guid: 8dac1850cb38c2242994b607af18f50e, type: 3}
 --- !u!114 &8509480061301435036
@@ -2649,11 +2650,11 @@ PrefabInstance:
     - target: {fileID: 6468859767798026066, guid: 154b17a3d0c477b4ba54c9ce104b9baa, type: 3}
       propertyPath: hourHandle
       value: 
-      objectReference: {fileID: 8927768845309257479}
+      objectReference: {fileID: 0}
     - target: {fileID: 6468859767798026066, guid: 154b17a3d0c477b4ba54c9ce104b9baa, type: 3}
       propertyPath: minuteHandle
       value: 
-      objectReference: {fileID: 5266237368714390152}
+      objectReference: {fileID: 0}
     - target: {fileID: 7430646057224914511, guid: 154b17a3d0c477b4ba54c9ce104b9baa, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4335,11 +4336,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8993063790044699348, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
   m_PrefabInstance: {fileID: 5646688669291552143}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &5266237368714390152 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 524809618732578567, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-  m_PrefabInstance: {fileID: 5646688669291552143}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &6980961830404351579 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3367648677414271956, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
@@ -4351,11 +4347,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3ddac7c7f07aca468d600c89f6ed8e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &8927768845309257479 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3871089190123715208, guid: 135227aa18ffb3044b357f7b2aa9ed63, type: 3}
-  m_PrefabInstance: {fileID: 5646688669291552143}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5646688669403585034
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -83,6 +83,9 @@ public class NewGameManager : MonoBehaviour
     // Game Stats
     public bool wantsEndOfDay = false;
     public bool wantsEndGame = false;
+    public bool wantsToTravel = false;
+    public string wantsToTravelTo;
+    public TransportationMethod wantsToTravelMethod;
 
     private float playtime = 0.0f; 
     public int money;
@@ -598,6 +601,41 @@ public class NewGameManager : MonoBehaviour
             return;
         }
 
+        // Check if there are quests that failed.
+        List<Quest> failedSideQuests = new(QuestManager.GetFailedSideQuestsIfYouLeave(LevelInstance.Instance.LocationName)
+            .Concat(QuestManager.GetFailedSideQuestsIfYouGetTo(name)));
+        if(failedSideQuests.Any())
+        {
+            foreach(Quest quest in failedSideQuests)
+            {
+                QuestManager.FailQuest(quest);
+                LevelInstance.Instance.OnQuestFailed(quest);
+            }
+
+            wantsToTravel = true;
+            wantsToTravelTo = name;
+            wantsToTravelMethod = method;
+        }
+        else
+        {
+            GoToLocationImplementation(name, method);
+        }
+    }
+
+    public void GoToWantingLocation()
+    {
+        if(wantsToTravel)
+        {
+            string name = wantsToTravelTo;
+            TransportationMethod method = wantsToTravelMethod;
+            wantsToTravelTo = "";
+            wantsToTravelMethod = TransportationMethod.None;
+            GoToLocationImplementation(name, method);
+        }
+    }
+
+    private void GoToLocationImplementation(string name, TransportationMethod method)
+    {
         if (LocationManager.IsFromEuropeToAmerica(LevelInstance.Instance.LocationName, name))
         {
             ShipManager.StartTravellingInShip();

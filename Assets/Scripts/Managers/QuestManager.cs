@@ -198,4 +198,46 @@ public class QuestManager : MonoBehaviour
     {
         return quests.FirstOrDefault(x => x.Id == id);
     }
+
+    private bool LocationMatches(string location, string failLocation)
+    {
+        switch (failLocation)
+        {
+            case "Europe":
+                if (NewGameManager.Instance.LocationManager.GetContinent(location) == Continent.Europe)
+                {
+                    return true;
+                }
+                break;
+
+            case "America":
+                if (NewGameManager.Instance.LocationManager.GetContinent(location) == Continent.America)
+                {
+                    return true;
+                }
+                break;
+
+            case "Ship":
+                if (NewGameManager.Instance.LocationManager.GetContinent(location) == Continent.Ship)
+                {
+                    return true;
+                }
+                break;
+
+            default:
+                return failLocation == location;
+        }
+
+        return false;
+    }
+
+    public IEnumerable<Quest> GetFailedSideQuestsIfYouLeave(string location)
+    {
+        return SideQuests.Where(quest => quest.FailIfYouLeave.Any(failLocation => LocationMatches(location, failLocation)));
+    }
+
+    public IEnumerable<Quest> GetFailedSideQuestsIfYouGetTo(string location)
+    {
+        return SideQuests.Where(quest => quest.FailIfYouGetTo.Any(failLocation => LocationMatches(location, failLocation)));
+    }
 }

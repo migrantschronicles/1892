@@ -19,31 +19,35 @@ public class QuestsPanel : MonoBehaviour
 
     public void OnQuestFinished(Quest quest)
     {
-        foreach(QuestEntry entry in quests)
+        for (int i = quests.Count - 1; i >= 0; --i)
         {
-            if(entry.Quest == quest)
+            QuestEntry questEntry = quests[i];
+            if (!questEntry || !questEntry.gameObject)
             {
-                Destroy(entry.gameObject);
-                quests.Remove(entry);
-                return;
+                quests.RemoveAt(i);
+            }
+            else if (questEntry.Quest == quest)
+            {
+                Destroy(questEntry.gameObject);
+                quests.RemoveAt(i);
             }
         }
-
-        Debug.Assert(false);
     }
 
     public void OnQuestFailed(Quest quest)
     {
-        foreach(QuestEntry entry in quests)
+        for(int i = quests.Count - 1; i >= 0; --i)
         {
-            if(entry.Quest == quest)
+            QuestEntry questEntry = quests[i];
+            if(!questEntry || !questEntry.gameObject)
             {
-                Destroy(entry.gameObject);
-                quests.Remove(entry);
-                return;
+                quests.RemoveAt(i);
+            }
+            else if(questEntry.Quest == quest)
+            {
+                Destroy(questEntry.gameObject);
+                quests.RemoveAt(i);
             }
         }
-
-        Debug.Assert(false);
     }
 }

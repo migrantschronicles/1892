@@ -201,6 +201,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject questFinishedPrefab;
     [SerializeField]
+    private GameObject questFailedPrefab;
+    [SerializeField]
     private GameObject cannotTravelAgainTodayPrefab;
 #if DEBUG
     [SerializeField]
@@ -453,6 +455,13 @@ public class LevelInstance : MonoBehaviour
                         return;
                     }
 
+                    if(NewGameManager.Instance.wantsToTravel)
+                    {
+                        // Game manager was waiting on quest failed popups.
+                        NewGameManager.Instance.GoToWantingLocation();
+                        return;
+                    }
+
                     // There are no more popups, so revert changes.
                     break;
                 }
@@ -570,8 +579,16 @@ public class LevelInstance : MonoBehaviour
                         return;
                     }
 
-                    if(wantsToContinueGame)
+                    if (NewGameManager.Instance.wantsToTravel)
                     {
+                        // Game manager was waiting on quest failed popups.
+                        NewGameManager.Instance.GoToWantingLocation();
+                        return;
+                    }
+
+                    if (wantsToContinueGame)
+                    {
+                        ///@todo ?
                         wantsToContinueGame = true;
                     }
 
@@ -1280,6 +1297,13 @@ public class LevelInstance : MonoBehaviour
     {
         GameObject popupGO = PushPopup(questFinishedPrefab);
         QuestFinishedPopup popup = popupGO.GetComponent<QuestFinishedPopup>();
+        popup.OnAccept += (_) => { PopPopup(); };
+    }
+
+    public void OnQuestFailed(Quest quest)
+    {
+        GameObject popupGO = PushPopup(questFailedPrefab);
+        QuestFailedPopup popup = popupGO.GetComponent<QuestFailedPopup>();
         popup.OnAccept += (_) => { PopPopup(); };
     }
 

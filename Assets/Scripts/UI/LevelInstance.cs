@@ -283,6 +283,9 @@ public class LevelInstance : MonoBehaviour
     public delegate void OnPlayableCharacterSpawnChangedEvent(PlayableCharacterSpawn spawn);
     public event OnPlayableCharacterSpawnChangedEvent onPlayableCharacterSpawnChanged;
 
+    public delegate void OnDialogsTodayChangedEvent(int dialogsToday);
+    public event OnDialogsTodayChangedEvent OnDialogsTodayChanged;
+
     private void Awake()
     {
         instance = this;
@@ -597,6 +600,7 @@ public class LevelInstance : MonoBehaviour
     {
         nextSeasicknessTimer = seasicknessSceneFrequency;
         dialogsToday = 0;
+        OnDialogsTodayChanged?.Invoke(dialogsToday);
     }
 
     public bool HasScene(string name)
@@ -1287,6 +1291,7 @@ public class LevelInstance : MonoBehaviour
         }
 
         ++dialogsToday;
+        OnDialogsTodayChanged?.Invoke(dialogsToday);
         return true;
     }
 

@@ -41,11 +41,23 @@ public class Interface : MonoBehaviour
     private GameObject diaryButton;
     [SerializeField]
     private IngameDiary ingameDiary;
+    [SerializeField]
+    private Image actionCounterBackground;
+    [SerializeField]
+    private Text actionCounter;
+    [SerializeField]
+    private Sprite actionCounterMalusBackground;
+    [SerializeField]
+    private Image infiniteActionCounter;
+    [SerializeField]
+    private Color actionCounterMalusForeground = Color.white;
 
     public IngameDiary IngameDiary { get { return ingameDiary; } }
     private bool TreatDiaryAsButton { get { return IngameDiary.Diary.Status == OpenStatus.Closed; } }
 
     private InterfaceVisibilityFlags visibilityFlags = InterfaceVisibilityFlags.All;
+    private Sprite defaultActionCounterBackground;
+    private Color defaultActionCounterForeground;
 
     public InterfaceVisibilityFlags VisibilityFlags { get { return visibilityFlags; } }
 
@@ -59,6 +71,9 @@ public class Interface : MonoBehaviour
                 ingameDiary.gameObject.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
             }
         };
+
+        defaultActionCounterBackground = actionCounterBackground.sprite;
+        defaultActionCounterForeground = actionCounter.color;
     }
 
     private void Start()
@@ -67,10 +82,16 @@ public class Interface : MonoBehaviour
         NewGameManager.Instance.onMoneyChanged += OnMoneyChanged;
         NewGameManager.Instance.inventory.onItemAmountChanged += OnItemAmountChanged;
 
+        if(LevelInstance.Instance.MaxDialogsPerDay >= 0)
+        {
+            LevelInstance.Instance.OnDialogsTodayChanged += OnDialogsTodayChanged;
+        }
+
         OnMoneyChanged(NewGameManager.Instance.money);
         OnDateChanged(NewGameManager.Instance.date);
         OnLocationChanged(LevelInstance.Instance.LocationName);
         foodText.text = NewGameManager.Instance.inventory.GetItemTypeCount(ItemType.Food).ToString();
+        InitDialogsToday(LevelInstance.Instance.MaxDialogsPerDay);
     }
 
     private void OnDestroy()
@@ -107,6 +128,20 @@ public class Interface : MonoBehaviour
             int totalFood = NewGameManager.Instance.inventory.GetItemTypeCount(ItemType.Food);
             foodText.text = totalFood.ToString();
         }
+    }
+
+    private void OnDialogsTodayChanged(int amount)
+    {
+        int remaining = LevelInstance.Instance.MaxDialogsPerDay - amount;
+        actionCounter.text = remaining.ToString();
+        actionCounterBackground.sprite = remaining > 0 ? defaultActionCounterBackground : actionCounterMalusBackground;
+        actionCounter.color = remaining > 0 ? defaultActionCounterForeground : actionCounterMalusForeground;
+    }
+
+    public void InitDialogsToday(int amount)
+    {
+        actionCounter.gameObject.SetActive(amount >= 0);
+        infiniteActionCounter.gameObject.SetActive(amount < 0);
     }
 
     /**

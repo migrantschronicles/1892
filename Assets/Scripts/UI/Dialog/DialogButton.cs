@@ -20,6 +20,16 @@ public class DialogButton : MonoBehaviour
     private DialogLanguage language = DialogLanguage.Native;
     [SerializeField, Tooltip("True if the dialog can start even if the main protagonist is sick (for family members)")]
     private bool canStartEvenIfSick = false;
+    [SerializeField]
+    private Sprite defaultButton;
+    [SerializeField]
+    private Sprite pressedButton;
+    [SerializeField]
+    private Sprite ticketButton;
+    [SerializeField]
+    private Sprite pressedTicketButton;
+    [SerializeField]
+    private bool isTicketSeller;
 
     private bool savedCanStartToday = false;
 
@@ -53,8 +63,28 @@ public class DialogButton : MonoBehaviour
 #if UNITY_EDITOR
         Validate();
 #endif
+        UpdateElements();
         dialogButton.onClick.AddListener(OnStartDialog);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        UnityEditor.EditorApplication.delayCall += _OnValidate;
+    }
+
+    private void _OnValidate()
+    {
+        if (this == null)
+        {
+            return;
+        }
+
+        UnityEditor.EditorApplication.delayCall -= _OnValidate;
+
+        UpdateElements();
+    }
+#endif
 
     private void OnStartDialog()
     {
@@ -102,5 +132,14 @@ public class DialogButton : MonoBehaviour
     {
         savedCanStartToday = false;
         NewGameManager.Instance.onNewDay -= OnNewDay;
+    }
+
+    private void UpdateElements()
+    {
+        ((Image)dialogButton.targetGraphic).sprite = isTicketSeller ? ticketButton : defaultButton;
+        SpriteState state = dialogButton.spriteState;
+        state.pressedSprite = isTicketSeller ? pressedTicketButton : pressedButton;
+        state.highlightedSprite = isTicketSeller ? pressedTicketButton : pressedButton;
+        dialogButton.spriteState = state;
     }
 }

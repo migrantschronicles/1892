@@ -8,6 +8,8 @@ public abstract class IAnimationController : MonoBehaviour
     private float neutralSpeed = 1.0f;
     [SerializeField]
     private float talkSpeed = 1.0f;
+    [SerializeField]
+    private Vector2 offsetRange = new Vector2(0, 1);
 
     private Animator animator;
     private bool isTalking = false;
@@ -17,6 +19,7 @@ public abstract class IAnimationController : MonoBehaviour
         GetAnimator().SetBool("IsTalking", isTalking);
         GetAnimator().SetFloat("NeutralSpeed", neutralSpeed);
         GetAnimator().SetFloat("TalkSpeed", talkSpeed);
+        GetAnimator().SetFloat("Offset", UnityEngine.Random.Range(offsetRange.x, offsetRange.y));
     }
 
     public void SetIsTalking(bool isTalking)

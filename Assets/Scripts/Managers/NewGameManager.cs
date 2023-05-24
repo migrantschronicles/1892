@@ -90,7 +90,7 @@ public class NewGameManager : MonoBehaviour
     private float playtime = 0.0f; 
     public int money;
     // Date
-    public DateTime date = new DateTime(1892, 6, 21);
+    public DateTime date = new DateTime(1892, 7, 27);
     private int travelCountToday = 0;
 
     // Saved stats 

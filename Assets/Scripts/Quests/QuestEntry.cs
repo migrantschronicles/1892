@@ -18,9 +18,28 @@ public class QuestEntry : MonoBehaviour
         get {  return quest; }
         set
         {
+            if(quest)
+            {
+                quest.Title.StringChanged -= UpdateTitle;
+            }
+
             quest = value;
             titleText.text = LocalizationManager.Instance.GetLocalizedString(quest.Title);
+            quest.Title.StringChanged += UpdateTitle;
         }
+    }
+
+    private void OnDestroy()
+    {
+        if(quest)
+        {
+            quest.Title.StringChanged -= UpdateTitle;
+        }
+    }
+
+    private void UpdateTitle(string title)
+    {
+        titleText.text = title;
     }
 
     public void MarkFinished()

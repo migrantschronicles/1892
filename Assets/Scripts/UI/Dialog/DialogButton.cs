@@ -21,6 +21,8 @@ public class DialogButton : MonoBehaviour
     [SerializeField, Tooltip("True if the dialog can start even if the main protagonist is sick (for family members)")]
     private bool canStartEvenIfSick = false;
     [SerializeField]
+    private bool canStartEvenIfHungry = false;
+    [SerializeField]
     private Sprite defaultButton;
     [SerializeField]
     private Sprite pressedButton;
@@ -95,7 +97,7 @@ public class DialogButton : MonoBehaviour
         }
 
         ProtagonistHealthData responsibleCharacter = null;
-        responsibleCharacter = NewGameManager.Instance.HealthStatus.TryStartDialog(canStartEvenIfSick);
+        responsibleCharacter = NewGameManager.Instance.HealthStatus.TryStartDialog(canStartEvenIfSick, canStartEvenIfHungry);
 
         if(responsibleCharacter == null)
         {

@@ -487,7 +487,7 @@ public class HealthStatus : MonoBehaviour
      * If you are able to start a dialog, this returns null.
      * If you can't start a dialog, this returns the reason.
      */
-    public ProtagonistHealthData TryStartDialog(bool canStartEvenIfSick)
+    public ProtagonistHealthData TryStartDialog(bool canStartEvenIfSick, bool canStartEvenIfHungry)
     {
         // Check first if the main protagonist is sick
         ProtagonistHealthData mainProtagonist = GetMainHealthStatus();
@@ -505,7 +505,7 @@ public class HealthStatus : MonoBehaviour
         foreach(ProtagonistHealthData status in characters)
         {
             // Check if the characters didn't have food for 2 days.
-            if(status.HungryStatus.DaysWithoutEnoughFood >= 2)
+            if(status.HungryStatus.DaysWithoutEnoughFood >= 2 && !canStartEvenIfHungry)
             {
                 // If the main character is hungry for more than 2 days, we want to display him as the reason, even if a child is hungry too.
                 if(responsibleCharacter == null || !responsibleCharacter.CharacterData.isMainProtagonist)

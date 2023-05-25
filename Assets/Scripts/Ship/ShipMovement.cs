@@ -42,6 +42,7 @@ public class ShipMovement : MonoBehaviour
 
     public Vector2 ZoomBounds { get { return zoomBounds; } }
     public float ZoomValue { get { return zoomValue; } }
+    public bool IsAutoZooming { get { return movementMode != MovementMode.Default; } }
 
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN
     [SerializeField]

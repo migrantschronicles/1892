@@ -23,13 +23,27 @@ public class Room : MonoBehaviour
     private LocalizedString roomName;
     [SerializeField]
     private Vector3 roomButtonWorldObjectOffset = new Vector3(0, 0);
+    [SerializeField]
+    private SpriteRenderer overlay;
+    [SerializeField]
+    private bool steerageClassAccessible = true;
+    [SerializeField]
+    private bool secondClassAccessible = true;
+    [SerializeField]
+    private bool firstClassAccessible = true;
+    [SerializeField]
+    private Color inaccessibleColor = new Color(0, 0, 0, 0.9f);
+    [SerializeField]
+    private Color unvisitedColor = new Color(0, 0, 0, 0.5f);
 
     private bool visited = false;
+    private bool accessible = true;
 
     public LocalizedString RoomName { get { return roomName; } }
     public RoomButton RoomButton { get; set; }
     public PlayableCharacterSpawn PlayableCharacterSpawn { get { return characterSpawn; } }
     public Vector3 RoomButtonWorldObjectOffset { get { return roomButtonWorldObjectOffset; } }
+    public bool IsAccessible { get {  return accessible; } }
 
     private void Start()
     {
@@ -48,7 +62,15 @@ public class Room : MonoBehaviour
             SetVisited(false);
         }
 
-        LevelInstance.Instance.InstantiateRoomButton(this);
+        bool isAccessible = false;
+        switch(NewGameManager.Instance.ShipManager.ShipClass)
+        {
+            case ShipClass.First: isAccessible = firstClassAccessible; break;
+            case ShipClass.Second: isAccessible = secondClassAccessible; break;
+            case ShipClass.Steerage: isAccessible = steerageClassAccessible; break;
+        }
+
+        SetIsAccessible(isAccessible);
     }
 
     public void SetVisited(bool visited)
@@ -78,5 +100,26 @@ public class Room : MonoBehaviour
         }
 
         this.visited = visited;
+        UpdateOverlay();
+    }
+
+    private void SetIsAccessible(bool isAccessible)
+    {
+        accessible = isAccessible;
+        UpdateOverlay();
+    }
+
+    private void UpdateOverlay()
+    {
+        if(visited)
+        {
+            overlay.gameObject.SetActive(false);
+        }
+        else
+        {
+            overlay.gameObject.SetActive(true);
+            overlay.color = accessible ? unvisitedColor : inaccessibleColor;
+            overlay.GetComponent<Collider2D>().enabled = accessible;
+        }
     }
 }

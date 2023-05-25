@@ -15,6 +15,14 @@ public class ShipRoute
     public bool HasStopover { get { return !string.IsNullOrWhiteSpace(stopoverLocation); } }
 }
 
+public enum ShipClass
+{
+    None,
+    Steerage,
+    Second,
+    First
+}
+
 public class ShipManager : MonoBehaviour
 {
     [SerializeField]
@@ -42,6 +50,7 @@ public class ShipManager : MonoBehaviour
     public bool HasReachedDestination { get { return currentShipRoute != null && NewGameManager.Instance.DaysInCity >= TravelDays; } }
     public bool WantsToVisitStopover { get; set; }
     public bool HasVisitedStopover { get; set; }
+    public ShipClass ShipClass { get; private set; } = ShipClass.None;
 
     private ShipRoute currentShipRoute = null;
 
@@ -54,6 +63,19 @@ public class ShipManager : MonoBehaviour
     {
         FromLocation = fromLocation;
         currentShipRoute = GetShipRoute(FromLocation);
+
+        if (NewGameManager.Instance.conditions.HasCondition("DialogueOptions.ShipFirstClass"))
+        {
+            ShipClass = ShipClass.First;
+        }
+        else if (NewGameManager.Instance.conditions.HasCondition("DialogueOptions.ShipSecondClass"))
+        {
+            ShipClass = ShipClass.Second;
+        }
+        else if (NewGameManager.Instance.conditions.HasCondition("DialogueOptions.ShipSteerageClass"))
+        {
+            ShipClass = ShipClass.Steerage;
+        }
     }
 
     public void EndTravellingInShip()

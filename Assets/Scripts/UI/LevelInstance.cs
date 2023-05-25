@@ -947,8 +947,13 @@ public class LevelInstance : MonoBehaviour
         room.RoomButton = roomButton;
     }
 
-    public void GoToRoom(Room room)
+    public bool GoToRoom(Room room)
     {
+        if(!room.IsAccessible)
+        {
+            return false;
+        }
+
         if(currentRoom)
         {
             currentRoom.SetVisited(false);
@@ -960,6 +965,8 @@ public class LevelInstance : MonoBehaviour
             currentRoom.SetVisited(true);
             onPlayableCharacterSpawnChanged?.Invoke(currentRoom.PlayableCharacterSpawn);
         }
+
+        return true;
     }
 
     private void OnDialogLine(string speakerTechnicalName)

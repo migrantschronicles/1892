@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ShipRoomNavigation : MonoBehaviour
 {
@@ -71,8 +72,18 @@ public class ShipRoomNavigation : MonoBehaviour
         }
     }
 
+    private bool IsOverUI()
+    {
+        return EventSystem.current.IsPointerOverGameObject();
+    }
+
     private void OnClick(Vector2 screenPosition)
     {
+        if(IsOverUI())
+        {
+            return;
+        }
+
         Vector3 worldPosition = LevelInstance.Instance.MainCamera.ScreenToWorldPoint(screenPosition);
         Vector2 ray = new Vector2(worldPosition.x, worldPosition.y);
         RaycastHit2D hit = Physics2D.Raycast(ray, ray, 0.1f);

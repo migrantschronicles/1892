@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -72,14 +73,27 @@ public class ShipRoomNavigation : MonoBehaviour
         }
     }
 
-    private bool IsOverUI()
+    private bool IsOverUI(Vector2 screenPosition)
     {
-        return EventSystem.current.IsPointerOverGameObject();
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = screenPosition;
+        List<RaycastResult> raysastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, raysastResults);
+        int uiLayer = LayerMask.NameToLayer("UI");
+        foreach(RaycastResult result in raysastResults)
+        {
+            if(result.gameObject.layer == uiLayer)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void OnClick(Vector2 screenPosition)
     {
-        if(IsOverUI())
+        if(IsOverUI(screenPosition))
         {
             return;
         }

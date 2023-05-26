@@ -14,11 +14,15 @@ using UnityEngine.Localization;
 public class Room : MonoBehaviour
 {
     [SerializeField]
+    private GameObject interactables;
+    [SerializeField]
     private GameObject[] hiddenWhenVisited;
     [SerializeField]
     private GameObject[] shownWhenVisited;
     [SerializeField]
     private PlayableCharacterSpawn characterSpawn;
+    [SerializeField]
+    private GameObject middleground;
     [SerializeField]
     private LocalizedString roomName;
     [SerializeField]
@@ -44,6 +48,8 @@ public class Room : MonoBehaviour
     public PlayableCharacterSpawn PlayableCharacterSpawn { get { return characterSpawn; } }
     public Vector3 RoomButtonWorldObjectOffset { get { return roomButtonWorldObjectOffset; } }
     public bool IsAccessible { get {  return accessible; } }
+    public GameObject Middleground { get { return middleground; } }
+    public GameObject Interactables { get {  return interactables; } }
 
     private void Start()
     {
@@ -62,7 +68,13 @@ public class Room : MonoBehaviour
             SetVisited(false);
         }
 
-        bool isAccessible = false;
+        // If you start play in the ship in the editor, make rooms accessible by default.
+        bool isAccessible =
+#if UNITY_EDITOR
+            NewGameManager.Instance.ShipManager.IsTravellingInShip ? false : true;
+#else
+            false;
+#endif
         switch(NewGameManager.Instance.ShipManager.ShipClass)
         {
             case ShipClass.First: isAccessible = firstClassAccessible; break;
@@ -84,6 +96,8 @@ public class Room : MonoBehaviour
         {
             go.SetActive(visited);
         }
+
+        interactables.SetActive(visited);
 
         if(visited)
         {

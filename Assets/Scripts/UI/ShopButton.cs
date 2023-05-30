@@ -14,7 +14,7 @@ public class ShopButton : MonoBehaviour
 
     private void Awake()
     {
-        button = GetComponent<Button>();
+        button = GetComponentInChildren<Button>();
     }
 
     private void Start()

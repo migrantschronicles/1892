@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ShopFlag : MonoBehaviour
 {
@@ -24,6 +25,10 @@ public class ShopFlag : MonoBehaviour
     private Sprite defaultFlag;
     [SerializeField]
     private Sprite pressedFlag;
+    [SerializeField]
+    private float timeCountsAsClick = 0.3f;
+
+    private float touchedTime = -1.0f;
 
     private void Start()
     {
@@ -48,6 +53,44 @@ public class ShopFlag : MonoBehaviour
         UpdateElements();
     }
 #endif
+
+    private void Update()
+    {
+        if (Input.touchCount == 1)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+                touchedTime = Time.time;
+                flagRenderer.sprite = pressedFlag;
+            }
+            else if (touch.phase == TouchPhase.Moved)
+            {
+                touchedTime = -1.0f;
+                flagRenderer.sprite = defaultFlag;
+            }
+            else if (touch.phase == TouchPhase.Ended)
+            {
+                if (touchedTime >= 0.0f)
+                {
+                    // Else the touch was moved
+                    float delta = Time.time - touchedTime;
+                    if (delta <= timeCountsAsClick)
+                    {
+                        OnClick(touch.position);
+                    }
+
+                    touchedTime = -1.0f;
+                    flagRenderer.sprite = defaultFlag;
+                }
+            }
+        }
+        else
+        {
+            touchedTime = -1.0f;
+            flagRenderer.sprite = defaultFlag;
+        }
+    }
 
     private void UpdateElements()
     {
@@ -78,6 +121,19 @@ public class ShopFlag : MonoBehaviour
     private void OnMouseUpAsButton()
     {
         flagRenderer.sprite = defaultFlag;
+        GoToTarget();
+    }
+
+    private void OnClick(Vector2 screenPosition)
+    {
+        if (ShipRoomNavigation.SpriteCast(screenPosition).collider != null)
+        {
+            GoToTarget();
+        }
+    }
+
+    private void GoToTarget()
+    {
         if (!string.IsNullOrWhiteSpace(sceneName))
         {
             LevelInstance.Instance.OpenScene(sceneName);

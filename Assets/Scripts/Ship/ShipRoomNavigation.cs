@@ -73,7 +73,7 @@ public class ShipRoomNavigation : MonoBehaviour
         }
     }
 
-    private bool IsOverUI(Vector2 screenPosition)
+    public static bool IsOverUI(Vector2 screenPosition)
     {
         PointerEventData eventData = new PointerEventData(EventSystem.current);
         eventData.position = screenPosition;
@@ -91,20 +91,25 @@ public class ShipRoomNavigation : MonoBehaviour
         return false;
     }
 
-    private void OnClick(Vector2 screenPosition)
+    public static RaycastHit2D SpriteCast(Vector2 screenPosition)
     {
         if(IsOverUI(screenPosition))
         {
-            return;
+            return new RaycastHit2D();
         }
 
         Vector3 worldPosition = LevelInstance.Instance.MainCamera.ScreenToWorldPoint(screenPosition);
         Vector2 ray = new Vector2(worldPosition.x, worldPosition.y);
-        RaycastHit2D hit = Physics2D.Raycast(ray, ray, 0.1f);
+        return Physics2D.Raycast(ray, ray, 0.1f);
+    }
+
+    private void OnClick(Vector2 screenPosition)
+    {
+        RaycastHit2D hit = SpriteCast(screenPosition);
         if(hit.collider != null)
         {
             Room room = hit.collider.GetComponentInParent<Room>();
-            if(LevelInstance.Instance.GoToRoom(room))
+            if (LevelInstance.Instance.GoToRoom(room))
             {
                 LevelInstance.Instance.GetComponent<ShipMovement>().ZoomToTarget(room.transform.position);
             }

@@ -616,6 +616,7 @@ public class LevelInstance : MonoBehaviour
     private void OnNewDay()
     {
         nextSeasicknessTimer = seasicknessSceneFrequency;
+        wantsToShowSeasickness = false;
         dialogsToday = 0;
         OnDialogsTodayChanged?.Invoke(dialogsToday);
     }
@@ -1220,6 +1221,9 @@ public class LevelInstance : MonoBehaviour
     public void OnSleepInShip(List<EndOfDayHealthData> endOfDayHealthData)
     {
         wantsToContinueGame = false;
+        nextSeasicknessTimer = -1.0f;
+        seasicknessSceneTimer = -1.0f;
+        wantsToShowSeasickness = false;
         StartCoroutine(SleepInShipTransition(endOfDayHealthData));
     }
 

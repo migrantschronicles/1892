@@ -1,3 +1,4 @@
+using Articy.TheMigrantsChronicles;
 using Articy.Unity;
 using Articy.Unity.Interfaces;
 using System.Collections;
@@ -14,6 +15,14 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
     private Image diamond;
     [SerializeField]
     private Text text;
+    [SerializeField]
+    private Image speakerBackground;
+    [SerializeField]
+    private Text speakerText;
+    [SerializeField]
+    private float speakerMarginLeft = -20;
+    [SerializeField]
+    private float speakerPaddingX = 30;
     [SerializeField]
     private bool isLeft = false;
     [SerializeField]
@@ -93,6 +102,9 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
 
         DropShadow shadow = background.GetComponent<DropShadow>();
         shadow.EffectDistance = new Vector2(-Mathf.Abs(shadow.EffectDistance.x), shadow.EffectDistance.y);
+
+        speakerBackground.color = npcDiamondColor;
+        speakerText.color = npcForegroundColor;
     }
 
     private void SetRight()
@@ -117,6 +129,9 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
 
         DropShadow shadow = background.GetComponent<DropShadow>();
         shadow.EffectDistance = new Vector2(Mathf.Abs(shadow.EffectDistance.x), shadow.EffectDistance.y);
+
+        speakerBackground.color = playerDiamondColor;
+        speakerText.color = playerForegroundColor;
     }
 
     private void UpdateHeight()
@@ -156,6 +171,29 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
             }
         }
 
+        // Get speaker information
+        var dlgSpeaker = flowObject as IObjectWithSpeaker;
+        bool speakerSet = false;
+        if(dlgSpeaker != null)
+        {
+            // Get the speaker object
+            var speaker = dlgSpeaker.Speaker;
+            if(speaker != null)
+            {
+                var speakerEntity = speaker as Entity;
+                if(speakerEntity != null)
+                {
+                    SetSpeakerText(speakerEntity.DisplayName);
+                    speakerSet = true;
+                }
+            }
+        }
+
+        if(!speakerSet)
+        {
+            SetSpeakerText(null);
+        }
+
         if(DialogSystem.Instance.IsRight(flowObject))
         {
             SetRight();
@@ -188,6 +226,29 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
         {
             // Just in case the language changed for bubbles before the current one.
             DialogSystem.Instance.RegisterAnimator(this, estrangedText);
+        }
+    }
+
+    private void OnLocalizedSpeakerChanged(Component targetComponent, string localizedText)
+    {
+        SetSpeakerText(localizedText);
+    }
+
+    private void SetSpeakerText(string localizedText)
+    {
+        if(text == null)
+        {
+            speakerBackground.gameObject.SetActive(false);
+        }
+        else
+        {
+            speakerBackground.gameObject.SetActive(true);
+            speakerText.text = localizedText;
+
+            RectTransform speakerBackgroundTransform = speakerBackground.GetComponent<RectTransform>();
+            speakerBackgroundTransform.sizeDelta = new Vector2(speakerText.preferredWidth + 2 * speakerPaddingX, speakerBackgroundTransform.sizeDelta.y);
+            speakerBackgroundTransform.anchoredPosition = new Vector2(speakerBackgroundTransform.sizeDelta.x / 2 + speakerMarginLeft, 
+                speakerBackgroundTransform.anchoredPosition.y);
         }
     }
 

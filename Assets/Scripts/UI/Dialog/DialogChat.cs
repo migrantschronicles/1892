@@ -21,9 +21,13 @@ public class DialogChat : MonoBehaviour
     [SerializeField]
     private GameObject answerPrefab;
     [SerializeField, Tooltip("The vertical space between each bubble")]
-    private float spacing = 30;
+    private float spacing = 50;
+    [SerializeField, Tooltip("The vertical space between answer bubbles")]
+    private float spacingOptions = 30;
     [SerializeField, Tooltip("How much space on the bottom should be left for the shadow to display")]
     private float paddingBottom = 8;
+    [SerializeField, Tooltip("How much space at the top should be left for the speaker text")]
+    private float paddingTop = 8;
 
     private List<Entry> entries = new List<Entry>();
     private RectTransform rectTransform;
@@ -527,7 +531,7 @@ public class DialogChat : MonoBehaviour
                         }
 
                         GameObject bubbleGO = Instantiate(answerPrefab, transform);
-                        AddToContent(bubbleGO);
+                        AddToContent(bubbleGO, true);
                         entries.Add(new Entry { bubble = bubbleGO });
 
                         DialogAnswerBubble bubble = bubbleGO.GetComponent<DialogAnswerBubble>();
@@ -546,11 +550,11 @@ public class DialogChat : MonoBehaviour
         }
     }
 
-    private void AddToContent(GameObject bubble)
+    private void AddToContent(GameObject bubble, bool isOption = false)
     {
         RectTransform bubbleTransform = bubble.GetComponent<RectTransform>();
         float currentHeight = Mathf.Max(0, rectTransform.sizeDelta.y - paddingBottom);
-        float newY = currentHeight + (entries.Count == 0 ? 0 : spacing);
+        float newY = currentHeight + (entries.Count == 0 ? paddingTop : (isOption ? spacingOptions : spacing));
         bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, -newY);
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newY + bubbleTransform.sizeDelta.y + paddingBottom);
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
@@ -566,12 +570,12 @@ public class DialogChat : MonoBehaviour
         foreach(var answer in currentAnswers)
         {
             RectTransform answerTransform = answer.GetComponent<RectTransform>();
-            adjustment += answerTransform.sizeDelta.y + spacing;
+            adjustment += answerTransform.sizeDelta.y + spacingOptions;
             if(answer != bubble)
             {
                 if(!containsBubble)
                 {
-                    bubbleAdjustment += answerTransform.sizeDelta.y + spacing;
+                    bubbleAdjustment += answerTransform.sizeDelta.y + spacingOptions;
                 }
 
                 answer.transform.SetParent(null, false);
@@ -595,7 +599,7 @@ public class DialogChat : MonoBehaviour
         RectTransform bubbleTransform = bubble.GetComponent<RectTransform>();
         float newBubbleY = bubbleTransform.anchoredPosition.y + bubbleAdjustment;
         bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, newBubbleY);
-        float newSizeY = rectTransform.sizeDelta.y - adjustment + spacing - paddingBottom;
+        float newSizeY = rectTransform.sizeDelta.y - adjustment + spacingOptions - paddingBottom;
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newSizeY + bubbleTransform.sizeDelta.y + paddingBottom);
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
         OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);

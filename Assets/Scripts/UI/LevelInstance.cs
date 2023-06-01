@@ -37,13 +37,18 @@ public enum LevelInstanceMode
 }
 
 /**
- * A prefab to add to each level as the root for every ui element.
+ * A prefab to add to each level as the root for every element.
  * This is so that new elements like the new game manager can be easily added and existing elements can be easily changed across levels.
  * It automatically switches scenes, shows/hides the back button, interactables etc.
  * 
+ * Each city that you travel to is its own level (Scene asset in Unity).
+ * Each level (city) can have multiple scenes (called Scene here, but they are different from the level / scene asset).
+ * Each scene has a background, middleground and foreground layer for placing buildings, characters etc.
+ * The LevelInstance takes care of switching between those scenes, and exists only for one level (Scene asset), so each city has its own LevelInstance.
+ * 
  * If you create a new scene, this is the only prefab you need to add as a root game object in the hierarchy.
  * Everything else is inside of this level instance prefab. 
- * Also you need to delete any preexising cameras, since a camera is included in the prefab.
+ * Also you need to delete any preexising cameras (game objects), since a camera is included in the prefab.
  * 
  * In the prefab, there is a parent game object "Scenes".
  * Here you can add the prefab "Scene". This represents one scene, e.g. there could be one street scene and one ticket stand scene.
@@ -86,7 +91,7 @@ public enum LevelInstanceMode
  * To have your characters on the left and right of the dialog, it is important that you set DialogPrefab of the DialogButton.
  * This is the prefab that will be automatically spawned on the left of the dialog (the NPC).
  * The playable character is automatically spawned to the right of the dialog.
- * Also add the sprite of the character you are talking to to the HideObjects.
+ * Also add the sprite (container) of the character you are talking to to the HideObjects.
  * If you want e.g. the characters that are involved in the dialog to disappear, you can add them to the DialogButton::HideObjects.
  * The objects in this list are hidden when the dialog starts and shown again when the dialog stops, so you can
  * hide characters that are in the additive scene anyway.

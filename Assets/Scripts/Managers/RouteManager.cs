@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Stores all the routes that are discovered.
+ * Some routes from one city to another with a specific transportation method are available from beginning,
+ * but some routes are discovered via dialogs.
+ */
 public class RouteManager : MonoBehaviour
 {
     public class DiscoveredRoute

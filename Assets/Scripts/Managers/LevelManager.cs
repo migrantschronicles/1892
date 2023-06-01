@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/**
+ * Used in the main menu to load the first scene (Pfaffenthal)
+ * and initialize the new game manager to a new game.
+ */
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }

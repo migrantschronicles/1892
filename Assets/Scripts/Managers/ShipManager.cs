@@ -23,6 +23,9 @@ public enum ShipClass
     First
 }
 
+/**
+ * Stores information about the current ship route, if there is any.
+ */
 public class ShipManager : MonoBehaviour
 {
     [SerializeField]

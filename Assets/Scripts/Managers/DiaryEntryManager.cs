@@ -14,6 +14,9 @@ public class EndGameDiaryEntryData
     public LocalizedString negative;
 }
 
+/**
+ * Generates the diary entries.
+ */
 public class DiaryEntryManager : MonoBehaviour
 {
     [SerializeField]

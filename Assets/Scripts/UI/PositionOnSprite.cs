@@ -12,6 +12,19 @@ public enum PositionOnSpriteMode
     SpriteContainer
 }
 
+/**
+ * Since ui elements are positioned differently than world object like SpriteRenderer, 
+ * this script allows you to position ui elements on top of world elements.
+ * It provides 4 different modes, but all use the normalizedPosition.
+ * If you select Sprite, then it will use the specified sprite and position the ui element (on which the component was added) 
+ * on top of the sprite in the world.
+ * (0/0) is the bottom left corner of the sprite, (1/1) the top right corner.
+ * If you select PlayableCharacter, it will position the ui element on the player that is spawned at game start.
+ * If you select WorldObject, it will only use the world location of the worldObject, assuming it has no sprite renderer / bounds.
+ * You can still modify the position with worldObjectOffset and worldObjectOffsetLocal.
+ * If you select SpriteContainer, it will iterate through all child SpriteRenderers of the selected game object, and 
+ * calculate the bounds of the whole. Then it will use normalizedPosition as if it was one sprite.
+ */
 public class PositionOnSprite : MonoBehaviour
 {
     [SerializeField]

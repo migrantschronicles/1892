@@ -11,6 +11,10 @@ public class GeoJSONLocation
     public double lon;
 }
 
+/**
+ * Stores the geojson location of each city.
+ * Calculates a list of coordinate for a route that the player took.
+ */
 public class GeoJSONManager : MonoBehaviour
 {
     [SerializeField]

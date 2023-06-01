@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Provides access to all items that exist in the game.
+ * This does not represent the player inventory, this is PlayerInventory.
+ */
 public class ItemManager : MonoBehaviour
 {
     [SerializeField]

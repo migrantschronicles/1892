@@ -61,6 +61,11 @@ public enum SleepMethod
     Ship
 }
 
+/**
+ * Holds every data that is persistent between level loads.
+ * Is instantiated once the first city loads and persists until the end of the game.
+ * Some functionality / data storage is outsourced to individual components, that reside on the same game object that won't be destroyed.
+ */
 public class NewGameManager : MonoBehaviour
 {
 

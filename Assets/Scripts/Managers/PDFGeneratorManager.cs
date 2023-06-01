@@ -11,6 +11,9 @@ public class PDFCityEntry
     public Sprite background;
 }
 
+/**
+ * Captures screenshots used in the generated pdf of diary entries and the map.
+ */
 public class PDFGeneratorManager : MonoBehaviour
 {
     [SerializeField]

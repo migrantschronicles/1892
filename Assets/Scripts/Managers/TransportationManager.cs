@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Localization;
 
+/**
+ * Provides access to the localized names of the transportation methods.
+ */
 public class TransportationManager : MonoBehaviour
 {
     [SerializeField]

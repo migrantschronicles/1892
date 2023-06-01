@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/**
+ * Stores all main and side quests.
+ */
 public class QuestManager : MonoBehaviour
 {
     public enum QuestListType

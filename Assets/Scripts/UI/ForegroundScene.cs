@@ -58,7 +58,7 @@ public class ForegroundScene : MonoBehaviour
         character.transform.SetParent(null, false);
 
         // Calculate the sprite height (since the characters are made of a lot of sprites, all have to be considered).
-        Bounds bounds = PositionOnSprite.CalculateSpriteContainerBounds(character);
+        Bounds bounds = PositionOnSprite.CalculateSpriteContainerBounds(dialogInfo.Prefab);
         Vector2 spriteSize = bounds.size;
         float widthScaleFactor = worldWidth / spriteSize.x;
         float heightScaleFactor = worldHeight / spriteSize.y;
@@ -68,6 +68,7 @@ public class ForegroundScene : MonoBehaviour
 
         // Reparent
         character.transform.SetParent(parent, false);
+        character.transform.localPosition = -bounds.center + dialogInfo.Prefab.transform.localPosition;
     }
 
     public void SetCharacters(string leftTechnicalName, string rightTechnicalName)

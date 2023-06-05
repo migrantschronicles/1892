@@ -42,16 +42,16 @@ public class ForegroundScene : MonoBehaviour
 
         if(leftCharacter)
         {
-            SetScaleToWorldSize(leftCharacter, worldWidth, worldHeight, leftDialogInfo);
+            SetScaleToWorldSize(leftCharacter, worldWidth, worldHeight, leftDialogInfo, false);
         }
 
         if (rightCharacter)
         {
-            SetScaleToWorldSize(rightCharacter, worldWidth, worldHeight, rightDialogInfo);
+            SetScaleToWorldSize(rightCharacter, worldWidth, worldHeight, rightDialogInfo, true);
         }
     }
 
-    private void SetScaleToWorldSize(GameObject character, float worldWidth, float worldHeight, CharacterDialogInfo dialogInfo)
+    private void SetScaleToWorldSize(GameObject character, float worldWidth, float worldHeight, CharacterDialogInfo dialogInfo, bool shouldLookLeft)
     {
         // Detach parent so that scale does not modify result.
         Transform parent = character.transform.parent;
@@ -64,7 +64,8 @@ public class ForegroundScene : MonoBehaviour
         float heightScaleFactor = worldHeight / spriteSize.y;
         float scaleFactor = Mathf.Min(widthScaleFactor, heightScaleFactor);
         scaleFactor *= dialogInfo.ScaleFactor;
-        parent.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+        float directionFactor = (shouldLookLeft != dialogInfo.LooksLeft) ? -1 : 1;
+        parent.localScale = new Vector3(scaleFactor * directionFactor, scaleFactor, scaleFactor);
 
         // Reparent
         character.transform.SetParent(parent, false);

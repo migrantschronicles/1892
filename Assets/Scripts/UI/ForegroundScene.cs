@@ -15,10 +15,10 @@ public class ForegroundScene : MonoBehaviour
 
     private GameObject leftCharacter;
     private IAnimationController[] leftAnimController;
-    private GameObject leftCharacterPrefab;
+    private CharacterDialogInfo leftDialogInfo;
     private GameObject rightCharacter;
     private IAnimationController[] rightAnimController;
-    private GameObject rightCharacterPrefab;
+    private CharacterDialogInfo rightDialogInfo;
 
     private void UpdatePosition()
     {
@@ -42,16 +42,16 @@ public class ForegroundScene : MonoBehaviour
 
         if(leftCharacter)
         {
-            SetScaleToWorldSize(leftCharacter, worldWidth, worldHeight);
+            SetScaleToWorldSize(leftCharacter, worldWidth, worldHeight, leftDialogInfo);
         }
 
         if (rightCharacter)
         {
-            SetScaleToWorldSize(rightCharacter, worldWidth, worldHeight);
+            SetScaleToWorldSize(rightCharacter, worldWidth, worldHeight, rightDialogInfo);
         }
     }
 
-    private void SetScaleToWorldSize(GameObject character, float worldWidth, float worldHeight)
+    private void SetScaleToWorldSize(GameObject character, float worldWidth, float worldHeight, CharacterDialogInfo dialogInfo)
     {
         // Detach parent so that scale does not modify result.
         Transform parent = character.transform.parent;
@@ -63,6 +63,7 @@ public class ForegroundScene : MonoBehaviour
         float widthScaleFactor = worldWidth / spriteSize.x;
         float heightScaleFactor = worldHeight / spriteSize.y;
         float scaleFactor = Mathf.Min(widthScaleFactor, heightScaleFactor);
+        scaleFactor *= dialogInfo.ScaleFactor;
         parent.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
 
         // Reparent
@@ -73,45 +74,45 @@ public class ForegroundScene : MonoBehaviour
     {
         if(!string.IsNullOrEmpty(leftTechnicalName))
         {
-            GameObject prefab = NewGameManager.Instance.CharacterManager.GetCharacterPrefab(leftTechnicalName);
-            UpdateCharacter(ref leftCharacter, ref leftCharacterPrefab, ref leftAnimController, prefab, left);
+            CharacterDialogInfo dialogInfo = NewGameManager.Instance.CharacterManager.GetCharacterInfo(leftTechnicalName);
+            UpdateCharacter(ref leftCharacter, ref leftDialogInfo, ref leftAnimController, dialogInfo, left);
         }
         else if(leftCharacter)
         {
             Destroy(leftCharacter);
             leftCharacter = null;
-            leftCharacterPrefab = null;
+            leftDialogInfo = null;
         }
 
         if(!string.IsNullOrEmpty(rightTechnicalName))
         {
-            GameObject prefab = NewGameManager.Instance.CharacterManager.GetCharacterPrefab(rightTechnicalName);
-            UpdateCharacter(ref rightCharacter, ref rightCharacterPrefab, ref rightAnimController, prefab, right);
+            CharacterDialogInfo dialogInfo = NewGameManager.Instance.CharacterManager.GetCharacterInfo(rightTechnicalName);
+            UpdateCharacter(ref rightCharacter, ref rightDialogInfo, ref rightAnimController, dialogInfo, right);
         }
         else if(rightCharacter)
         {
             Destroy(rightCharacter);
             rightCharacter = null;
-            rightCharacterPrefab = null;
+            rightDialogInfo = null;
         }
     }
 
-    private void UpdateCharacter(ref GameObject character, ref GameObject characterPrefab, ref IAnimationController[] animController, 
-        GameObject prefab, Transform parent)
+    private void UpdateCharacter(ref GameObject character, ref CharacterDialogInfo savedDialogInfo, ref IAnimationController[] animController, 
+        CharacterDialogInfo dialogInfo, Transform parent)
     {
-        if(characterPrefab != prefab)
+        if(savedDialogInfo != dialogInfo)
         {
             if(character)
             {
                 Destroy(character);
                 character = null;
-                characterPrefab = null;
+                savedDialogInfo = null;
             }
 
-            if(prefab)
+            if(dialogInfo != null)
             {
-                character = Instantiate(prefab, parent);
-                characterPrefab = prefab;
+                character = Instantiate(dialogInfo.Prefab, parent);
+                savedDialogInfo = dialogInfo;
                 SetLayer(character, LayerMask.NameToLayer("Foreground"));
                 animController = character.GetComponentsInChildren<IAnimationController>();
                 UpdatePosition();
@@ -130,16 +131,16 @@ public class ForegroundScene : MonoBehaviour
 
     public void OnDialogLine(string speakerTechnicalName)
     {
-        GameObject prefab = NewGameManager.Instance.CharacterManager.GetCharacterPrefab(speakerTechnicalName);
+        CharacterDialogInfo dialogInfo = NewGameManager.Instance.CharacterManager.GetCharacterInfo(speakerTechnicalName);
         IEnumerable<IAnimationController> animControllers;
         if(DialogSystem.Instance.IsRight(speakerTechnicalName))
         {
-            UpdateCharacter(ref rightCharacter, ref rightCharacterPrefab, ref rightAnimController, prefab, right);
+            UpdateCharacter(ref rightCharacter, ref rightDialogInfo, ref rightAnimController, dialogInfo, right);
             animControllers = rightAnimController;
         }
         else
         {
-            UpdateCharacter(ref leftCharacter, ref leftCharacterPrefab, ref leftAnimController, prefab, left);
+            UpdateCharacter(ref leftCharacter, ref leftDialogInfo, ref leftAnimController, dialogInfo, left);
             animControllers = leftAnimController;
         }
 
@@ -152,8 +153,8 @@ public class ForegroundScene : MonoBehaviour
     public void OnDialogDecision()
     {
         ProtagonistData mainProtagonist = NewGameManager.Instance.PlayableCharacterData.GetMainProtagonist();
-        GameObject prefab = NewGameManager.Instance.CharacterManager.GetCharacterPrefab(mainProtagonist.technicalName);
-        UpdateCharacter(ref rightCharacter, ref rightCharacterPrefab, ref rightAnimController, prefab, right);
+        CharacterDialogInfo dialogInfo = NewGameManager.Instance.CharacterManager.GetCharacterInfo(mainProtagonist.technicalName);
+        UpdateCharacter(ref rightCharacter, ref rightDialogInfo, ref rightAnimController, dialogInfo, right);
         foreach (IAnimationController controller in rightAnimController)
         {
             controller.TalkIfNotTalking();

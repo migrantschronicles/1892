@@ -14,4 +14,5 @@ public class CharacterDialogInfo : MonoBehaviour
     public string TechnicalName { get { return technicalName; } }
     public bool LooksLeft { get { return looksLeft; } }
     public float ScaleFactor { get {  return scaleFactor; } }
+    public GameObject Prefab { get { return gameObject; } }
 }

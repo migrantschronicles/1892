@@ -81,6 +81,8 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     private Dictionary<IAnimatedText, TextElementAnimator> animators = new();
 
     public ArticyFlowPlayer FlowPlayer { get { return flowPlayer; } }
+    public string LastLeftTechnicalName { get { return currentChat != null ? currentChat.LastLeftTechnicalName : null; } }
+    public string LastRightTechnicalName { get { return currentChat != null ? currentChat.LastRightTechnicalName : null; } }
     public GameObject DiscoveredRoutePopup { get { return discoveredRoutePopup; } }
 
     private void Awake()
@@ -296,7 +298,22 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
 
     public bool IsRight(string technicalName)
     {
-        return LevelInstance.Instance.HasRightForegroundCharacter(technicalName);
+        ProtagonistData protagonist = NewGameManager.Instance.PlayableCharacterData.GetProtagonistDataByTechnicalName(technicalName);
+        if(protagonist == null)
+        {
+            return false;
+        }
+
+        if(currentChat && currentChat.CurrentDialog)
+        {
+            switch(currentChat.CurrentDialog.protagonistMode)
+            {
+                case DialogProtagonistMode.Any: return true;
+                case DialogProtagonistMode.OnlyMain: return protagonist.isMainProtagonist;
+            }
+        }
+
+        return false;
     }
 
     public string GetTechnicalNameOfSpeaker(IFlowObject flowObject)

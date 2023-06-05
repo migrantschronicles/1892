@@ -38,11 +38,15 @@ public class DialogChat : MonoBehaviour
     private IArticyObject currentSpecialDialog;
     /// This will be true after a template was handled for a fragment which had a template.
     private bool handledTemplate = false;
+    private string lastLeftTechnicalName;
+    private string lastRightTechnicalName;
 
     public bool IsWaitingForDecision { get { return currentAnswers.Count > 0; } }
     public float Height { get { return rectTransform.sizeDelta.y; } }
     public Dialog CurrentDialog { get { return currentDialog; } }
     public IFlowObject PausedOn { get { return pausedOn; } }
+    public string LastLeftTechnicalName { get { return lastLeftTechnicalName; } }
+    public string LastRightTechnicalName { get { return lastRightTechnicalName; } }
     public bool WantsRestart
     {
         get
@@ -145,7 +149,16 @@ public class DialogChat : MonoBehaviour
         // Reset the flag
         handledTemplate = false;
 
-        DialogSystem.Instance.OnDialogLine(DialogSystem.Instance.GetTechnicalNameOfSpeaker(flowObject));
+        string technicalName = DialogSystem.Instance.GetTechnicalNameOfSpeaker(flowObject);
+        DialogSystem.Instance.OnDialogLine(technicalName);
+        if(DialogSystem.Instance.IsRight(technicalName))
+        {
+            lastRightTechnicalName = technicalName;
+        }
+        else
+        {
+            lastLeftTechnicalName = technicalName;
+        }
     }
 
     public void OnBranchesUpdated(IList<Branch> branches)
@@ -541,6 +554,11 @@ public class DialogChat : MonoBehaviour
                     }
 
                     DialogSystem.Instance.OnDialogDecision();
+                    ProtagonistData mainProtagonist = NewGameManager.Instance.PlayableCharacterData.GetMainProtagonist();
+                    if(mainProtagonist != null)
+                    {
+                        lastRightTechnicalName = mainProtagonist.technicalName;
+                    }
                 }
             }
         }

@@ -691,6 +691,7 @@ public class LevelInstance : MonoBehaviour
         ui.SetUIElementsVisible(InterfaceVisibilityFlags.StatusInfo);
         SetSceneInteractablesEnabled(false);
         SetBlurEnabled(true);
+        foregroundScene.SetCharacters(DialogSystem.Instance.LastLeftTechnicalName, DialogSystem.Instance.LastRightTechnicalName);
     }
 
     private void PrepareDialog(DialogButton button)
@@ -713,13 +714,6 @@ public class LevelInstance : MonoBehaviour
         }
 
         // Set foreground scene
-        GameObject rightDialogPrefab = button.RightDialogPrefab;
-        if(rightDialogPrefab == null)
-        {
-            rightDialogPrefab = NewGameManager.Instance.PlayableCharacterData.dialogPrefab;
-        }
-
-        foregroundScene.SetCharacters(button.LeftDialogPrefab, rightDialogPrefab);
         foregroundScene.gameObject.SetActive(true);
 
         dialogSystem.gameObject.SetActive(true);

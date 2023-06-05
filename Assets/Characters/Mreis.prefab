@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7932900447552565671}
   - component: {fileID: 7662182884977097599}
+  - component: {fileID: 2236169704147129734}
   m_Layer: 0
   m_Name: Mreis
   m_TagString: Untagged
@@ -45,7 +46,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bf055e63327f2741adf95811f7b68cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  neutralSpeed: 1
+  talkSpeed: 1
+  offsetRange: {x: 0, y: 1}
   protagonistName: Mreis
+  angrySpeed: 1
+  happySpeed: 1
+  hungrySpeed: 1
+  sadSpeed: 1
+  sickSpeed: 1
+  stateAnimationTimeRange: {x: 5, y: 10}
+--- !u!114 &2236169704147129734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4399434180883299541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59987525befb1914499ac4f083c66ab7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  technicalName: Ntt_57F5EBC1
+  looksLeft: 1
+  scaleFactor: 0.7
 --- !u!1001 &2837299958082709093
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -205,6 +230,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.000021360273
       objectReference: {fileID: 0}
+    - target: {fileID: 1849817210506792333, guid: 38b07d93196d41e43aaeb093ad528044, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2839524485208765339, guid: 0690710e2921547459a1ed4c89dd46fb, type: 3}
     - target: {fileID: 2038810216113433436, guid: 38b07d93196d41e43aaeb093ad528044, type: 3}
       propertyPath: m_Name
       value: Mreis
@@ -253,6 +282,10 @@ PrefabInstance:
       propertyPath: m_Bounds.m_Extent.x
       value: 0.32996005
       objectReference: {fileID: 0}
+    - target: {fileID: 2481508405745262571, guid: 38b07d93196d41e43aaeb093ad528044, type: 3}
+      propertyPath: m_Bounds.m_Extent.y
+      value: 0.54936004
+      objectReference: {fileID: 0}
     - target: {fileID: 2495456984481017514, guid: 38b07d93196d41e43aaeb093ad528044, type: 3}
       propertyPath: m_Bounds.m_Center.x
       value: -0.0000013411045
@@ -285,6 +318,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: -0.9999356
       objectReference: {fileID: 0}
+    - target: {fileID: 3061429716591516869, guid: 38b07d93196d41e43aaeb093ad528044, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 11457988024196399, guid: 0690710e2921547459a1ed4c89dd46fb, type: 3}
     - target: {fileID: 3246469842670972279, guid: 38b07d93196d41e43aaeb093ad528044, type: 3}
       propertyPath: m_Controller
       value: 
@@ -596,6 +633,10 @@ PrefabInstance:
     - target: {fileID: 8773963405341097886, guid: 38b07d93196d41e43aaeb093ad528044, type: 3}
       propertyPath: m_Bounds.m_Extent.x
       value: 1.1100001
+      objectReference: {fileID: 0}
+    - target: {fileID: 8773963405341097886, guid: 38b07d93196d41e43aaeb093ad528044, type: 3}
+      propertyPath: m_Bounds.m_Extent.y
+      value: 2.6709795
       objectReference: {fileID: 0}
     - target: {fileID: 8797551036649760474, guid: 38b07d93196d41e43aaeb093ad528044, type: 3}
       propertyPath: m_Bounds.m_Center.x

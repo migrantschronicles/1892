@@ -120,6 +120,7 @@ public class NewGameManager : MonoBehaviour
 
     public GeoJSONManager GeoJSONManager { get { return GetComponent<GeoJSONManager>(); } }
     public QuestManager QuestManager { get { return GetComponent<QuestManager>(); } }
+    public CharacterManager CharacterManager { get { return GetComponent<CharacterManager>(); } }
 
     // Stealing
     [Tooltip("The probability (weight) that money can be stolen")]

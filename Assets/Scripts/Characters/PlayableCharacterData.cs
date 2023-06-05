@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Localization;
 
@@ -99,5 +100,15 @@ public class PlayableCharacterData : ScriptableObject
         }
 
         return null;
+    }
+
+    public bool IsProtagonistByTechnicalName(string technicalName)
+    {
+        return GetProtagonistDataByTechnicalName(technicalName) != null;
+    }
+
+    public ProtagonistData GetMainProtagonist()
+    {
+        return protagonistData.FirstOrDefault(protagonist => protagonist.isMainProtagonist);
     }
 }

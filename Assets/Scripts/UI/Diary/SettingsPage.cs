@@ -36,7 +36,7 @@ public class SettingsPage : MonoBehaviour
 
     private void SavePrefs()
     {
-        if(isQuitting)
+        if(isQuitting || !AudioManager.Instance.IsValid)
         {
             return;
         }
@@ -58,5 +58,15 @@ public class SettingsPage : MonoBehaviour
     private void OnSFXVolumeChanged(float volume)
     {
         AudioManager.Instance.SFXVolume = volume;
+    }
+
+    public void OnDownloadPDF()
+    {
+        NewGameManager.Instance.GeneratePDF();
+    }
+
+    public void OnBackToMainMenu()
+    {
+        NewGameManager.Instance.EndGameAndReturnToMainMenu();
     }
 }

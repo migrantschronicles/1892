@@ -172,11 +172,6 @@ public class IngameDiary : MonoBehaviour
         diary.CloseImmediately();
     }
 
-    public void GeneratePDF()
-    {
-        NewGameManager.Instance.GeneratePDF();
-    }
-
     public void SetMarkersClosed()
     {
         diary.SetMarkersClosed(true);

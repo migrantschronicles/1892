@@ -72,6 +72,14 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    public bool IsValid
+    {
+        get
+        {
+            return musicSource != null && fxSource != null;
+        }
+    }
+
     private void Awake()
     {
         if(Instance == null)

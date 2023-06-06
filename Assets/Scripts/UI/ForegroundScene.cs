@@ -2,6 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Foreground scene for the dialogs.
+ * During the dialogs, characters will be displayed on the left and right to indicate who is talking.
+ * These are sprites (world objects), yet have to be displayed in front of ui elements (the blur and darkening of the background).
+ * For this to work, there is an additional camera (so the main camera for world objects, the ui camera for ui elements
+ * and a foreground camera for the dialog characters).
+ * Then they are layered together.
+ * Foreground objects need to be on the layer "Foreground", this is automatically done in UpdateCharacter.
+ * SetCharacters is called if you start a dialog, then on each dialog line + decision, the talking character
+ * is displayed automatically.
+ */
 public class ForegroundScene : MonoBehaviour
 {
     private static readonly Vector2 UI_SIZE = new Vector2(1920, 1200);

@@ -3,6 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/**
+ * The health status for the characters.
+ * There are HealthStatus_[Hungry|Seasickness|Cholera|Homesickness], which represent the data for the sicknesses of one character.
+ * ProtagonistHealthData combines all health states and represents the total health state of one character.
+ * HealthStatus creates one ProtagonistHealthData for each protagonist and is the health state of all characters.
+ */
+
+/**
+ * An enum representing the most heavily weighted sickness state of a character.
+ */
 public enum HealthState
 {
     Neutral = 0,
@@ -13,6 +23,9 @@ public enum HealthState
     Sick = 5
 }
 
+/**
+ * Data that is passed around at the end of a day for each character.
+ */
 public class EndOfDayHealthData
 {
     /// The name of the character.
@@ -48,8 +61,6 @@ public class HealthStatus_Hungry
             return nextRequiredFoodAmount;
         } 
     }
-
-    
 
     public HealthStatus_Hungry(ProtagonistHealthData data)
     {
@@ -266,6 +277,9 @@ public class HealthStatus_Seasickness
     }
 }
 
+/**
+ * The health state for one character.
+ */
 public class ProtagonistHealthData
 {
     private HealthStatus healthStatus;
@@ -393,6 +407,9 @@ public class ProtagonistHealthData
     }
 }
 
+/**
+ * The health state of all characters.
+ */
 public class HealthStatus : MonoBehaviour
 {
     [SerializeField, Tooltip("How much homesickness will increase for every day without enough food (starting from the 2. day)")]

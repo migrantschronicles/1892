@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Animation controller for characters to control the state of animation.
+ * Subclassed by NPCAnimationController and ProtagonistAnimationController.
+ */
 public abstract class IAnimationController : MonoBehaviour
 {
     [SerializeField]

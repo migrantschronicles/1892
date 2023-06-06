@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Animation controller for protagonists.
+ * Protagonists have different animations for each health state they are in.
+ */
 public class ProtagonistAnimationController : IAnimationController
 {
     [SerializeField]

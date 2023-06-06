@@ -13,6 +13,9 @@ public class SceneCharacterPrefab
     public string name;
 }
 
+/**
+ * Data for one protagonist.
+ */
 [System.Serializable]
 public class ProtagonistData
 {

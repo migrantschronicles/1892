@@ -8,6 +8,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/**
+ * If you talk to people, a DialogChat is created.
+ * You can close the dialog, talk to other people and return to the same dialog to open the already existing DialogChat and
+ * have your history of the dialog.
+ * The dialog chat is created in the dialog system, and gets updated with the new line.
+ */
 public class DialogChat : MonoBehaviour
 {
     class Entry

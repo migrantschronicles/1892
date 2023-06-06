@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
+/**
+ * Can play music and sound effects.
+ * You can control volume for each independently.
+ */
 public class AudioManager : MonoBehaviour
 {
     [SerializeField]

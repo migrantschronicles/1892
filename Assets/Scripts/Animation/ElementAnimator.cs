@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Animates elements in the diary or in dialogs.
+ * This can be a TextElementAnimator to animate text, or ImageElementAnimator to fade in images.
+ */
 public abstract class ElementAnimator
 {
     public delegate void OnFinishedDelegate(ElementAnimator animator);

@@ -215,6 +215,13 @@ public class DialogChat : MonoBehaviour
         {
             NewGameManager.Instance.conditions.AddConditions(currentDialog.setFinishedConditions);
         }
+
+        // Notify the dialog button
+        if(string.IsNullOrEmpty(currentDialog.restartCondition) && DialogSystem.Instance.CurrentButton)
+        {
+            // If there is a restart condition, this dialog may not be finished, so don't color it grey.
+            DialogSystem.Instance.CurrentButton.OnDialogFinished();
+        }
     }
 
     private void OnBubbleHeightChanged(DialogBubble bubble, float oldHeight, float newHeight)

@@ -27,11 +27,15 @@ public class DialogButton : MonoBehaviour
     [SerializeField]
     private Sprite pressedButton;
     [SerializeField]
+    private Sprite finishedButton;
+    [SerializeField]
     private Sprite ticketButton;
     [SerializeField]
     private Sprite pressedTicketButton;
     [SerializeField]
     private bool isTicketSeller;
+    [SerializeField]
+    private bool isFinished;
 
     private bool savedCanStartToday = false;
 
@@ -138,10 +142,17 @@ public class DialogButton : MonoBehaviour
 
     private void UpdateElements()
     {
-        ((Image)dialogButton.targetGraphic).sprite = isTicketSeller ? ticketButton : defaultButton;
+        ((Image)dialogButton.targetGraphic).sprite = isTicketSeller ? ticketButton : (isFinished ? finishedButton : defaultButton);
         SpriteState state = dialogButton.spriteState;
-        state.pressedSprite = isTicketSeller ? pressedTicketButton : pressedButton;
-        state.highlightedSprite = isTicketSeller ? pressedTicketButton : pressedButton;
+        Sprite pressedSprite = isTicketSeller ? pressedTicketButton : (isFinished ? finishedButton : pressedButton);
+        state.pressedSprite = pressedSprite;
+        state.highlightedSprite = pressedSprite;
         dialogButton.spriteState = state;
+    }
+
+    public void OnDialogFinished()
+    {
+        isFinished = true;
+        UpdateElements();
     }
 }

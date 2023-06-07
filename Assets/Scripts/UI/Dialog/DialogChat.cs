@@ -46,7 +46,6 @@ public class DialogChat : MonoBehaviour
     private bool handledTemplate = false;
     private string lastLeftTechnicalName;
     private string lastRightTechnicalName;
-
     public bool IsWaitingForDecision { get { return currentAnswers.Count > 0; } }
     public float Height { get { return rectTransform.sizeDelta.y; } }
     public Dialog CurrentDialog { get { return currentDialog; } }
@@ -578,6 +577,7 @@ public class DialogChat : MonoBehaviour
         else
         {
             OnDialogEnded();
+            LevelInstance.Instance.OnBack();
         }
     }
 

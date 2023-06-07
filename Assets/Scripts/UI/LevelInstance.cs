@@ -423,7 +423,7 @@ public class LevelInstance : MonoBehaviour
 #endif
     }
 
-    private void OnBack()
+    public void OnBack()
     {
         if(overlayMode != OverlayMode.None)
         {

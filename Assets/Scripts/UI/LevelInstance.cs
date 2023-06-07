@@ -209,6 +209,8 @@ public class LevelInstance : MonoBehaviour
     private GameObject questFailedPrefab;
     [SerializeField]
     private GameObject cannotTravelAgainTodayPrefab;
+    [SerializeField]
+    private string seasicknessRemedy;
 #if DEBUG
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -379,12 +381,17 @@ public class LevelInstance : MonoBehaviour
             if(nextSeasicknessTimer <= 0.0f)
             {
                 ProtagonistHealthData mainHealthData = NewGameManager.Instance.HealthStatus.GetMainHealthStatus();
-                if (mainHealthData.SeasicknessStatus.IsCurrentlySeasick)
+                if (mainHealthData.SeasicknessStatus.IsCurrentlySeasick && !NewGameManager.Instance.conditions.HasCondition(seasicknessRemedy))
                 {
                     nextSeasicknessTimer = -1.0f;
                     ShowSeasicknessScene(true);
                 }
+                else
+                {
+                    nextSeasicknessTimer = seasicknessSceneFrequency;
+                }
             }
+
         }
 
 #if DEBUG && ENABLE_DEVELOPER_MENU

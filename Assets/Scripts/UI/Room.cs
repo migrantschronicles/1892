@@ -83,6 +83,11 @@ public class Room : MonoBehaviour
         }
 
         SetIsAccessible(isAccessible);
+
+        if(isAccessible)
+        {
+            LevelInstance.Instance.InstantiateRoomButton(this);
+        }
     }
 
     public void SetVisited(bool visited)

@@ -95,7 +95,7 @@ public class RoomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private void SetHighlighted(bool value)
     {
-        roomNameText.color = value ? highlightedForegroundColor : defaultForegroundColor;
+        //roomNameText.color = value ? highlightedForegroundColor : defaultForegroundColor;
     }
 
     public void SetActive(bool active)

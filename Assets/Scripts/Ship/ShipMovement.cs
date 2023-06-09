@@ -122,7 +122,7 @@ public class ShipMovement : MonoBehaviour
         float newZoom = Mathf.SmoothDamp(currentZoom, targetZoom, ref velocity, smoothTime);
         float newOrthographicSize = newZoom * newZoom;
         updatedCamera.orthographicSize = newOrthographicSize;
-        zoomValue = newOrthographicSize / originalZ;
+        zoomValue = Mathf.Sqrt(newOrthographicSize / originalZ);
 
         Vector3 currentPosition = updatedCamera.transform.position;
         Vector3 targetPosition = new Vector3(location.x, location.y, currentPosition.z);

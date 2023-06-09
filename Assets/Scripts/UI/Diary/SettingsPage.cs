@@ -67,6 +67,6 @@ public class SettingsPage : MonoBehaviour
 
     public void OnBackToMainMenu()
     {
-        NewGameManager.Instance.EndGameAndReturnToMainMenu();
+        LevelInstance.Instance.UI.IngameDiary.OnReturnToMainMenu();
     }
 }

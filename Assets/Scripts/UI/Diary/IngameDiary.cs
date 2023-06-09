@@ -34,6 +34,8 @@ public class IngameDiary : MonoBehaviour
     private DiaryContentPages immediatelyOpenedPages;
     [SerializeField]
     private GameObject tempMapButtonsDev;
+    [SerializeField]
+    private GameObject returnToMainMenuPrefab;
 
     public Diary Diary { get { return diary; } }
 
@@ -190,5 +192,26 @@ public class IngameDiary : MonoBehaviour
     public void Anim_EndPageAnimation()
     {
         diary.Anim_EndPageAnimation();
+    }
+
+    public void OnReturnToMainMenu()
+    {
+        gameObject.SetActive(false);
+        LevelInstance.Instance.SetBackButtonVisible(false);
+
+        GameObject popupGO = Instantiate(returnToMainMenuPrefab, LevelInstance.Instance.Canvas.transform);
+        ReturnToMainMenuPopup popup = popupGO.GetComponent<ReturnToMainMenuPopup>();
+        popup.OnBack += (popup) =>
+        {
+            Destroy(popupGO);
+            gameObject.SetActive(true);
+            ///@todo LevelInstance should have UpdateBackButtonVisibililty(), and check whether button should be visible based on mode and diary status
+            LevelInstance.Instance.SetBackButtonVisible(true);
+        };
+        popup.OnMainMenu += (popup) =>
+        {
+            Destroy(popupGO);
+            NewGameManager.Instance.EndGameAndReturnToMainMenu();
+        };
     }
 }

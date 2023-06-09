@@ -40,6 +40,8 @@ public class Interface : MonoBehaviour
     [SerializeField]
     private GameObject diaryButton;
     [SerializeField]
+    private GameObject diaryBackground;
+    [SerializeField]
     private IngameDiary ingameDiary;
     [SerializeField]
     private Image actionCounterBackground;
@@ -69,6 +71,7 @@ public class Interface : MonoBehaviour
             if(status == OpenStatus.Closed)
             {
                 ingameDiary.gameObject.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
+                diaryBackground.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
             }
         };
 
@@ -157,6 +160,11 @@ public class Interface : MonoBehaviour
         if(TreatDiaryAsButton)
         {
             ingameDiary.gameObject.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
+            diaryBackground.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
+        }
+        else
+        {
+            diaryBackground.SetActive(false);
         }
     }
 
@@ -165,6 +173,7 @@ public class Interface : MonoBehaviour
         if(opened)
         {
             ingameDiary.gameObject.SetActive(true);
+            diaryBackground.SetActive(false);
         }
         ingameDiary.SetOpened(opened);
     }
@@ -172,12 +181,14 @@ public class Interface : MonoBehaviour
     public void SetDiaryOpened(DiaryPageLink page)
     {
         ingameDiary.gameObject.SetActive(true);
+        diaryBackground.SetActive(false);
         ingameDiary.SetOpened(page);
     }
 
     public void OpenDiaryImmediately(DiaryPageLink type)
     {
         ingameDiary.gameObject.SetActive(true);
+        diaryBackground.SetActive(false);
         ingameDiary.OpenImmediately(type);
     }
 
@@ -185,10 +196,12 @@ public class Interface : MonoBehaviour
     {
         ingameDiary.CloseImmediately();
         ingameDiary.gameObject.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
+        diaryBackground.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
     }
 
     public void HideDiary(bool hide)
     {
         ingameDiary.gameObject.SetActive(!hide);
+        diaryBackground.SetActive(!hide);
     }
 }

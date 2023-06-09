@@ -22,20 +22,27 @@ public class ProtagonistAnimationController : IAnimationController
     private float sickSpeed = 1.0f;
     [SerializeField]
     private Vector2 stateAnimationTimeRange = new Vector2(5, 10);
+    [SerializeField]
+    private HealthState overrideState;
+    [SerializeField]
+    private bool shouldOverrideState;
 
     public string ProtagonistName { get { return protagonistName; } }
     private float stateAnimationTimer = -1.0f;
 
     private void Start()
     {
-        ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
-        healthData.onHealthStateChanged += OnHealthStateChanged;
-        OnHealthStateChanged(healthData);
+        if(!shouldOverrideState)
+        {
+            ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
+            healthData.onHealthStateChanged += OnHealthStateChanged;
+            OnHealthStateChanged(healthData);
+        }
     }
 
     private void OnDestroy()
     {
-        if(NewGameManager.Instance)
+        if(NewGameManager.Instance && !shouldOverrideState)
         {
             ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
             healthData.onHealthStateChanged -= OnHealthStateChanged;
@@ -44,11 +51,19 @@ public class ProtagonistAnimationController : IAnimationController
 
     private void OnEnable()
     {
-        if (NewGameManager.Instance)
+        if(shouldOverrideState)
         {
-            ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
-            GetAnimator().SetInteger("State", (int)healthData.HealthState);
+            GetAnimator().SetInteger("State", (int)overrideState);
         }
+        else
+        {
+            if (NewGameManager.Instance)
+            {
+                ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
+                GetAnimator().SetInteger("State", (int)healthData.HealthState);
+            }
+        }
+
         GetAnimator().SetFloat("AngrySpeed", angrySpeed);
         GetAnimator().SetFloat("HappySpeed", happySpeed);
         GetAnimator().SetFloat("HungrySpeed", hungrySpeed);

@@ -90,9 +90,21 @@ public class Interface : MonoBehaviour
             LevelInstance.Instance.OnDialogsTodayChanged += OnDialogsTodayChanged;
         }
 
+        switch(LevelInstance.Instance.LevelMode)
+        {
+            case LevelInstanceMode.Default: 
+                OnLocationChanged(LevelInstance.Instance.LocationName); 
+                break;
+
+            case LevelInstanceMode.Ship:
+                LevelInstance.Instance.onCurrentRoomChanged += OnCurrentRoomChanged;
+                OnCurrentRoomChanged(LevelInstance.Instance.CurrentRoom);
+                locationTextMapUI.text = NewGameManager.Instance.LocationManager.GetLocalizedName("Ship");
+                break;
+        }
+
         OnMoneyChanged(NewGameManager.Instance.money);
         OnDateChanged(NewGameManager.Instance.date);
-        OnLocationChanged(LevelInstance.Instance.LocationName);
         foodText.text = NewGameManager.Instance.inventory.GetItemTypeCount(ItemType.Food).ToString();
         InitDialogsToday(LevelInstance.Instance.MaxDialogsPerDay);
     }
@@ -122,6 +134,18 @@ public class Interface : MonoBehaviour
     {
         locationText.text = NewGameManager.Instance.LocationManager.GetLocalizedName(location);
         locationTextMapUI.text = NewGameManager.Instance.LocationManager.GetLocalizedName(location);
+    }
+
+    private void OnCurrentRoomChanged(Room room)
+    {
+        if(room)
+        {
+            locationText.text = LocalizationManager.Instance.GetLocalizedString(room.RoomName);
+        }
+        else
+        {
+            locationText.text = NewGameManager.Instance.LocationManager.GetLocalizedName("Ship");
+        }
     }
 
     private void OnItemAmountChanged(Item item, int changedAmount, int totalAmount)

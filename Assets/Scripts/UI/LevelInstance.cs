@@ -257,6 +257,7 @@ public class LevelInstance : MonoBehaviour
     public int MaxDialogsPerDay { get { return maxDialogsPerDay; } }
     public bool IsBlurEnabled { get { return blur.IsEnabled; } }
     public bool AreSceneInteractablesEnabled { get { return sceneInteractables.activeSelf; } }
+    public Room CurrentRoom { get { return currentRoom; } }
     public PlayableCharacterSpawn PlayableCharacterSpawn
     {
         get
@@ -294,6 +295,9 @@ public class LevelInstance : MonoBehaviour
 
     public delegate void OnDialogsTodayChangedEvent(int dialogsToday);
     public event OnDialogsTodayChangedEvent OnDialogsTodayChanged;
+
+    public delegate void OnCurrentRoomChangedEvent(Room room);
+    public event  OnCurrentRoomChangedEvent onCurrentRoomChanged;
 
     private void Awake()
     {
@@ -972,6 +976,8 @@ public class LevelInstance : MonoBehaviour
             currentRoom.SetVisited(true);
             onPlayableCharacterSpawnChanged?.Invoke(currentRoom.PlayableCharacterSpawn);
         }
+
+        onCurrentRoomChanged?.Invoke(currentRoom);
 
         return true;
     }

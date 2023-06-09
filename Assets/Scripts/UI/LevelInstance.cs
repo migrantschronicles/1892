@@ -211,6 +211,10 @@ public class LevelInstance : MonoBehaviour
     private GameObject cannotTravelAgainTodayPrefab;
     [SerializeField]
     private string seasicknessRemedy;
+    [SerializeField]
+    private HealthState overrideProtagonistAnimState;
+    [SerializeField]
+    private bool shouldOverrideProtagonistAnimState;
 #if DEBUG
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
@@ -258,6 +262,8 @@ public class LevelInstance : MonoBehaviour
     public bool IsBlurEnabled { get { return blur.IsEnabled; } }
     public bool AreSceneInteractablesEnabled { get { return sceneInteractables.activeSelf; } }
     public Room CurrentRoom { get { return currentRoom; } }
+    public HealthState OverrideProtagonistAnimState { get { return overrideProtagonistAnimState; } }
+    public bool ShouldOverrideProtagonistAnimState { get { return shouldOverrideProtagonistAnimState; } }
     public PlayableCharacterSpawn PlayableCharacterSpawn
     {
         get

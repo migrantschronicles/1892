@@ -22,17 +22,13 @@ public class ProtagonistAnimationController : IAnimationController
     private float sickSpeed = 1.0f;
     [SerializeField]
     private Vector2 stateAnimationTimeRange = new Vector2(5, 10);
-    [SerializeField]
-    private HealthState overrideState;
-    [SerializeField]
-    private bool shouldOverrideState;
 
     public string ProtagonistName { get { return protagonistName; } }
     private float stateAnimationTimer = -1.0f;
 
     private void Start()
     {
-        if(!shouldOverrideState)
+        if(!LevelInstance.Instance.ShouldOverrideProtagonistAnimState)
         {
             ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
             healthData.onHealthStateChanged += OnHealthStateChanged;
@@ -42,7 +38,7 @@ public class ProtagonistAnimationController : IAnimationController
 
     private void OnDestroy()
     {
-        if(NewGameManager.Instance && !shouldOverrideState)
+        if(NewGameManager.Instance && !LevelInstance.Instance.ShouldOverrideProtagonistAnimState)
         {
             ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
             healthData.onHealthStateChanged -= OnHealthStateChanged;
@@ -51,9 +47,9 @@ public class ProtagonistAnimationController : IAnimationController
 
     private void OnEnable()
     {
-        if(shouldOverrideState)
+        if(LevelInstance.Instance.ShouldOverrideProtagonistAnimState)
         {
-            GetAnimator().SetInteger("State", (int)overrideState);
+            GetAnimator().SetInteger("State", (int)LevelInstance.Instance.OverrideProtagonistAnimState);
         }
         else
         {

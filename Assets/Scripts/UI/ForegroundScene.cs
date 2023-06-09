@@ -80,7 +80,16 @@ public class ForegroundScene : MonoBehaviour
 
         // Reparent
         character.transform.SetParent(parent, false);
-        character.transform.localPosition = -bounds.center + dialogInfo.Prefab.transform.localPosition;
+
+        Vector3 newLocalPosition = -bounds.center + dialogInfo.Prefab.transform.localPosition;
+
+        // Move to bottom
+        if(dialogInfo.ScaleFactor < 1)
+        {
+            newLocalPosition.y -= (worldHeight / Mathf.Min(widthScaleFactor, heightScaleFactor)) * (1.0f - dialogInfo.ScaleFactor); 
+        }
+
+        character.transform.localPosition = newLocalPosition;
     }
 
     public void SetCharacters(string leftTechnicalName, string rightTechnicalName)

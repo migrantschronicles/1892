@@ -13,9 +13,12 @@ public class CharacterDialogInfo : MonoBehaviour
     private bool looksLeft;
     [SerializeField, Tooltip("Scale in the dialogs. Useful for children if they should appear smaller.")]
     private float scaleFactor = 1.0f;
+    [SerializeField]
+    private Vector3 worldOffset = Vector3.zero;
 
     public string TechnicalName { get { return technicalName; } }
     public bool LooksLeft { get { return looksLeft; } }
     public float ScaleFactor { get {  return scaleFactor; } }
     public GameObject Prefab { get { return gameObject; } }
+    public Vector3 WorldOffset { get { return worldOffset; } }
 }

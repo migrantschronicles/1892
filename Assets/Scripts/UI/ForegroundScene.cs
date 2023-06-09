@@ -86,7 +86,7 @@ public class ForegroundScene : MonoBehaviour
         // Move to bottom
         if(dialogInfo.ScaleFactor < 1)
         {
-            newLocalPosition.y -= (worldHeight / Mathf.Min(widthScaleFactor, heightScaleFactor)) * (1.0f - dialogInfo.ScaleFactor); 
+            newLocalPosition += dialogInfo.WorldOffset;
         }
 
         character.transform.localPosition = newLocalPosition;

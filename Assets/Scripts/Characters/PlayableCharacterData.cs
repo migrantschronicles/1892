@@ -68,8 +68,6 @@ public class PlayableCharacterData : ScriptableObject
 {
     [Tooltip("The conditions that will be set when the character is selected.")]
     public SetCondition[] setConditions;
-    [Tooltip("The prefab that will be displayed on the right side of the dialogs by default.")]
-    public GameObject dialogPrefab;
     [Tooltip("The prefabs that will be instantiated into the scene.")]
     public SceneCharacterPrefab[] scenePrefabs;
     [Tooltip("The data about the characters")]

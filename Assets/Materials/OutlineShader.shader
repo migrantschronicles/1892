@@ -129,11 +129,11 @@ Shader "Unlit/OutlineShader"
                 OUTLINE_POINT(upleft, IN.texcoord + fixed2(-distance.x, distance.y));
                 OUTLINE_POINT(downleft, IN.texcoord - distance);
                 OUTLINE_POINT(downright, IN.texcoord + fixed2(distance.x, -distance.y));
-                fixed factor = ceil(alpha_up * alpha_down * alpha_right * alpha_left * alpha_upright * alpha_upleft * alpha_downleft * alpha_downright);
+                fixed factor = (alpha_up * alpha_down * alpha_right * alpha_left * alpha_upright * alpha_upleft * alpha_downleft * alpha_downright);
                 factor = lerp(1, factor, _OutlineEnabled);
 
                 half4 outlineColor = lerp(_OutlineColor0, _OutlineColor1, _OutlineColorIndex);
-                outlineColor.a *= ceil(color.a);
+                outlineColor.a *= (color.a);
                 outlineColor.rgb *= outlineColor.a;
 
                 return lerp(outlineColor, color, factor);

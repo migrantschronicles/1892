@@ -514,6 +514,15 @@ public class HealthStatus : MonoBehaviour
             return mainProtagonist;
         }
 
+        if(mainProtagonist.HomesickessStatus.Value > 5)
+        {
+            // The main protagonist is homesick and can only talk to one person.
+            if(dialogsStartedToday >= 1)
+            {
+                return mainProtagonist;
+            }
+        }
+
         // The main protagonist is health or the dialog is for a family member (can start even if sick).
         ++dialogsStartedToday;
 

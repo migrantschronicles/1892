@@ -134,6 +134,11 @@ public class HealthStatus_Homesickness
         value = Mathf.Clamp(value + change, 1, 10);
     }
 
+    public void SetValue(float inValue)
+    {
+        value = Mathf.Clamp(inValue, 1, 10);
+    }
+
     public void Save(SaveDataHealthPerCharacter health)
     {
         health.homesickness = value;
@@ -343,6 +348,12 @@ public class ProtagonistHealthData
     public void AddHomesicknessValue(float value)
     {
         HomesickessStatus.AddValue(value);
+        OnHealthChanged();
+    }
+
+    public void SetHomesicknessValue(float value)
+    {
+        HomesickessStatus.SetValue(value);
         OnHealthChanged();
     }
 

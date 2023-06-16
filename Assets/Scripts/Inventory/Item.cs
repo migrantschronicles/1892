@@ -24,6 +24,8 @@ public class Item : ScriptableObject
     public int MaxStackCount = 1;
     [Tooltip("The conditions to add if the item is added to the inventory. Gets removed if the item is removed.")]
     public string[] SetConditions;
+    [Tooltip("The conditions to set if sold")]
+    public string[] SetConditionsWhenSold;
     [Tooltip("The category of this item")]
     public ItemCategory category;
     [Tooltip("The probability (weight) to be stolen. If an item should not be able to be stolen set it to 0." +

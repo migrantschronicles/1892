@@ -405,6 +405,19 @@ public class Shop : MonoBehaviour
             AudioManager.Instance.PlayFX(acceptTransferClip);
         }
 
+        // Apply set conditions if sold
+        foreach(KeyValuePair<Item, int> transfer in transferChanges)
+        {
+            if (transfer.Value < 0)
+            {
+                // Was sold to shop
+                for(int i = 0; i > transfer.Value; --i)
+                {
+                    NewGameManager.Instance.conditions.AddConditions(transfer.Key.SetConditionsWhenSold, true);
+                }
+            }
+        }
+
         Dictionary<Item, int> transfers = new Dictionary<Item, int>(transferChanges);
         Basket.ApplyGhostMode();
         Luggage.ApplyGhostMode();

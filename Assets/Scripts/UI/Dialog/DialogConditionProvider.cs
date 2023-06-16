@@ -4,11 +4,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Localization.Plugins.XLIFF.V20;
 using UnityEngine;
 
 /**
  * Stores conditions that are used in various systems.
  * Conditions are basically only a string, and you can set a condition (add it to a list) and check whether that condition exists (is in the list).
+ * Conditions may not include the following characters: = + - < > ! :
  * 
  * There are special conditions you can use for retrieving health information. These conditions need to start with 'health:'.
  * Then you can optionally specify for which person you want to retrieve health information. These are currently supported:
@@ -41,6 +43,32 @@ using UnityEngine;
  * After that (for int and float keys) you can add a comparison. The same comparisons are supported as the health conditions.  
  * Examples of a game condition:
  *      * 'game:daysincity>2': Checks if the player has spent more than 2 days in the current city / on the ship.
+ *      
+ * If you set conditions via AddCondition, you can also change Articy variables or change game state.
+ * You can set Articy variables, you have to follow the following syntax:
+ * [Variable name][Operation][Value]
+ * The variable name has to exist in Articy.
+ * The following operations are currently supported:
+ *      * '=': Set the variable to the specified value
+ *      * '+=': Increment the variable by the specified value (only for Integers)
+ *      * '-=': Decrement the variable by the specified value (only for Integers).
+ * Examples of changing Articy variables:
+ *      * 'CharacterTraits.Corruption+=1': Increases the corruption variable by one.
+ *      * 'CharacterTraits.Corruption-=3': Decreases the corruption variable by 3.
+ *      * 'CharacterTraits.Corruption=5': Sets the corruption variable to 5.
+ * Health related values like homesickness should not be set in Articy variables directly.
+ * Instead change if with 'health:'.
+ *      
+ * You can also set health related values of the game. These conditions need to start with 'health:'.
+ * Then you can optionally specify for which person you want to retrieve health information. These are currently supported:
+ *      * 'main:': The main protagonist (e.g. Elis as the mother of the family)
+ *      * 'side:': The side character(s) (e.g. Mattis and Mreis of the family)
+ *      * 'elis:': Elis Beffort
+ *      * 'mattis:': Matti Beffort
+ *      * 'mreis:': Mreis Beffort
+ * Then you can specify which value you want to modify. These are currently supported:
+ *      * 'homesickness' [float]: Change the homesickness value (1-10, least homesick - most homesick)
+ * After that you can set the operation and value. The same operations are supported as changing Articy variables.
  *      
  * Warning: It is expected that you don't have errors in the condition and follow exactly the rules, i.e. no whitespaces, nothing other than expected.
  */
@@ -199,6 +227,54 @@ public class DialogConditionProvider : MonoBehaviour
         }
     }
 
+    private void AddHealthCondition(string condition)
+    {
+        IEnumerable<ProtagonistHealthData> affectedCharacters = NewGameManager.Instance.HealthStatus.Characters;
+
+        // Filter by character
+        if (condition.StartsWith("main:", StringComparison.OrdinalIgnoreCase))
+        {
+            condition = condition.Substring(5);
+            affectedCharacters = affectedCharacters.Where(status => status.CharacterData.isMainProtagonist);
+        }
+        else if (condition.StartsWith("side:", StringComparison.OrdinalIgnoreCase))
+        {
+            condition = condition.Substring(5);
+            affectedCharacters = affectedCharacters.Where(status => !status.CharacterData.isMainProtagonist);
+        }
+        else if(condition.StartsWith("elis:", StringComparison.OrdinalIgnoreCase))
+        {
+            condition = condition.Substring(5);
+            affectedCharacters = affectedCharacters.Where(status => status.CharacterData.name == "Elis");
+        }
+        else if (condition.StartsWith("mattis:", StringComparison.OrdinalIgnoreCase))
+        {
+            condition = condition.Substring(5);
+            affectedCharacters = affectedCharacters.Where(status => status.CharacterData.name == "Mattis");
+        }
+        else if (condition.StartsWith("mreis:", StringComparison.OrdinalIgnoreCase))
+        {
+            condition = condition.Substring(5);
+            affectedCharacters = affectedCharacters.Where(status => status.CharacterData.name == "Mreis");
+        }
+
+        SplitOperation(condition, out string key, out Operation operation, out string value);
+
+        if (key.Equals("homesickness", StringComparison.OrdinalIgnoreCase))
+        {
+            float.TryParse(value, out float valueFloat);
+            foreach(ProtagonistHealthData character in affectedCharacters)
+            {
+                switch(operation)
+                {
+                    case Operation.Equals: character.SetHomesicknessValue(valueFloat); break;
+                    case Operation.IncrementBy: character.AddHomesicknessValue(valueFloat); break;
+                    case Operation.DecrementBy: character.AddHomesicknessValue(-valueFloat); break;
+                }
+            }
+        }
+    }
+
     /**
      * Adds a condition to the list.
      * @param global True if it should be added to the global list, false for the local one.
@@ -215,23 +291,63 @@ public class DialogConditionProvider : MonoBehaviour
             Debug.Log($"Add condition {condition} {global}");
         }
 
-        if(ArticyGlobalVariables.VariableNames.Contains(condition))
+        // Check if this is a special condition
+        if(condition.StartsWith("health:"))
         {
-            // Add the condition to articy
-            // The callback for when an articy condition changed handles invoking delegate etc.
-            ArticyGlobalVariables.Default.SetVariableByString(condition, true);
+            AddHealthCondition(condition[7..]);
+            return;
+        }
+
+        // Check if this changes a value, or if it is a boolean condition
+        SplitOperation(condition, out string key, out Operation operation, out string value);
+        if (operation != Operation.None)
+        {
+            // This sets a condition in Articy.
+            if(ArticyGlobalVariables.VariableNames.Contains(key))
+            {
+                if(int.TryParse(value, out int valueInt))
+                {
+                    // Calculate the new integer value.
+                    int currentValue = ArticyGlobalVariables.Default.GetVariableByString<int>(key);
+                    int newValue = currentValue;
+                    switch(operation)
+                    {
+                        case Operation.Equals: newValue = valueInt; break;
+                        case Operation.IncrementBy: newValue += valueInt; break;
+                        case Operation.DecrementBy: newValue -= valueInt; break;
+                    }
+
+                    // Set the new value.
+                    ArticyGlobalVariables.Default.SetVariableByString(key, newValue);
+                }
+                else
+                {
+                    // Set the string directly.
+                    ArticyGlobalVariables.Default.SetVariableByString(key, value);
+                }
+            }
         }
         else
         {
-            // This is a condition which only exists in our system, not in articy.
-            List<string> conditions = GetConditionList(global);
-            if (!conditions.Contains(condition))
+            // This is a boolean condition, so only set it
+            if (ArticyGlobalVariables.VariableNames.Contains(condition))
             {
-                conditions.Add(condition);
-
-                if (onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChangedEventData onConditionsChanged))
+                // Add the condition to articy
+                // The callback for when an articy condition changed handles invoking delegate etc.
+                ArticyGlobalVariables.Default.SetVariableByString(condition, true);
+            }
+            else
+            {
+                // This is a condition which only exists in our system, not in articy.
+                List<string> conditions = GetConditionList(global);
+                if (!conditions.Contains(condition))
                 {
-                    onConditionsChanged.onConditionsChanged?.Invoke(onConditionsChanged.context);
+                    conditions.Add(condition);
+
+                    if (onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChangedEventData onConditionsChanged))
+                    {
+                        onConditionsChanged.onConditionsChanged?.Invoke(onConditionsChanged.context);
+                    }
                 }
             }
         }
@@ -324,7 +440,9 @@ public class DialogConditionProvider : MonoBehaviour
         Greater,
         GreaterEqual,
         Less,
-        LessEqual
+        LessEqual,
+        IncrementBy,
+        DecrementBy
     }
 
     private void SplitOperation(string condition, out string key, out Operation operation, out string value)
@@ -361,6 +479,16 @@ public class DialogConditionProvider : MonoBehaviour
                 case '!':
                     key = condition[..i];
                     operation = Operation.NotEquals;
+                    break;
+
+                case '+':
+                    key = condition[..i];
+                    operation = Operation.IncrementBy;
+                    break;
+
+                case '-':
+                    key = condition[..i];
+                    operation = Operation.DecrementBy;
                     break;
 
                 default:

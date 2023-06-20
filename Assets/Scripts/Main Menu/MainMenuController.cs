@@ -14,6 +14,8 @@ public class MainMenuController : MonoBehaviour
     private AudioClip[] musicClips;
     [SerializeField]
     private List<GameObject> diaryObjects;
+    [SerializeField]
+    private MainMenuDiary mainMenuDiary;
 
     private MainMenuState state;
 
@@ -59,6 +61,11 @@ public class MainMenuController : MonoBehaviour
             yield return null;
         }
 
+        while(!mainMenuDiary.IsAnimatorState(MainMenuDiaryState.Closed))
+        {
+            yield return null;
+        }
+
         OnLanguageSelectionToDiaryFinished();
     }
 
@@ -71,11 +78,40 @@ public class MainMenuController : MonoBehaviour
     {
         state = MainMenuState.LanguageSelection;
         diaryObjects.ForEach(go => go.SetActive(false));
+        mainMenuDiary.SetState(MainMenuDiaryState.Away);
+    }
 
-        Animator cameraAnimator = Camera.main.GetComponent<Animator>();
-        if (cameraAnimator != null)
+    /**
+     * Called from MainMenuCamera_LanguageSelectionToDiary animation.
+     */
+    public void OnSetDiaryToClosed()
+    {
+        switch(state)
         {
-            cameraAnimator.SetInteger("State", (int)state);
+            case MainMenuState.Diary:
+            {
+                mainMenuDiary.SetState(MainMenuDiaryState.Closed);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Called from the MainMenuDiary_ClosedToAway animation.
+     */
+    public void OnDiaryToLanguageSelection()
+    {
+        switch (state)
+        {
+            case MainMenuState.LanguageSelection:
+            { 
+                Animator cameraAnimator = Camera.main.GetComponent<Animator>();
+                if (cameraAnimator != null)
+                {
+                    cameraAnimator.SetInteger("State", (int)state);
+                }
+                break;
+            }
         }
     }
 }

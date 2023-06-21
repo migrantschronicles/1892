@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField]
     private AudioClip[] musicClips;
     [SerializeField]
-    private List<GameObject> diaryObjects;
+    private Button backToLanguageSelectionButton;
     [SerializeField]
     private MainMenuDiary mainMenuDiary;
 
@@ -39,6 +40,25 @@ public class MainMenuController : MonoBehaviour
         if (PlayerPrefs.HasKey("SFXVolume"))
         {
             AudioManager.Instance.SFXVolume = PlayerPrefs.GetFloat("SFXVolume");
+        }
+
+        mainMenuDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
+    }
+
+    private void OnDiaryStatusChanged(OpenStatus openStatus)
+    {
+        switch(openStatus)
+        {
+            case OpenStatus.Closed:
+                if(state == MainMenuState.Diary)
+                {
+                    backToLanguageSelectionButton.gameObject.SetActive(true);
+                }
+                break;
+
+            default:
+                backToLanguageSelectionButton.gameObject.SetActive(false);
+                break;
         }
     }
 
@@ -71,13 +91,13 @@ public class MainMenuController : MonoBehaviour
 
     private void OnLanguageSelectionToDiaryFinished()
     {
-        diaryObjects.ForEach(go => go.SetActive(true));
+        backToLanguageSelectionButton.gameObject.SetActive(true);
     }
 
     public void OnBackToLanguageSelection()
     {
         state = MainMenuState.LanguageSelection;
-        diaryObjects.ForEach(go => go.SetActive(false));
+        backToLanguageSelectionButton.gameObject.SetActive(false);
         mainMenuDiary.SetState(MainMenuDiaryState.Away);
     }
 
@@ -112,6 +132,16 @@ public class MainMenuController : MonoBehaviour
                 }
                 break;
             }
+        }
+    }
+
+    public void OpenPage(DiaryContentPage page)
+    {
+        switch(state)
+        {
+            case MainMenuState.Diary:
+                mainMenuDiary.OpenPage(page);
+                break;
         }
     }
 }

@@ -93,7 +93,7 @@ public class DiaryContentPage : MonoBehaviour
         Debug.Assert(Status == OpenStatus.Closed);
         gameObject.SetActive(true);
         // Animator etc is still not activated, only next frame
-        LevelInstance.Instance.StartCoroutine(OpenImmediatelyNextFrame());
+        GetComponentInParent<Diary>().StartCoroutine(OpenImmediatelyNextFrame());
     }
 
     private IEnumerator OpenImmediatelyNextFrame()
@@ -109,7 +109,7 @@ public class DiaryContentPage : MonoBehaviour
         {
             case OpenStatus.Closed:
                 gameObject.SetActive(true);
-                LevelInstance.Instance.StartCoroutine(OpenToLeftNextFrame());
+                GetComponentInParent<Diary>().StartCoroutine(OpenToLeftNextFrame());
                 break;
         }
     }
@@ -128,7 +128,7 @@ public class DiaryContentPage : MonoBehaviour
         {
             case OpenStatus.Closed:
                 gameObject.SetActive(true);
-                LevelInstance.Instance.StartCoroutine(OpenToRightNextFrame());
+                GetComponentInParent<Diary>().StartCoroutine(OpenToRightNextFrame());
                 break;
         }
     }

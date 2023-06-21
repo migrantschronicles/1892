@@ -13,10 +13,56 @@ public class MainMenuDiary : MonoBehaviour
 {
     [SerializeField]
     private Animator diaryAnimator;
+    [SerializeField]
+    private Diary diary;
 
     private MainMenuDiaryState diaryState = MainMenuDiaryState.Away;
 
     public Animator DiaryAnimator { get { return diaryAnimator; } }
+    public Diary Diary { get { return diary; } }
+
+    private void Awake()
+    {
+        diary.onDiaryStatusChanged += OnDiaryStatusChanged;
+    }
+
+    private void OnDiaryStatusChanged(OpenStatus status)
+    {
+        switch(status)
+        {
+            case OpenStatus.Opening:
+                diaryState = MainMenuDiaryState.Opened;
+                diaryAnimator.SetInteger("State", (int) diaryState);
+                StartCoroutine(WaitForAnimationEvents());
+                break;
+
+            case OpenStatus.Closing:
+                diaryState = MainMenuDiaryState.Closed;
+                diaryAnimator.SetInteger("State", (int)diaryState);
+                StartCoroutine(WaitForAnimationEvents());
+                break;
+        }
+    }
+
+    private IEnumerator WaitForAnimationEvents()
+    {
+        while ((diary.Status == OpenStatus.Opening && !diaryAnimator.GetCurrentAnimatorStateInfo(0).IsName("Opened"))
+            || (diary.Status == OpenStatus.Closing && !diaryAnimator.GetCurrentAnimatorStateInfo(0).IsName("Closed")))
+        {
+            yield return null;
+        }
+
+        switch (diary.Status)
+        {
+            case OpenStatus.Opening:
+                diary.OnOpeningAnimationFinished();
+                break;
+
+            case OpenStatus.Closing:
+                diary.OnClosingAnimationFinished();
+                break;
+        }
+    }
 
     public void SetState(MainMenuDiaryState newState)
     {
@@ -51,5 +97,61 @@ public class MainMenuDiary : MonoBehaviour
     public void OnDiaryToLanguageSelection()
     {
         MainMenuController.Instance.OnDiaryToLanguageSelection();
+    }
+
+    public void Anim_StartPageAnimation()
+    {
+        diary.Anim_StartPageAnimation();
+    }
+
+    public void Anim_EndPageAnimation()
+    {
+        diary.Anim_EndPageAnimation();
+    }
+
+    public void OpenPage(DiaryContentPage page)
+    {
+        if(diary.Status != OpenStatus.Opened && diary.Status != OpenStatus.Closed || diary.IsAnimationInProgress)
+        {
+            return;
+        }
+
+        switch(diaryState)
+        {
+            case MainMenuDiaryState.Closed:
+            {
+                diary.SetOpened(page);
+                break;
+            }
+
+            case MainMenuDiaryState.Opened:
+            {
+                diary.OpenPage(page);
+                break;
+            }
+        }
+    }
+
+    public void OpenPreviousPageOrClose()
+    {
+        if(diary.Status != OpenStatus.Opened || diary.IsAnimationInProgress)
+        {
+            return;
+        }
+
+        if(!diary.OpenPrevPageOfContentPages())
+        {
+            diary.SetOpened(false);
+        }
+    }
+
+    public void OpenNextPage()
+    {
+        if(diary.Status != OpenStatus.Opened || diary.IsAnimationInProgress)
+        {
+            return;
+        }
+
+        diary.OpenNextPageOfContentPages();
     }
 }

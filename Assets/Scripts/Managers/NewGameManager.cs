@@ -549,6 +549,9 @@ public class NewGameManager : MonoBehaviour
         LastStolenItems = null;
         LastSleepMethod = SleepMethod.Hotel;
         StartNewDay();
+
+        money -= cost;
+        onMoneyChanged?.Invoke(money);
     }
 
     /**

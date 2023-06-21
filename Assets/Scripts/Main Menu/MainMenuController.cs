@@ -64,6 +64,7 @@ public class MainMenuController : MonoBehaviour
 
     public void OnLanguageSelected(Language language)
     {
+        LocalizationManager.Instance.ChangeLanguage(language);
         state = MainMenuState.Diary;
 
         Animator cameraAnimator = Camera.main.GetComponent<Animator>();

@@ -605,7 +605,7 @@ public class DiaryEntryManager : MonoBehaviour
             leftPage = diaryEntry.leftPage.Clone(),
             rightPage = diaryEntry.rightPage.Clone(),
             info = info,
-            date = info.date
+            date = info.Date
         };
 
         UpdateDiaryEntry(diaryEntryData);

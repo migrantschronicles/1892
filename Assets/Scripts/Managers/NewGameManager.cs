@@ -340,7 +340,7 @@ public class NewGameManager : MonoBehaviour
         playtime = saveGame.playtime;
         lastMethod = saveGame.lastMethod;
         SetMoney(saveGame.money);
-        SetDate(saveGame.date);
+        SetDate(saveGame.Date);
 
         journeys.Clear();
         foreach(SaveDataJourney journey in saveGame.journeys)
@@ -429,7 +429,7 @@ public class NewGameManager : MonoBehaviour
         saveGame.username = userName;
         saveGame.money = money;
         saveGame.playtime = playtime;
-        saveGame.date = date;
+        saveGame.Date = date;
 
         switch(SceneManager.GetActiveScene().name)
         {
@@ -879,7 +879,7 @@ public class NewGameManager : MonoBehaviour
             healthStates.Add(new DiaryHealthState { character = character.CharacterData, healthState = character.HealthState });
         }
 
-        return new DiaryEntryInfo
+        DiaryEntryInfo info = new DiaryEntryInfo
         {
             levelMode = LevelInstance.Instance.LevelMode,
             daysInCity = DaysInCity,
@@ -892,11 +892,12 @@ public class NewGameManager : MonoBehaviour
             healthStates = healthStates,
             newHealthProblems = newProblems,
             existingHealthProblems = existingProblems,
-            date = date,
             lastTransportationMethod = lastMethod,
             purpose = purpose,
             playtime = playtime
         };
+        info.Date = date;
+        return info;
     }
 
     public void GeneratePDF()

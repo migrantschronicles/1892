@@ -69,7 +69,8 @@ public class SaveDataJourney
 
 public enum SaveGameVersion
 {
-    V1
+    V1,
+    V2_DateTimeFix
 }
 
 [System.Serializable]
@@ -77,7 +78,7 @@ public class SaveData
 {
     public string username;
     public float playtime = 0.0f;
-    public DateTime date;
+    public long date;
     public int money;
     public TransportationMethod lastMethod;
     public Currency currency;
@@ -90,6 +91,19 @@ public class SaveData
 
     public string levelName;
     public SaveGameVersion version;
+
+    public DateTime Date
+    {
+        get
+        {
+            return DateTime.FromFileTimeUtc(date);
+        }
+
+        set
+        {
+            date = value.ToFileTimeUtc();
+        }
+    }
 }
 
 public class SaveGameManager : MonoBehaviour
@@ -130,6 +144,13 @@ public class SaveGameManager : MonoBehaviour
     {
         string jsonData = File.ReadAllText(filePath);
         SaveData saveData = JsonUtility.FromJson<SaveData>(jsonData);
+
+        // E.g. here you could fill in other values if it's an old save game version.
+        // For the dates it does not make sense to fill in other values.
+        //if(saveData.version < SaveGameVersion.V2_DateTimeFix)
+        //{
+        //     saveData.Date = ...
+        //}
 
         DontDestroyOnLoad(this);
         SceneManager.LoadScene(saveData.levelName);

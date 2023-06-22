@@ -149,11 +149,24 @@ public class DiaryEntryInfo
     public List<DiaryHealthState> healthStates = new();
     public List<HealthProblem> newHealthProblems = new();
     public List<HealthProblem> existingHealthProblems = new();
-    public DateTime date;
+    public long date;
     public TransportationMethod lastTransportationMethod;
     public GeneratedDiaryEntryPurpose purpose;
     public string endGameEntryTechnicalName;
     public float playtime;
+
+    public DateTime Date
+    {
+        get
+        {
+            return DateTime.FromFileTimeUtc(date);
+        }
+
+        set
+        {
+            date = value.ToFileTimeUtc();
+        }
+    }
 }
 
 [System.Serializable]

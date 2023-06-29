@@ -24,12 +24,12 @@ public class LanguageFlag : MonoBehaviour
         UpdateLanguage();
         button.onClick.AddListener(OnClick);
         LocalizationManager.Instance.OnLanguageChanged += OnLanguageChanged;
-        OnLanguageChanged(LocalizationManager.Instance.Language);
+        OnLanguageChanged(LocalizationManager.Instance.CurrentLanguage);
     }
 
     private void OnEnable()
     {
-        OnLanguageChanged(LocalizationManager.Instance.Language);
+        OnLanguageChanged(LocalizationManager.Instance.CurrentLanguage);
     }
 
     private void OnDestroy()

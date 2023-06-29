@@ -5,13 +5,12 @@ using UnityEngine;
 public class LanguageSelectionBook : MonoBehaviour
 {
 
-    public string language;
-    public MainMenu menu;
+    [SerializeField]
+    private Language language;
 
     private void OnMouseDown()
     {
         GetComponentInChildren<Animator>().SetTrigger("Language selection 0");
-        menu.SelectLanguage(language);
+        MainMenuController.Instance.OnLanguageSelected(language);
     }
-
 }

@@ -28,7 +28,18 @@ public class LocalizationManager
         }
     }
 
-    public Language Language { get; private set; } = Language.English;
+    public Language CurrentLanguage
+    {
+        get
+        {
+            if(LocalizationSettings.SelectedLocale.Identifier.Code.Contains("lb"))
+            {
+                return Language.Luxembourgish;
+            }
+
+            return Language.English;
+        }
+    }
 
     public delegate void OnLanguageChangedEvent(Language language);
     public event OnLanguageChangedEvent OnLanguageChanged;
@@ -65,12 +76,11 @@ public class LocalizationManager
 
     public bool ChangeLanguage(Language language)
     {
-        if(language == Language)
+        if(language == CurrentLanguage)
         {
             return true;
         }
 
-        Language = language;
         string languageCode = "";
         switch(language)
         {
@@ -91,7 +101,7 @@ public class LocalizationManager
                 if(locale.Identifier == identifier)
                 {
                     LocalizationSettings.SelectedLocale = locale;
-                    OnLanguageChanged?.Invoke(Language);
+                    OnLanguageChanged?.Invoke(language);
                     return true;
                 }
             }

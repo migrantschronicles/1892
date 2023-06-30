@@ -25,6 +25,8 @@ public class OneTimeAnimator : MonoBehaviour
     private bool useZoomLevelRange = true;
     [SerializeField]
     private Vector2 zoomLevelRange = new Vector2(2, 3);
+    [SerializeField]
+    private float animationSpeed = 1.0f;
 
     private float timeToSpawnNext = -1.0f;
     private MapZoom mapZoom;
@@ -81,6 +83,7 @@ public class OneTimeAnimator : MonoBehaviour
         int randomIndex = UnityEngine.Random.Range(0, children.Count);
         GameObject go = Instantiate(prefab, children[randomIndex]);
         OneTimeAnimation anim = go.GetComponent<OneTimeAnimation>();
+        anim.Speed = animationSpeed;
         anim.OnAnimationFinished += (anim) =>
         {
             Destroy(anim.gameObject);

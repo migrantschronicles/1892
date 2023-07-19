@@ -100,6 +100,7 @@ public class MainMenu : MonoBehaviour
         diaryAnimator.SetTrigger("BookToPosition");
         yield return new WaitForSeconds(1f);
         for(int i = 0; i < coverAnimator.gameObject.transform.childCount; i++) { coverAnimator.gameObject.transform.GetChild(i).gameObject.SetActive(true); }
+
     }
 
     public void SelectLanguage(string language) 

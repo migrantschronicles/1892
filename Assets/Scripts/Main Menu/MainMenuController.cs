@@ -16,8 +16,11 @@ public class MainMenuController : MonoBehaviour
     [SerializeField]
     private Button backToLanguageSelectionButton;
     [SerializeField]
+    public SpriteRenderer FlagEnglish;
+    [SerializeField]
+    private SpriteRenderer FlagLouxembourgish;
+    [SerializeField]
     private MainMenuDiary mainMenuDiary;
-
     private MainMenuState state;
 
     public static MainMenuController Instance { get; private set; }
@@ -71,11 +74,11 @@ public class MainMenuController : MonoBehaviour
         if(cameraAnimator != null)
         {
             cameraAnimator.SetInteger("State", (int)state);
-            StartCoroutine(WaitForTransitionToDiaryEnd(cameraAnimator));
+            StartCoroutine(WaitForTransitionToDiaryEnd(cameraAnimator, language));
         }
     }
 
-    private IEnumerator WaitForTransitionToDiaryEnd(Animator animator)
+    private IEnumerator WaitForTransitionToDiaryEnd(Animator animator, Language language)
     {
         while(!animator.GetCurrentAnimatorStateInfo(0).IsName("Diary"))
         {
@@ -87,12 +90,14 @@ public class MainMenuController : MonoBehaviour
             yield return null;
         }
 
-        OnLanguageSelectionToDiaryFinished();
+        OnLanguageSelectionToDiaryFinished(language);
     }
 
-    private void OnLanguageSelectionToDiaryFinished()
+    private void OnLanguageSelectionToDiaryFinished(Language language)
     {
         backToLanguageSelectionButton.gameObject.SetActive(true);
+        FlagEnglish.gameObject.SetActive(language == Language.English);
+        FlagLouxembourgish.gameObject.SetActive(language == Language.Luxembourgish);
     }
 
     public void OnBackToLanguageSelection()

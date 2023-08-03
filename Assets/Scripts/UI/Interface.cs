@@ -38,28 +38,68 @@ public class Interface : MonoBehaviour
     [SerializeField]
     private GameObject clockButton;
     [SerializeField]
+    private GameObject clockButtonDial;
+    [SerializeField]
+    private Image clockButtonDialBackground;
+    [SerializeField]
     private GameObject diaryButton;
     [SerializeField]
     private GameObject diaryBackground;
     [SerializeField]
     private IngameDiary ingameDiary;
-    [SerializeField]
-    private Image actionCounterBackground;
-    [SerializeField]
-    private Text actionCounter;
-    [SerializeField]
-    private Sprite actionCounterMalusBackground;
+    //[SerializeField]
+    //private Image actionCounterBackground;
+    //[SerializeField]
+    //private Text actionCounter;
+    //[SerializeField]
+    //private Sprite actionCounterMalusBackground;
     [SerializeField]
     private Image infiniteActionCounter;
+    //[SerializeField]
+    //private Color actionCounterMalusForeground = Color.white;
+
     [SerializeField]
-    private Color actionCounterMalusForeground = Color.white;
+    private Sprite actionCounter_16;
+    [SerializeField]
+    private Sprite actionCounter_15;
+    [SerializeField]
+    private Sprite actionCounter_14;
+    [SerializeField]
+    private Sprite actionCounter_13;
+    [SerializeField]
+    private Sprite actionCounter_12;
+    [SerializeField]
+    private Sprite actionCounter_11;
+    [SerializeField]
+    private Sprite actionCounter_10;
+    [SerializeField]
+    private Sprite actionCounter_09;
+    [SerializeField]
+    private Sprite actionCounter_08;
+    [SerializeField]
+    private Sprite actionCounter_07;
+    [SerializeField]
+    private Sprite actionCounter_06;
+    [SerializeField]
+    private Sprite actionCounter_05;
+    [SerializeField]
+    private Sprite actionCounter_04;
+    [SerializeField]
+    private Sprite actionCounter_03;
+    [SerializeField]
+    private Sprite actionCounter_02;  
+    [SerializeField]
+    private Sprite actionCounter_01;  
+    [SerializeField]
+    private Sprite actionCounter_00;
+
 
     public IngameDiary IngameDiary { get { return ingameDiary; } }
     private bool TreatDiaryAsButton { get { return IngameDiary.Diary.Status == OpenStatus.Closed; } }
 
     private InterfaceVisibilityFlags visibilityFlags = InterfaceVisibilityFlags.All;
-    private Sprite defaultActionCounterBackground;
-    private Color defaultActionCounterForeground;
+    //private Sprite defaultActionCounterBackground;
+    //private Color defaultActionCounterForeground;
 
     public InterfaceVisibilityFlags VisibilityFlags { get { return visibilityFlags; } }
 
@@ -75,8 +115,8 @@ public class Interface : MonoBehaviour
             }
         };
 
-        defaultActionCounterBackground = actionCounterBackground.sprite;
-        defaultActionCounterForeground = actionCounter.color;
+        //defaultActionCounterBackground = actionCounterBackground.sprite;
+        //defaultActionCounterForeground = actionCounter.color;
     }
 
     private void Start()
@@ -159,16 +199,69 @@ public class Interface : MonoBehaviour
 
     private void OnDialogsTodayChanged(int amount)
     {
+        SetClock(amount);
+        //int remaining = LevelInstance.Instance.MaxDialogsPerDay - amount;
+        ////actionCounter.text = remaining.ToString();
+        ////actionCounterBackground.sprite = remaining > 0 ? defaultActionCounterBackground : actionCounterMalusBackground;
+        ////actionCounter.color = remaining > 0 ? defaultActionCounterForeground : actionCounterMalusForeground;
+        //clockButtonDialBackground = clockButtonDial.GetComponent<Image>();
+        ////Vector3 originalDelta = clockButtonDialBackground.rectTransform.sizeDelta;
+        //clockButtonDialBackground.sprite = remaining switch
+        //{
+        //    0 => actionCounter_00,
+        //    1 => actionCounter_01,
+        //    2 => actionCounter_02,
+        //    3 => actionCounter_03,
+        //    4 => actionCounter_04,
+        //    5 => actionCounter_05,
+        //    6 => actionCounter_06,
+        //    7 => actionCounter_07,
+        //    8 => actionCounter_08,
+        //    9 => actionCounter_09,
+        //    10 => actionCounter_10,
+        //    11 => actionCounter_11,
+        //    12 => actionCounter_12,
+        //    13 => actionCounter_13,
+        //    14 => actionCounter_14,
+        //    15 => actionCounter_15,
+        //    16 => actionCounter_16,
+        //    _ => actionCounter_16,
+        //};
+ 
+    }
+
+    public void SetClock(int amount)
+    {
         int remaining = LevelInstance.Instance.MaxDialogsPerDay - amount;
-        actionCounter.text = remaining.ToString();
-        actionCounterBackground.sprite = remaining > 0 ? defaultActionCounterBackground : actionCounterMalusBackground;
-        actionCounter.color = remaining > 0 ? defaultActionCounterForeground : actionCounterMalusForeground;
+        clockButtonDialBackground = clockButtonDial.GetComponent<Image>();
+        clockButtonDialBackground.sprite = remaining switch
+        {
+            0 => actionCounter_00,
+            1 => actionCounter_01,
+            2 => actionCounter_02,
+            3 => actionCounter_03,
+            4 => actionCounter_04,
+            5 => actionCounter_05,
+            6 => actionCounter_06,
+            7 => actionCounter_07,
+            8 => actionCounter_08,
+            9 => actionCounter_09,
+            10 => actionCounter_10,
+            11 => actionCounter_11,
+            12 => actionCounter_12,
+            13 => actionCounter_13,
+            14 => actionCounter_14,
+            15 => actionCounter_15,
+            16 => actionCounter_16,
+            _ => actionCounter_16,
+        };
     }
 
     public void InitDialogsToday(int amount)
     {
-        actionCounter.gameObject.SetActive(amount >= 0);
+        //actionCounter.gameObject.SetActive(amount >= 0);
         infiniteActionCounter.gameObject.SetActive(amount < 0);
+        SetClock(0);
     }
 
     /**

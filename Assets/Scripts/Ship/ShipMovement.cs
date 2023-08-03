@@ -12,10 +12,12 @@ public class ShipMovement : MonoBehaviour
         ZoomToTarget
     }
 
+    //[SerializeField]
+    //private Rect cameraBounds = new Rect(-80, -30, 160, 60);
     [SerializeField]
-    private Rect cameraBounds = new Rect(-80, -30, 160, 60);
+    private Rect cameraBounds = new Rect(-60, -20, 120, 40);
     [SerializeField]
-    private Vector2 zoomBounds = new Vector2(0.1f, 3.0f);
+    private Vector2 zoomBounds = new Vector2(0.1f, 5.0f);
     [SerializeField]
     private float moveMultiplier = 1.0f;
     [SerializeField]
@@ -246,7 +248,7 @@ public class ShipMovement : MonoBehaviour
     {
         targetPosition = target;
         SetMovementMode(MovementMode.ZoomToTarget);
-    }
+     }
 
     public void ZoomToPlayer()
     {
@@ -275,13 +277,30 @@ public class ShipMovement : MonoBehaviour
     /**
      * Zooms to the center of the screen.
      */
+    //private void ZoomToViewportCenter(float delta)
+    //{
+
+    //    zoomValue += delta;
+    //    //zoomValue = ApplyZoomBounds(zoomValue + delta);
+    //    //float perspectiveZoomValue = ApplyPerspectiveZoom(zoomValue);
+    //    //updatedCamera.orthographicSize = perspectiveZoomValue * originalZ;
+    //    updatedCamera.orthographicSize = zoomValue * originalZ;
+    //    onZoomValueChanged?.Invoke(zoomValue);
+    //}
+
+    /**
+ * Zooms to the center of the screen.
+ */
     private void ZoomToViewportCenter(float delta)
     {
+
+        //zoomValue += delta;
         zoomValue = ApplyZoomBounds(zoomValue + delta);
         float perspectiveZoomValue = ApplyPerspectiveZoom(zoomValue);
-        updatedCamera.orthographicSize = perspectiveZoomValue * originalZ;
+        updatedCamera.orthographicSize = /*4**/perspectiveZoomValue * originalZ;
         onZoomValueChanged?.Invoke(zoomValue);
     }
+
 
     private float ApplyZoomBounds(float value)
     {

@@ -10,8 +10,8 @@ public class TeachingModePopup : MonoBehaviour
     public UnityEngine.UI.Text text;
     public Color color;
 
-    public delegate void OnClickDelegate();
-    public event OnClickDelegate onClick;
+    //public delegate void OnClickDelegate();
+    //public event OnClickDelegate onClick;
 
     private void Start()
     {

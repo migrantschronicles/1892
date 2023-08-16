@@ -200,34 +200,6 @@ public class Interface : MonoBehaviour
     private void OnDialogsTodayChanged(int amount)
     {
         SetClock(amount);
-        //int remaining = LevelInstance.Instance.MaxDialogsPerDay - amount;
-        ////actionCounter.text = remaining.ToString();
-        ////actionCounterBackground.sprite = remaining > 0 ? defaultActionCounterBackground : actionCounterMalusBackground;
-        ////actionCounter.color = remaining > 0 ? defaultActionCounterForeground : actionCounterMalusForeground;
-        //clockButtonDialBackground = clockButtonDial.GetComponent<Image>();
-        ////Vector3 originalDelta = clockButtonDialBackground.rectTransform.sizeDelta;
-        //clockButtonDialBackground.sprite = remaining switch
-        //{
-        //    0 => actionCounter_00,
-        //    1 => actionCounter_01,
-        //    2 => actionCounter_02,
-        //    3 => actionCounter_03,
-        //    4 => actionCounter_04,
-        //    5 => actionCounter_05,
-        //    6 => actionCounter_06,
-        //    7 => actionCounter_07,
-        //    8 => actionCounter_08,
-        //    9 => actionCounter_09,
-        //    10 => actionCounter_10,
-        //    11 => actionCounter_11,
-        //    12 => actionCounter_12,
-        //    13 => actionCounter_13,
-        //    14 => actionCounter_14,
-        //    15 => actionCounter_15,
-        //    16 => actionCounter_16,
-        //    _ => actionCounter_16,
-        //};
- 
     }
 
     public void SetClock(int amount)

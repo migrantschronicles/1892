@@ -136,7 +136,7 @@ public class DialogConditionProvider : MonoBehaviour
     {
         switch(protagonistName)
         {
-            case "Mattis": return "Matti";
+            case "Mattis": return "Metti";
             case "Mreis": return "Mrei";
         }
 

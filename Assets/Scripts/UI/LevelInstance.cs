@@ -376,34 +376,35 @@ public class LevelInstance : MonoBehaviour
 
     private void Update()
     {
-        if(IsShowingSeasickness)
-        {
-            seasicknessSceneTimer += Time.deltaTime;
-            if(seasicknessSceneTimer >= seasicknessSceneTime)
+        if(levelMode == LevelInstanceMode.Ship) { 
+            if(IsShowingSeasickness)
             {
-                ShowSeasicknessScene(false);
-            }
-        }
-
-        if(nextSeasicknessTimer > 0.0f)
-        {
-            nextSeasicknessTimer -= Time.deltaTime;
-            if(nextSeasicknessTimer <= 0.0f)
-            {
-                ProtagonistHealthData mainHealthData = NewGameManager.Instance.HealthStatus.GetMainHealthStatus();
-                if (mainHealthData.SeasicknessStatus.IsCurrentlySeasick && !NewGameManager.Instance.conditions.HasCondition(seasicknessRemedy))
+                seasicknessSceneTimer += Time.deltaTime;
+                if(seasicknessSceneTimer >= seasicknessSceneTime)
                 {
-                    nextSeasicknessTimer = -1.0f;
-                    ShowSeasicknessScene(true);
-                }
-                else
-                {
-                    nextSeasicknessTimer = seasicknessSceneFrequency;
+                    ShowSeasicknessScene(false);
                 }
             }
 
-        }
+            if(nextSeasicknessTimer > 0.0f)
+            {
+                nextSeasicknessTimer -= Time.deltaTime;
+                if(nextSeasicknessTimer <= 0.0f)
+                {
+                    ProtagonistHealthData mainHealthData = NewGameManager.Instance.HealthStatus.GetMainHealthStatus();
+                    if (mainHealthData.SeasicknessStatus.IsCurrentlySeasick && !NewGameManager.Instance.conditions.HasCondition(seasicknessRemedy))
+                    {
+                        nextSeasicknessTimer = -1.0f;
+                        ShowSeasicknessScene(true);
+                    }
+                    else
+                    {
+                        nextSeasicknessTimer = seasicknessSceneFrequency;
+                    }
+                }
 
+            }
+         }
 #if DEBUG && ENABLE_DEVELOPER_MENU
         if (Input.GetKeyDown(KeyCode.F10))
         {

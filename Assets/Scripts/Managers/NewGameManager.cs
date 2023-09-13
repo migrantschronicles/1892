@@ -1175,7 +1175,7 @@ public class NewGameManager : MonoBehaviour
     }
 
     public LocationDiscoveryStatus GetRouteDiscoveryStatus(string from, string to)
-    {
+     {
         if(from == LevelInstance.Instance.LocationName)
         {
             if(ShipManager.IsStopoverDay)
@@ -1238,7 +1238,7 @@ public class NewGameManager : MonoBehaviour
 
     public bool CanTravel(string from, string to, TransportationMethod method = TransportationMethod.None)
     {
-        bool hasRouteInfo = transportationInfo.HasRouteInfo(from, to, method);
+          bool hasRouteInfo = transportationInfo.HasRouteInfo(from, to, method);
         if(!hasRouteInfo)
         {
             return false;

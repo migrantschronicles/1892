@@ -51,9 +51,9 @@ public class IngameDiary : MonoBehaviour
             OpenImmediately(immediatelyOpenedPages);
         }
 
-#if !(DEVELOPMENT_BUILD || UNITY_EDITOR)
+//#if !(DEVELOPMENT_BUILD || UNITY_EDITOR)
         tempMapButtonsDev.SetActive(false);
-#endif
+//#endif
     }
 
     private void OnEnable()

@@ -215,6 +215,7 @@ public class NewGameManager : MonoBehaviour
         {
             Initialize();
         }
+
     }
 
     private void OnEnable()

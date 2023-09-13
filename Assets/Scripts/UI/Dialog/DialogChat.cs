@@ -305,7 +305,7 @@ public class DialogChat : MonoBehaviour
             .Where(enumValue => enumValue != 0)
             .Select(enumValue => ConvertArticyMethodToTransportationMethod(enumValue))
             .Where(method => !NewGameManager.Instance.RouteManager.IsRouteDiscovered(currentLocation, locationName, method));
-        if(methods != null && methods.Any())
+        if(methods != null && methods.Any() && locationName != null && locationName.Length>0)
         {
             GameObject popupGO = LevelInstance.Instance.PushPopup(DialogSystem.Instance.DiscoveredRoutePopup);
             DiscoveredRoutePopup popup = popupGO.GetComponent<DiscoveredRoutePopup>();

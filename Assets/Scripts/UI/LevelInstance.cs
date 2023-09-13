@@ -136,6 +136,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private AudioClip[] musicClips;
     [SerializeField]
+    private AudioClip auswandererLied;
+    [SerializeField]
     private GameObject draggedItemPrefab;
     [SerializeField]
     private GameObject sceneInteractables;
@@ -361,6 +363,15 @@ public class LevelInstance : MonoBehaviour
         {
             OpenNewCityDiaryEntry();
         }
+        if (!startedPlayingMusic)
+        {
+            if (LocationName == "Luxembourg")
+            {
+                AudioClip[] luxClip = { auswandererLied };
+                AudioManager.Instance.PlayMusic(luxClip);
+            }
+            startedPlayingMusic = true;
+        }
 
         NewGameManager.Instance.HealthStatus.SetIsOnShip(levelMode == LevelInstanceMode.Ship);
         nextSeasicknessTimer = seasicknessSceneFrequency;
@@ -582,6 +593,7 @@ public class LevelInstance : MonoBehaviour
                     AudioManager.Instance.PlayFX(ui.IngameDiary.Diary.closeClip);
                     if (!startedPlayingMusic)
                     {
+                        
                         AudioManager.Instance.PlayMusic(musicClips);
                         startedPlayingMusic = true;
                     }

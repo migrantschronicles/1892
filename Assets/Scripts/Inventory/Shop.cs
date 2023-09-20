@@ -413,7 +413,11 @@ public class Shop : MonoBehaviour
                 // Was sold to shop
                 for(int i = 0; i > transfer.Value; --i)
                 {
-                    NewGameManager.Instance.conditions.AddConditions(transfer.Key.SetConditionsWhenSold, true);
+                    if (transfer.Key.SetConditionsWhenSold != null)
+                    {
+                        NewGameManager.Instance.conditions.AddConditions(transfer.Key.SetConditionsWhenSold, true);
+                    }
+                    
                 }
             }
         }

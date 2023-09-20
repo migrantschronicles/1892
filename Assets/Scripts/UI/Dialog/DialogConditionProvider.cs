@@ -248,12 +248,12 @@ public class DialogConditionProvider : MonoBehaviour
         }
         else if (condition.StartsWith("mattis:", StringComparison.OrdinalIgnoreCase))
         {
-            condition = condition.Substring(5);
+            condition = condition.Substring(7);
             affectedCharacters = affectedCharacters.Where(status => status.CharacterData.name == "Mattis");
         }
         else if (condition.StartsWith("mreis:", StringComparison.OrdinalIgnoreCase))
         {
-            condition = condition.Substring(5);
+            condition = condition.Substring(6);
             affectedCharacters = affectedCharacters.Where(status => status.CharacterData.name == "Mreis");
         }
 

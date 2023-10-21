@@ -532,7 +532,7 @@ public class DialogChat : MonoBehaviour
         }
 
         bool isDialogFinished = IsDialogFinished();
-
+         
         if(!isDialogFinished)
         {
             if (availableBranches.Count == 1)

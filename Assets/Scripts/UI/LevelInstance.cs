@@ -172,6 +172,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private DialogButton introductoryDialogButton;
     [SerializeField]
+    private DialogButton[] daysDialogButtons;
+    [SerializeField]
     private int maxDialogsPerDay = -1;
     [SerializeField]
     private GameObject shopPrefab;
@@ -881,7 +883,12 @@ public class LevelInstance : MonoBehaviour
 
     private void OnDiaryStatusChanged(OpenStatus status)
     {
-        switch(status)
+        var daysInScene = Instance.CurrentScene.DaysInScene;
+        if (daysInScene > 4)
+        {
+            hasShownIntroductoryDialog = true;
+        }
+        switch (status)
         {
             case OpenStatus.Opened:
                 if (mode == Mode.Diary)
@@ -904,6 +911,13 @@ public class LevelInstance : MonoBehaviour
                         StartDialog(introductoryDialogButton);
                         introductoryDialogButton.gameObject.SetActive(false);
                         hasShownIntroductoryDialog = true;
+                    }
+                    else if (LocationName == "Elis Island" || LocationName == "ElisIsland" && daysInScene > 0)
+                    {
+                        StartDialog(daysDialogButtons[daysInScene-1]);
+                        daysDialogButtons[daysInScene-1].gameObject.SetActive(false);
+                        hasShownIntroductoryDialog = true;
+                        
                     }
                 }
                 break;

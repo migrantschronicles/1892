@@ -525,7 +525,7 @@ public class HealthStatus : MonoBehaviour
             return mainProtagonist;
         }
 
-        if(mainProtagonist.HomesickessStatus.Value > 5)
+        if (mainProtagonist.HomesickessStatus.Value > 5 && !LevelInstance.Instance.LocationName.ToLower().Equals("elisisland"))
         {
             // The main protagonist is homesick and can only talk to one person.
             if(dialogsStartedToday >= 1)

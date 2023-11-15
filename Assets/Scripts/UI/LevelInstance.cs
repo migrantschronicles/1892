@@ -247,6 +247,7 @@ public class LevelInstance : MonoBehaviour
     private GameObject nightTransition;
     private bool wantsToContinueGame = false;
     private int dialogsToday = 0;
+    private int daysInDetention = 0;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -656,6 +657,7 @@ public class LevelInstance : MonoBehaviour
         wantsToShowSeasickness = false;
         dialogsToday = 0;
         OnDialogsTodayChanged?.Invoke(dialogsToday);
+        daysInDetention++;
     }
 
     public bool HasScene(string name)
@@ -694,6 +696,7 @@ public class LevelInstance : MonoBehaviour
             }
         }
 
+
         OpenScene(scene);
     }
 
@@ -714,6 +717,11 @@ public class LevelInstance : MonoBehaviour
         {
             // If it's a normal scene, broadcast the event. If it's a ship, this is null.
             onPlayableCharacterSpawnChanged?.Invoke(currentScene.PlayableCharacterSpawn);
+        }
+
+        if(scene.SceneName == "detention")
+        {
+            daysInDetention = 0;
         }
     }
 
@@ -884,10 +892,6 @@ public class LevelInstance : MonoBehaviour
     private void OnDiaryStatusChanged(OpenStatus status)
     {
         var daysInScene = Instance.CurrentScene.DaysInScene;
-        if (daysInScene > 4)
-        {
-            hasShownIntroductoryDialog = true;
-        }
         switch (status)
         {
             case OpenStatus.Opened:
@@ -912,12 +916,10 @@ public class LevelInstance : MonoBehaviour
                         introductoryDialogButton.gameObject.SetActive(false);
                         hasShownIntroductoryDialog = true;
                     }
-                    else if (LocationName == "Elis Island" || LocationName == "ElisIsland" && daysInScene > 0)
+                    else if (LocationName == "ElisIsland" && CurrentScene.SceneName == "detention" && daysInDetention > 0)
                     {
-                        StartDialog(daysDialogButtons[daysInScene-1]);
-                        daysDialogButtons[daysInScene-1].gameObject.SetActive(false);
-                        hasShownIntroductoryDialog = true;
-                        
+                        StartDialog(daysDialogButtons[daysInDetention-1]);
+                        daysDialogButtons[daysInDetention-1].gameObject.SetActive(false);
                     }
                 }
                 break;

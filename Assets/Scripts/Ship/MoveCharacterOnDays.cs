@@ -24,6 +24,15 @@ public class MoveCharacterOnDays : MonoBehaviour
         SetDay(NewGameManager.Instance.DaysInCity);
     }
 
+    private void OnDestroy()
+    {
+        if (NewGameManager.Instance != null)
+        {
+            NewGameManager.Instance.onNewDay -= OnNewDay;
+        }
+    }
+
+
     private void OnNewDay()
     {
         SetDay(NewGameManager.Instance.DaysInCity);

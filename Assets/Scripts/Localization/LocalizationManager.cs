@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
+using static UnityEditor.PlayerSettings.Switch;
 
 public enum Language
 {
@@ -19,9 +20,15 @@ public class LocalizationManager
     {
         get
         {
-            if(instance == null)
+            if (instance == null)
             {
                 instance = new LocalizationManager();
+                string languageCode = instance.GetLanguageCode(instance.CurrentLanguage);
+                if (!string.IsNullOrWhiteSpace(languageCode))
+                {
+                    // Set articy language
+                    ArticyDatabase.Localization.Language = languageCode;
+                }
             }
 
             return instance;
@@ -74,6 +81,18 @@ public class LocalizationManager
         return localizedString.GetLocalizedString(args);
     }
 
+    public string GetLanguageCode(Language language)
+    {
+        string languageCode = "";
+        switch (language)
+        {
+            case Language.English: languageCode = "en"; break;
+            case Language.Luxembourgish: languageCode = "lb"; break;
+        }
+
+        return languageCode;
+    }
+
     public bool ChangeLanguage(Language language)
     {
         if(language == CurrentLanguage)
@@ -81,13 +100,7 @@ public class LocalizationManager
             return true;
         }
 
-        string languageCode = "";
-        switch(language)
-        {
-            case Language.English: languageCode = "en"; break;
-            case Language.Luxembourgish: languageCode = "lb"; break;
-        }
-
+        string languageCode = GetLanguageCode(language);
         if(!string.IsNullOrWhiteSpace(languageCode))
         {
             // Set articy language

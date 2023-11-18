@@ -51,8 +51,9 @@ public class DiscoveredRoutePopup : MonoBehaviour, IPopup
     public void Init(string destination, IEnumerable<TransportationMethod> methods)
     {
         string methodsString = methods.Select(method => GetLocalizedStringForMethod(method)).Aggregate((a, b) => $"{a}, {b}");
+        string localizedLocation = NewGameManager.Instance.LocationManager.GetLocalizedName(destination);
         LocalizeStringEvent localizeStringEvent = title.GetComponent<LocalizeStringEvent>();
-        localizeStringEvent.StringReference.Arguments = new object[] { destination, methodsString };
+        localizeStringEvent.StringReference.Arguments = new object[] { localizedLocation, methodsString };
         localizeStringEvent.RefreshString();
     }
 }

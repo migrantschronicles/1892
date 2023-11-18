@@ -1,17 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuFlag : MonoBehaviour
 {
-    public SpriteRenderer Flag;
+    public Image Flag;
     public Language language;
-    private MainMenuDiaryState state;
 
-    private void SetFlagSprite()
+    private void OnEnable()
     {
-        Flag.gameObject.SetActive(true);
+        Flag.enabled = LocalizationManager.Instance.CurrentLanguage == language;
     }
-
-
 }

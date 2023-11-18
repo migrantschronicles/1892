@@ -16,9 +16,9 @@ public class MainMenuController : MonoBehaviour
     [SerializeField]
     private Button backToLanguageSelectionButton;
     [SerializeField]
-    public SpriteRenderer FlagEnglish;
+    public Image FlagEnglish;
     [SerializeField]
-    private SpriteRenderer FlagLouxembourgish;
+    private Image FlagLouxembourgish;
     [SerializeField]
     private MainMenuDiary mainMenuDiary;
     private MainMenuState state;

@@ -23,12 +23,6 @@ public class LocalizationManager
             if (instance == null)
             {
                 instance = new LocalizationManager();
-                string languageCode = instance.GetLanguageCode(instance.CurrentLanguage);
-                if (!string.IsNullOrWhiteSpace(languageCode))
-                {
-                    // Set articy language
-                    ArticyDatabase.Localization.Language = languageCode;
-                }
             }
 
             return instance;
@@ -50,6 +44,16 @@ public class LocalizationManager
 
     public delegate void OnLanguageChangedEvent(Language language);
     public event OnLanguageChangedEvent OnLanguageChanged;
+
+    public LocalizationManager()
+    {
+        string languageCode = GetLanguageCode(CurrentLanguage);
+        if (!string.IsNullOrWhiteSpace(languageCode))
+        {
+            // Set articy language
+            ArticyDatabase.Localization.Language = languageCode;
+        }
+    }
 
     public string GetLocalizedString(LocalizedString localizedString)
     {

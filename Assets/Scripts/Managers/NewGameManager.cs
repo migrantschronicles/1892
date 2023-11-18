@@ -228,6 +228,14 @@ public class NewGameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;   
     }
 
+    private void OnDestroy()
+    {
+        if(LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.OnLanguageChanged -= OnLanguageChanged;
+        }
+    }
+
     void Update() 
     {
         playtime += Time.deltaTime;
@@ -288,10 +296,7 @@ public class NewGameManager : MonoBehaviour
             QuestManager.AddQuest(PlayableCharacterData.mainQuest);
         }
 
-        LocalizationManager.Instance.OnLanguageChanged += (Language language) =>
-        {
-            journeys.ForEach(journey => journey.diaryEntries.ForEach(entry => DiaryEntryManager.UpdateDiaryEntry(entry)));
-        };
+        LocalizationManager.Instance.OnLanguageChanged += OnLanguageChanged;
 
         if (PlayerPrefs.HasKey("MusicVolume"))
         {
@@ -492,6 +497,11 @@ public class NewGameManager : MonoBehaviour
         saveGame.health = HealthStatus.CreateSaveData();
         saveGame.currency = CurrentCurrency;
         saveGame.routes = RouteManager.Routes;
+    }
+
+    private void OnLanguageChanged(Language language)
+    {
+        journeys.ForEach(journey => journey.diaryEntries.ForEach(entry => DiaryEntryManager.UpdateDiaryEntry(entry)));
     }
 
     public void DiscoverRoute(string from, string to, TransportationMethod method)

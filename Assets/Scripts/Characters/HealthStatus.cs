@@ -99,6 +99,26 @@ public class HealthStatus_Hungry
         requiredFoodAmount = health.requiredFoodAmount;
         DaysWithoutEnoughFood = health.daysWithoutEnoughFood;
     }
+
+    public void Dev_SetHungry(bool hungry)
+    {
+        if(hungry)
+        {
+            if(requiredFoodAmount == 0)
+            {
+                requiredFoodAmount = 2;
+                DaysWithoutEnoughFood = 2;
+            }
+        }
+        else
+        {
+            if(requiredFoodAmount > 0)
+            {
+                requiredFoodAmount = 0;
+                DaysWithoutEnoughFood = 0;
+            }
+        }
+    }
 }
 
 public class HealthStatus_Homesickness
@@ -149,6 +169,12 @@ public class HealthStatus_Homesickness
     {
         value = health.homesickness;
         daysSinceLastDecrease = health.homesicknessDaysSinceLastDecrease;
+    }
+
+    public void Dev_SetValue(float value)
+    {
+        this.value = value;
+        daysSinceLastDecrease = 0;
     }
 }
 
@@ -234,6 +260,27 @@ public class HealthStatus_Cholera
         daysSinceExposed = health.choleraDaysSinceExposed;
         daysSick = health.choleraDaysSick;
     }
+
+    public void Dev_SetHealthy()
+    {
+        status = CholeraStatus.Healthy;
+        daysSinceExposed = 0;
+        daysSick = 0;
+    }
+
+    public void Dev_SetExposed()
+    {
+        status = CholeraStatus.Exposed;
+        daysSinceExposed = 0;
+        daysSick = 0;
+    }
+
+    public void Dev_SetSick()
+    {
+        status = CholeraStatus.Sick;
+        daysSinceExposed = 0;
+        daysSick = 1;
+    }
 }
 
 public class HealthStatus_Seasickness
@@ -279,6 +326,11 @@ public class HealthStatus_Seasickness
     public void Load(SaveDataHealthPerCharacter health)
     {
         canGetSeasick = health.canGetSeasick;
+    }
+
+    public void Dev_SetSeasick(bool sick)
+    {
+        canGetSeasick = sick;
     }
 }
 
@@ -414,6 +466,11 @@ public class ProtagonistHealthData
         homesicknessStatus.Load(health);
         choleraStatus.Load(health);
         seasicknessStatus.Load(health);
+        OnHealthChanged();
+    }
+
+    public void Dev_OnHealthChanged()
+    {
         OnHealthChanged();
     }
 }

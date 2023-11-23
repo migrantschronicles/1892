@@ -15,6 +15,14 @@ public class EndDayHostelPopup : EndDaySleepPopupBase
     private int foodCost = 5;
     [SerializeField]
     private int maxFoodAmount = 9;
+    [SerializeField]
+    private GameObject priceBackground;
+    [SerializeField]
+    private GameObject CurrencyBackgroundBase;
+    [SerializeField]
+    private GameObject CurrencyBackgroundActive;
+    [SerializeField]
+    private GameObject currencyIcon;
 
     private int boughtFoodAmount = 0;
 
@@ -59,6 +67,20 @@ public class EndDayHostelPopup : EndDaySleepPopupBase
     private void UpdateElements()
     {
         priceText.text = (-price).ToString();
+        if(boughtFoodAmount > 0)
+        {
+            CurrencyBackgroundActive.SetActive(true);
+            CurrencyBackgroundBase.SetActive(false);
+            currencyIcon.GetComponent<CurrencyIcon>().UseLight = true;
+            priceText.color = Color.white;
+        }
+        else
+        {
+            CurrencyBackgroundActive.SetActive(false);
+            CurrencyBackgroundBase.SetActive(true);
+            currencyIcon.GetComponent<CurrencyIcon>().UseLight = false;
+            priceText.color = Color.gray;
+        }
     }
 
     private void OnSubtract()
@@ -98,6 +120,7 @@ public class EndDayHostelPopup : EndDaySleepPopupBase
             // Inventory is full.
             return;
         }
+
 
         ++boughtFoodAmount;
         ++foodCounter.Count;

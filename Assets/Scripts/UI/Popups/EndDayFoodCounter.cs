@@ -23,6 +23,10 @@ public class EndDayFoodCounter : MonoBehaviour
     private Sprite infiniteBackground;
     [SerializeField]
     private Sprite normalBackground;
+    //[SerializeField]
+    //private Sprite CurrencyBackgroundBase;
+    //[SerializeField]
+    //private Sprite CurrencyBackgroundActive;
 
     private int count = 0;
     public int Count 
@@ -43,6 +47,7 @@ public class EndDayFoodCounter : MonoBehaviour
     public event OnSubtractEvent OnSubtract;
     public delegate void OnAddEvent();
     public event OnAddEvent OnAdd;
+
 
     private void Awake()
     {

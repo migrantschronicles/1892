@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
-using static UnityEditor.PlayerSettings.Switch;
+//using static UnityEditor.PlayerSettings.Switch;
 
 public enum Language
 {

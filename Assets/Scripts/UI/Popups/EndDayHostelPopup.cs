@@ -71,14 +71,14 @@ public class EndDayHostelPopup : EndDaySleepPopupBase
         {
             CurrencyBackgroundActive.SetActive(true);
             CurrencyBackgroundBase.SetActive(false);
-            currencyIcon.GetComponent<CurrencyIcon>().UseLight = true;
+            //currencyIcon.GetComponent<CurrencyIcon>().UseLight = true;
             priceText.color = Color.white;
         }
         else
         {
             CurrencyBackgroundActive.SetActive(false);
             CurrencyBackgroundBase.SetActive(true);
-            currencyIcon.GetComponent<CurrencyIcon>().UseLight = false;
+            //currencyIcon.GetComponent<CurrencyIcon>().UseLight = false;
             priceText.color = Color.gray;
         }
     }

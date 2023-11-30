@@ -70,7 +70,8 @@ public class SaveDataJourney
 public enum SaveGameVersion
 {
     V1,
-    V2_DateTimeFix
+    V2_DateTimeFix,
+    V3_TutorialActionsAdded
 }
 
 [System.Serializable]
@@ -88,6 +89,7 @@ public class SaveData
     public List<SaveDataCondition> conditions = new();
     public List<SaveDataJourney> journeys = new();
     public List<RouteManager.DiscoveredRoute> routes = new();
+    public List<TutorialAction> remainingTutorialActions = new();
 
     public string levelName;
     public SaveGameVersion version;

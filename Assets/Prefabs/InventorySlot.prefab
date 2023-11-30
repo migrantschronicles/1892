@@ -170,6 +170,7 @@ GameObject:
   - component: {fileID: 997849307232071262}
   - component: {fileID: 6698654999814530129}
   - component: {fileID: -5000339488725998816}
+  - component: {fileID: 8441905562168669830}
   m_Layer: 5
   m_Name: InventorySlot
   m_TagString: Untagged
@@ -311,3 +312,53 @@ MonoBehaviour:
   amountBackground: {fileID: 6563222235936517203}
   defaultTextColor: {r: 1, g: 1, b: 1, a: 1}
   ghostTextColor: {r: 1, g: 0.6, b: 0.22352941, a: 1}
+--- !u!114 &8441905562168669830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8320221895105182596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d1a2ae4765cf154daca2765d9c74f15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  targetColor: {r: 0, g: 0, b: 0, a: 1}
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 1
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 1
+      outWeight: 1
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 1
+      outWeight: 1
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  amplitude: 0.25
+  multiplier: 1
+  autoStart: 0

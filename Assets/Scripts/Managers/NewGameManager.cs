@@ -121,6 +121,7 @@ public class NewGameManager : MonoBehaviour
     public GeoJSONManager GeoJSONManager { get { return GetComponent<GeoJSONManager>(); } }
     public QuestManager QuestManager { get { return GetComponent<QuestManager>(); } }
     public CharacterManager CharacterManager { get { return GetComponent<CharacterManager>(); } }
+    public TutorialManager TutorialManager { get {  return GetComponent<TutorialManager>(); } }
 
     // Stealing
     [Tooltip("The probability (weight) that money can be stolen")]
@@ -328,6 +329,7 @@ public class NewGameManager : MonoBehaviour
     public void InitNewGame(string username)
     {
         userName = username;
+        TutorialManager.SetAllRemaining();
     }
 
     public void LoadFromSaveGame(SaveData saveGame)
@@ -425,12 +427,14 @@ public class NewGameManager : MonoBehaviour
         });
         LevelInstance.Instance.OpenNewCityDiaryEntry();
 
+        TutorialManager.Instance.LoadFromSaveGame(saveGame);
+
         onLocationChanged?.Invoke(saveGame.levelName);
     }
 
     public void SaveGame(SaveData saveGame)
     {
-        saveGame.version = SaveGameVersion.V1;
+        saveGame.version = SaveGameVersion.V3_TutorialActionsAdded;
         ///@todo selected character
         saveGame.username = userName;
         saveGame.money = money;
@@ -497,6 +501,7 @@ public class NewGameManager : MonoBehaviour
         saveGame.health = HealthStatus.CreateSaveData();
         saveGame.currency = CurrentCurrency;
         saveGame.routes = RouteManager.Routes;
+        saveGame.remainingTutorialActions = TutorialManager.Instance.remainingActions;
     }
 
     private void OnLanguageChanged(Language language)

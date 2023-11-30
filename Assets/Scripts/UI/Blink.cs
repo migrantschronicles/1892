@@ -29,7 +29,14 @@ public class Blink : MonoBehaviour
     public bool IsRunning
     {
         get { return timer >= 0.0f; }
-        set { timer = 0.0f; }
+        set 
+        { 
+            timer = value ? 0.0f : -1.0f; 
+            if(!value && target != null)
+            {
+                target.color = startColor;
+            }
+        }
     }
 
     private void Awake()

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public enum AcceptableItemType
@@ -64,6 +65,9 @@ public class Shop : MonoBehaviour
     private Color gainTradeInfoColor = new Color(0.61f, 0.65f, 0.47f, 1f);
     [SerializeField]
     private Color looseTradeInfoColor = new Color(0.78f, 0.38f, 0.27f, 1f);
+
+    public UnityEvent OnOpenedEvent;
+    public UnityEvent OnItemDraggedEvent;
 
     public AudioClip openClip;
     public AudioClip closeClip;
@@ -201,6 +205,7 @@ public class Shop : MonoBehaviour
     {
         Basket.ResetItems(basketItems);
         Luggage.ResetItems(NewGameManager.Instance.inventory.Items);
+        OnOpenedEvent?.Invoke();
     }
 
     public void OnClosed()
@@ -492,6 +497,8 @@ public class Shop : MonoBehaviour
                     int change = sourceManager == Basket ? 1 : -1;
                     LogTransferChange(item.Slot.InventorySlot.Item, change);
                     SetSelectedItem(null);
+
+                    OnItemDraggedEvent?.Invoke();
                 }
             }
         }

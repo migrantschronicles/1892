@@ -16,11 +16,16 @@ public class TutorialBlur : MonoBehaviour
     private UnityEvent pfaffenthal_OnAcceptTrade;
     [SerializeField]
     private UnityEvent pfaffenthal_OnItemDragged;
+    [SerializeField]
+    private UnityEvent pfaffenthal_OnShopClosed;
+    [SerializeField]
+    private UnityEvent pfaffenthal_OnShopOpened;
 
     private GameObject openedPopup;
     private bool pfaffenthal_areItemsBlinking = false;
     private bool pfaffenthal_transferRight = false;
     private bool pfaffenthal_acceptTransfer = false;
+    private bool pfaffenthal_shopClosed = false;
     private Dictionary<Button, bool> prevInteractables = new();
 
     public void SetEnabled(bool value)
@@ -74,6 +79,42 @@ public class TutorialBlur : MonoBehaviour
         {
             button.interactable = prevInteractables[button];
             prevInteractables.Remove(button);
+        }
+    }
+
+    public void EnableChilds(GameObject parent)
+    {
+        for (int i = 0; i < parent.transform.childCount; ++i)
+        {
+            Button button = parent.transform.GetChild(i).GetComponent<Button>();
+            if (button != null)
+            {
+                EnableButton(button);
+            }
+        }
+    }
+
+    public void RestoreChilds(GameObject parent)
+    {
+        for (int i = 0; i < parent.transform.childCount; ++i)
+        {
+            Button button = parent.transform.GetChild(i).GetComponent<Button>();
+            if (button != null)
+            {
+                RestoreButton(button);
+            }
+        }
+    }
+
+    public void DisableChilds(GameObject parent)
+    {
+        for(int i = 0; i < parent.transform.childCount; ++i)
+        {
+            Button button = parent.transform.GetChild(i).GetComponent<Button>();
+            if(button != null)
+            {
+                DisableButton(button);
+            }
         }
     }
 
@@ -137,5 +178,24 @@ public class TutorialBlur : MonoBehaviour
 
         pfaffenthal_transferRight = true;
         pfaffenthal_OnItemDragged?.Invoke();
+    }
+
+    public void OnExitClicked()
+    {
+        if(pfaffenthal_acceptTransfer && !pfaffenthal_shopClosed)
+        {
+            pfaffenthal_shopClosed = true;
+            pfaffenthal_OnShopClosed?.Invoke();
+        }
+    }
+
+    public void OnShopOpened()
+    {
+        if(pfaffenthal_acceptTransfer)
+        {
+            return;
+        }
+
+        pfaffenthal_OnShopOpened?.Invoke();
     }
 }

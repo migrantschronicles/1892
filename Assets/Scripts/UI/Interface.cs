@@ -242,14 +242,20 @@ public class Interface : MonoBehaviour
     public void SetUIElementsVisible(InterfaceVisibilityFlags flags)
     {
         visibilityFlags = flags;
-        locationInfo.SetActive((visibilityFlags & InterfaceVisibilityFlags.StatusInfo) != 0);
-        clockButton.SetActive((visibilityFlags & InterfaceVisibilityFlags.ClockButton) != 0);
-        diaryButton.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
+        UpdateUIElements();
+    }
 
-        if(TreatDiaryAsButton)
+    public void UpdateUIElements()
+    {
+        locationInfo.SetActive((visibilityFlags & InterfaceVisibilityFlags.StatusInfo) != 0);
+        clockButton.SetActive((visibilityFlags & InterfaceVisibilityFlags.ClockButton) != 0 && !TutorialManager.Instance.HasCompleted(TutorialFeature.ClockUnlocked));
+        bool bDiaryButtonVisible = (visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0 && !TutorialManager.Instance.HasCompleted(TutorialFeature.DiaryUnlocked);
+        diaryButton.SetActive(bDiaryButtonVisible);
+
+        if (TreatDiaryAsButton)
         {
-            ingameDiary.gameObject.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
-            diaryBackground.SetActive((visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0);
+            ingameDiary.gameObject.SetActive(bDiaryButtonVisible);
+            diaryBackground.SetActive(bDiaryButtonVisible);
         }
         else
         {

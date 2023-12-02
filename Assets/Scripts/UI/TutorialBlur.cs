@@ -240,4 +240,14 @@ public class TutorialBlur : MonoBehaviour
         decision = true;
         OnDecision?.Invoke();
     }
+
+    public void SetClockVisible(bool visible)
+    {
+
+    }
+
+    public void SetDiaryVisible(bool visible)
+    {
+
+    }
 }

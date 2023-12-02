@@ -3,19 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum TutorialAction
+public enum TutorialFeature
 {
     None,
-    GetReady,
-    Pack_OrganizeBelongings,
+    ClockUnlocked,
+    DiaryUnlocked
 }
 
 public class TutorialManager : MonoBehaviour
 {
     public static TutorialManager Instance { get; private set; }
 
-    public List<TutorialAction> remainingActions { get; private set; } = new ();
-    private TutorialAction activeAction = TutorialAction.None;
+    public List<TutorialFeature> remainingActions { get; private set; } = new ();
 
     private void Awake()
     {
@@ -33,9 +32,9 @@ public class TutorialManager : MonoBehaviour
 
     public void SetAllRemaining()
     {
-        foreach(TutorialAction action in Enum.GetValues (typeof (TutorialAction)))
+        foreach(TutorialFeature action in Enum.GetValues (typeof (TutorialFeature)))
         {
-            if(action != TutorialAction.None)
+            if(action != TutorialFeature.None)
             {
                 remainingActions.Add(action);
             }
@@ -48,34 +47,20 @@ public class TutorialManager : MonoBehaviour
         remainingActions.AddRange(saveGame.remainingTutorialActions);
     }
 
-    public bool HasCompleted(TutorialAction action)
+    public bool HasCompleted(TutorialFeature action)
     {
         return !remainingActions.Contains(action);
     }
 
-    public void ActivateAction(TutorialAction action)
+    public void CompleteAction(TutorialFeature action)
     {
-        if(HasCompleted(action) || IsActionActive(action))
+        remainingActions.Remove(action);
+        switch(action)
         {
-            return;
+            case TutorialFeature.DiaryUnlocked:
+            case TutorialFeature.ClockUnlocked:
+                LevelInstance.Instance.UI.UpdateUIElements();
+                break;
         }
-
-        activeAction = action;
-    }
-
-    public void CompleteAction(TutorialAction action)
-    {
-        if(!IsActionActive(action))
-        {
-            return;
-        }
-
-        remainingActions.Remove(activeAction);
-        activeAction = TutorialAction.None;
-    }
-
-    public bool IsActionActive(TutorialAction action)
-    {
-        return activeAction == action;
     }
 }

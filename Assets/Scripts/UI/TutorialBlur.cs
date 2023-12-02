@@ -21,6 +21,7 @@ public class TutorialBlur : MonoBehaviour
     private bool pfaffenthal_areItemsBlinking = false;
     private bool pfaffenthal_transferRight = false;
     private bool pfaffenthal_acceptTransfer = false;
+    private Dictionary<Button, bool> prevInteractables = new();
 
     public void SetEnabled(bool value)
     {
@@ -45,6 +46,35 @@ public class TutorialBlur : MonoBehaviour
         popup.SetActive(false);
         SetEnabled(false);
         openedPopup = null;
+    }
+
+    public void EnableButton(Button button)
+    {
+        if(!prevInteractables.ContainsKey(button))
+        {
+            prevInteractables[button] = button.interactable;
+        }
+
+        button.interactable = true;
+    }
+
+    public void DisableButton(Button button)
+    {
+        if(!prevInteractables.ContainsKey(button))
+        {
+            prevInteractables[button] = button.interactable;
+        }
+
+        button.interactable = false;
+    }
+
+    public void RestoreButton(Button button)
+    {
+        if(prevInteractables.ContainsKey(button))
+        {
+            button.interactable = prevInteractables[button];
+            prevInteractables.Remove(button);
+        }
     }
 
     public void MakeItemsBlink(InventoryContainer inventory)

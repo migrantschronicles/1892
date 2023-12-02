@@ -2,6 +2,7 @@ using Articy.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class DialogButton : MonoBehaviour
@@ -34,6 +35,8 @@ public class DialogButton : MonoBehaviour
     private bool isFinished;
 
     private bool savedCanStartToday = false;
+
+    public UnityEvent OnDialogEnded;
 
     public string SceneName { get { return sceneName; } }
     public IEnumerable<GameObject> HideObjects { get { return hideObjects; } }
@@ -149,5 +152,6 @@ public class DialogButton : MonoBehaviour
     {
         isFinished = true;
         UpdateElements();
+        OnDialogEnded?.Invoke();
     }
 }

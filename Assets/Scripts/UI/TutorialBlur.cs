@@ -23,6 +23,8 @@ public class TutorialBlur : MonoBehaviour
     [SerializeField]
     private UnityEvent pfaffenthal_OnMadameHutain;
     [SerializeField]
+    private UnityEvent pfaffenthal_OnMadameHutainEnded;
+    [SerializeField]
     private UnityEvent OnDecision;
 
     private GameObject openedPopup;
@@ -31,6 +33,7 @@ public class TutorialBlur : MonoBehaviour
     private bool pfaffenthal_acceptTransfer = false;
     private bool pfaffenthal_shopClosed = false;
     private bool pfaffenthal_madameHutain = false;
+    private bool pfaffenthal_madameHutainEnded = false;
     private bool decision = false;
     private Dictionary<Button, bool> prevInteractables = new();
 
@@ -241,13 +244,14 @@ public class TutorialBlur : MonoBehaviour
         OnDecision?.Invoke();
     }
 
-    public void SetClockVisible(bool visible)
+    public void OnMadameHutainEnded()
     {
+        if(pfaffenthal_madameHutainEnded)
+        {
+            return;
+        }
 
-    }
-
-    public void SetDiaryVisible(bool visible)
-    {
-
+        pfaffenthal_madameHutainEnded = true;
+        pfaffenthal_OnMadameHutainEnded?.Invoke();
     }
 }

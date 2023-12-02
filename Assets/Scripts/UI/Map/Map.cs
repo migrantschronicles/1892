@@ -17,6 +17,8 @@ public class Map : MonoBehaviour
     private MapLocationMarker[] locationMarkers;
     private MapTransportationMethods transportationMethods;
 
+    public MapTransportationMethods TransportationMethods { get { return transportationMethods; } }
+
     public MapLocationMarker CurrentLocationMarker
     {
         get

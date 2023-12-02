@@ -14,6 +14,11 @@ public class TutorialManager : MonoBehaviour
 {
     public static TutorialManager Instance { get; private set; }
 
+    [SerializeField]
+    private TutorialBlur blur;
+
+    public TutorialBlur Blur { get { return blur; } }
+
     public List<TutorialFeature> remainingActions { get; private set; } = new ();
 
     private void Awake()

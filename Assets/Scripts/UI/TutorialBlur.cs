@@ -25,6 +25,8 @@ public class TutorialBlur : MonoBehaviour
     [SerializeField]
     private UnityEvent pfaffenthal_OnMadameHutainEnded;
     [SerializeField]
+    private UnityEvent pfaffenthal_OnLuxembourgDiscoveredDiaryOpening;
+    [SerializeField]
     private UnityEvent OnDecision;
 
     private GameObject openedPopup;
@@ -253,5 +255,42 @@ public class TutorialBlur : MonoBehaviour
 
         pfaffenthal_madameHutainEnded = true;
         pfaffenthal_OnMadameHutainEnded?.Invoke();
+    }
+
+    public void OnLuxembourgDiscoveredDiaryOpening()
+    {
+        pfaffenthal_OnLuxembourgDiscoveredDiaryOpening?.Invoke();
+    }
+
+    public void MakeTransportationMethodsBlink(Map map)
+    {
+        if(map.TransportationMethods == null)
+        {
+            return;
+        }
+
+        foreach(MethodManager parent in map.TransportationMethods.GetComponentsInChildren<MethodManager>())
+        {
+            if(!parent.gameObject.activeSelf)
+            {
+                continue;
+            }
+
+            Blink blink = parent.GetComponent<Blink>();
+            if(blink == null)
+            {
+                blink = parent.gameObject.AddComponent<Blink>();
+            }
+
+            blink.IsRunning = true;
+
+            blink = parent.transform.GetChild(0).GetComponent<Blink>();
+            if(blink == null)
+            {
+                blink = parent.transform.GetChild(0).gameObject.AddComponent<Blink>();
+            }
+
+            blink.IsRunning = true;
+        }
     }
 }

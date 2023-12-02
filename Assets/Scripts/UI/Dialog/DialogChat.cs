@@ -317,6 +317,7 @@ public class DialogChat : MonoBehaviour
                 if (locationName == "Luxembourg")
                 {
                     LevelInstance.Instance.OpenDiary();
+                    TutorialManager.Instance.Blur.OnLuxembourgDiscoveredDiaryOpening();
                 }
             };
 

@@ -83,7 +83,6 @@ public class MapLocationMarker : MonoBehaviour
     {
         image = GetComponent<Image>();
         button = GetComponent<Button>();
-        button.onClick.AddListener(OnClick);
     }
 
     private void Start()
@@ -149,7 +148,7 @@ public class MapLocationMarker : MonoBehaviour
         transform.localScale = initialImageScale / value;
     }
 
-    private void OnClick()
+    public void OnClick()
     {
         Map.OnLocationMarkerClicked(this);
     }

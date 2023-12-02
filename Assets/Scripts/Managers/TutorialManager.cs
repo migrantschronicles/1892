@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public enum TutorialFeature
 {
     None,
@@ -57,7 +58,7 @@ public class TutorialManager : MonoBehaviour
         return !remainingActions.Contains(action);
     }
 
-    public void CompleteAction(TutorialFeature action)
+    public void CompleteFeature(TutorialFeature action)
     {
         remainingActions.Remove(action);
         switch(action)

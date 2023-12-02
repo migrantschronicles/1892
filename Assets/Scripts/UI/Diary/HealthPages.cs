@@ -18,8 +18,6 @@ public class HealthPages : MonoBehaviour
 
     private void Awake()
     {
-        prevPageButton.onClick.AddListener(OpenPrevDoublePage);
-        nextPageButton.onClick.AddListener(OpenNextDoublePage);
         contentPages.onActiveStatusChanged += OnContentPagesActiveStatusChanged;
     }
 
@@ -49,7 +47,7 @@ public class HealthPages : MonoBehaviour
         }
     }
 
-    private void OpenPrevDoublePage()
+    public void OpenPrevDoublePage()
     {
         if(LevelInstance.Instance.IngameDiary.Diary.OpenPrevPageOfContentPages())
         {
@@ -57,7 +55,7 @@ public class HealthPages : MonoBehaviour
         }
     }
 
-    private void OpenNextDoublePage()
+    public void OpenNextDoublePage()
     {
         if(LevelInstance.Instance.IngameDiary.Diary.OpenNextPageOfContentPages())
         {

@@ -27,6 +27,22 @@ public class TutorialBlur : MonoBehaviour
     [SerializeField]
     private UnityEvent pfaffenthal_OnLuxembourgDiscoveredDiaryOpening;
     [SerializeField]
+    private UnityEvent luxembourg_OnDiaryOpening;
+    [SerializeField]
+    private UnityEvent luxembourg_OnDiaryOpened;
+    [SerializeField]
+    private UnityEvent luxembourg_OnInventory;
+    [SerializeField]
+    private UnityEvent luxembourg_OnSettings;
+    [SerializeField]
+    private UnityEvent luxembourg_OnHealth;
+    [SerializeField]
+    private UnityEvent luxembourg_OnDiary;
+    [SerializeField]
+    private UnityEvent luxembourg_OnNextHealthPage;
+    [SerializeField]
+    private UnityEvent luxembourg_OnDiaryClosed;
+    [SerializeField]
     private UnityEvent OnDecision;
 
     private GameObject openedPopup;
@@ -36,6 +52,13 @@ public class TutorialBlur : MonoBehaviour
     private bool pfaffenthal_shopClosed = false;
     private bool pfaffenthal_madameHutain = false;
     private bool pfaffenthal_madameHutainEnded = false;
+    private bool luxembourg_diaryOpened = false;
+    private bool luxembourg_inventory = false;
+    private bool luxembourg_settings = false;
+    private bool luxembourg_health = false;
+    private bool luxembourg_diary = false;
+    private bool luxembourg_nextHealthPage = false;
+    private bool luxembourg_diaryClosed = false;
     private bool decision = false;
     private Dictionary<Button, bool> prevInteractables = new();
 
@@ -64,15 +87,9 @@ public class TutorialBlur : MonoBehaviour
         openedPopup = popup;
     }
 
-    public void ClosePopup(GameObject popup)
+    public void ClosePopup()
     {
-        ///@todo
-        //if(popup != openedPopup)
-        //{
-        //    return;
-        //}
-
-        popup.SetActive(false);
+        openedPopup.SetActive(false);
         SetEnabled(false);
         openedPopup = null;
     }
@@ -206,7 +223,12 @@ public class TutorialBlur : MonoBehaviour
 
     public void OnExitClicked()
     {
-        if(pfaffenthal_acceptTransfer && !pfaffenthal_shopClosed)
+        if(luxembourg_nextHealthPage && !luxembourg_diaryClosed)
+        {
+            luxembourg_diaryClosed = true;
+            luxembourg_OnDiaryClosed?.Invoke();
+        }
+        else if(pfaffenthal_acceptTransfer && !pfaffenthal_shopClosed)
         {
             pfaffenthal_shopClosed = true;
             pfaffenthal_OnShopClosed?.Invoke();
@@ -291,6 +313,84 @@ public class TutorialBlur : MonoBehaviour
             }
 
             blink.IsRunning = true;
+        }
+    }
+
+    public void CompleteFeatureClock()
+    {
+        TutorialManager.Instance.CompleteFeature(TutorialFeature.ClockUnlocked);
+    }
+
+    public void CompleteFeatureDiary()
+    {
+        TutorialManager.Instance.CompleteFeature(TutorialFeature.DiaryUnlocked);
+    }
+
+    public void OnDiaryOpening()
+    {
+        if(luxembourg_diaryOpened)
+        {
+            return;
+        }
+
+        luxembourg_diaryOpened = true;
+        LevelInstance.Instance.UI.IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
+        luxembourg_OnDiaryOpening?.Invoke();
+    }
+
+    private void OnDiaryStatusChanged(OpenStatus status)
+    {
+        if(status == OpenStatus.Opened)
+        {
+            LevelInstance.Instance.UI.IngameDiary.Diary.onDiaryStatusChanged -= OnDiaryStatusChanged;
+            luxembourg_OnDiaryOpened?.Invoke();
+        }
+    }
+
+    public void OnInventory()
+    {
+        if(luxembourg_inventory)
+        {
+            return;
+        }
+
+        luxembourg_inventory = true;
+        luxembourg_OnInventory?.Invoke();
+    }
+
+    public void OnHealth()
+    {
+        if(!luxembourg_health)
+        {
+            luxembourg_health = true;
+            luxembourg_OnHealth?.Invoke();
+        }
+    }
+
+    public void OnDiary()
+    {
+        if(!luxembourg_diary)
+        {
+            luxembourg_diary = true;
+            luxembourg_OnDiary?.Invoke();
+        }
+    }
+
+    public void OnSettings()
+    {
+        if(!luxembourg_settings)
+        {
+            luxembourg_settings = true;
+            luxembourg_OnSettings?.Invoke();
+        }
+    }
+
+    public void OnNextHealthPage()
+    {
+        if(!luxembourg_nextHealthPage)
+        {
+            luxembourg_nextHealthPage = true;
+            luxembourg_OnNextHealthPage?.Invoke();
         }
     }
 }

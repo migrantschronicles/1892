@@ -52,8 +52,6 @@ public class DiaryPages : MonoBehaviour
 
     private void Awake()
     {
-        prevPageButton.onClick.AddListener(OpenPrevDoublePage);
-        nextPageButton.onClick.AddListener(OpenNextDoublePage);
         contentLeftButton.onClick.AddListener(() => StopAnimators(true));
         contentRightButton.onClick.AddListener(() => StopAnimators(true));
         contentPages.onActiveStatusChanged += OnContentPagesActiveStatusChanged;

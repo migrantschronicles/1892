@@ -248,8 +248,8 @@ public class Interface : MonoBehaviour
     public void UpdateUIElements()
     {
         locationInfo.SetActive((visibilityFlags & InterfaceVisibilityFlags.StatusInfo) != 0);
-        clockButton.SetActive((visibilityFlags & InterfaceVisibilityFlags.ClockButton) != 0 && !TutorialManager.Instance.HasCompleted(TutorialFeature.ClockUnlocked));
-        bool bDiaryButtonVisible = (visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0 && !TutorialManager.Instance.HasCompleted(TutorialFeature.DiaryUnlocked);
+        clockButton.SetActive((visibilityFlags & InterfaceVisibilityFlags.ClockButton) != 0 && TutorialManager.Instance.HasCompleted(TutorialFeature.ClockUnlocked));
+        bool bDiaryButtonVisible = (visibilityFlags & InterfaceVisibilityFlags.DiaryButton) != 0 && TutorialManager.Instance.HasCompleted(TutorialFeature.DiaryUnlocked);
         diaryButton.SetActive(bDiaryButtonVisible);
 
         if (TreatDiaryAsButton)

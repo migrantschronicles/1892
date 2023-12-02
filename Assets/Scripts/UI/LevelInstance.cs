@@ -311,6 +311,8 @@ public class LevelInstance : MonoBehaviour
     public delegate void OnCurrentRoomChangedEvent(Room room);
     public event  OnCurrentRoomChangedEvent onCurrentRoomChanged;
 
+    public UnityEvent OnStarted;
+
     private void Awake()
     {
         instance = this;
@@ -379,6 +381,8 @@ public class LevelInstance : MonoBehaviour
 
         NewGameManager.Instance.HealthStatus.SetIsOnShip(levelMode == LevelInstanceMode.Ship);
         nextSeasicknessTimer = seasicknessSceneFrequency;
+
+        OnStarted?.Invoke();
     }
 
     private void OnDestroy()

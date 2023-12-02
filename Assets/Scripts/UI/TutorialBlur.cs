@@ -20,13 +20,32 @@ public class TutorialBlur : MonoBehaviour
     private UnityEvent pfaffenthal_OnShopClosed;
     [SerializeField]
     private UnityEvent pfaffenthal_OnShopOpened;
+    [SerializeField]
+    private UnityEvent pfaffenthal_OnMadameHutain;
+    [SerializeField]
+    private UnityEvent OnDecision;
 
     private GameObject openedPopup;
     private bool pfaffenthal_areItemsBlinking = false;
     private bool pfaffenthal_transferRight = false;
     private bool pfaffenthal_acceptTransfer = false;
     private bool pfaffenthal_shopClosed = false;
+    private bool pfaffenthal_madameHutain = false;
+    private bool decision = false;
     private Dictionary<Button, bool> prevInteractables = new();
+
+    private void Start()
+    {
+        DialogSystem.Instance.onDialogDecision += OnDialogDecision;
+    }
+
+    private void OnDestroy()
+    {
+        if(DialogSystem.Instance)
+        {
+            DialogSystem.Instance.onDialogDecision -= OnDialogDecision;
+        }
+    }
 
     public void SetEnabled(bool value)
     {
@@ -197,5 +216,28 @@ public class TutorialBlur : MonoBehaviour
         }
 
         pfaffenthal_OnShopOpened?.Invoke();
+    }
+
+    public void OnMadameHutain()
+    {
+        if(pfaffenthal_madameHutain)
+        {
+            return;
+        }
+
+        pfaffenthal_madameHutain = true;
+        pfaffenthal_OnMadameHutain?.Invoke();
+    }
+
+    private void OnDialogDecision()
+    {
+        if (decision)
+        {
+            return;
+        }
+
+        DialogSystem.Instance.onDialogDecision -= OnDialogDecision;
+        decision = true;
+        OnDecision?.Invoke();
     }
 }

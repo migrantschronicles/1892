@@ -11,6 +11,16 @@ public class TutorialBlur : MonoBehaviour
     [SerializeField]
     private UnityEvent OnDecision;
     [SerializeField]
+    private UnityEvent OnEndOfDay;
+    [SerializeField]
+    private UnityEvent OnEndOfDay_Hostel;
+    [SerializeField]
+    private UnityEvent OnEndOfDay_Outside;
+    [SerializeField]
+    private UnityEvent OnEndOfDay_Ship;
+    [SerializeField]
+    private UnityEvent OnClockButton;
+    [SerializeField]
     private UnityEvent pfaffenthal_OnBasketItemClicked;
     [SerializeField]
     private UnityEvent pfaffenthal_OnTransferRight;
@@ -271,13 +281,13 @@ public class TutorialBlur : MonoBehaviour
 
     private void OnDialogDecision()
     {
-        if (decision)
+        if (TutorialManager.Instance.HasCompleted(TutorialFeature.DialogDecision))
         {
             return;
         }
 
         DialogSystem.Instance.onDialogDecision -= OnDialogDecision;
-        decision = true;
+        TutorialManager.Instance.CompleteFeature(TutorialFeature.DialogDecision);
         OnDecision?.Invoke();
     }
 
@@ -423,6 +433,55 @@ public class TutorialBlur : MonoBehaviour
         {
             luxembourg_sceneButton = true;
             luxembourg_OnSceneButton?.Invoke();
+        }
+    }
+
+    public void EndOfDay()
+    {
+        if(!TutorialManager.Instance.HasCompleted(TutorialFeature.EndOfDay))
+        {
+            TutorialManager.Instance.CompleteFeature(TutorialFeature.EndOfDay);
+            OnEndOfDay?.Invoke();
+        }
+    }
+
+    public void EndOfDay_Hostel()
+    {
+        if(!TutorialManager.Instance.HasCompleted(TutorialFeature.EndOfDay_Hostel))
+        {
+            TutorialManager.Instance.CompleteFeature(TutorialFeature.EndOfDay_Hostel);
+            OnEndOfDay_Hostel?.Invoke();
+        }
+    }
+
+    public void EndOfDay_Outside()
+    {
+        if(!TutorialManager.Instance.HasCompleted(TutorialFeature.EndOfDay_Outside))
+        {
+            TutorialManager.Instance.CompleteFeature(TutorialFeature.EndOfDay_Outside);
+            OnEndOfDay_Outside?.Invoke();
+        }
+    }
+
+    public void EndOfDay_Ship()
+    {
+        if(!TutorialManager.Instance.HasCompleted(TutorialFeature.EndOfDay_Ship))
+        {
+            TutorialManager.Instance.CompleteFeature(TutorialFeature.EndOfDay_Ship);
+            OnEndOfDay_Ship?.Invoke();
+        }
+    }
+
+    public void ClockButton()
+    {
+        if(TutorialManager.Instance.HasCompleted(TutorialFeature.EndOfDay) && !TutorialManager.Instance.HasCompleted(TutorialFeature.ClockButton))
+        {
+            TutorialManager.Instance.CompleteFeature(TutorialFeature.ClockButton);
+            OnClockButton?.Invoke();
+        }
+        else if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship)
+        {
+            EndOfDay_Ship();
         }
     }
 }

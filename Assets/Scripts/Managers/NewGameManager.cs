@@ -329,7 +329,6 @@ public class NewGameManager : MonoBehaviour
     public void InitNewGame(string username)
     {
         userName = username;
-        TutorialManager.SetAllRemaining();
     }
 
     public void LoadFromSaveGame(SaveData saveGame)
@@ -501,7 +500,7 @@ public class NewGameManager : MonoBehaviour
         saveGame.health = HealthStatus.CreateSaveData();
         saveGame.currency = CurrentCurrency;
         saveGame.routes = RouteManager.Routes;
-        saveGame.remainingTutorialActions = TutorialManager.Instance.remainingActions;
+        saveGame.completedTutorialFeatures = TutorialManager.Instance.CompletedFeatures;
     }
 
     private void OnLanguageChanged(Language language)

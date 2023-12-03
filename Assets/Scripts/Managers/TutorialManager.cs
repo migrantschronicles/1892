@@ -8,19 +8,34 @@ public enum TutorialFeature
 {
     None,
     ClockUnlocked,
-    DiaryUnlocked
+    DiaryUnlocked,
+    DialogDecision,
+    EndOfDay,
+    EndOfDay_Hostel,
+    EndOfDay_Outside,
+    EndOfDay_Ship,
+    ClockButton
 }
 
 public class TutorialManager : MonoBehaviour
 {
     public static TutorialManager Instance { get; private set; }
 
-    [SerializeField]
     private TutorialBlur blur;
+    public TutorialBlur Blur
+    {
+        get
+        {
+            if(blur == null)
+            {
+                blur = FindObjectOfType<TutorialBlur>();
+            }
 
-    public TutorialBlur Blur { get { return blur; } }
+            return blur;
+        }
+    }
 
-    public List<TutorialFeature> remainingActions { get; private set; } = new ();
+    public List<TutorialFeature> CompletedFeatures { get; private set; } = new ();
 
     private void Awake()
     {
@@ -36,31 +51,25 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    public void SetAllRemaining()
+    public void Clear()
     {
-        foreach(TutorialFeature action in Enum.GetValues (typeof (TutorialFeature)))
-        {
-            if(action != TutorialFeature.None)
-            {
-                remainingActions.Add(action);
-            }
-        }
+        CompletedFeatures.Clear();
     }
 
     public void LoadFromSaveGame(SaveData saveGame)
     {
-        remainingActions.Clear();
-        remainingActions.AddRange(saveGame.remainingTutorialActions);
+        CompletedFeatures.Clear();
+        CompletedFeatures.AddRange(saveGame.completedTutorialFeatures);
     }
 
     public bool HasCompleted(TutorialFeature action)
     {
-        return !remainingActions.Contains(action);
+        return CompletedFeatures.Contains(action);
     }
 
     public void CompleteFeature(TutorialFeature action)
     {
-        remainingActions.Remove(action);
+        CompletedFeatures.Add(action);
         switch(action)
         {
             case TutorialFeature.DiaryUnlocked:

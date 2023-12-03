@@ -89,7 +89,7 @@ public class SaveData
     public List<SaveDataCondition> conditions = new();
     public List<SaveDataJourney> journeys = new();
     public List<RouteManager.DiscoveredRoute> routes = new();
-    public List<TutorialFeature> remainingTutorialActions = new();
+    public List<TutorialFeature> completedTutorialFeatures = new();
 
     public string levelName;
     public SaveGameVersion version;

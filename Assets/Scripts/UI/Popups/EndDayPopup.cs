@@ -34,10 +34,12 @@ public class EndDayPopup : MonoBehaviour, IPopup
     public void OnHostel()
     {
         LevelInstance.Instance.PushPopup(endDayHostelPrefab);
+        TutorialManager.Instance.Blur.EndOfDay_Hostel();
     }
 
     public void OnOutside()
     {
         LevelInstance.Instance.PushPopup(endDayOutsidePrefab);
+        TutorialManager.Instance.Blur.EndOfDay_Outside();
     }
 }

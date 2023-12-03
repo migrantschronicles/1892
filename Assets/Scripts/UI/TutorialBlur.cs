@@ -9,6 +9,8 @@ public class TutorialBlur : MonoBehaviour
     [SerializeField]
     private Image blur;
     [SerializeField]
+    private UnityEvent OnDecision;
+    [SerializeField]
     private UnityEvent pfaffenthal_OnBasketItemClicked;
     [SerializeField]
     private UnityEvent pfaffenthal_OnTransferRight;
@@ -43,9 +45,12 @@ public class TutorialBlur : MonoBehaviour
     [SerializeField]
     private UnityEvent luxembourg_OnDiaryClosed;
     [SerializeField]
-    private UnityEvent OnDecision;
+    private UnityEvent luxembourg_OnShopOrDialogClosed;
+    [SerializeField]
+    private UnityEvent luxembourg_OnSceneButton;
 
     private GameObject openedPopup;
+    private bool decision = false;
     private bool pfaffenthal_areItemsBlinking = false;
     private bool pfaffenthal_transferRight = false;
     private bool pfaffenthal_acceptTransfer = false;
@@ -59,7 +64,10 @@ public class TutorialBlur : MonoBehaviour
     private bool luxembourg_diary = false;
     private bool luxembourg_nextHealthPage = false;
     private bool luxembourg_diaryClosed = false;
-    private bool decision = false;
+    private bool luxembourg_dialog = false;
+    private bool luxembourg_shop = false;
+    private bool luxembourg_shopOrDialogClosed = false;
+    private bool luxembourg_sceneButton = false;
     private Dictionary<Button, bool> prevInteractables = new();
 
     private void Start()
@@ -223,7 +231,12 @@ public class TutorialBlur : MonoBehaviour
 
     public void OnExitClicked()
     {
-        if(luxembourg_nextHealthPage && !luxembourg_diaryClosed)
+        if (!luxembourg_shopOrDialogClosed && luxembourg_dialog && luxembourg_shop)
+        {
+            luxembourg_shopOrDialogClosed = true;
+            luxembourg_OnShopOrDialogClosed?.Invoke();
+        }
+        else if(luxembourg_nextHealthPage && !luxembourg_diaryClosed)
         {
             luxembourg_diaryClosed = true;
             luxembourg_OnDiaryClosed?.Invoke();
@@ -391,6 +404,25 @@ public class TutorialBlur : MonoBehaviour
         {
             luxembourg_nextHealthPage = true;
             luxembourg_OnNextHealthPage?.Invoke();
+        }
+    }
+
+    public void OnLuxembourgDialog()
+    {
+        luxembourg_dialog = true;
+    }
+
+    public void OnLuxembourgShop()
+    {
+        luxembourg_shop = true;
+    }
+
+    public void OnLuxembourgSceneButton()
+    {
+        if(!luxembourg_sceneButton)
+        {
+            luxembourg_sceneButton = true;
+            luxembourg_OnSceneButton?.Invoke();
         }
     }
 }

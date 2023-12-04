@@ -1133,6 +1133,7 @@ public class NewGameManager : MonoBehaviour
         AudioManager.Instance.StopMusic();
         Destroy(AudioManager.Instance.gameObject);
         Destroy(gameObject);
+        GetComponent<SaveGameManager>().OnEndGame();
         SceneManager.LoadScene("MainMenu");
     }
 

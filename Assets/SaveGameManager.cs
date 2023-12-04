@@ -108,15 +108,35 @@ public class SaveData
     }
 }
 
+[System.Serializable]
+public class DataFile
+{
+    public bool hasFinishedGame;
+}
+
 public class SaveGameManager : MonoBehaviour
 {
     public bool SavedGameExists { get; private set; } = false;
+    public DataFile DataFile { get { return dataFile; } }
 
     private string filePath;
+    private string dataFilePath;
+    private DataFile dataFile;
 
-    private void Start()
+    private void Awake()
     {
         filePath = Application.persistentDataPath + "/savedata.json";
+        dataFilePath = Application.persistentDataPath + "/data.json";
+
+        if(File.Exists(dataFilePath))
+        {
+            string jsonData = File.ReadAllText(dataFilePath);
+            dataFile = JsonUtility.FromJson<DataFile>(jsonData);
+        }
+        else
+        {
+            dataFile = new DataFile();
+        }
 
         if (File.Exists(filePath))
         {
@@ -159,5 +179,19 @@ public class SaveGameManager : MonoBehaviour
         yield return null;
         NewGameManager.Instance.LoadFromSaveGame(saveData);
         Destroy(gameObject);
+    }
+
+    public void SaveDataFile()
+    {
+        string jsonData = JsonUtility.ToJson(dataFile);
+        File.WriteAllText(dataFilePath, jsonData);
+    }
+
+    public void OnEndGame()
+    {
+        File.Delete(filePath);
+
+        dataFile.hasFinishedGame = true;
+        SaveDataFile();
     }
 }

@@ -220,15 +220,10 @@ public class LevelInstance : MonoBehaviour
     private HealthState overrideProtagonistAnimState;
     [SerializeField]
     private bool shouldOverrideProtagonistAnimState;
-#if DEBUG
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
 
-#if ENABLE_DEVELOPER_MENU
     private GameObject developerLocationPanel;
-#endif
-
-#endif
 
     private List<Scene> scenes = new List<Scene>();
     private Scene currentScene;

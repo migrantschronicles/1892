@@ -64,6 +64,17 @@ public class TutorialManager : MonoBehaviour
 
     public bool HasCompleted(TutorialFeature action)
     {
+        switch(action)
+        {
+            case TutorialFeature.ClockUnlocked:
+            case TutorialFeature.DiaryUnlocked:
+                if(LevelInstance.Instance.LocationName != "Pfaffenthal" && LevelInstance.Instance.LocationName != "Luxembourg")
+                {
+                    return true;
+                }
+                break;
+        }
+
         return CompletedFeatures.Contains(action);
     }
 

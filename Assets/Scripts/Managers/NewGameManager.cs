@@ -340,6 +340,25 @@ public class NewGameManager : MonoBehaviour
         conditions.InitHistoryMode(isHistoryMode);
     }
 
+    public void OnHistoryModeRouteSelected(HistoryModeRoute route)
+    {
+        RouteManager.OnHistoryModeRouteSelected(route);
+        switch (route)
+        {
+            case HistoryModeRoute.LeHavre:
+                OnRouteDiscovered?.Invoke("Luxembourg", "Paris", TransportationMethod.Train);
+                OnRouteDiscovered?.Invoke("Luxembourg", "Paris", TransportationMethod.Carriage);
+                break;
+
+            case HistoryModeRoute.Antwerp:
+            case HistoryModeRoute.Rotterdam:
+                OnRouteDiscovered?.Invoke("Luxembourg", "Brussels", TransportationMethod.Cart);
+                OnRouteDiscovered?.Invoke("Luxembourg", "Brussels", TransportationMethod.Carriage);
+                OnRouteDiscovered?.Invoke("Luxembourg", "Brussels", TransportationMethod.Train);
+                break;
+        }
+    }
+
     public void LoadFromSaveGame(SaveData saveGame)
     {
         switch(saveGame.levelName)
@@ -772,6 +791,15 @@ public class NewGameManager : MonoBehaviour
 
         nextLocation = null;
         nextMethod = TransportationMethod.None;
+
+        if(isHistoryMode)
+        {
+            string port = RouteManager.GetHistoryModePort();
+            if(!string.IsNullOrEmpty(port) && LevelInstance.Instance.LocationName == port)
+            {
+                conditions.AddCondition("ship_ticket", true);
+            }
+        }
 
         StartCoroutine(OpenNewCityDiaryEntryNextFrame());
     }

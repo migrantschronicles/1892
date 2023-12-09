@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum HistoryModeRoute
@@ -54,9 +55,14 @@ public class RouteManager : MonoBehaviour
         }
     }
 
+    public void OnHistoryModeRouteSelected(HistoryModeRoute route)
+    {
+        selectedHistoryRoute = route;
+    }
+
     public bool IsRouteDiscovered(string from, string to, TransportationMethod method = TransportationMethod.None)
     {
-        if(NewGameManager.Instance.isHistoryMode)
+        if(NewGameManager.Instance.isHistoryMode && to != "Luxembourg")
         {
             if(NewGameManager.Instance.HasTraveled(from, to))
             {
@@ -66,11 +72,6 @@ public class RouteManager : MonoBehaviour
             if(from != LevelInstance.Instance.LocationName)
             {
                 return false;
-            }
-
-            if(to == "Luxembourg")
-            {
-                return true;
             }
 
             string next = GetNextHistoryModeLocation();
@@ -91,6 +92,25 @@ public class RouteManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    public string GetHistoryModePort()
+    {
+        if(selectedHistoryRoute == HistoryModeRoute.None)
+        {
+            return "";
+        }
+
+        HistoryModeRouteInfo info = GetHistoryModeRouteInfo(selectedHistoryRoute);
+        for(int i = 0; i < info.locations.Length - 1; ++i)
+        {
+            if (info.locations[i + 1] == "ElisIsland")
+            {
+                return info.locations[i];
+            }
+        }
+
+        return "";
     }
 
     private string GetNextHistoryModeLocation()
@@ -128,7 +148,7 @@ public class RouteManager : MonoBehaviour
      */
     public bool DiscoverRoute(string from, string to, TransportationMethod method)
     {
-        if(NewGameManager.Instance.isHistoryMode)
+        if(NewGameManager.Instance.isHistoryMode && to != "Luxembourg")
         {
             return false;
         }

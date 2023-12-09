@@ -156,10 +156,6 @@ public class DialogConditionProvider : MonoBehaviour
     public void InitHistoryMode(bool isHistoryMode)
     {
         ArticyGlobalVariables.Default.SetVariableByString("Misc.HistoryMode", isHistoryMode);
-        if(isHistoryMode)
-        {
-            AddCondition("ship_ticket", true);
-        }
     }
 
     private void OnArticyVariableChanged(string condition, object value)
@@ -173,6 +169,19 @@ public class DialogConditionProvider : MonoBehaviour
         {
             // If the new value is true, add it to our conditions.
             globalConditions.Add(condition);
+
+            HistoryModeRoute historyModeRoute = HistoryModeRoute.None;
+            switch (condition)
+            {
+                case "Misc.HistoryModeLeHavre": historyModeRoute = HistoryModeRoute.LeHavre; break;
+                case "Misc.HistoryModeRotterdam": historyModeRoute = HistoryModeRoute.Rotterdam; break;
+                case "Misc.HistoryModeAntwerp": historyModeRoute = HistoryModeRoute.Antwerp; break;
+            }
+
+            if (historyModeRoute != HistoryModeRoute.None)
+            {
+                NewGameManager.Instance.OnHistoryModeRouteSelected(historyModeRoute);
+            }
         }
         else
         {

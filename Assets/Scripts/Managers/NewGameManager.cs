@@ -1266,7 +1266,7 @@ public class NewGameManager : MonoBehaviour
 
     public bool CanTravel(string from, string to, TransportationMethod method = TransportationMethod.None)
     {
-          bool hasRouteInfo = transportationInfo.HasRouteInfo(from, to, method);
+        bool hasRouteInfo = transportationInfo.HasRouteInfo(from, to, method);
         if(!hasRouteInfo)
         {
             return false;
@@ -1293,6 +1293,20 @@ public class NewGameManager : MonoBehaviour
     public bool CanTravelTo(string to, TransportationMethod method = TransportationMethod.None)
     {
         return CanTravel(LevelInstance.Instance.LocationName, to, method);
+    }
+
+    public bool HasTraveled(string from, string to)
+    {
+        for (int i = 0; i < journeys.Count - 1; ++i)
+        {
+            if (journeys[i].destination == from && journeys[i + 1].destination == to)
+            {
+                // The player traveled this route
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static TransportationMethod GetTransportationMethodByName(string method)

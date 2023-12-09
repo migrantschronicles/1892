@@ -156,6 +156,10 @@ public class DialogConditionProvider : MonoBehaviour
     public void InitHistoryMode(bool isHistoryMode)
     {
         ArticyGlobalVariables.Default.SetVariableByString("Misc.HistoryMode", isHistoryMode);
+        if(isHistoryMode)
+        {
+            AddCondition("ship_ticket", true);
+        }
     }
 
     private void OnArticyVariableChanged(string condition, object value)

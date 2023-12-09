@@ -664,6 +664,7 @@ public class NewGameManager : MonoBehaviour
             string name = wantsToTravelTo;
             TransportationMethod method = wantsToTravelMethod;
             wantsToTravelTo = "";
+            wantsToTravel = false;
             wantsToTravelMethod = TransportationMethod.None;
             GoToLocationImplementation(name, method);
         }

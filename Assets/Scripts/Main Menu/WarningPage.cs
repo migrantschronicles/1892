@@ -15,7 +15,6 @@ public class WarningPage : MonoBehaviour
     {
         startGameButton.SetEnabled(false);
         nameField.onValueChanged.AddListener(OnNameChanged);
-        startGameButton.onClick += OnStartGame;
     }
 
     private void OnNameChanged(string name)
@@ -23,9 +22,9 @@ public class WarningPage : MonoBehaviour
         startGameButton.SetEnabled(name.Length > 0);
     }
 
-    private void OnStartGame()
+    public void OnStartGame(MainMenuDiary diary)
     {
-        LevelManager.Instance.StartNewGame(nameField.text);
+        diary.StartNewGame(nameField.text);
     }
 
     public void OpenMoreInfo()

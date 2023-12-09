@@ -140,6 +140,12 @@ public class DialogButton : MonoBehaviour
 
     private void UpdateElements()
     {
+        if(isTicketSeller && Application.isPlaying && NewGameManager.Instance.isHistoryMode)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         ((Image)dialogButton.targetGraphic).sprite = isTicketSeller ? ticketButton : (isFinished ? finishedButton : defaultButton);
         SpriteState state = dialogButton.spriteState;
         Sprite pressedSprite = isTicketSeller ? pressedTicketButton : (isFinished ? finishedButton : pressedButton);

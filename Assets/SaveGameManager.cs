@@ -71,7 +71,8 @@ public enum SaveGameVersion
 {
     V1,
     V2_DateTimeFix,
-    V3_TutorialActionsAdded
+    V3_TutorialActionsAdded,
+    V4_HistoryModeAdded
 }
 
 [System.Serializable]
@@ -90,6 +91,7 @@ public class SaveData
     public List<SaveDataJourney> journeys = new();
     public List<RouteManager.DiscoveredRoute> routes = new();
     public List<TutorialFeature> completedTutorialFeatures = new();
+    public bool isHistoryMode;
 
     public string levelName;
     public SaveGameVersion version;

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 using System.Globalization;
 using System;
+using Articy.TheMigrantsChronicles.GlobalVariables;
 
 public enum TransportationMethod
 {
@@ -70,6 +71,7 @@ public class NewGameManager : MonoBehaviour
 {
 
     public string userName;
+    public bool isHistoryMode = false;
     
     private static bool isInitialized = false;
 
@@ -326,9 +328,16 @@ public class NewGameManager : MonoBehaviour
         }
     }
 
-    public void InitNewGame(string username)
+    public void InitNewGame(string username, bool historyMode)
     {
         userName = username;
+        InitHistoryMode(historyMode);
+    }
+
+    private void InitHistoryMode(bool historyMode)
+    {
+        isHistoryMode = historyMode;
+        conditions.InitHistoryMode(isHistoryMode);
     }
 
     public void LoadFromSaveGame(SaveData saveGame)
@@ -348,6 +357,7 @@ public class NewGameManager : MonoBehaviour
         lastMethod = saveGame.lastMethod;
         SetMoney(saveGame.money);
         SetDate(saveGame.Date);
+        InitHistoryMode(saveGame.isHistoryMode);
 
         journeys.Clear();
         foreach(SaveDataJourney journey in saveGame.journeys)
@@ -439,6 +449,7 @@ public class NewGameManager : MonoBehaviour
         saveGame.money = money;
         saveGame.playtime = playtime;
         saveGame.Date = date;
+        saveGame.isHistoryMode = isHistoryMode;
 
         switch(SceneManager.GetActiveScene().name)
         {

@@ -153,6 +153,11 @@ public class DialogConditionProvider : MonoBehaviour
         ArticyGlobalVariables.Default.SetVariableByString($"Health.{articyPrefix}Sick", data.CholeraStatus.IsSick);
     }
 
+    public void InitHistoryMode(bool isHistoryMode)
+    {
+        ArticyGlobalVariables.Default.SetVariableByString("Misc.HistoryMode", isHistoryMode);
+    }
+
     private void OnArticyVariableChanged(string condition, object value)
     {
         if(verbose)

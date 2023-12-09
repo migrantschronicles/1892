@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public enum MainMenuDiaryState
 {
@@ -20,6 +21,7 @@ public class MainMenuDiary : MonoBehaviour
 
     public Animator DiaryAnimator { get { return diaryAnimator; } }
     public Diary Diary { get { return diary; } }
+    public bool IsHistoryMode { get; private set; }
 
     private void Awake()
     {
@@ -153,5 +155,15 @@ public class MainMenuDiary : MonoBehaviour
         }
 
         diary.OpenNextPageOfContentPages();
+    }
+    
+    public void SetIsHistoryMode(bool bHistoryMode)
+    {
+        IsHistoryMode = bHistoryMode;
+    }
+
+    public void StartNewGame(string username)
+    {
+        LevelManager.Instance.StartNewGame(username, IsHistoryMode);
     }
 }

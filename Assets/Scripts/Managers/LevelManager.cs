@@ -16,12 +16,12 @@ public class LevelManager : MonoBehaviour
         Instance = this;
     }
 
-    public void StartNewGame(string username)
+    public void StartNewGame(string username, bool isHistoryMode)
     {
-        StartCoroutine(StartNewGameRoutine(username));
+        StartCoroutine(StartNewGameRoutine(username, isHistoryMode));
     }
 
-    private IEnumerator StartNewGameRoutine(string username)
+    private IEnumerator StartNewGameRoutine(string username, bool isHistoryMode)
     {
         DontDestroyOnLoad(gameObject);
 
@@ -30,7 +30,7 @@ public class LevelManager : MonoBehaviour
 
         yield return null;
 
-        NewGameManager.Instance.InitNewGame(username);
+        NewGameManager.Instance.InitNewGame(username, isHistoryMode);
 
         Destroy(gameObject);
     }

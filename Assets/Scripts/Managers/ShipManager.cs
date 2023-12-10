@@ -67,15 +67,15 @@ public class ShipManager : MonoBehaviour
         FromLocation = fromLocation;
         currentShipRoute = GetShipRoute(FromLocation);
 
-        if (NewGameManager.Instance.conditions.HasCondition("DialogueOptions.ShipFirstClass"))
+        if (NewGameManager.Instance.conditions.HasCondition("DialogueOptions.ShipFirstClass") || NewGameManager.Instance.conditions.HasCondition("DialogueOptions.TravelAgentFirstClass"))
         {
             ShipClass = ShipClass.First;
         }
-        else if (NewGameManager.Instance.conditions.HasCondition("DialogueOptions.ShipSecondClass"))
+        else if (NewGameManager.Instance.conditions.HasCondition("DialogueOptions.ShipSecondClass") || NewGameManager.Instance.conditions.HasCondition("DialogueOptions.TravelAgentSecondClass"))
         {
             ShipClass = ShipClass.Second;
         }
-        else if (NewGameManager.Instance.conditions.HasCondition("DialogueOptions.ShipSteerageClass"))
+        else if (NewGameManager.Instance.conditions.HasCondition("DialogueOptions.ShipSteerageClass") || NewGameManager.Instance.conditions.HasCondition("DialogueOptions.TravelAgentSteerage"))
         {
             ShipClass = ShipClass.Steerage;
         }

@@ -243,7 +243,7 @@ public class LevelInstance : MonoBehaviour
     private GameObject nightTransition;
     private bool wantsToContinueGame = false;
     private int dialogsToday = 0;
-    private int daysInDetention = 0;
+    private int detentionDialogsShown = 0;
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -657,7 +657,6 @@ public class LevelInstance : MonoBehaviour
         wantsToShowSeasickness = false;
         dialogsToday = 0;
         OnDialogsTodayChanged?.Invoke(dialogsToday);
-        daysInDetention++;
     }
 
     public bool HasScene(string name)
@@ -719,9 +718,11 @@ public class LevelInstance : MonoBehaviour
             onPlayableCharacterSpawnChanged?.Invoke(currentScene.PlayableCharacterSpawn);
         }
 
-        if(scene.SceneName == "detention")
+        if(LocationName == "ElisIsland" && CurrentScene.SceneName == "detention")
         {
-            daysInDetention = 0;
+            detentionDialogsShown = 0;
+            StartDialog(daysDialogButtons[0]);
+            daysDialogButtons[0].gameObject.SetActive(false);
         }
     }
 
@@ -916,10 +917,14 @@ public class LevelInstance : MonoBehaviour
                         introductoryDialogButton.gameObject.SetActive(false);
                         hasShownIntroductoryDialog = true;
                     }
-                    else if (LocationName == "ElisIsland" && CurrentScene.SceneName == "detention" && daysInDetention > 0)
+                    else if (LocationName == "ElisIsland" && CurrentScene.SceneName == "detention")
                     {
-                        StartDialog(daysDialogButtons[daysInDetention-1]);
-                        daysDialogButtons[daysInDetention-1].gameObject.SetActive(false);
+                        if(detentionDialogsShown < CurrentScene.DaysInScene)
+                        {
+                            StartDialog(daysDialogButtons[CurrentScene.DaysInScene]);
+                            daysDialogButtons[CurrentScene.DaysInScene].gameObject.SetActive(false);
+                            ++detentionDialogsShown;
+                        }
                     }
                 }
                 break;

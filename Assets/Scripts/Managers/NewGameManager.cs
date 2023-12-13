@@ -556,7 +556,7 @@ public class NewGameManager : MonoBehaviour
         onMoneyChanged?.Invoke(money);
     }
 
-    private void SetDate(DateTime newDate)
+    public void SetDate(DateTime newDate)
     {
         DateTimeFormatInfo dateFormat = CultureInfo.CurrentCulture.DateTimeFormat;
         date = newDate;

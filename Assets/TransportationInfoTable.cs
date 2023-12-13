@@ -44,7 +44,7 @@ public class TransportationInfoTable
             TransportationMethod method = NewGameManager.GetTransportationMethodByName(type);
             int cost = int.Parse(attributes[3]);
             bool discoverable = !string.IsNullOrWhiteSpace(attributes[4]);
-            int activityPointsCost = int.Parse(attributes[5]);
+            int activityPointsCost = int.TryParse(attributes[5], out int apc)? apc: 50; 
             TransportationRouteInfo newRouteInfo = new TransportationRouteInfo 
             { 
                 FromLocation = FromLocation, 

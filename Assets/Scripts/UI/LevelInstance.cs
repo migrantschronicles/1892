@@ -13,6 +13,7 @@ using Articy.Unity.Interfaces;
 using UnityEngine.SceneManagement;
 using System.Linq;
 using UnityEngine.Events;
+using Articy.Unity.Constraints;
 
 public enum Mode
 {
@@ -376,7 +377,7 @@ public class LevelInstance : MonoBehaviour
 
         NewGameManager.Instance.HealthStatus.SetIsOnShip(levelMode == LevelInstanceMode.Ship);
         nextSeasicknessTimer = seasicknessSceneFrequency;
-        SetDialogsTodayAfterTravel()
+        SetDialogsTodayAfterTravel();
         OnStarted?.Invoke();
     }
 
@@ -666,7 +667,18 @@ public class LevelInstance : MonoBehaviour
 
         if (travelCost > 0)
         {
-            dialogsToday += travelCost;
+            if(remainingPoints - travelCost < 0)
+            {
+                var rest = (travelCost - remainingPoints) % 24;
+                var days = rest >= 16? (travelCost-remainingPoints)/24 : (travelCost - remainingPoints) / 24 +1;
+                NewGameManager.Instance.SetDate(NewGameManager.Instance.date.AddDays(days));
+                OnNewDay();
+            }
+            else
+            {
+                dialogsToday += travelCost;
+            }
+            
         }
         OnDialogsTodayChanged?.Invoke(dialogsToday);
     }

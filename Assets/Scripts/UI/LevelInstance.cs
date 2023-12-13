@@ -376,7 +376,7 @@ public class LevelInstance : MonoBehaviour
 
         NewGameManager.Instance.HealthStatus.SetIsOnShip(levelMode == LevelInstanceMode.Ship);
         nextSeasicknessTimer = seasicknessSceneFrequency;
-
+        SetDialogsTodayAfterTravel()
         OnStarted?.Invoke();
     }
 
@@ -659,6 +659,17 @@ public class LevelInstance : MonoBehaviour
         OnDialogsTodayChanged?.Invoke(dialogsToday);
     }
 
+    private void SetDialogsTodayAfterTravel()
+    {
+        int travelCost = NewGameManager.Instance.ActivityPointsTravelCost;
+        int remainingPoints = NewGameManager.Instance.LastActivityPointsLeft;
+
+        if (travelCost > 0)
+        {
+            dialogsToday += travelCost;
+        }
+        OnDialogsTodayChanged?.Invoke(dialogsToday);
+    }
     public bool HasScene(string name)
     {
         if(string.IsNullOrWhiteSpace(name))

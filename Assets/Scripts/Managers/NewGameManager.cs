@@ -114,6 +114,10 @@ public class NewGameManager : MonoBehaviour
     public TransportationInfoTable transportationInfo { get; private set; } = new TransportationInfoTable();
     public TextAsset transportationTableCSV;
 
+    //ActivityPoints
+    public int LastActivityPointsLeft { get; private set; }
+    public int ActivityPointsTravelCost {get; private set; }
+
     // Conditions
     public DialogConditionProvider conditions { get { return GetComponent<DialogConditionProvider>(); } }
 
@@ -695,6 +699,7 @@ public class NewGameManager : MonoBehaviour
         {
             ShipManager.StartTravellingInShip();
 
+            
             // Load level
             nextLocation = name;
             nextMethod = method;
@@ -725,6 +730,10 @@ public class NewGameManager : MonoBehaviour
             // Remove required costs.
             SetMoney(money - routeInfo.cost);
             ++travelCountToday;
+
+            // Deduct Activity Points
+            ActivityPointsTravelCost = routeInfo.activityPointsCost;
+            LastActivityPointsLeft = LevelInstance.Instance.DialogsToday;
 
             // Load level
             nextLocation = name;
@@ -1351,5 +1360,11 @@ public class NewGameManager : MonoBehaviour
         }
 
         return TransportationMethod.Walking;
+    }
+
+    public void ResetTravelActivityPoints()
+    {
+        LastActivityPointsLeft = -1;
+        ActivityPointsTravelCost = 0;
     }
 }

@@ -10,6 +10,7 @@ public class TransportationRouteInfo
     public TransportationMethod method; // Walking, Train, Carriage, etc.
     public int cost;
     public bool isDiscoverable;
+    public int activityPointsCost;
 
     public override string ToString() 
     {
@@ -43,13 +44,15 @@ public class TransportationInfoTable
             TransportationMethod method = NewGameManager.GetTransportationMethodByName(type);
             int cost = int.Parse(attributes[3]);
             bool discoverable = !string.IsNullOrWhiteSpace(attributes[4]);
+            int activityPointsCost = int.Parse(attributes[5]);
             TransportationRouteInfo newRouteInfo = new TransportationRouteInfo 
             { 
                 FromLocation = FromLocation, 
                 ToLocation = ToLocation, 
                 method = method, 
                 cost = cost, 
-                isDiscoverable = discoverable
+                isDiscoverable = discoverable,
+                activityPointsCost = activityPointsCost,
             };
 
             transportationInfo.Add(newRouteInfo);

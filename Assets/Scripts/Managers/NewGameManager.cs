@@ -733,7 +733,7 @@ public class NewGameManager : MonoBehaviour
 
             // Deduct Activity Points
             ActivityPointsTravelCost = routeInfo.activityPointsCost;
-            LastActivityPointsLeft = LevelInstance.Instance.DialogsToday;
+            LastActivityPointsLeft = LevelInstance.Instance.MaxDialogsPerDay - LevelInstance.Instance.DialogsToday;
 
             // Load level
             nextLocation = name;

@@ -44,6 +44,8 @@ public class Shop : MonoBehaviour
     [SerializeField]
     private Button tradeButton;
     [SerializeField]
+    private Text nameText;
+    [SerializeField]
     private Text descriptionText;
     [SerializeField]
     private Text moneyText;
@@ -65,6 +67,8 @@ public class Shop : MonoBehaviour
     private Color gainTradeInfoColor = new Color(0.61f, 0.65f, 0.47f, 1f);
     [SerializeField]
     private Color looseTradeInfoColor = new Color(0.78f, 0.38f, 0.27f, 1f);
+    [SerializeField]
+    private ShopInfobox infobox;
 
     public UnityEvent OnOpenedEvent;
     public UnityEvent OnItemDraggedEvent;
@@ -91,7 +95,7 @@ public class Shop : MonoBehaviour
 
     public delegate void OnTradeAcceptedEvent(Dictionary<Item, int> transfers);
     public event OnTradeAcceptedEvent onTradeAccepted;
-    
+
     public ScrollableInventoryManager HighlightedInventoryManager { get; private set; }
     private bool OnlyAcceptsItem { get { return freeShop && acceptableItem.type != AcceptableItemType.None; } }
     private bool CanClose { get { return !freeShop || LevelInstance.Instance.Mode == Mode.Shop; } }
@@ -100,13 +104,13 @@ public class Shop : MonoBehaviour
     {
         get
         {
-            if(OnlyAcceptsItem)
+            if (OnlyAcceptsItem)
             {
                 return HasAcceptableItem();
             }
-            else if(freeShop)
+            else if (freeShop)
             {
-                if(providesItem)
+                if (providesItem)
                 {
                     return HasTakenItem();
                 }
@@ -145,10 +149,12 @@ public class Shop : MonoBehaviour
         Luggage.onPointerEnter += OnPointerEnter;
         Luggage.onPointerExit += OnPointerExit;
 
-        foreach(Item item in ShopItems)
+        foreach (Item item in ShopItems)
         {
             OnBasketItemAmountChanged(item, 1);
         }
+
+        infobox.SetIsShop(!freeShop);
     }
 
     private void Start()
@@ -161,6 +167,7 @@ public class Shop : MonoBehaviour
     {
         providesItem = item;
         freeShop = true;
+        infobox.SetIsShop(false);
         OnBasketItemAmountChanged(item, 1);
         UpdateDynamics();
     }
@@ -168,6 +175,7 @@ public class Shop : MonoBehaviour
     public void InitItemRemoved(Item item)
     {
         freeShop = true;
+        infobox.SetIsShop(false);
         acceptableItem.type = AcceptableItemType.Item;
         acceptableItem.item = item;
         UpdateDynamics();
@@ -181,11 +189,11 @@ public class Shop : MonoBehaviour
 
     private void OnBasketItemAmountChanged(Item item, int amount)
     {
-        if(basketItems.TryGetValue(item, out int currentAmount))
+        if (basketItems.TryGetValue(item, out int currentAmount))
         {
             int newAmount = currentAmount + amount;
             Debug.Assert(newAmount >= 0);
-            if(newAmount <= 0)
+            if (newAmount <= 0)
             {
                 basketItems.Remove(item);
             }
@@ -215,12 +223,12 @@ public class Shop : MonoBehaviour
 
     private void OnTransferLeft()
     {
-        if(!selectedItem || !selectedItemIsInLuggage)
+        if (!selectedItem || !selectedItemIsInLuggage)
         {
             return;
         }
 
-        if(CanTransferItem(selectedItem.Item, Basket))
+        if (CanTransferItem(selectedItem.Item, Basket))
         {
             ConditionallyStartTransfer();
             if (Basket.TryAddItem(selectedItem.Item))
@@ -238,12 +246,12 @@ public class Shop : MonoBehaviour
 
     private void OnTransferRight()
     {
-        if(!selectedItem || selectedItemIsInLuggage)
+        if (!selectedItem || selectedItemIsInLuggage)
         {
             return;
         }
 
-        if(CanTransferItem(selectedItem.Item, Luggage))
+        if (CanTransferItem(selectedItem.Item, Luggage))
         {
             ConditionallyStartTransfer();
             if (Luggage.TryAddItem(selectedItem.Item))
@@ -273,29 +281,31 @@ public class Shop : MonoBehaviour
 
     private void SetSelectedItem(InventorySlot slot)
     {
-        if(selectedItem)
+        if (selectedItem)
         {
             selectedItem.SetSelected(false);
         }
 
         selectedItem = slot;
-        if(selectedItem)
+        if (selectedItem)
         {
+            nameText.text = LocalizationManager.Instance.GetLocalizedString(selectedItem.Item.Name);
             descriptionText.text = LocalizationManager.Instance.GetLocalizedString(selectedItem.Item.Description);
             selectedItem.SetSelected(true);
         }
         else
         {
+            nameText.text = "";
             descriptionText.text = "";
         }
     }
 
     private void LogTransferChange(Item item, int amount)
     {
-        if(transferChanges.TryGetValue(item, out int value))
+        if (transferChanges.TryGetValue(item, out int value))
         {
             int newValue = value + amount;
-            if(newValue == 0)
+            if (newValue == 0)
             {
                 transferChanges.Remove(item);
             }
@@ -334,7 +344,7 @@ public class Shop : MonoBehaviour
     private int CalculatePrice()
     {
         int price = 0;
-        foreach(var item in transferChanges)
+        foreach (var item in transferChanges)
         {
             price += item.Key.Price * item.Value;
         }
@@ -343,7 +353,7 @@ public class Shop : MonoBehaviour
 
     private void ConditionallyStartTransfer()
     {
-        if(!transferInProgress)
+        if (!transferInProgress)
         {
             transferInProgress = true;
             Basket.EnableGhostMode();
@@ -353,7 +363,7 @@ public class Shop : MonoBehaviour
 
     private void StopTransfer()
     {
-        if(selectedItem != null)
+        if (selectedItem != null)
         {
             SetSelectedItem(null);
         }
@@ -366,9 +376,9 @@ public class Shop : MonoBehaviour
     private int GetItemsBoughtCount()
     {
         int count = 0;
-        foreach(var item in transferChanges)
+        foreach (var item in transferChanges)
         {
-            if(item.Value > 0)
+            if (item.Value > 0)
             {
                 ++count;
             }
@@ -379,7 +389,7 @@ public class Shop : MonoBehaviour
 
     private void AcceptTransfer()
     {
-        if(!freeShop)
+        if (!freeShop)
         {
             int price = CalculatePrice();
             if (price > 0 && price > NewGameManager.Instance.money)
@@ -392,11 +402,11 @@ public class Shop : MonoBehaviour
             // Notify the health status.
             NewGameManager.Instance.HealthStatus.OnItemsBought(GetItemsBoughtCount());
 
-            if(price > 0)
+            if (price > 0)
             {
                 AudioManager.Instance.PlayFX(spentMoneyClip);
             }
-            else if(price < 0)
+            else if (price < 0)
             {
                 AudioManager.Instance.PlayFX(receivedMoneyClip);
             }
@@ -411,18 +421,18 @@ public class Shop : MonoBehaviour
         }
 
         // Apply set conditions if sold
-        foreach(KeyValuePair<Item, int> transfer in transferChanges)
+        foreach (KeyValuePair<Item, int> transfer in transferChanges)
         {
             if (transfer.Value < 0)
             {
                 // Was sold to shop
-                for(int i = 0; i > transfer.Value; --i)
+                for (int i = 0; i > transfer.Value; --i)
                 {
                     if (transfer.Key.SetConditionsWhenSold != null)
                     {
                         NewGameManager.Instance.conditions.AddConditions(transfer.Key.SetConditionsWhenSold, true);
                     }
-                    
+
                 }
             }
         }
@@ -437,7 +447,7 @@ public class Shop : MonoBehaviour
 
     private void CancelTransfer()
     {
-        if(transferInProgress)
+        if (transferInProgress)
         {
             Basket.CancelGhostMode();
             Luggage.CancelGhostMode();
@@ -457,7 +467,7 @@ public class Shop : MonoBehaviour
 
     private void OnPointerExit(ScrollableInventoryManager manager)
     {
-        if(HighlightedInventoryManager == manager)
+        if (HighlightedInventoryManager == manager)
         {
             HighlightedInventoryManager = null;
         }
@@ -474,16 +484,16 @@ public class Shop : MonoBehaviour
     }
 
     public void OnDrag(DraggedItem item)
-    { 
+    {
     }
 
     public void OnEndDrag(DraggedItem item)
     {
-        if(item.IsValidTransfer)
+        if (item.IsValidTransfer)
         {
             ScrollableInventoryManager sourceManager = item.Slot.InventoryManager;
             ScrollableInventoryManager targetManager = item.TargetManager;
-            if(CanTransferItem(item.Slot.InventorySlot.Item, targetManager))
+            if (CanTransferItem(item.Slot.InventorySlot.Item, targetManager))
             {
                 ConditionallyStartTransfer();
 
@@ -506,24 +516,24 @@ public class Shop : MonoBehaviour
 
     public bool CanTransferItem(Item item, ScrollableInventoryManager targetManager)
     {
-        if(targetManager == Basket)
+        if (targetManager == Basket)
         {
-            if(OnlyAcceptsItem)
+            if (OnlyAcceptsItem)
             {
-                switch(acceptableItem.type)
+                switch (acceptableItem.type)
                 {
                     case AcceptableItemType.None:
                         return false;
 
                     case AcceptableItemType.Item:
-                        if(!acceptableItem.item || acceptableItem.item != item)
+                        if (!acceptableItem.item || acceptableItem.item != item)
                         {
                             return false;
                         }
                         break;
 
                     case AcceptableItemType.ItemCategory:
-                        if(!acceptableItem.category || acceptableItem.category != item.category)
+                        if (!acceptableItem.category || acceptableItem.category != item.category)
                         {
                             return false;
                         }
@@ -537,41 +547,41 @@ public class Shop : MonoBehaviour
 
     private bool HasAcceptableItem()
     {
-        if(OnlyAcceptsItem)
+        if (OnlyAcceptsItem)
         {
-            switch(acceptableItem.type)
+            switch (acceptableItem.type)
             {
                 case AcceptableItemType.None:
                     return true;
 
                 case AcceptableItemType.Item:
-                    if(!acceptableItem.item)
+                    if (!acceptableItem.item)
                     {
                         return true;
                     }
                     break;
 
                 case AcceptableItemType.ItemCategory:
-                    if(!acceptableItem.category)
+                    if (!acceptableItem.category)
                     {
                         return true;
                     }
                     break;
             }
 
-            foreach(KeyValuePair<Item, int> item in basketItems)
-            { 
-                switch(acceptableItem.type)
+            foreach (KeyValuePair<Item, int> item in basketItems)
+            {
+                switch (acceptableItem.type)
                 {
                     case AcceptableItemType.Item:
-                        if(item.Key == acceptableItem.item)
+                        if (item.Key == acceptableItem.item)
                         {
                             return true;
                         }
                         break;
 
                     case AcceptableItemType.ItemCategory:
-                        if(item.Key.category == acceptableItem.category)
+                        if (item.Key.category == acceptableItem.category)
                         {
                             return true;
                         }
@@ -579,11 +589,11 @@ public class Shop : MonoBehaviour
                 }
             }
 
-            foreach(KeyValuePair<Item, int> item in transferChanges)
+            foreach (KeyValuePair<Item, int> item in transferChanges)
             {
-                if(item.Value >= 0)
+                if (item.Value >= 0)
                 {
-                    continue; 
+                    continue;
                 }
 
                 switch (acceptableItem.type)
@@ -612,11 +622,16 @@ public class Shop : MonoBehaviour
 
     private bool HasTakenItem()
     {
-        if(freeShop && providesItem)
+        if (freeShop && providesItem)
         {
             return Luggage.HasItem(providesItem);
         }
 
         return true;
+    }
+
+    public void CloseShop()
+    {
+        LevelInstance.Instance.OnBack();
     }
 }

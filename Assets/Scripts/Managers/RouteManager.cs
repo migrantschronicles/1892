@@ -62,7 +62,7 @@ public class RouteManager : MonoBehaviour
 
     public bool IsRouteDiscovered(string from, string to, TransportationMethod method = TransportationMethod.None)
     {
-        if(NewGameManager.Instance.isHistoryMode && to != "Luxembourg")
+        if(NewGameManager.Instance.isHistoryMode && to != "Luxembourg" && NewGameManager.Instance.LocationManager.GetContinent(from) != Continent.America)
         {
             if(NewGameManager.Instance.HasTraveled(from, to))
             {
@@ -148,7 +148,7 @@ public class RouteManager : MonoBehaviour
      */
     public bool DiscoverRoute(string from, string to, TransportationMethod method)
     {
-        if(NewGameManager.Instance.isHistoryMode && to != "Luxembourg")
+        if(NewGameManager.Instance.isHistoryMode && to != "Luxembourg" && NewGameManager.Instance.LocationManager.GetContinent(from) != Continent.America)
         {
             return false;
         }

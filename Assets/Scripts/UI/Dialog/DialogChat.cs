@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 /**
  * If you talk to people, a DialogChat is created.
@@ -34,6 +35,14 @@ public class DialogChat : MonoBehaviour
     private float paddingBottom = 8;
     [SerializeField, Tooltip("How much space at the top should be left for the speaker text")]
     private float paddingTop = 8;
+    [SerializeField]
+    private float continueButtonMarginTop = 50;
+    [SerializeField]
+    private float closeButtonMarginTop = 100;
+    [SerializeField]
+    private GameObject continueButtonPrefab;
+    [SerializeField]
+    private GameObject closeButtonPrefab;
 
     private List<Entry> entries = new List<Entry>();
     private RectTransform rectTransform;
@@ -46,12 +55,17 @@ public class DialogChat : MonoBehaviour
     private bool handledTemplate = false;
     private string lastLeftTechnicalName;
     private string lastRightTechnicalName;
+    private Button continueButton;
+    private Button closeButton;
+
     public bool IsWaitingForDecision { get { return currentAnswers.Count > 0; } }
     public float Height { get { return rectTransform.sizeDelta.y; } }
     public Dialog CurrentDialog { get { return currentDialog; } }
     public IFlowObject PausedOn { get { return pausedOn; } }
     public string LastLeftTechnicalName { get { return lastLeftTechnicalName; } }
     public string LastRightTechnicalName { get { return lastRightTechnicalName; } }
+    public Button ContinueButton { get { return continueButton; } }
+    public Button CloseButton { get { return closeButton; } }
     public bool WantsRestart
     {
         get
@@ -86,6 +100,7 @@ public class DialogChat : MonoBehaviour
             return;
         }
 
+        RemoveButtons();
         NewGameManager.Instance.conditions.RemoveCondition(dialog.restartCondition);
         currentDialog = dialog;
         currentAnswers.Clear();
@@ -99,6 +114,7 @@ public class DialogChat : MonoBehaviour
             return;
         }
 
+        RemoveButtons();
         currentSpecialDialog = specialDialog;
         DialogSystem.Instance.FlowPlayer.StartOn = specialDialog;
     }
@@ -146,6 +162,7 @@ public class DialogChat : MonoBehaviour
         GameObject bubbleGO = Instantiate(linePrefab, transform);
         AddToContent(bubbleGO);
         entries.Add(new Entry { bubble = bubbleGO, isSpecial = currentSpecialDialog != null });
+        AddContinueButton();
 
         DialogBubble bubble = bubbleGO.GetComponent<DialogBubble>();
         bubble.OnHeightChanged += OnBubbleHeightChanged;
@@ -172,6 +189,11 @@ public class DialogChat : MonoBehaviour
         {
             // Don't store the branches in a special dialog to be able to continue the normal dialog.
             availableBranches = branches;
+            if(IsDialogFinished())
+            {
+                RemoveContinueButton();
+                AddCloseButton();
+            }
         }
     }
 
@@ -231,6 +253,7 @@ public class DialogChat : MonoBehaviour
 
     private void OnBubbleHeightChanged(DialogBubble bubble, float oldHeight, float newHeight)
     {
+        RemoveButtons();
         float adjustment = newHeight - oldHeight;
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y + adjustment);
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
@@ -247,6 +270,7 @@ public class DialogChat : MonoBehaviour
         }
 
         OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
+        AddButton();
     }
 
     private bool IsDialogFinished()
@@ -584,15 +608,110 @@ public class DialogChat : MonoBehaviour
         }
     }
 
-    private void AddToContent(GameObject bubble, bool isOption = false)
+    private void AddToContent(GameObject bubble, bool isOption = false, float overrideMarginTop = -1)
     {
+        RemoveButtons();
         RectTransform bubbleTransform = bubble.GetComponent<RectTransform>();
         float currentHeight = Mathf.Max(0, rectTransform.sizeDelta.y - paddingBottom);
-        float newY = currentHeight + (entries.Count == 0 ? paddingTop : (isOption ? spacingOptions : spacing));
+        float margin = overrideMarginTop < 0 ? (entries.Count == 0 ? paddingTop : (isOption ? spacingOptions : spacing)) : overrideMarginTop;
+        float newY = currentHeight + margin;
         bubbleTransform.anchoredPosition = new Vector2(bubbleTransform.anchoredPosition.x, -newY);
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newY + bubbleTransform.sizeDelta.y + paddingBottom);
         rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
         OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
+    }
+
+    private void AddContinueButton()
+    {
+        if(continueButton)
+        {
+            return;
+        }
+
+        GameObject go = Instantiate(continueButtonPrefab, transform);
+        AddToContent(go, false, continueButtonMarginTop);
+        continueButton = go.GetComponent<Button>();
+        continueButton.onClick.AddListener(HandleContinueButtonClicked);
+    }
+
+    private void AddCloseButton()
+    {
+        if(closeButton)
+        {
+            return;
+        }
+
+        GameObject go = Instantiate(closeButtonPrefab, transform);
+        AddToContent(go, false, closeButtonMarginTop);
+        closeButton = go.GetComponent<Button>();
+        closeButton.onClick.AddListener(HandleCloseButtonClicked);
+    }
+
+    private void AddButton()
+    {
+        if(IsDialogFinished())
+        {
+            AddCloseButton();
+        }
+        else
+        {
+            AddContinueButton();
+        }
+    }
+
+    private void RemoveButton(Button button, float margin)
+    {
+        RectTransform buttonTransform = button.GetComponent<RectTransform>();
+        float adjustment = buttonTransform.sizeDelta.y;
+        adjustment += margin;
+        Destroy(button.gameObject);
+        float newSizeY = rectTransform.sizeDelta.y - adjustment;
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newSizeY);
+        rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, -rectTransform.sizeDelta.y / 2);
+        OnHeightChanged?.Invoke(rectTransform.sizeDelta.y);
+    }
+
+    private void RemoveContinueButton()
+    {
+        if(!continueButton)
+        {
+            return;
+        }
+
+        continueButton.onClick.RemoveListener(HandleContinueButtonClicked);
+        RemoveButton(continueButton, continueButtonMarginTop);
+        continueButton = null;
+    }
+
+    /**
+     * Should only be called if the dialog is restarted.
+     */
+    private void RemoveCloseButton()
+    {
+        if(!closeButton)
+        {
+            return;
+        }
+
+        closeButton.onClick.RemoveListener(HandleCloseButtonClicked);
+        RemoveButton(closeButton, closeButtonMarginTop);
+        closeButton = null;
+    }
+
+    private void RemoveButtons()
+    {
+        RemoveContinueButton();
+        RemoveCloseButton();
+    }
+
+    private void HandleContinueButtonClicked()
+    {
+        DialogSystem.Instance.HandleClick();
+    }
+
+    private void HandleCloseButtonClicked()
+    {
+        LevelInstance.Instance.OnBack();
     }
 
     private void OnDecisionTaken(DialogAnswerBubble bubble)

@@ -271,8 +271,13 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        HandleClick();
+    }
+
+    public void HandleClick()
+    {
         // Check if there are animators
-        if(animators.Count > 0)
+        if (animators.Count > 0)
         {
             // Finish the animators
             FinishAnimators();
@@ -280,7 +285,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
             return;
         }
 
-        if(currentChat)
+        if (currentChat)
         {
             currentChat.OnPointerClick();
         }

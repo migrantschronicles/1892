@@ -186,6 +186,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject endDayShipPopupPrefab;
     [SerializeField]
+    private GameObject endDayElisIslandPopupPrefab;
+    [SerializeField]
     private GameObject nightTransitionPrefab;
     [SerializeField]
     private float nightTransitionTime = 2.0f;
@@ -195,6 +197,8 @@ public class LevelInstance : MonoBehaviour
     private GameObject startDayHostelPrefab;
     [SerializeField]
     private GameObject startDayShipPrefab;
+    [SerializeField]
+    private GameObject startDayElisIslandPrefab;
     [SerializeField]
     private GameObject visitCityPopupPrefab;
     [SerializeField]
@@ -1189,7 +1193,11 @@ public class LevelInstance : MonoBehaviour
     public void OpenEndDayPopup()
     {
         GameObject popup;
-        if(levelMode == LevelInstanceMode.Ship)
+        if(LocationName == "ElisIsland")
+        {
+            popup = endDayElisIslandPopupPrefab;
+        }
+        else if(levelMode == LevelInstanceMode.Ship)
         {
             popup = endDayShipPopupPrefab;
         }
@@ -1290,6 +1298,24 @@ public class LevelInstance : MonoBehaviour
         NewGameManager.Instance.OnSleepInHostel(endOfDayHealthData, cost, boughtFoodAmount);
         GameObject popupGO = ShowPopup(startDayHostelPrefab);
         StartDayHostelPopup popup = popupGO.GetComponent<StartDayHostelPopup>();
+        popup.OnStartDay += (p) => { PopPopup(); OpenNewDayDiaryEntry(); };
+    }
+
+    public void OnSleepInElisIsland(List<EndOfDayHealthData> endOfDayHealthData)
+    {
+        wantsToContinueGame = false;
+        StartCoroutine(SleepInElisIslandTransition(endOfDayHealthData));
+    }
+
+    private IEnumerator SleepInElisIslandTransition(List<EndOfDayHealthData> endOfDayHealthData)
+    {
+        nightTransition = Instantiate(nightTransitionPrefab, canvas.transform);
+        yield return new WaitForSeconds(nightTransitionTime);
+        Destroy(nightTransition);
+
+        NewGameManager.Instance.OnSleepInElisIsland(endOfDayHealthData);
+        GameObject popupGO = ShowPopup(startDayElisIslandPrefab);
+        StartDayElisIslandPopup popup = popupGO.GetComponent<StartDayElisIslandPopup>();
         popup.OnStartDay += (p) => { PopPopup(); OpenNewDayDiaryEntry(); };
     }
 

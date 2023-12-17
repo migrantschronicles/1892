@@ -623,6 +623,14 @@ public class NewGameManager : MonoBehaviour
         return false;
     }
 
+    public void OnSleepInElisIsland(List<EndOfDayHealthData> endOfDayHealthData)
+    {
+        HealthStatus.OnEndOfDay(endOfDayHealthData);
+        LastStolenItems = null;
+        LastSleepMethod = SleepMethod.Hotel;
+        StartNewDay();
+    }
+
     public void OnLeaveShip()
     {
         SceneManager.LoadScene("LoadingScene");

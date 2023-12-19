@@ -270,6 +270,7 @@ public class LevelInstance : MonoBehaviour
     public Room CurrentRoom { get { return currentRoom; } }
     public HealthState OverrideProtagonistAnimState { get { return overrideProtagonistAnimState; } }
     public bool ShouldOverrideProtagonistAnimState { get { return shouldOverrideProtagonistAnimState; } }
+    public DialogButton IntroductoryDialogButton { get { return introductoryDialogButton; } }
     public PlayableCharacterSpawn PlayableCharacterSpawn
     {
         get
@@ -312,6 +313,7 @@ public class LevelInstance : MonoBehaviour
     public event  OnCurrentRoomChangedEvent onCurrentRoomChanged;
 
     public UnityEvent OnStarted;
+    public UnityEvent OnIntroductoryDialogStarted;
 
     private void Awake()
     {
@@ -919,7 +921,6 @@ public class LevelInstance : MonoBehaviour
 
     private void OnDiaryStatusChanged(OpenStatus status)
     {
-        var daysInScene = Instance.CurrentScene.DaysInScene;
         switch (status)
         {
             case OpenStatus.Opened:
@@ -943,6 +944,7 @@ public class LevelInstance : MonoBehaviour
                         StartDialog(introductoryDialogButton);
                         introductoryDialogButton.gameObject.SetActive(false);
                         hasShownIntroductoryDialog = true;
+                        OnIntroductoryDialogStarted?.Invoke();
                     }
                     else if (LocationName == "ElisIsland" && CurrentScene.SceneName == "detention")
                     {

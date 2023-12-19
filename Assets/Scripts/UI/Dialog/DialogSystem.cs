@@ -85,6 +85,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     public string LastRightTechnicalName { get { return currentChat != null ? currentChat.LastRightTechnicalName : null; } }
     public GameObject DiscoveredRoutePopup { get { return discoveredRoutePopup; } }
     public DialogButton CurrentButton { get { return currentButton; } }
+    public DialogChat CurrentChat { get { return currentChat; } }
 
     private void Awake()
     {

@@ -21,6 +21,8 @@ public class TutorialBlur : MonoBehaviour
     [SerializeField]
     private UnityEvent OnClockButton;
     [SerializeField]
+    private UnityEvent pfaffenthal_OnStarted;
+    [SerializeField]
     private UnityEvent pfaffenthal_OnBasketItemClicked;
     [SerializeField]
     private UnityEvent pfaffenthal_OnTransferRight;
@@ -38,6 +40,12 @@ public class TutorialBlur : MonoBehaviour
     private UnityEvent pfaffenthal_OnMadameHutainEnded;
     [SerializeField]
     private UnityEvent pfaffenthal_OnLuxembourgDiscoveredDiaryOpening;
+    [SerializeField]
+    private UnityEvent pfaffenthal_OnIntroductoryDialog;
+    [SerializeField]
+    private UnityEvent pfaffenthal_OnIntroductoryDialogEnded;
+    [SerializeField]
+    private UnityEvent pfaffenthal_OnIntroductoryDialogExited;
     [SerializeField]
     private UnityEvent luxembourg_OnDiaryOpening;
     [SerializeField]
@@ -67,6 +75,8 @@ public class TutorialBlur : MonoBehaviour
     private bool pfaffenthal_shopClosed = false;
     private bool pfaffenthal_madameHutain = false;
     private bool pfaffenthal_madameHutainEnded = false;
+    private bool pfaffenthal_introductoryDialog = false;
+    private bool pfaffenthal_introductoryDialogEnded = false;
     private bool luxembourg_diaryOpened = false;
     private bool luxembourg_inventory = false;
     private bool luxembourg_settings = false;
@@ -255,6 +265,10 @@ public class TutorialBlur : MonoBehaviour
         {
             pfaffenthal_shopClosed = true;
             pfaffenthal_OnShopClosed?.Invoke();
+        }
+        else if(pfaffenthal_introductoryDialog && !pfaffenthal_shopClosed)
+        {
+            pfaffenthal_OnIntroductoryDialogExited?.Invoke();
         }
     }
 
@@ -482,6 +496,48 @@ public class TutorialBlur : MonoBehaviour
         else if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship)
         {
             EndOfDay_Ship();
+        }
+    }
+
+    public void Pfaffenthal_OnStarted()
+    {
+        pfaffenthal_OnStarted?.Invoke();
+    }
+
+    public void OnIntroductoryDialog()
+    {
+        if(!pfaffenthal_introductoryDialog)
+        {
+            pfaffenthal_OnIntroductoryDialog?.Invoke();
+            pfaffenthal_introductoryDialog = true;
+        }
+    }
+
+    public void OnIntroductoryDialogEnded()
+    {
+        if(!pfaffenthal_introductoryDialogEnded)
+        {
+            pfaffenthal_OnIntroductoryDialogEnded?.Invoke();
+            pfaffenthal_introductoryDialogEnded = true;
+        }
+    }
+
+    public void SetDialogCloseButtonBlinking(bool value)
+    {
+        if(DialogSystem.Instance.CurrentChat != null && DialogSystem.Instance.CurrentChat.CloseButton != null)
+        {
+            Blink blink = DialogSystem.Instance.CurrentChat.CloseButton.GetComponent<Blink>();
+            if(blink == null)
+            {
+                if(!value)
+                {
+                    return;
+                }
+
+                blink = DialogSystem.Instance.CurrentChat.CloseButton.gameObject.AddComponent<Blink>();
+            }
+
+            blink.IsRunning = value;
         }
     }
 }

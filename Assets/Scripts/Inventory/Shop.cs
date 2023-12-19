@@ -69,6 +69,8 @@ public class Shop : MonoBehaviour
     private Color looseTradeInfoColor = new Color(0.78f, 0.38f, 0.27f, 1f);
     [SerializeField]
     private ShopInfobox infobox;
+    [SerializeField]
+    private Button closeShopButton;
 
     public UnityEvent OnOpenedEvent;
     public UnityEvent OnItemDraggedEvent;
@@ -339,6 +341,7 @@ public class Shop : MonoBehaviour
 
         // Back button
         LevelInstance.Instance.SetBackButtonVisible(CanClose);
+        closeShopButton.interactable = CanClose;
     }
 
     private int CalculatePrice()
@@ -632,6 +635,11 @@ public class Shop : MonoBehaviour
 
     public void CloseShop()
     {
+        if (LevelInstance.Instance.LocationName == "Pfaffenthal")
+        {
+            TutorialManager.Instance.Blur.OnExitClicked();
+        }
+
         LevelInstance.Instance.OnBack();
     }
 }

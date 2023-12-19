@@ -269,6 +269,7 @@ public class TutorialBlur : MonoBehaviour
         else if(pfaffenthal_introductoryDialog && !pfaffenthal_shopClosed)
         {
             pfaffenthal_OnIntroductoryDialogExited?.Invoke();
+            pfaffenthal_introductoryDialogEnded = true;
         }
     }
 

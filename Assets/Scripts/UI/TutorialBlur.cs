@@ -66,6 +66,8 @@ public class TutorialBlur : MonoBehaviour
     private UnityEvent luxembourg_OnShopOrDialogClosed;
     [SerializeField]
     private UnityEvent luxembourg_OnSceneButton;
+    [SerializeField]
+    private UnityEvent luxembourg_OnOpenAgain;
 
     private GameObject openedPopup;
     private bool decision = false;
@@ -88,6 +90,7 @@ public class TutorialBlur : MonoBehaviour
     private bool luxembourg_shop = false;
     private bool luxembourg_shopOrDialogClosed = false;
     private bool luxembourg_sceneButton = false;
+    private bool luxembourg_openAgain = false;
     private Dictionary<Button, bool> prevInteractables = new();
 
     private void Start()
@@ -261,6 +264,11 @@ public class TutorialBlur : MonoBehaviour
             luxembourg_diaryClosed = true;
             luxembourg_OnDiaryClosed?.Invoke();
         }
+        else if(LevelInstance.Instance.LocationName == "Luxembourg" && !luxembourg_openAgain && pfaffenthal_introductoryDialog)
+        {
+            luxembourg_openAgain = true;
+            luxembourg_OnOpenAgain?.Invoke();
+        }
         else if(pfaffenthal_acceptTransfer && !pfaffenthal_shopClosed)
         {
             pfaffenthal_shopClosed = true;
@@ -407,7 +415,7 @@ public class TutorialBlur : MonoBehaviour
 
     public void OnDiary()
     {
-        if(!luxembourg_diary)
+        if(!luxembourg_diary && pfaffenthal_introductoryDialogEnded)
         {
             luxembourg_diary = true;
             luxembourg_OnDiary?.Invoke();

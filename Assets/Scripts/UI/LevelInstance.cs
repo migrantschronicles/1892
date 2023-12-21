@@ -314,6 +314,7 @@ public class LevelInstance : MonoBehaviour
 
     public UnityEvent OnStarted;
     public UnityEvent OnIntroductoryDialogStarted;
+    public UnityEvent OnDialogClosed;
 
     private void Awake()
     {
@@ -577,6 +578,8 @@ public class LevelInstance : MonoBehaviour
                             }
                             currentHiddenObjects = null;
                         }
+
+                        OnDialogClosed?.Invoke();
                     }
                     else
                     {

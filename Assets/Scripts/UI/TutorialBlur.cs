@@ -91,6 +91,8 @@ public class TutorialBlur : MonoBehaviour
     private bool luxembourg_shopOrDialogClosed = false;
     private bool luxembourg_sceneButton = false;
     private bool luxembourg_openAgain = false;
+    private bool luxembourg_ticketSeller = false;
+    private bool luxembourg_ticketSellerClosed = false;
     private Dictionary<Button, bool> prevInteractables = new();
 
     private void Start()
@@ -266,6 +268,7 @@ public class TutorialBlur : MonoBehaviour
         }
         else if(LevelInstance.Instance.LocationName == "Luxembourg" && !luxembourg_openAgain && pfaffenthal_introductoryDialog)
         {
+            pfaffenthal_introductoryDialogEnded = true;
             luxembourg_openAgain = true;
             luxembourg_OnOpenAgain?.Invoke();
         }
@@ -274,7 +277,7 @@ public class TutorialBlur : MonoBehaviour
             pfaffenthal_shopClosed = true;
             pfaffenthal_OnShopClosed?.Invoke();
         }
-        else if(pfaffenthal_introductoryDialog && !pfaffenthal_shopClosed)
+        else if(pfaffenthal_introductoryDialog && !pfaffenthal_introductoryDialogEnded)
         {
             pfaffenthal_OnIntroductoryDialogExited?.Invoke();
             pfaffenthal_introductoryDialogEnded = true;
@@ -455,7 +458,15 @@ public class TutorialBlur : MonoBehaviour
         if(!luxembourg_sceneButton)
         {
             luxembourg_sceneButton = true;
-            luxembourg_OnSceneButton?.Invoke();
+            if(NewGameManager.Instance.isHistoryMode)
+            {
+                EndOfDay();
+            }
+            else
+            {
+                // In history mode you can't talk to ticket sellers, so don't show the popup.
+                luxembourg_OnSceneButton?.Invoke();
+            }
         }
     }
 
@@ -547,6 +558,23 @@ public class TutorialBlur : MonoBehaviour
             }
 
             blink.IsRunning = value;
+        }
+    }
+
+    public void OnDialogClosed()
+    {
+        if(!luxembourg_ticketSellerClosed && luxembourg_ticketSeller)
+        {
+            luxembourg_ticketSellerClosed = true;
+            EndOfDay();
+        }
+    }
+
+    public void OnLuxembourgTicketSeller()
+    {
+        if(!luxembourg_ticketSeller)
+        {
+            luxembourg_ticketSeller = true;
         }
     }
 }

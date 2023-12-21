@@ -23,6 +23,7 @@ public class DeveloperLocationButton : MonoBehaviour
             Destroy(AudioManager.Instance.gameObject);
             */
             SceneManager.LoadScene(sceneName);
+            NewGameManager.Instance.OnBeforeSceneActivation();
         });
     }
 }

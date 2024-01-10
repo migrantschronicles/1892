@@ -135,6 +135,11 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         currentChat.gameObject.SetActive(true);
         currentChat.OnHeightChanged += OnChatHeightChanged;
         OnChatHeightChanged(currentChat.Height);
+        if(currentChat.PausedOn != null && currentChat.AvailableBranches.Count == 0)
+        {
+            // Restart on the latest node if there have previously been no connections. Conditions could have changed.
+            flowPlayer.StartOn = (IArticyObject) currentChat.PausedOn;
+        }
     }
 
     /**

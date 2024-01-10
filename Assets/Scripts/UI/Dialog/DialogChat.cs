@@ -62,6 +62,7 @@ public class DialogChat : MonoBehaviour
     public float Height { get { return rectTransform.sizeDelta.y; } }
     public Dialog CurrentDialog { get { return currentDialog; } }
     public IFlowObject PausedOn { get { return pausedOn; } }
+    public IList<Branch> AvailableBranches { get { return availableBranches; } }
     public string LastLeftTechnicalName { get { return lastLeftTechnicalName; } }
     public string LastRightTechnicalName { get { return lastRightTechnicalName; } }
     public Button ContinueButton { get { return continueButton; } }
@@ -153,6 +154,11 @@ public class DialogChat : MonoBehaviour
 
     public void OnFlowPlayerPaused(IFlowObject flowObject)
     {
+        if(flowObject == pausedOn)
+        {
+            return;
+        }
+
         if(currentSpecialDialog == null)
         {
             // Don't store the current paused on, if it's a special dialog to be able to continue the normal dialog.

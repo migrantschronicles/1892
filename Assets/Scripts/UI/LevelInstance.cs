@@ -755,6 +755,7 @@ public class LevelInstance : MonoBehaviour
             detentionDialogsShown = 0;
             StartDialog(daysDialogButtons[0]);
             daysDialogButtons[0].gameObject.SetActive(false);
+            SetBackButtonVisible(false);
         }
     }
 
@@ -956,11 +957,7 @@ public class LevelInstance : MonoBehaviour
                             StartDialog(daysDialogButtons[CurrentScene.DaysInScene]);
                             daysDialogButtons[CurrentScene.DaysInScene].gameObject.SetActive(false);
                             ++detentionDialogsShown;
-                            if(CurrentScene.DaysInScene == 1 && NewGameManager.Instance.conditions.HasCondition("Misc.ImmigrationRelative") && 
-                                !NewGameManager.Instance.conditions.HasCondition("Misc.ImmigrationCustomsDeceive") && !NewGameManager.Instance.conditions.HasCondition("Misc.ImmigrationThief"))
-                            {
-                                SetBackButtonVisible(false);
-                            }
+                            SetBackButtonVisible(false);
                         }
                     }
                 }

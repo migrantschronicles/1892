@@ -836,13 +836,6 @@ public class NewGameManager : MonoBehaviour
         }
         else if(DaysInCity == 0)
         {
-            // Add the journey
-            Journey journey = new Journey();
-            journey.destination = nextLocation;
-            journey.method = nextMethod;
-            journey.money = money;
-            journeys.Add(journey);
-
             StartCoroutine(OpenNewCityDiaryEntryNextFrame());
         }
     }

@@ -351,6 +351,11 @@ public class DialogChat : MonoBehaviour
                     LevelInstance.Instance.OpenDiary();
                     TutorialManager.Instance.Blur.OnLuxembourgDiscoveredDiaryOpening();
                 }
+                else if(locationName == "NewYorkCity" && LevelInstance.Instance.LocationName == "ElisIsland")
+                {
+                    LevelInstance.Instance.OpenDiary();
+                    TutorialManager.Instance.Blur.OnLuxembourgDiscoveredDiaryOpening();
+                }
             };
 
             return true;

@@ -956,6 +956,11 @@ public class LevelInstance : MonoBehaviour
                             StartDialog(daysDialogButtons[CurrentScene.DaysInScene]);
                             daysDialogButtons[CurrentScene.DaysInScene].gameObject.SetActive(false);
                             ++detentionDialogsShown;
+                            if(CurrentScene.DaysInScene == 1 && NewGameManager.Instance.conditions.HasCondition("Misc.ImmigrationRelative") && 
+                                !NewGameManager.Instance.conditions.HasCondition("Misc.ImmigrationCustomsDeceive") && !NewGameManager.Instance.conditions.HasCondition("Misc.ImmigrationThief"))
+                            {
+                                SetBackButtonVisible(false);
+                            }
                         }
                     }
                 }

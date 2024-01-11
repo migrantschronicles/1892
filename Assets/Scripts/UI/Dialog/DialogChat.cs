@@ -165,6 +165,12 @@ public class DialogChat : MonoBehaviour
             pausedOn = flowObject;
         }
 
+        if(pausedOn is End_of_Game)
+        {
+            DialogSystem.Instance.HandleClick();
+            return;
+        }
+
         GameObject bubbleGO = Instantiate(linePrefab, transform);
         AddToContent(bubbleGO);
         entries.Add(new Entry { bubble = bubbleGO, isSpecial = currentSpecialDialog != null });
@@ -199,6 +205,11 @@ public class DialogChat : MonoBehaviour
             {
                 RemoveContinueButton();
                 AddCloseButton();
+            }
+
+            if(pausedOn is End_of_Game)
+            {
+                DialogSystem.Instance.HandleClick();
             }
         }
     }

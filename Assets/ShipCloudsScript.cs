@@ -41,7 +41,7 @@ public class ShipCloudsScript : MonoBehaviour
         float startY = UnityEngine.Random.Range(startPos.y - 11f, startPos.y + 22f);
         cloud.transform.position = new Vector3(startPos.x, startY, startPos.z);
 
-        float scale = UnityEngine.Random.Range(0.5f, 2f);
+        float scale = UnityEngine.Random.Range(0.3f, 1.7f);
         Vector3 newScale = new Vector3(scale, scale);
         newScale.x *= 1.0f / transform.localScale.x;
         newScale.y *= 1.0f / transform.localScale.y;
@@ -49,7 +49,7 @@ public class ShipCloudsScript : MonoBehaviour
         cloud.transform.localScale = newScale;
 
 
-        float speed = UnityEngine.Random.Range(0.3f, 1.5f);
+        float speed = UnityEngine.Random.Range(0.08f, 3.5f);
         cloud.GetComponent<CloudScript>().StartFloating(speed, endPoint.transform.position.x);
 
 
@@ -64,7 +64,7 @@ public class ShipCloudsScript : MonoBehaviour
 
     void Prewarm()
     {
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 15; i++)
         {
             Vector3 spawnPos = startPos + Vector3.right * (i * 2);
             SpawnCloud(spawnPos);

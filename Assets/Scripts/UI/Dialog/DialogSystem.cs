@@ -221,7 +221,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     /// </summary>
     public void OnBranchesUpdated(IList<Branch> branches)
     {
-        if(flowPlayer.PausedOn is IDialogue)
+        if(flowPlayer.PausedOn is IDialogue && branches.Count <= 1)
         {
             // The dialog is paused on the dialog (first fragment), so continue to 
             // the first dialog fragment.
@@ -239,7 +239,18 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         if (currentChat)
         {
             currentChat.OnBranchesUpdated(branches);
+
+            if(flowPlayer.PausedOn is IDialogue && branches.Count > 1)
+            {
+                StartCoroutine(OnPointerClickDelayed());
+            }
         }
+    }
+
+    private IEnumerator OnPointerClickDelayed()
+    {
+        yield return new WaitForEndOfFrame();
+        currentChat.OnPointerClick();
     }
 
     private IEnumerator SetStartOnDelayed(IArticyObject targetObject)

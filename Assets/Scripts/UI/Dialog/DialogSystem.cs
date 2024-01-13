@@ -221,11 +221,13 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     /// </summary>
     public void OnBranchesUpdated(IList<Branch> branches)
     {
-        if(flowPlayer.PausedOn is IDialogue && branches.Count <= 1)
+        IEnumerable<Branch> branchesWithText = GetBranchesWithText(branches);
+        int count = branchesWithText.Count();
+        if(flowPlayer.PausedOn is IDialogue && count <= 1)
         {
             // The dialog is paused on the dialog (first fragment), so continue to 
             // the first dialog fragment.
-            foreach(Branch branch in branches)
+            foreach(Branch branch in branchesWithText)
             {
                 if(branch.IsValid)
                 {
@@ -240,7 +242,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         {
             currentChat.OnBranchesUpdated(branches);
 
-            if(flowPlayer.PausedOn is IDialogue && branches.Count > 1)
+            if(flowPlayer.PausedOn is IDialogue && count > 1)
             {
                 StartCoroutine(OnPointerClickDelayed());
             }
@@ -257,6 +259,11 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
     {
         yield return new WaitForEndOfFrame();
         flowPlayer.StartOn = targetObject;
+    }
+
+    public IEnumerable<Branch> GetBranchesWithText(IList<Branch> branches)
+    {
+        return branches.Where(branch => branch.Target is IObjectWithLocalizableMenuText);
     }
 
     public string ConditionallyEstrangeLine(string text)

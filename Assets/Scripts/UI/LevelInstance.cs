@@ -166,6 +166,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private ArticyRef foreignLanguageDialog;
     [SerializeField]
+    private DialogButton hungryIntroductoryDialogButton;
+    [SerializeField]
     private GameObject seasicknessScenePrefab;
     [SerializeField, Tooltip("How many seconds (real time) the seasickness scene should be displayed")]
     private float seasicknessSceneTime = 5.0f;
@@ -249,6 +251,7 @@ public class LevelInstance : MonoBehaviour
     private bool wantsToContinueGame = false;
     private int dialogsToday = 0;
     private int detentionDialogsShown = 0;
+    private bool hasShownSpecialIntroductoryDialog = false; // e.g. Hungry
 
     private static LevelInstance instance;
     public static LevelInstance Instance { get { return instance; } }
@@ -565,7 +568,7 @@ public class LevelInstance : MonoBehaviour
                             previousScene = null;
                         }
 
-                        PlayableCharacterSpawn.SetCharactersVisible(true);
+                        PlayableCharacterSpawn?.SetCharactersVisible(true);
                         if (currentHiddenObjects != null)
                         {
                             // Reactivate all the characters that were hidden during the dialog.
@@ -667,6 +670,7 @@ public class LevelInstance : MonoBehaviour
         wantsToShowSeasickness = false;
         dialogsToday = 0;
         OnDialogsTodayChanged?.Invoke(dialogsToday);
+        hasShownSpecialIntroductoryDialog = false;
     }
 
     private void SetDialogsTodayAfterTravel()
@@ -777,7 +781,7 @@ public class LevelInstance : MonoBehaviour
         }
 
         mode = Mode.Dialog;
-        PlayableCharacterSpawn.SetCharactersVisible(false);
+        PlayableCharacterSpawn?.SetCharactersVisible(false);
         currentHiddenObjects = button.HideObjects;
         foreach (GameObject go in currentHiddenObjects)
         {
@@ -958,6 +962,21 @@ public class LevelInstance : MonoBehaviour
                             daysDialogButtons[CurrentScene.DaysInScene].gameObject.SetActive(false);
                             ++detentionDialogsShown;
                             SetBackButtonVisible(false);
+                        }
+                    }
+                    else if(NewGameManager.Instance.HealthStatus.Characters.Any(character => character.HungryStatus.DaysWithoutEnoughFood >= 2))
+                    {
+                        if(hungryIntroductoryDialogButton != null && !hasShownSpecialIntroductoryDialog)
+                        {
+                            if(hungryIntroductoryDialogButton.Chat != null)
+                            {
+                                Destroy(hungryIntroductoryDialogButton.Chat.gameObject);
+                                hungryIntroductoryDialogButton.Chat = null;
+                            }
+
+                            StartDialog(hungryIntroductoryDialogButton);
+                            hungryIntroductoryDialogButton.gameObject.SetActive(false);
+                            hasShownSpecialIntroductoryDialog = true;
                         }
                     }
                 }

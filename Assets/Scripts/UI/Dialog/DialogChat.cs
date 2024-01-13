@@ -584,10 +584,13 @@ public class DialogChat : MonoBehaviour
          
         if(!isDialogFinished)
         {
-            if (availableBranches.Count == 1)
+            IEnumerable<Branch> branchesWithText = DialogSystem.Instance.GetBranchesWithText(availableBranches);
+            int count = branchesWithText.Count();
+
+            if (count == 1)
             {
                 // A linear dialog flow, so go to the next line and create a bubble.
-                Branch targetBranch = availableBranches[0];
+                Branch targetBranch = branchesWithText.First();
                 availableBranches = null;
                 DialogSystem.Instance.FlowPlayer.Play(targetBranch);
             }
@@ -596,7 +599,7 @@ public class DialogChat : MonoBehaviour
                 // Multiple branches, so it's a decision.
                 if (!IsWaitingForDecision)
                 {
-                    foreach (var branch in availableBranches)
+                    foreach (var branch in branchesWithText)
                     {
                         // we filter those out that are not valid
                         if (!branch.IsValid)

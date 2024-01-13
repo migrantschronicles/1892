@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CloudGeneratorScript : MonoBehaviour
+public class CloudCoastGen : MonoBehaviour
 {
     [SerializeField]
     GameObject[] clouds;
@@ -49,7 +49,7 @@ public class CloudGeneratorScript : MonoBehaviour
         cloud.transform.localScale = newScale;
 
 
-        float speed = UnityEngine.Random.Range(0.05f, 0.4f);
+        float speed = UnityEngine.Random.Range(0.5f, 2.5f);
         cloud.GetComponent<CloudScript>().StartFloating(speed, endPoint.transform.position.x);
     
         

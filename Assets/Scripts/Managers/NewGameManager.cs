@@ -791,6 +791,8 @@ public class NewGameManager : MonoBehaviour
             wantsEndOfDay = endOfDay;
         }
 
+        conditions.RemoveCondition("Misc.StopoverLocation");
+
         SceneManager.LoadScene("LoadingScene");
     }
 
@@ -855,6 +857,8 @@ public class NewGameManager : MonoBehaviour
         journey.method = TransportationMethod.Ship;
         journey.money = money;
         journeys.Add(journey);
+
+        conditions.AddCondition(new SetCondition { Condition = "Misc.StopoverLocation", IsGlobal = true });
 
         StartCoroutine(OpenNewDayDiaryEntryNextFrame());
     }

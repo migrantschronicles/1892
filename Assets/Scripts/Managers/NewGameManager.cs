@@ -198,11 +198,11 @@ public class NewGameManager : MonoBehaviour
             transform.SetParent(null, false);
             Instance = this;
             DontDestroyOnLoad(this);
+            money = PlayableCharacterData.startMoney;
             inventory.Initialize();
             transportationInfo.Initialize(transportationTableCSV);
             HealthStatus.Init(PlayableCharacterData.protagonistData);
             conditions.Init();
-            money = PlayableCharacterData.startMoney;
 
             Journey journey = new Journey();
             journey.destination = SceneManager.GetActiveScene().name;

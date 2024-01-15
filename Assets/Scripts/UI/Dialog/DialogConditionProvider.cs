@@ -111,6 +111,7 @@ public class DialogConditionProvider : MonoBehaviour
         }
 
         NewGameManager.Instance.onMoneyChanged += OnMoneyChanged;
+        OnMoneyChanged(NewGameManager.Instance.money);
         NewGameManager.Instance.onNewDay += OnNewDay;
     }
 

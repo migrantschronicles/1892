@@ -127,7 +127,7 @@ public class HealthStatus_Homesickness
     private int daysSinceLastDecrease = 0;
     
     public float Value { get { return value; } }
-    public int ValueInt { get { return Mathf.FloorToInt(value); } }
+    public int ValueInt { get { return Mathf.RoundToInt(value); } }
     public int DaysSick { get; private set; }
 
     public void OnEndOfDay()
@@ -628,6 +628,22 @@ public class HealthStatus : MonoBehaviour
         {
             healthData.AddHomesicknessValue(value);
         }
+    }
+
+    public bool SetHomesicknessValue(string name, float value)
+    {
+        float newValue = Mathf.Clamp(value, 1, 10);
+        IEnumerable<ProtagonistHealthData> datas = characters.Where(character => character.CharacterData.name == name);
+        foreach(ProtagonistHealthData data in datas)
+        {
+            if(!Mathf.Approximately(data.HomesickessStatus.Value, newValue))
+            {
+                data.SetHomesicknessValue(newValue);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void OnItemsStolen(int count = 1)

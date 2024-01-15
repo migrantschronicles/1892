@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Localization.Plugins.XLIFF.V20;
 using UnityEngine;
 
 /**
@@ -96,7 +97,6 @@ public class DialogConditionProvider : MonoBehaviour
     {
         foreach(string condition in ArticyGlobalVariables.VariableNames)
         {
-            // Only handle bool conditions
             if(ArticyGlobalVariables.Default.IsVariableOfTypeBoolean(condition))
             {
                 if(ArticyGlobalVariables.Default.GetVariableByString<bool>(condition))
@@ -104,10 +104,10 @@ public class DialogConditionProvider : MonoBehaviour
                     // If  the variable is set by default, add it  to the global conditions.
                     globalConditions.Add(condition);
                 }
-
-                // Add a callback that gets called whenever the value changes.
-                ArticyGlobalVariables.Default.Notifications.AddListener(condition, OnArticyVariableChanged);
             }
+
+            // Add a callback that gets called whenever the value changes.
+            ArticyGlobalVariables.Default.Notifications.AddListener(condition, OnArticyVariableChanged);
         }
 
         NewGameManager.Instance.onMoneyChanged += OnMoneyChanged;
@@ -143,6 +143,17 @@ public class DialogConditionProvider : MonoBehaviour
         return protagonistName;
     }
 
+    private string GetUnityCharacter(string articyName)
+    {
+        switch(articyName)
+        {
+            case "Metti": return "Mattis";
+            case "Mrei": return "Mreis";
+        }
+
+        return articyName;
+    }
+
     private void OnHealthChanged(ProtagonistHealthData data)
     {
         string articyPrefix = GetArticyPrefix(data.CharacterData.name);
@@ -164,35 +175,57 @@ public class DialogConditionProvider : MonoBehaviour
         {
             Debug.Log($"On Articy Condition changed: {condition} ({value})");
         }
-        
-        if((bool) value)
-        {
-            // If the new value is true, add it to our conditions.
-            globalConditions.Add(condition);
 
-            HistoryModeRoute historyModeRoute = HistoryModeRoute.None;
-            switch (condition)
+        if(ArticyGlobalVariables.Default.IsVariableOfTypeBoolean(condition))
+        {
+            if ((bool)value)
             {
-                case "Misc.HistoryModeLeHavre": historyModeRoute = HistoryModeRoute.LeHavre; break;
-                case "Misc.HistoryModeRotterdam": historyModeRoute = HistoryModeRoute.Rotterdam; break;
-                case "Misc.HistoryModeAntwerp": historyModeRoute = HistoryModeRoute.Antwerp; break;
+                // If the new value is true, add it to our conditions.
+                globalConditions.Add(condition);
+
+                HistoryModeRoute historyModeRoute = HistoryModeRoute.None;
+                switch (condition)
+                {
+                    case "Misc.HistoryModeLeHavre": historyModeRoute = HistoryModeRoute.LeHavre; break;
+                    case "Misc.HistoryModeRotterdam": historyModeRoute = HistoryModeRoute.Rotterdam; break;
+                    case "Misc.HistoryModeAntwerp": historyModeRoute = HistoryModeRoute.Antwerp; break;
+                }
+
+                if (historyModeRoute != HistoryModeRoute.None)
+                {
+                    NewGameManager.Instance.OnHistoryModeRouteSelected(historyModeRoute);
+                }
+            }
+            else
+            {
+                // If the new value is false, remove it from our conditions.
+                globalConditions.Remove(condition);
             }
 
-            if (historyModeRoute != HistoryModeRoute.None)
+            if (onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChangedEventData onConditionsChanged))
             {
-                NewGameManager.Instance.OnHistoryModeRouteSelected(historyModeRoute);
+                // Call the delegate.
+                onConditionsChanged.onConditionsChanged?.Invoke(onConditionsChanged.context);
             }
         }
-        else
+        else if(condition.StartsWith("Health.") && condition.EndsWith("Homesickness"))
         {
-            // If the new value is false, remove it from our conditions.
-            globalConditions.Remove(condition);
-        }
-
-        if (onConditionsChangedListeners.TryGetValue(condition, out OnConditionsChangedEventData onConditionsChanged))
-        {
-            // Call the delegate.
-            onConditionsChanged.onConditionsChanged?.Invoke(onConditionsChanged.context);
+            string articyName = condition.Replace("Health.", "").Replace("Homesickness", "");
+            string unityName = GetUnityCharacter(articyName);
+            ProtagonistHealthData data = NewGameManager.Instance.HealthStatus.GetHealthStatus(unityName);
+            if (data != null)
+            {
+                // Only do something if the value (unclamped) differs
+                if ((int)value != data.HomesickessStatus.ValueInt)
+                {
+                    // If the homesickness value is not changed (if value is e.g. 0, and the clamped value does not differ)
+                    if(!NewGameManager.Instance.HealthStatus.SetHomesicknessValue(unityName, (int)value))
+                    {
+                        // Set the value in Articy, so Articy does not use wrong values.
+                        ArticyGlobalVariables.Default.SetVariableByString($"Health.{articyName}Homesickness", data.HomesickessStatus.ValueInt);
+                    }
+                }
+            }
         }
     }
 

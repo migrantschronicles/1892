@@ -9,7 +9,7 @@ public class FamilyMainQuest : MonoBehaviour
     private Quest familyMainQuest;
 
     private DateTime failedDate = new DateTime(1892, 8, 15);
-    private string targetLocation = "NewYorkCity";
+    private string targetLocation = "ElisIsland";
 
     private void Start()
     {
@@ -86,5 +86,6 @@ public class FamilyMainQuest : MonoBehaviour
         NewGameManager.Instance.QuestManager.FinishQuest(familyMainQuest);
         NewGameManager.Instance.onDateChanged -= OnDateChanged;
         NewGameManager.Instance.onLocationChanged -= OnLocationChanged;
+        NewGameManager.Instance.conditions.AddCondition("Misc.ArrivedInTime", true);
     }
 }

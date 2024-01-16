@@ -121,6 +121,7 @@ public class QuestManager : MonoBehaviour
 
     private void OnQuestFinished(Quest quest)
     {
+        NewGameManager.Instance.conditions.AddConditions(quest.SetFinishedConditions);
         onQuestFinished?.Invoke(quest);
     }
 

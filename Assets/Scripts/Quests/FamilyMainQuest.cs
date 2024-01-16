@@ -86,6 +86,5 @@ public class FamilyMainQuest : MonoBehaviour
         NewGameManager.Instance.QuestManager.FinishQuest(familyMainQuest);
         NewGameManager.Instance.onDateChanged -= OnDateChanged;
         NewGameManager.Instance.onLocationChanged -= OnLocationChanged;
-        NewGameManager.Instance.conditions.AddCondition("Misc.ArrivedInTime", true);
     }
 }

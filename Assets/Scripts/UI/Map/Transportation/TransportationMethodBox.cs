@@ -13,6 +13,8 @@ public class TransportationMethodBox : MonoBehaviour
     [SerializeField]
     private Text moneyText;
     [SerializeField]
+    private Text timeText;
+    [SerializeField]
     private Image handle;
     [SerializeField]
     private bool useFerry = false;
@@ -22,6 +24,7 @@ public class TransportationMethodBox : MonoBehaviour
         set
         {
             moneyText.text = value.cost.ToString();
+            timeText.text = value.activityPointsCost.ToString();
         }
     }
 

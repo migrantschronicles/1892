@@ -195,18 +195,19 @@ public class DialogAnswerBubble : MonoBehaviour, IAnimatedText
 
     private void OnLocalizedTextChanged(Component targetComponent, string localizedText)
     {
-        text.text = localizedText;
+        string resolvedText = DialogSystem.Instance.ResolveDialogLine(localizedText);
+        text.text = resolvedText;
 
         if(DialogSystem.Instance.IsCurrentBranch(this))
         {
             // Check that this decision option is a current one and not an old one.
-            DialogSystem.Instance.RegisterAnimator(this, localizedText);
+            DialogSystem.Instance.RegisterAnimator(this, resolvedText);
         }
     }
 
     public void SetText(string value)
     {
-        text.text = value;
+        text.text = DialogSystem.Instance.ResolveDialogLine(value);
     }
 
     public void SetButtonEnabled(bool enabled = true)

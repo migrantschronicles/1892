@@ -439,4 +439,20 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
 
         return currentChat.PausedOn == flowObject && !currentChat.IsWaitingForDecision;
     }
+
+    public string ResolveDialogLine(string line)
+    {
+        return line
+            .Replace("[Misc.Money]", NewGameManager.Instance.money.ToString())
+            .Replace("[Health.ElisDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Elis")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.ElisDaysHungry]")
+            .Replace("[Health.MreiDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Mreis")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.MreiDaysHungry]")
+            .Replace("[Health.MreisDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Mreis")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.MreiDaysHungry]")
+            .Replace("[Health.MettiDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Mattis")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.MettiDaysHungry]")
+            .Replace("[Health.MattiDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Mattis")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.MettiDaysHungry]")
+            .Replace("[Health.MattisDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Mattis")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.MettiDaysHungry]")
+            .Replace("[Health.MichelDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Michel")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.MichelDaysHungry]")
+            .Replace("[Health.PeterDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Peter")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.PeterDaysHungry]")
+            .Replace("[Health.SusannaDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Susanna")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.SusannaDaysHungry]")
+            .Replace("[Misc.Date]", NewGameManager.Instance.date.ToString("m"));
+    }
 }

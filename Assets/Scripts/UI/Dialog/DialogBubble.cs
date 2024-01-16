@@ -212,9 +212,11 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
             estrangedText = DialogSystem.Instance.ConditionallyEstrangeLine(localizedText);
         }
 
+        string resolvedText = DialogSystem.Instance.ResolveDialogLine(estrangedText);
+
         float oldHeight = rectTransform.rect.height;
         var text = targetComponent as Text;
-        text.text = estrangedText;
+        text.text = resolvedText;
         UpdateHeight();
         float newHeight = rectTransform.rect.height;
         if(!Mathf.Approximately(oldHeight, newHeight))
@@ -225,7 +227,7 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
         if(DialogSystem.Instance.IsFlowObjectActive(FlowObject))
         {
             // Just in case the language changed for bubbles before the current one.
-            DialogSystem.Instance.RegisterAnimator(this, estrangedText);
+            DialogSystem.Instance.RegisterAnimator(this, resolvedText);
         }
     }
 
@@ -258,6 +260,6 @@ public class DialogBubble : MonoBehaviour, IAnimatedText
      */
     public void SetText(string value)
     {
-        text.text = value;
+        text.text = DialogSystem.Instance.ResolveDialogLine(value);
     }
 }

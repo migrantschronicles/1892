@@ -8,7 +8,7 @@ public class FamilyMainQuest : MonoBehaviour
     [SerializeField]
     private Quest familyMainQuest;
 
-    private DateTime failedDate = new DateTime(1892, 9, 10);
+    private DateTime failedDate = new DateTime(1892, 8, 15);
     private string targetLocation = "NewYorkCity";
 
     private void Start()

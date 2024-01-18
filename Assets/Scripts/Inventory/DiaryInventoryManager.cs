@@ -9,11 +9,9 @@ public class DiaryInventoryManager : InventoryManager
     [SerializeField]
     private DiaryInventoryContainer bag0;
     [SerializeField]
-    private DiaryInventoryContainer bag1;
-    [SerializeField]
-    private DiaryInventoryContainer bag2;
-    [SerializeField]
     private Text descriptionText;
+    [SerializeField]
+    private Text nameText;
     [SerializeField]
     private GameObject deleteItemPopupPrefab;
 
@@ -23,8 +21,6 @@ public class DiaryInventoryManager : InventoryManager
     {
         base.Start();
         bag0.onRemoveItem += OnRemoveItem;
-        bag1.onRemoveItem += OnRemoveItem;
-        bag2.onRemoveItem += OnRemoveItem;
         SetBagCount(NewGameManager.Instance.inventory.GetBagCount());
         ResetItems(NewGameManager.Instance.inventory.Items);
         LevelInstance.Instance.IngameDiary.Diary.onDiaryStatusChanged += (status) =>
@@ -40,8 +36,6 @@ public class DiaryInventoryManager : InventoryManager
     {
         base.SetBagCount(newBagCount);
         bag0.SetUnlocked(bagCount >= 1);
-        bag1.SetUnlocked(bagCount >= 2);
-        bag2.SetUnlocked(bagCount >= 3);
     }
 
     protected override InventoryContainer GetContainer(int bagIndex)
@@ -49,8 +43,6 @@ public class DiaryInventoryManager : InventoryManager
         switch(bagIndex)
         {
             case 0: return bag0;
-            case 1: return bag1;
-            case 2: return bag2;
             default: Debug.Assert(false); return null;
         }
     }
@@ -74,6 +66,8 @@ public class DiaryInventoryManager : InventoryManager
         base.OnSlotClicked(slot);
         string description = LocalizationManager.Instance.GetLocalizedString(slot.Item.Description, slot.Item.Price);
         descriptionText.text = description;
+        string itemName = LocalizationManager.Instance.GetLocalizedString(slot.Item.Name);
+        nameText.text = itemName;
 
         selectedSlot = slot;
         selectedSlot.SetSelected(true);
@@ -97,14 +91,6 @@ public class DiaryInventoryManager : InventoryManager
                 case 0:
                     if (container != bag0) return;
                     break;
-
-                case 1:
-                    if (container != bag1) return;
-                    break;
-
-                case 2:
-                    if (container != bag2) return;
-                    break;
             }
 
             if (TryRemoveItemAt(selectedSlot.X, selectedSlot.Y))
@@ -118,6 +104,7 @@ public class DiaryInventoryManager : InventoryManager
                 else
                 {
                     descriptionText.text = "";
+                    nameText.text = "";
                     selectedSlot = null;
                 }
             }

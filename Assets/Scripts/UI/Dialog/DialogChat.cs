@@ -492,7 +492,14 @@ public class DialogChat : MonoBehaviour
                 Item item = NewGameManager.Instance.ItemManager.GetItemByTechnicalName(technicalName);
                 if(item != null)
                 {
-                    LevelInstance.Instance.OpenShopForItemRemoved(item);
+                    if(itemRemoved.Template.Secretly.Secretly)
+                    {
+                        NewGameManager.Instance.inventory.RemoveItem(item);
+                    }
+                    else
+                    {
+                        LevelInstance.Instance.OpenShopForItemRemoved(item);
+                    }
                 }
                 else
                 {

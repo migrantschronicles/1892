@@ -174,7 +174,7 @@ public class ForegroundScene : MonoBehaviour
 
     public void OnDialogDecision()
     {
-        ProtagonistData mainProtagonist = NewGameManager.Instance.PlayableCharacterData.GetMainProtagonist();
+        ProtagonistData mainProtagonist = NewGameManager.Instance.PlayerCharacterManager.SelectedData.GetMainProtagonist();
         CharacterDialogInfo dialogInfo = NewGameManager.Instance.CharacterManager.GetCharacterInfo(mainProtagonist.technicalName);
         UpdateCharacter(ref rightCharacter, ref rightDialogInfo, ref rightAnimController, dialogInfo, right);
         foreach (IAnimationController controller in rightAnimController)
@@ -187,7 +187,7 @@ public class ForegroundScene : MonoBehaviour
     {
         if(rightCharacter)
         {
-            ProtagonistData data = NewGameManager.Instance.PlayableCharacterData.GetProtagonistDataByTechnicalName(technicalName);
+            ProtagonistData data = NewGameManager.Instance.PlayerCharacterManager.SelectedData.GetProtagonistDataByTechnicalName(technicalName);
             if(data != null)
             {
                 ProtagonistAnimationController[] controllers = rightCharacter.GetComponentsInChildren<ProtagonistAnimationController>();

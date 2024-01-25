@@ -11,19 +11,22 @@ public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
+    public CharacterType SelectedCharacter { get; set; }
+
     private void Awake()
     {
         Instance = this;
     }
 
-    public void StartNewGame(string username, bool isHistoryMode)
+    public void StartNewGame(string username, CharacterType character, bool isHistoryMode)
     {
-        StartCoroutine(StartNewGameRoutine(username, isHistoryMode));
+        StartCoroutine(StartNewGameRoutine(username, character, isHistoryMode));
     }
 
-    private IEnumerator StartNewGameRoutine(string username, bool isHistoryMode)
+    private IEnumerator StartNewGameRoutine(string username, CharacterType character, bool isHistoryMode)
     {
         DontDestroyOnLoad(gameObject);
+        SelectedCharacter = character;
 
         AudioManager.Instance.FadeOutMusic();
         SceneManager.LoadScene("Pfaffenthal");

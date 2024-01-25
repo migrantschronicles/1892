@@ -22,6 +22,7 @@ public class MainMenuDiary : MonoBehaviour
     public Animator DiaryAnimator { get { return diaryAnimator; } }
     public Diary Diary { get { return diary; } }
     public bool IsHistoryMode { get; private set; }
+    public CharacterType SelectedCharacter { get; set; } = CharacterType.None;
 
     private void Awake()
     {
@@ -164,6 +165,6 @@ public class MainMenuDiary : MonoBehaviour
 
     public void StartNewGame(string username)
     {
-        LevelManager.Instance.StartNewGame(username, IsHistoryMode);
+        LevelManager.Instance.StartNewGame(username, SelectedCharacter, IsHistoryMode);
     }
 }

@@ -22,7 +22,7 @@ public class EndDaySleepPopupBase : MonoBehaviour, IPopup
 
     protected void CreatePortraits()
     {
-        foreach(ProtagonistData data in NewGameManager.Instance.PlayableCharacterData.protagonistData)
+        foreach(ProtagonistData data in NewGameManager.Instance.PlayerCharacterManager.SelectedData.protagonistData)
         {
             GameObject endDayPortraitGO = Instantiate(endDayPortraitPrefab, endDayPortraitContainer.transform);
             EndDayPortrait portrait = endDayPortraitGO.GetComponent<EndDayPortrait>();

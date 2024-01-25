@@ -328,7 +328,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
 
     public bool IsRight(string technicalName)
     {
-        ProtagonistData protagonist = NewGameManager.Instance.PlayableCharacterData.GetProtagonistDataByTechnicalName(technicalName);
+        ProtagonistData protagonist = NewGameManager.Instance.PlayerCharacterManager.SelectedData.GetProtagonistDataByTechnicalName(technicalName);
         if(protagonist == null)
         {
             return false;

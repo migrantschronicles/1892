@@ -14,7 +14,7 @@ public class PlayableCharacterSpawn : MonoBehaviour
     {
         if(!SpawnedCharacter)
         {
-            PlayableCharacterData data = NewGameManager.Instance.PlayableCharacterData;
+            PlayableCharacterData data = NewGameManager.Instance.PlayerCharacterManager.SelectedData;
             SceneCharacterPrefab scenePrefab = data.scenePrefabs.First((prefab) => prefab.name == prefabName);
             if (scenePrefab != null)
             {

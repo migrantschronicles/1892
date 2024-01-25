@@ -24,6 +24,7 @@ public class MainMenuController : MonoBehaviour
     private MainMenuState state;
 
     public static MainMenuController Instance { get; private set; }
+    public MainMenuDiary Diary { get => mainMenuDiary; }
 
     private void Awake()
     {

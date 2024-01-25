@@ -39,6 +39,7 @@ public class CharacterSelectionPage : MonoBehaviour
             selectedOption = option;
             selectedOption.SetSelected(true);
             nextButton.SetEnabled(true);
+            MainMenuController.Instance.Diary.SelectedCharacter = option.Character;
         }
     }
 }

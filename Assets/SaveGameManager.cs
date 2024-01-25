@@ -72,7 +72,8 @@ public enum SaveGameVersion
     V1,
     V2_DateTimeFix,
     V3_TutorialActionsAdded,
-    V4_HistoryModeAdded
+    V4_HistoryModeAdded,
+    V5_CharacterAdded
 }
 
 [System.Serializable]
@@ -92,6 +93,7 @@ public class SaveData
     public List<RouteManager.DiscoveredRoute> routes = new();
     public List<TutorialFeature> completedTutorialFeatures = new();
     public bool isHistoryMode;
+    public CharacterType character;
 
     public string levelName;
     public SaveGameVersion version;
@@ -171,12 +173,13 @@ public class SaveGameManager : MonoBehaviour
 
         // E.g. here you could fill in other values if it's an old save game version.
         // For the dates it does not make sense to fill in other values.
-        //if(saveData.version < SaveGameVersion.V2_DateTimeFix)
-        //{
-        //     saveData.Date = ...
-        //}
+        if(saveData.version < SaveGameVersion.V5_CharacterAdded)
+        {
+            saveData.character = CharacterType.Elis;
+        }
 
         DontDestroyOnLoad(this);
+        LevelManager.Instance.SelectedCharacter = saveData.character;
         SceneManager.LoadScene(saveData.levelName);
         yield return null;
         NewGameManager.Instance.LoadFromSaveGame(saveData);

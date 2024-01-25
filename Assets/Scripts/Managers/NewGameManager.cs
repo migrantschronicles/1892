@@ -62,6 +62,14 @@ public enum SleepMethod
     Ship
 }
 
+public enum CharacterType
+{
+    None,
+    Elis,
+    PeterAndSusanna,
+    Michel
+}
+
 /**
  * Holds every data that is persistent between level loads.
  * Is instantiated once the first city loads and persists until the end of the game.
@@ -128,6 +136,7 @@ public class NewGameManager : MonoBehaviour
     public QuestManager QuestManager { get { return GetComponent<QuestManager>(); } }
     public CharacterManager CharacterManager { get { return GetComponent<CharacterManager>(); } }
     public TutorialManager TutorialManager { get {  return GetComponent<TutorialManager>(); } }
+    public PlayerCharacterManager PlayerCharacterManager { get => GetComponent<PlayerCharacterManager>(); }
 
     // Stealing
     [Tooltip("The probability (weight) that money can be stolen")]
@@ -183,7 +192,7 @@ public class NewGameManager : MonoBehaviour
     //public event OnTimeChangedDelegate onTimeChanged;
 
     public PlayableCharacterData TEST_PlayableCharacter;
-    public PlayableCharacterData PlayableCharacterData { get { return TEST_PlayableCharacter; } }
+    //public PlayableCharacterData PlayableCharacterData { get { return TEST_PlayableCharacter; } }
 
     public delegate void OnLocationChanged(string location);
     public event OnLocationChanged onLocationChanged;
@@ -198,11 +207,21 @@ public class NewGameManager : MonoBehaviour
             transform.SetParent(null, false);
             Instance = this;
             DontDestroyOnLoad(this);
-            money = PlayableCharacterData.startMoney;
+
+            CharacterType selectedCharacter = CharacterType.None;
+            if(LevelManager.Instance != null)
+            {
+                // If the LevelManager exixts, this is called from the main menu, either start a new game or load a save game.
+                // In both cases, this variable is set.
+                selectedCharacter = LevelManager.Instance.SelectedCharacter;
+            }
+
+            conditions.Init();
+            PlayerCharacterManager.Initialize(selectedCharacter);
+            money = PlayerCharacterManager.SelectedData.startMoney;
             inventory.Initialize();
             transportationInfo.Initialize(transportationTableCSV);
-            HealthStatus.Init(PlayableCharacterData.protagonistData);
-            conditions.Init();
+            HealthStatus.Init(PlayerCharacterManager.SelectedData.protagonistData);
 
             Journey journey = new Journey();
             journey.destination = SceneManager.GetActiveScene().name;
@@ -298,9 +317,9 @@ public class NewGameManager : MonoBehaviour
     private void Initialize()
     {
         // Add main quest
-        if(PlayableCharacterData.mainQuest)
+        if(PlayerCharacterManager.SelectedData.mainQuest)
         {
-            QuestManager.AddQuest(PlayableCharacterData.mainQuest);
+            QuestManager.AddQuest(PlayerCharacterManager.SelectedData.mainQuest);
         }
 
         LocalizationManager.Instance.OnLanguageChanged += OnLanguageChanged;
@@ -335,7 +354,6 @@ public class NewGameManager : MonoBehaviour
     public void InitNewGame(string username, bool historyMode)
     {
         userName = username;
-        InitHistoryMode(historyMode);
     }
 
     private void InitHistoryMode(bool historyMode)

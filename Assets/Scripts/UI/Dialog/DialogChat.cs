@@ -625,7 +625,7 @@ public class DialogChat : MonoBehaviour
                     }
 
                     DialogSystem.Instance.OnDialogDecision();
-                    ProtagonistData mainProtagonist = NewGameManager.Instance.PlayableCharacterData.GetMainProtagonist();
+                    ProtagonistData mainProtagonist = NewGameManager.Instance.PlayerCharacterManager.SelectedData.GetMainProtagonist();
                     if(mainProtagonist != null)
                     {
                         lastRightTechnicalName = mainProtagonist.technicalName;

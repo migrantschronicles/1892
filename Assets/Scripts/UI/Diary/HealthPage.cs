@@ -23,7 +23,7 @@ public class HealthPage : MonoBehaviour
 
     private void Start()
     {
-        int characterCount = NewGameManager.Instance.PlayableCharacterData.protagonistData.Length;
+        int characterCount = NewGameManager.Instance.PlayerCharacterManager.SelectedData.protagonistData.Length;
         switch(characterCount)
         {
             case 1:

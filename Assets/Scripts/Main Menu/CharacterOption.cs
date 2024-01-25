@@ -5,8 +5,13 @@ using UnityEngine.UI;
 
 public class CharacterOption : MonoBehaviour
 {
+    [SerializeField]
+    private CharacterType character;
+
     private Outline outline;
     private Button button;
+
+    public CharacterType Character { get => character; }
 
     public delegate void OnSelectedEvent(CharacterOption option);
     public event OnSelectedEvent onSelected;

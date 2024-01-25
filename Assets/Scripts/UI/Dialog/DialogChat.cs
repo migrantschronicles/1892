@@ -495,6 +495,7 @@ public class DialogChat : MonoBehaviour
                     if(itemRemoved.Template.Secretly.Secretly)
                     {
                         NewGameManager.Instance.inventory.RemoveItem(item);
+                        OnTemplateHandled();
                     }
                     else
                     {

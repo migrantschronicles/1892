@@ -32,12 +32,16 @@ MonoBehaviour:
     m_WaitForCompletion: 0
     m_LocalVariables: []
   technicalName: Ntt_1C1E9645
-  sprite: {fileID: 21300000, guid: 830744612b1b77f4eada19614d5ce671, type: 3}
+  sprite: {fileID: 21300000, guid: 1bce2a6076a6e6146b369065f691c914, type: 3}
+  openedSprite: {fileID: 21300000, guid: 830744612b1b77f4eada19614d5ce671, type: 3}
+  viewedSprite: {fileID: 21300000, guid: 830744612b1b77f4eada19614d5ce671, type: 3}
   Price: 0
   Volume: 1
   MaxStackCount: 1
   SetConditions:
   - Item.PackageWithDiamonds
+  SetConditionsWhenSold: []
+  SetConditionWhenOpened: ItemViewed.PackageWithDiamonds
   category: {fileID: 0}
   stolenProbabilityWeight: 1
   references:

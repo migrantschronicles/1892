@@ -47,6 +47,11 @@ public class InventorySlot : MonoBehaviour
         image.material = material;
     }
 
+    private void OnEnable()
+    {
+        UpdateVisuals();
+    }
+
     private bool TryAddAmount(bool ghost)
     {
         int currentAmount = ghost ? ghostAmount : Amount;
@@ -98,10 +103,25 @@ public class InventorySlot : MonoBehaviour
         Width = width;
         Height = height;
         isGhostMode = ghost;
-        image.sprite = item.sprite;
+        image.sprite = GetItemSprite(item);
         TryAddAmount(ghost);
         UpdateAmountText();
         UpdateVisuals();
+    }
+
+    private Sprite GetItemSprite(Item item)
+    {
+        if(item.viewedSprite != null && isSelected)
+        {
+            return item.ViewedSprite;
+        }
+
+        if(item.openedSprite != null && !string.IsNullOrEmpty(item.SetConditionWhenOpened) && NewGameManager.Instance.conditions.HasCondition(item.SetConditionWhenOpened))
+        {
+            return item.OpenedSprite;
+        }
+
+        return item.sprite;
     }
 
     public bool IsAt(int x, int y)
@@ -190,6 +210,13 @@ public class InventorySlot : MonoBehaviour
     public void SetSelected(bool selected)
     {
         isSelected = selected;
+
+        if(!string.IsNullOrEmpty(Item.SetConditionWhenOpened) && !NewGameManager.Instance.conditions.HasCondition(Item.SetConditionWhenOpened))
+        {
+            NewGameManager.Instance.conditions.AddCondition(Item.SetConditionWhenOpened, true);
+        }
+        image.sprite = GetItemSprite(Item);
+
         UpdateVisuals();
     }
 

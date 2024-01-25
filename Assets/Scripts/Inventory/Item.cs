@@ -16,6 +16,10 @@ public class Item : ScriptableObject
     public string technicalName;
     [Tooltip("The normal sprite used in the inventory")]
     public Sprite sprite;
+    [Tooltip("The sprite used when the item was already opened. If null use sprite")]
+    public Sprite openedSprite;
+    [Tooltip("The sprite used when the item is currently viewed. If null use sprite")]
+    public Sprite viewedSprite;
     [Tooltip("The price of the item")]
     public int Price;
     [Tooltip("The number of slots it occupies (should be 1 or 2)")]
@@ -26,6 +30,8 @@ public class Item : ScriptableObject
     public string[] SetConditions;
     [Tooltip("The conditions to set if sold")]
     public string[] SetConditionsWhenSold;
+    [Tooltip("The conditions to set if viewed")]
+    public string SetConditionWhenOpened;
     [Tooltip("The category of this item")]
     public ItemCategory category;
     [Tooltip("The probability (weight) to be stolen. If an item should not be able to be stolen set it to 0." +
@@ -49,4 +55,7 @@ public class Item : ScriptableObject
             return category != null ? category.type : ItemType.Default;
         }
     }
+
+    public Sprite ViewedSprite { get => viewedSprite ?? sprite; }
+    public Sprite OpenedSprite { get => openedSprite ?? sprite; }
 }

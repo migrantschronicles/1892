@@ -156,12 +156,6 @@ public class DialogConditionProvider : MonoBehaviour
 
     private void OnHealthChanged(ProtagonistHealthData data)
     {
-        if(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter == CharacterType.PeterAndSusanna)
-        {
-            ///@todo remove once implemented in Articy
-            return;
-        }
-
         string articyPrefix = GetArticyPrefix(data.CharacterData.name);
         ArticyGlobalVariables.Default.SetVariableByString($"Health.{articyPrefix}DaysHungry", data.HungryStatus.DaysWithoutEnoughFood);
         ArticyGlobalVariables.Default.SetVariableByString($"Health.{articyPrefix}DaysSick", data.CholeraStatus.DaysSick);
@@ -180,7 +174,7 @@ public class DialogConditionProvider : MonoBehaviour
         switch(character)
         {
             case CharacterType.Elis: AddCondition("Misc.CharacterElis", true); break;
-            case CharacterType.PeterAndSusanna: AddCondition("Misc.CharacterPeterAndSusanna", true); break;
+            case CharacterType.Punnels: AddCondition("Misc.CharacterPunnels", true); break;
             case CharacterType.Michel: AddCondition("Misc.CharacterMichel", true); break;
         }
     }

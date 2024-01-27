@@ -66,7 +66,7 @@ public enum CharacterType
 {
     None,
     Elis,
-    PeterAndSusanna,
+    Punnels,
     Michel
 }
 

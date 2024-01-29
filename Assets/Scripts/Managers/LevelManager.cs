@@ -29,7 +29,14 @@ public class LevelManager : MonoBehaviour
         SelectedCharacter = character;
 
         AudioManager.Instance.FadeOutMusic();
-        SceneManager.LoadScene("Pfaffenthal");
+        string locationToLoad = "";
+        switch(character)
+        {
+            case CharacterType.Elis: locationToLoad = "Pfaffenthal"; break;
+            case CharacterType.Punnels: locationToLoad = "Wormeldange"; break;
+            case CharacterType.Michel: locationToLoad = "Weicherdange"; break;
+        }
+        SceneManager.LoadScene(locationToLoad);
 
         yield return null;
 

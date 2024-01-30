@@ -14,198 +14,102 @@ public class EndGameDiaryEntryData
     public LocalizedString negative;
 }
 
+[System.Serializable]
+public class DiaryEntryLocationBase
+{
+    public DiaryEntry diaryEntry;
+    public LocalizedString text;
+}
+
+[System.Serializable]
+public class DiaryEntryLocation
+{
+    public string locationName;
+    public DiaryEntryLocationBase data;
+}
+
+[System.Serializable]
+public class DiaryEntryShip
+{
+    public int day;
+    public DiaryEntryLocationBase data;
+}
+
+[System.Serializable]
+public class DiaryEntryContainer
+{
+    public DiaryEntryLocation[] locations;
+    public DiaryEntryShip[] shipDays;
+    public LocalizedString[] transportationFirstDay;
+    public LocalizedString transportationOtherDays;
+    public LocalizedString lastNightHotelEnoughFood;
+    public LocalizedString lastNightHotelNotEnoughFood;
+    public LocalizedString lastNightOutsideEnoughFoodNothingStolen;
+    public LocalizedString lastNightOutsideNotEnoughFoodNothingStolen;
+    public LocalizedString lastNightOutsideEnoughFoodStolen;
+    public LocalizedString lastNightOutsideNotEnoughFoodStolen;
+    public LocalizedString[] lastNightShip;
+    public LocalizedString lastNightShipStopoverDay;
+    public LocalizedString healthNoProblems;
+    public LocalizedString healthNewProblem;
+    public LocalizedString healthNewProblems;
+    public LocalizedString healthExistingProblem;
+    public EndGameDiaryEntryData[] endGameEntries;
+
+    public DiaryEntryLocation GetEntryForLocation(string location)
+    {
+        return locations.First(l => l.locationName == location);
+    }
+
+    public DiaryEntryShip GetEntryForShip(int day)
+    {
+        return shipDays.First(s => s.day == day);
+    }
+
+    public EndGameDiaryEntryData GetEndGameEntry(string technicalName)
+    {
+        return endGameEntries.FirstOrDefault(data => data.technicalName == technicalName);
+    }
+}
+
+[System.Serializable]
+public class ElisDiaryEntryContainer
+{
+    public DiaryEntryContainer data;
+}
+
+[System.Serializable]
+public class PunnelsDiaryEntryContainer
+{
+    public DiaryEntryContainer data;
+}
+
+[System.Serializable]
+public class MichelDiaryEntryContainer
+{
+    public DiaryEntryContainer data;
+}
+
 /**
  * Generates the diary entries.
  */
 public class DiaryEntryManager : MonoBehaviour
 {
     [SerializeField]
-    private DiaryEntry pfaffenthalEntry;
-    [SerializeField]
-    private DiaryEntry luxembourgEntry;
-    [SerializeField]
-    private DiaryEntry parisEntry;
-    [SerializeField]
-    private DiaryEntry leHavreEntry;
-    [SerializeField]
-    private DiaryEntry rotterdamEntry;
-    [SerializeField]
-    private DiaryEntry bremerhavenEntry;
-    [SerializeField]
-    private DiaryEntry brusselsEntry;
-    [SerializeField]
-    private DiaryEntry marseilleEntry;
-    [SerializeField]
-    private DiaryEntry hamburgEntry;
-    [SerializeField]
-    private DiaryEntry antwerpEntry;
-    [SerializeField]
-    private DiaryEntry liverpoolEntry;
-    [SerializeField]
-    private DiaryEntry southamptonEntry;
-    [SerializeField]
-    private DiaryEntry genoaEntry;
-    [SerializeField]
-    private DiaryEntry shipDay1Entry;
-    [SerializeField]
-    private DiaryEntry shipDay2Entry;
-    [SerializeField]
-    private DiaryEntry shipDay3Entry;
-    [SerializeField]
-    private DiaryEntry shipDay4Entry;
-    [SerializeField]
-    private DiaryEntry shipDay5Entry;
-    [SerializeField]
-    private DiaryEntry shipDay6Entry;
-    [SerializeField]
-    private DiaryEntry shipDay7Entry;
-    [SerializeField]
-    private DiaryEntry shipDay8Entry;
-    [SerializeField]
-    private DiaryEntry shipDay9Entry;
-    [SerializeField]
-    private DiaryEntry shipDay10Entry;
-    [SerializeField]
-    private DiaryEntry minneapolisEntry;
-    [SerializeField]
-    private DiaryEntry villageOfBelgiumEntry;
-    [SerializeField]
-    private DiaryEntry newYorkCityEntry;
-    [SerializeField]
-    private DiaryEntry chicagoEntry;
-    [SerializeField]
-    private DiaryEntry elisIslandEntry;
-    [SerializeField]
-    private DiaryEntry bostonEntry;
-    [SerializeField]
-    private DiaryEntry philadelphiaEntry;
-    [SerializeField]
-    private DiaryEntry dubuqueEntry;
-    [SerializeField]
-    private DiaryEntry rollingstoneEntry;
-    [SerializeField]
-    private DiaryEntry stDonatusEntry;
-    [SerializeField]
-    private DiaryEntry milwaukeeEntry;
-    [SerializeField]
-    private DiaryEntry albanyEntry;
-    [SerializeField]
-    private DiaryEntry buffaloEntry;
-    [SerializeField]
-    private DiaryEntry detroitEntry;
-
-    [SerializeField]
     private LocalizedString and;
     [SerializeField]
     private LocalizedString i;
     [SerializeField]
-    private LocalizedString[] transportationFirstDay;
-    [SerializeField]
-    private LocalizedString transportationOtherDays;
-    [SerializeField]
-    private LocalizedString lastNightHotelEnoughFood;
-    [SerializeField]
-    private LocalizedString lastNightHotelNotEnoughFood;
-    [SerializeField]
-    private LocalizedString lastNightOutsideEnoughFoodNothingStolen;
-    [SerializeField]
-    private LocalizedString lastNightOutsideNotEnoughFoodNothingStolen;
-    [SerializeField]
-    private LocalizedString lastNightOutsideEnoughFoodStolen;
-    [SerializeField]
-    private LocalizedString lastNightOutsideNotEnoughFoodStolen;
-    [SerializeField]
-    private LocalizedString[] lastNightShip;
-    [SerializeField]
-    private LocalizedString lastNightShipStopoverDay;
-    [SerializeField]
-    private LocalizedString healthNoProblems;
-    [SerializeField]
-    private LocalizedString healthNewProblem;
-    [SerializeField]
-    private LocalizedString healthNewProblems;
-    [SerializeField]
-    private LocalizedString healthExistingProblem;
-    [SerializeField]
     private LocalizedString cholera;
     [SerializeField]
     private LocalizedString homesickness;
+
     [SerializeField]
-    private LocalizedString pfaffenthal;
+    private ElisDiaryEntryContainer elisEntries;
     [SerializeField]
-    private LocalizedString luxembourg;
+    private PunnelsDiaryEntryContainer punnelsEntries;
     [SerializeField]
-    private LocalizedString paris;
-    [SerializeField]
-    private LocalizedString brussels;
-    [SerializeField]
-    private LocalizedString lehavre;
-    [SerializeField]
-    private LocalizedString rotterdam;
-    [SerializeField]
-    private LocalizedString bremerhaven;
-    [SerializeField]
-    private LocalizedString antwerp;
-    [SerializeField]
-    private LocalizedString marseille;
-    [SerializeField]
-    private LocalizedString hamburg;
-    [SerializeField]
-    private LocalizedString liverpool;
-    [SerializeField]
-    private LocalizedString southampton;
-    [SerializeField]
-    private LocalizedString genoa;
-    [SerializeField]
-    private LocalizedString shipDay1;
-    [SerializeField]
-    private LocalizedString shipDay2;
-    [SerializeField]
-    private LocalizedString shipDay3;
-    [SerializeField]
-    private LocalizedString shipDay4;
-    [SerializeField]
-    private LocalizedString shipDay5;
-    [SerializeField]
-    private LocalizedString shipDay6;
-    [SerializeField]
-    private LocalizedString shipDay7;
-    [SerializeField]
-    private LocalizedString shipDay8;
-    [SerializeField]
-    private LocalizedString shipDay9;
-    [SerializeField]
-    private LocalizedString shipDay10;
-    [SerializeField]
-    private LocalizedString elisIsland;
-    [SerializeField]
-    private LocalizedString newYorkCity;
-    [SerializeField]
-    private LocalizedString chicago;
-    [SerializeField]
-    private LocalizedString boston;
-    [SerializeField]
-    private LocalizedString milwaukee;
-    [SerializeField]
-    private LocalizedString villageOfBelgium;
-    [SerializeField]
-    private LocalizedString minneapolis;
-    [SerializeField]
-    private LocalizedString rollingstone;
-    [SerializeField]
-    private LocalizedString dubuque;
-    [SerializeField]
-    private LocalizedString stDonatus;
-    [SerializeField]
-    private LocalizedString philadelphia;
-    [SerializeField]
-    private LocalizedString albany;
-    [SerializeField]
-    private LocalizedString buffalo;
-    [SerializeField]
-    private LocalizedString detroit;
-    [SerializeField]
-    private EndGameDiaryEntryData[] endGameEntries;
+    private MichelDiaryEntryContainer michelEntries;
 
     public bool IsPositiveEnding 
     { 
@@ -215,24 +119,24 @@ public class DiaryEntryManager : MonoBehaviour
         }
     }
 
-    private string GenerateTransportationInfo(DiaryEntryInfo info)
+    private string GenerateTransportationInfo(DiaryEntryInfo info, DiaryEntryContainer container)
     {
         string localizedLocation = NewGameManager.Instance.LocationManager.GetLocalizedName(info.locationName);
         if (info.daysInCity == 0)
         {
             // The day of the arrival
-            int randomIndex = Random.Range(0, transportationFirstDay.Length);
+            int randomIndex = Random.Range(0, container.transportationFirstDay.Length);
             string localizedMethod = NewGameManager.Instance.TransportationManager.GetLocalizedMethod(info.lastTransportationMethod);
-            return LocalizationManager.Instance.GetLocalizedString(transportationFirstDay[randomIndex], localizedLocation, localizedMethod);
+            return LocalizationManager.Instance.GetLocalizedString(container.transportationFirstDay[randomIndex], localizedLocation, localizedMethod);
         }
         else
         {
             // Other days
-            return LocalizationManager.Instance.GetLocalizedString(transportationOtherDays, localizedLocation);
+            return LocalizationManager.Instance.GetLocalizedString(container.transportationOtherDays, localizedLocation);
         }
     }
 
-    private string GenerateLastNight(DiaryEntryInfo info)
+    private string GenerateLastNight(DiaryEntryInfo info, DiaryEntryContainer container)
     {
         switch(info.lastSleepMethod)
         {
@@ -243,14 +147,14 @@ public class DiaryEntryManager : MonoBehaviour
                     if(info.lastStolenItems.Count == 0)
                     {
                         // Nothing got stolen, no one is hungry.
-                        return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideEnoughFoodNothingStolen);
+                        return LocalizationManager.Instance.GetLocalizedString(container.lastNightOutsideEnoughFoodNothingStolen);
                     }
                     else
                     {
                         // Something got stolen, but no one is hungry.
                         Currency currency = NewGameManager.Instance.LocationManager.GetCurrencyForLocation(info.locationName);
                         string localizedItems = GetLocalizedStolenItems(info.lastStolenItems, currency);
-                        return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideEnoughFoodStolen, localizedItems);
+                        return LocalizationManager.Instance.GetLocalizedString(container.lastNightOutsideEnoughFoodStolen, localizedItems);
                     }
                 }
                 else
@@ -258,14 +162,14 @@ public class DiaryEntryManager : MonoBehaviour
                     if(info.lastStolenItems.Count == 0)
                     {
                         // Nothing got stolen, but some one is hungry.
-                        return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideNotEnoughFoodNothingStolen);
+                        return LocalizationManager.Instance.GetLocalizedString(container.lastNightOutsideNotEnoughFoodNothingStolen);
                     }
                     else
                     {
                         // Something got stolen and someone is hungry.
                         Currency currency = NewGameManager.Instance.LocationManager.GetCurrencyForLocation(info.locationName);
                         string localizedItems = GetLocalizedStolenItems(info.lastStolenItems, currency);
-                        return LocalizationManager.Instance.GetLocalizedString(lastNightOutsideNotEnoughFoodStolen, localizedItems);
+                        return LocalizationManager.Instance.GetLocalizedString(container.lastNightOutsideNotEnoughFoodStolen, localizedItems);
                     }
                 }
             }
@@ -275,7 +179,7 @@ public class DiaryEntryManager : MonoBehaviour
                 if(info.hungryCharacters.Count == 0)
                 {
                     // Everyone had enough food.
-                    return LocalizationManager.Instance.GetLocalizedString(lastNightHotelEnoughFood);
+                    return LocalizationManager.Instance.GetLocalizedString(container.lastNightHotelEnoughFood);
                 }
                 else
                 {
@@ -293,7 +197,7 @@ public class DiaryEntryManager : MonoBehaviour
                         localizedName = GetNameForCharacter(info.hungryCharacters[0]);
                     }
 
-                    return LocalizationManager.Instance.GetLocalizedString(lastNightHotelNotEnoughFood, $"{localizedName}");
+                    return LocalizationManager.Instance.GetLocalizedString(container.lastNightHotelNotEnoughFood, $"{localizedName}");
                 }
             }
 
@@ -303,12 +207,12 @@ public class DiaryEntryManager : MonoBehaviour
                 if(!string.IsNullOrEmpty(info.stopoverLocation))
                 {
                     string localizedStopover = NewGameManager.Instance.LocationManager.GetLocalizedName(info.stopoverLocation);
-                    return LocalizationManager.Instance.GetLocalizedString(lastNightShipStopoverDay, localizedDays, localizedStopover);
+                    return LocalizationManager.Instance.GetLocalizedString(container.lastNightShipStopoverDay, localizedDays, localizedStopover);
                 }
                 else
                 {
-                    int randomIndex = Random.Range(0, lastNightShip.Length);
-                    return LocalizationManager.Instance.GetLocalizedString(lastNightShip[randomIndex], localizedDays);
+                    int randomIndex = Random.Range(0, container.lastNightShip.Length);
+                    return LocalizationManager.Instance.GetLocalizedString(container.lastNightShip[randomIndex], localizedDays);
                 }
             }
         }
@@ -366,11 +270,11 @@ public class DiaryEntryManager : MonoBehaviour
         return "NONE";
     }
 
-    private string GenerateHealthStatus(DiaryEntryInfo info)
+    private string GenerateHealthStatus(DiaryEntryInfo info, DiaryEntryContainer container)
     {
         if(info.newHealthProblems.Count == 0 && info.existingHealthProblems.Count == 0)
         {
-            return LocalizationManager.Instance.GetLocalizedString(healthNoProblems);
+            return LocalizationManager.Instance.GetLocalizedString(container.healthNoProblems);
         }
 
         string result = "";
@@ -378,14 +282,14 @@ public class DiaryEntryManager : MonoBehaviour
         {
             string localizedName = info.newHealthProblems[0].character.name;
             string localizedSickness = GetLocalizedHealthProblemType(info.newHealthProblems[0].sickness);
-            result += LocalizationManager.Instance.GetLocalizedString(healthNewProblem, localizedName, localizedSickness);
+            result += LocalizationManager.Instance.GetLocalizedString(container.healthNewProblem, localizedName, localizedSickness);
         }
         else if(info.newHealthProblems.Count > 1)
         {
             string characterNames = GetEnumerationString(new List<string>(info.newHealthProblems.Select(problem => problem.character.name)));
             string sicknesses = GetEnumerationString(new List<string>(info.newHealthProblems.Select(problem => 
                 GetLocalizedHealthProblemType(problem.sickness))));
-            result += LocalizationManager.Instance.GetLocalizedString(healthNewProblems, characterNames, sicknesses);
+            result += LocalizationManager.Instance.GetLocalizedString(container.healthNewProblems, characterNames, sicknesses);
         }
 
         if(info.existingHealthProblems.Count > 0)
@@ -397,7 +301,7 @@ public class DiaryEntryManager : MonoBehaviour
 
             result += info.existingHealthProblems
                 .Select(problem => 
-                    LocalizationManager.Instance.GetLocalizedString(healthExistingProblem, problem.character.name, 
+                    LocalizationManager.Instance.GetLocalizedString(container.healthExistingProblem, problem.character.name, 
                         GetLocalizedHealthProblemType(problem.sickness)))
                 .Aggregate((a, b) => $"{a} {b}");
         }
@@ -424,72 +328,27 @@ public class DiaryEntryManager : MonoBehaviour
         return result;
     }
 
-    private string GenerateCity(DiaryEntryInfo info)
+    private string GenerateCity(DiaryEntryInfo info, DiaryEntryContainer container)
     {
         LocalizedString value = null;
         if (info.levelMode == LevelInstanceMode.Ship)
         {
-            switch(info.daysInCity)
-            {
-                case 0: value = shipDay1; break;
-                case 1: value = shipDay2; break;
-                case 2: value = shipDay3; break;
-                case 3: value = shipDay4; break;
-                case 4: value = shipDay5; break;
-                case 5: value = shipDay6; break;
-                case 6: value = shipDay7; break;
-                case 7: value = shipDay8; break;
-                case 8: value = shipDay9; break;
-                case 9: value = shipDay10; break;
-            }
+            value = container.GetEntryForShip(info.daysInCity).data.text;
         }
         else
         {
-            switch (info.locationName)
-            {
-                case "Luxembourg": value = luxembourg; break;
-                case "Paris": value = paris; break;
-                case "Brussels": value = brussels; break;
-                case "LeHavre": value = lehavre; break;
-                case "Rotterdam": value = rotterdam; break;
-                case "Bremerhaven": value = bremerhaven; break;
-                case "Antwerp": value = antwerp; break;
-                case "Marseille": value = marseille; break;
-                case "Hamburg": value = hamburg; break;
-                case "Liverpool": value = liverpool; break;
-                case "Southampton": value = southampton; break;
-                case "Genoa": value = genoa; break;
-                case "ElisIsland": value = elisIsland; break;
-                case "NewYorkCity": value = newYorkCity; break;
-                case "Chicago": value = chicago; break;
-                case "Boston": value = boston; break;
-                case "Milwaukee": value = milwaukee; break;
-                case "VillageOfBelgium": value = villageOfBelgium; break;
-                case "Minneapolis": value = minneapolis; break;
-                case "Rollingstone": value = rollingstone; break;
-                case "Dubuque": value = dubuque; break;
-                case "StDonatus": value = stDonatus; break;
-                case "Philadelphia": value = philadelphia; break;
-                case "Albany": value = albany; break;
-                case "Buffalo": value = buffalo; break;
-                case "Detroit": value = detroit; break;
-            }
+            value = container.GetEntryForLocation(info.locationName).data.text;
         }
 
         return LocalizationManager.Instance.GetLocalizedString(value);
     }
 
-    private EndGameDiaryEntryData FindEndGameDiaryEntryData(string technicalName)
-    {
-        return endGameEntries.FirstOrDefault(data => data.technicalName == technicalName);
-    }
-
-    private string GenerateText(DiaryEntryInfo info)
+    private string GenerateText(DiaryEntryInfo info, DiaryEntryContainer container)
     {
         if(info.purpose == GeneratedDiaryEntryPurpose.EndGame)
         {
             // Generate end game entry
-            EndGameDiaryEntryData data = FindEndGameDiaryEntryData(info.endGameEntryTechnicalName);
+            EndGameDiaryEntryData data = container.GetEndGameEntry(info.endGameEntryTechnicalName);
             if(data != null)
             {
                 LocalizedString localizedString = data.hasHomesicknessVariant ? (IsPositiveEnding ? data.positive : data.negative) : data.neutral;
@@ -505,27 +364,35 @@ public class DiaryEntryManager : MonoBehaviour
             if(info.daysInCity == 0)
             {
                 // On first day, only city
-                return LocalizationManager.Instance.GetLocalizedString(shipDay1);
+                return LocalizationManager.Instance.GetLocalizedString(container.GetEntryForShip(0).data.text);
             }
 
-            string lastNight = GenerateLastNight(info);
-            string healthStatus = GenerateHealthStatus(info);
-            string city = GenerateCity(info);
+            string lastNight = GenerateLastNight(info, container);
+            string healthStatus = GenerateHealthStatus(info, container);
+            string city = GenerateCity(info, container);
             return $"{lastNight} {healthStatus} {city}";
         }
         else if(info.locationName == "Pfaffenthal")
         {
             // Special diary entry for pfaffenthal
-            return LocalizationManager.Instance.GetLocalizedString(pfaffenthal);
+            return LocalizationManager.Instance.GetLocalizedString(container.GetEntryForLocation("Pfaffenthal").data.text);
+        }
+        else if(info.locationName == "Wormeldange")
+        {
+            return LocalizationManager.Instance.GetLocalizedString(container.GetEntryForLocation("Wormeldange").data.text);
+        }
+        else if(info.locationName == "Weicherdange")
+        {
+            return LocalizationManager.Instance.GetLocalizedString(container.GetEntryForLocation("Weicherdange").data.text);
         }
         else if(info.locationName == "ElisIsland")
         {
             // Special diary entry for elis island.
-            return LocalizationManager.Instance.GetLocalizedString(elisIsland);
+            return LocalizationManager.Instance.GetLocalizedString(container.GetEntryForLocation("ElisIsland").data.text);
         }
 
         // Always generate transportation info.
-        string transporationInfo = GenerateTransportationInfo(info);
+        string transporationInfo = GenerateTransportationInfo(info, container);
 
         // Determine if it's a diary entry for when you arrived to a city or on a new day
         switch (info.purpose)
@@ -533,7 +400,7 @@ public class DiaryEntryManager : MonoBehaviour
             case GeneratedDiaryEntryPurpose.NewCity:
             {
                 // The content for the city.
-                string city = GenerateCity(info);
+                string city = GenerateCity(info, container);
 
                 return $"{transporationInfo} {city}";
             }
@@ -541,9 +408,9 @@ public class DiaryEntryManager : MonoBehaviour
             case GeneratedDiaryEntryPurpose.NewDay:
             {
                 // How last night was
-                string lastNight = GenerateLastNight(info);
+                string lastNight = GenerateLastNight(info, container);
                 // Health status
-                string healthStatus = GenerateHealthStatus(info);
+                string healthStatus = GenerateHealthStatus(info, container);
 
                 return $"{transporationInfo} {lastNight} {healthStatus}";
             }
@@ -552,56 +419,25 @@ public class DiaryEntryManager : MonoBehaviour
         return "";
     }
 
-    private DiaryEntry GetDiaryEntryForCity(DiaryEntryInfo info)
+    private DiaryEntry GetDiaryEntryForCity(DiaryEntryInfo info, DiaryEntryContainer container)
     {
         if(info.levelMode == LevelInstanceMode.Ship)
         {
-            switch(info.daysInCity)
-            {
-                case 0: return shipDay1Entry;
-                case 1: return shipDay2Entry;
-                case 2: return shipDay3Entry;
-                case 3: return shipDay4Entry;
-                case 4: return shipDay5Entry;
-                case 5: return shipDay6Entry;
-                case 6: return shipDay7Entry;
-                case 7: return shipDay8Entry;
-                case 8: return shipDay9Entry;
-                case 9: return shipDay10Entry;
-            }
+            return container.GetEntryForShip(info.daysInCity).data.diaryEntry;
         }
         else
         {
-            switch (info.locationName)
-            {
-                case "Pfaffenthal": return pfaffenthalEntry;
-                case "Luxembourg": return luxembourgEntry;
-                case "Paris": return parisEntry;
-                case "Brussels": return brusselsEntry;
-                case "LeHavre": return leHavreEntry;
-                case "Rotterdam": return rotterdamEntry;
-                case "Bremerhaven": return bremerhavenEntry;
-                case "Antwerp": return antwerpEntry;
-                case "Marseille": return marseilleEntry;
-                case "Hamburg": return hamburgEntry;
-                case "Liverpool": return liverpoolEntry;
-                case "Southampton": return southamptonEntry;
-                case "Genoa": return genoaEntry;
-                case "ElisIsland": return elisIslandEntry;
-                case "NewYorkCity": return newYorkCityEntry;
-                case "Chicago": return chicagoEntry;
-                case "Boston": return bostonEntry;
-                case "Milwaukee": return milwaukeeEntry;
-                case "VillageOfBelgium": return villageOfBelgiumEntry;
-                case "Minneapolis": return minneapolisEntry;
-                case "Rollingstone": return rollingstoneEntry;
-                case "Dubuque": return dubuqueEntry;
-                case "StDonatus": return stDonatusEntry;
-                case "Philadelphia": return philadelphiaEntry;
-                case "Albany": return albanyEntry;
-                case "Buffalo": return buffaloEntry;
-                case "Detroit": return detroitEntry;
-            }
+            return container.GetEntryForLocation(info.locationName).data.diaryEntry;
+        }
+    }
+
+    private DiaryEntryContainer GetEntryContainer()
+    {
+        switch(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter)
+        {
+            case CharacterType.Elis: return elisEntries.data;
+            case CharacterType.Punnels: return punnelsEntries.data;
+            case CharacterType.Michel: return michelEntries.data;
         }
 
         return null;
@@ -609,7 +445,7 @@ public class DiaryEntryManager : MonoBehaviour
 
     public DiaryEntryData GenerateEntry(DiaryEntryInfo info)
     {
-        DiaryEntry diaryEntry = GetDiaryEntryForCity(info);
+        DiaryEntry diaryEntry = GetDiaryEntryForCity(info, GetEntryContainer());
         if(!diaryEntry)
         {
             Debug.LogError($"Diary entry not found for {info.locationName}");
@@ -633,7 +469,7 @@ public class DiaryEntryManager : MonoBehaviour
 
     public void UpdateDiaryEntry(DiaryEntryData diaryEntryData)
     {
-        string text = GenerateText(diaryEntryData.info);
+        string text = GenerateText(diaryEntryData.info, GetEntryContainer());
 
         // Distribute text to different pages.
         List<Vector2> leftWeights = diaryEntryData.leftPage.prefab.GetComponent<IDiaryPage>().GetTextFieldWeights();

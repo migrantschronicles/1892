@@ -193,6 +193,12 @@ public class DiaryEntryManager : MonoBehaviour
     [SerializeField]
     private LocalizedString philadelphia;
     [SerializeField]
+    private LocalizedString albany;
+    [SerializeField]
+    private LocalizedString buffalo;
+    [SerializeField]
+    private LocalizedString detroit;
+    [SerializeField]
     private EndGameDiaryEntryData[] endGameEntries;
 
     public bool IsPositiveEnding 
@@ -458,6 +464,9 @@ public class DiaryEntryManager : MonoBehaviour
                 case "Dubuque": value = dubuque; break;
                 case "StDonatus": value = stDonatus; break;
                 case "Philadelphia": value = philadelphia; break;
+                case "Albany": value = albany; break;
+                case "Buffalo": value = buffalo; break;
+                case "Detroit": value = detroit; break;
             }
         }
 

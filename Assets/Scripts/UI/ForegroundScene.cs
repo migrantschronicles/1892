@@ -172,10 +172,9 @@ public class ForegroundScene : MonoBehaviour
         }
     }
 
-    public void OnDialogDecision()
+    public void OnDialogDecision(string speakerTechnicalName)
     {
-        ProtagonistData mainProtagonist = NewGameManager.Instance.PlayerCharacterManager.SelectedData.GetMainProtagonist();
-        CharacterDialogInfo dialogInfo = NewGameManager.Instance.CharacterManager.GetCharacterInfo(mainProtagonist.technicalName);
+        CharacterDialogInfo dialogInfo = NewGameManager.Instance.CharacterManager.GetCharacterInfo(speakerTechnicalName);
         UpdateCharacter(ref rightCharacter, ref rightDialogInfo, ref rightAnimController, dialogInfo, right);
         foreach (IAnimationController controller in rightAnimController)
         {

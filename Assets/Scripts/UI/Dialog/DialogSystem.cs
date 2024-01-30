@@ -71,7 +71,7 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
 
     public delegate void OnDialogLineEvent(string speakerTechnicalName);
     public event OnDialogLineEvent onDialogLine;
-    public delegate void OnDialogDecisionEvent();
+    public delegate void OnDialogDecisionEvent(string speakerTechnicalName);
     public event OnDialogDecisionEvent onDialogDecision;
 
     private GameObject content;
@@ -404,10 +404,10 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
         onDialogLine?.Invoke(technicalName);
     }
 
-    public void OnDialogDecision()
+    public void OnDialogDecision(string technicalName)
     {
         NewGameManager.Instance.HealthStatus.OnDialogDecision();
-        onDialogDecision?.Invoke();
+        onDialogDecision?.Invoke(technicalName);
     }
 
     public bool IsCurrentBranch(DialogAnswerBubble bubble)

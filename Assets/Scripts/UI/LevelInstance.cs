@@ -1083,11 +1083,11 @@ public class LevelInstance : MonoBehaviour
         }
     }
 
-    private void OnDialogDecision()
+    private void OnDialogDecision(string speakerTechnicalName)
     {
         if(mode == Mode.Dialog && overlayMode == OverlayMode.None)
         {
-            foregroundScene.OnDialogDecision();
+            foregroundScene.OnDialogDecision(speakerTechnicalName);
         }
     }
 

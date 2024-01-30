@@ -607,12 +607,18 @@ public class DialogChat : MonoBehaviour
                 // Multiple branches, so it's a decision.
                 if (!IsWaitingForDecision)
                 {
+                    Branch firstBranch = null;
                     foreach (var branch in branchesWithText)
                     {
                         // we filter those out that are not valid
                         if (!branch.IsValid)
                         {
                             continue;
+                        }
+
+                        if(firstBranch == null)
+                        {
+                            firstBranch = branch;
                         }
 
                         GameObject bubbleGO = Instantiate(answerPrefab, transform);
@@ -625,7 +631,8 @@ public class DialogChat : MonoBehaviour
                         currentAnswers.Add(bubble);
                     }
 
-                    DialogSystem.Instance.OnDialogDecision();
+                    string technicalName = DialogSystem.Instance.GetTechnicalNameOfSpeaker(firstBranch.Target);
+                    DialogSystem.Instance.OnDialogDecision(technicalName);
                     ProtagonistData mainProtagonist = NewGameManager.Instance.PlayerCharacterManager.SelectedData.GetMainProtagonist();
                     if(mainProtagonist != null)
                     {

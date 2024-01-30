@@ -305,7 +305,7 @@ public class TutorialBlur : MonoBehaviour
         pfaffenthal_OnMadameHutain?.Invoke();
     }
 
-    private void OnDialogDecision()
+    private void OnDialogDecision(string technicalName)
     {
         if (TutorialManager.Instance.HasCompleted(TutorialFeature.DialogDecision))
         {

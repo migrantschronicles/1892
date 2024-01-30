@@ -87,6 +87,12 @@ public class DiaryEntryManager : MonoBehaviour
     private DiaryEntry stDonatusEntry;
     [SerializeField]
     private DiaryEntry milwaukeeEntry;
+    [SerializeField]
+    private DiaryEntry albanyEntry;
+    [SerializeField]
+    private DiaryEntry buffaloEntry;
+    [SerializeField]
+    private DiaryEntry detroitEntry;
 
     [SerializeField]
     private LocalizedString and;
@@ -592,6 +598,9 @@ public class DiaryEntryManager : MonoBehaviour
                 case "Dubuque": return dubuqueEntry;
                 case "StDonatus": return stDonatusEntry;
                 case "Philadelphia": return philadelphiaEntry;
+                case "Albany": return albanyEntry;
+                case "Buffalo": return buffaloEntry;
+                case "Detroit": return detroitEntry;
             }
         }
 

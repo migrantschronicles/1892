@@ -176,6 +176,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private DialogButton introductoryDialogButton;
     [SerializeField]
+    private DialogCondition introductoryDialogCondition;
+    [SerializeField]
     private DialogButton[] daysDialogButtons;
     [SerializeField]
     private int maxDialogsPerDay = -1;
@@ -947,36 +949,46 @@ public class LevelInstance : MonoBehaviour
                     mode = Mode.None;
                     UpdateShowSeasickness();
 
+                    bool bIntroductoryDialog = false;
                     if(introductoryDialogButton != null && !hasShownIntroductoryDialog)
                     {
-                        StartDialog(introductoryDialogButton);
-                        introductoryDialogButton.gameObject.SetActive(false);
                         hasShownIntroductoryDialog = true;
-                        OnIntroductoryDialogStarted?.Invoke();
-                    }
-                    else if (LocationName == "ElisIsland" && CurrentScene.SceneName == "detention")
-                    {
-                        if(detentionDialogsShown < CurrentScene.DaysInScene)
+                        introductoryDialogButton.gameObject.SetActive(false);
+
+                        if (introductoryDialogCondition.Test())
                         {
-                            StartDialog(daysDialogButtons[CurrentScene.DaysInScene]);
-                            daysDialogButtons[CurrentScene.DaysInScene].gameObject.SetActive(false);
-                            ++detentionDialogsShown;
-                            SetBackButtonVisible(false);
+                            StartDialog(introductoryDialogButton);
+                            OnIntroductoryDialogStarted?.Invoke();
+                            bIntroductoryDialog = true;
                         }
                     }
-                    else if(NewGameManager.Instance.HealthStatus.Characters.Any(character => character.HungryStatus.DaysWithoutEnoughFood >= 2))
-                    {
-                        if(hungryIntroductoryDialogButton != null && !hasShownSpecialIntroductoryDialog)
-                        {
-                            if(hungryIntroductoryDialogButton.Chat != null)
-                            {
-                                Destroy(hungryIntroductoryDialogButton.Chat.gameObject);
-                                hungryIntroductoryDialogButton.Chat = null;
-                            }
 
-                            StartDialog(hungryIntroductoryDialogButton);
-                            hungryIntroductoryDialogButton.gameObject.SetActive(false);
-                            hasShownSpecialIntroductoryDialog = true;
+                    if (!bIntroductoryDialog)
+                    {
+                        if (LocationName == "ElisIsland" && CurrentScene.SceneName == "detention")
+                        {
+                            if (detentionDialogsShown < CurrentScene.DaysInScene)
+                            {
+                                StartDialog(daysDialogButtons[CurrentScene.DaysInScene]);
+                                daysDialogButtons[CurrentScene.DaysInScene].gameObject.SetActive(false);
+                                ++detentionDialogsShown;
+                                SetBackButtonVisible(false);
+                            }
+                        }
+                        else if (NewGameManager.Instance.HealthStatus.Characters.Any(character => character.HungryStatus.DaysWithoutEnoughFood >= 2))
+                        {
+                            if (hungryIntroductoryDialogButton != null && !hasShownSpecialIntroductoryDialog)
+                            {
+                                if (hungryIntroductoryDialogButton.Chat != null)
+                                {
+                                    Destroy(hungryIntroductoryDialogButton.Chat.gameObject);
+                                    hungryIntroductoryDialogButton.Chat = null;
+                                }
+
+                                StartDialog(hungryIntroductoryDialogButton);
+                                hungryIntroductoryDialogButton.gameObject.SetActive(false);
+                                hasShownSpecialIntroductoryDialog = true;
+                            }
                         }
                     }
                 }

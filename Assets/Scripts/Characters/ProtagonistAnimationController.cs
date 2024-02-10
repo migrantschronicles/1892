@@ -25,20 +25,26 @@ public class ProtagonistAnimationController : IAnimationController
 
     public string ProtagonistName { get { return protagonistName; } }
     private float stateAnimationTimer = -1.0f;
+    private bool IsProtagonist { get => NewGameManager.Instance && NewGameManager.Instance.PlayerCharacterManager.HasPlayerCharacter(ProtagonistName); }
 
     private void Start()
     {
-        if(!LevelInstance.Instance.ShouldOverrideProtagonistAnimState)
+        if(IsProtagonist)
         {
-            ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
-            healthData.onHealthStateChanged += OnHealthStateChanged;
-            OnHealthStateChanged(healthData);
+            if(!LevelInstance.Instance.ShouldOverrideProtagonistAnimState)
+            {
+                ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
+                healthData.onHealthStateChanged += OnHealthStateChanged;
+                OnHealthStateChanged(healthData);
+            }
+
+            UpdateValues();
         }
     }
 
     private void OnDestroy()
     {
-        if(NewGameManager.Instance && !LevelInstance.Instance.ShouldOverrideProtagonistAnimState)
+        if(NewGameManager.Instance && IsProtagonist && !LevelInstance.Instance.ShouldOverrideProtagonistAnimState)
         {
             ProtagonistHealthData healthData = NewGameManager.Instance.HealthStatus.GetHealthStatus(protagonistName);
             healthData.onHealthStateChanged -= OnHealthStateChanged;
@@ -47,7 +53,17 @@ public class ProtagonistAnimationController : IAnimationController
 
     private void OnEnable()
     {
-        if(LevelInstance.Instance.ShouldOverrideProtagonistAnimState)
+        if(!IsProtagonist)
+        {
+            return;
+        }
+
+        UpdateValues();
+    }
+
+    private void UpdateValues()
+    {
+        if (LevelInstance.Instance.ShouldOverrideProtagonistAnimState)
         {
             GetAnimator().SetInteger("State", (int)LevelInstance.Instance.OverrideProtagonistAnimState);
         }
@@ -75,7 +91,7 @@ public class ProtagonistAnimationController : IAnimationController
 
     private void Update()
     {
-        if(stateAnimationTimer > 0.0f)
+        if(IsProtagonist && stateAnimationTimer > 0.0f)
         {
             stateAnimationTimer -= Time.deltaTime;
             if(stateAnimationTimer <= 0.0f)

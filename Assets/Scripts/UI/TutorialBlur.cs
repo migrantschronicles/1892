@@ -266,11 +266,21 @@ public class TutorialBlur : MonoBehaviour
             luxembourg_diaryClosed = true;
             luxembourg_OnDiaryClosed?.Invoke();
         }
-        else if(LevelInstance.Instance.LocationName == "Luxembourg" && !luxembourg_openAgain && pfaffenthal_introductoryDialog)
+        else if(LevelInstance.Instance.LocationName == "Luxembourg" && !luxembourg_openAgain)
         {
-            pfaffenthal_introductoryDialogEnded = true;
-            luxembourg_openAgain = true;
-            luxembourg_OnOpenAgain?.Invoke();
+            if (NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter == CharacterType.Elis)
+            {
+                if(pfaffenthal_introductoryDialog)
+                {
+                    pfaffenthal_introductoryDialogEnded = true;
+                    luxembourg_openAgain = true;
+                    luxembourg_OnOpenAgain?.Invoke();
+                }
+            }
+            else
+            {
+                LevelInstance.Instance.UI.IngameDiary.Diary.onDiaryStatusChanged += OnDiaryStatusChanged;
+            }
         }
         else if(pfaffenthal_acceptTransfer && !pfaffenthal_shopClosed)
         {
@@ -393,6 +403,16 @@ public class TutorialBlur : MonoBehaviour
         {
             LevelInstance.Instance.UI.IngameDiary.Diary.onDiaryStatusChanged -= OnDiaryStatusChanged;
             luxembourg_OnDiaryOpened?.Invoke();
+        }
+        else if(status == OpenStatus.Closed)
+        {
+            if(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter != CharacterType.Elis)
+            {
+                LevelInstance.Instance.UI.IngameDiary.Diary.onDiaryStatusChanged -= OnDiaryStatusChanged;
+                pfaffenthal_introductoryDialogEnded = true;
+                luxembourg_openAgain = true;
+                luxembourg_OnOpenAgain?.Invoke();
+            }
         }
     }
 

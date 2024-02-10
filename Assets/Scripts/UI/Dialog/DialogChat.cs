@@ -644,7 +644,7 @@ public class DialogChat : MonoBehaviour
         else
         {
             OnDialogEnded();
-            if((LevelInstance.Instance.LocationName != "Pfaffenthal" && LevelInstance.Instance.LocationName != "Luxembourg") || 
+            if((!LevelInstance.Instance.IsStartLocation && LevelInstance.Instance.LocationName != "Luxembourg") || 
                 LevelInstance.Instance.IntroductoryDialogButton != DialogSystem.Instance.CurrentButton)
             {
                 LevelInstance.Instance.OnBack();
@@ -755,7 +755,7 @@ public class DialogChat : MonoBehaviour
 
     private void HandleCloseButtonClicked()
     {
-        if ((LevelInstance.Instance.LocationName == "Pfaffenthal" || LevelInstance.Instance.LocationName == "Luxembourg") && 
+        if ((LevelInstance.Instance.IsStartLocation || LevelInstance.Instance.LocationName == "Luxembourg") && 
             DialogSystem.Instance.CurrentButton == LevelInstance.Instance.IntroductoryDialogButton)
         {
             TutorialManager.Instance.Blur.OnExitClicked();

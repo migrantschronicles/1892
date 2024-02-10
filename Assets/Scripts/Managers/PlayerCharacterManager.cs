@@ -25,10 +25,15 @@ public class PlayerCharacterManager : MonoBehaviour
     {
         if(character == CharacterType.None)
         {
-            character = CharacterType.Elis;
+            character = CharacterType.Punnels;
         }
 
         selectedCharacter = character;
         NewGameManager.Instance.conditions.InitCharacter(selectedCharacter);
+    }
+
+    public bool HasPlayerCharacter(string characterName)
+    {
+        return SelectedEntry.Data.protagonistData.Any((character) => character.name == characterName);
     }
 }

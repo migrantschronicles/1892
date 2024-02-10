@@ -635,7 +635,7 @@ public class Shop : MonoBehaviour
 
     public void CloseShop()
     {
-        if (LevelInstance.Instance.LocationName == "Pfaffenthal")
+        if (LevelInstance.Instance.IsStartLocation || LevelInstance.Instance.LocationName == "Luxembourg")
         {
             TutorialManager.Instance.Blur.OnExitClicked();
         }

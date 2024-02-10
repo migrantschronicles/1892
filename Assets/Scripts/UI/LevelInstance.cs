@@ -303,6 +303,7 @@ public class LevelInstance : MonoBehaviour
             return SceneManager.GetActiveScene().name; 
         } 
     }
+    public bool IsStartLocation { get => LocationName == "Pfaffenthal" || LocationName == "Weicherdange" || LocationName == "Wormeldange"; }
     private PopupManager PopupManager { get { return GetComponent<PopupManager>(); } }
 
     public delegate void OnSceneChangedEvent(Scene scene);
@@ -373,7 +374,7 @@ public class LevelInstance : MonoBehaviour
                 break;
         }
 
-        if(LocationName == "Pfaffenthal")
+        if(IsStartLocation)
         {
             OpenNewCityDiaryEntry();
         }

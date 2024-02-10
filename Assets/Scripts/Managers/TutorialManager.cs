@@ -68,7 +68,7 @@ public class TutorialManager : MonoBehaviour
         {
             case TutorialFeature.ClockUnlocked:
             case TutorialFeature.DiaryUnlocked:
-                if(LevelInstance.Instance.LocationName != "Pfaffenthal" && LevelInstance.Instance.LocationName != "Luxembourg")
+                if(!LevelInstance.Instance.IsStartLocation && LevelInstance.Instance.LocationName != "Luxembourg")
                 {
                     return true;
                 }

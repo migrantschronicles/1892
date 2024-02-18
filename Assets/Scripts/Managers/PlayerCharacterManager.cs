@@ -25,7 +25,7 @@ public class PlayerCharacterManager : MonoBehaviour
     {
         if(character == CharacterType.None)
         {
-            character = CharacterType.Punnels;
+            character = CharacterType.Elis;
         }
 
         selectedCharacter = character;

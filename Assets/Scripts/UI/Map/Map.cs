@@ -13,6 +13,12 @@ public class Map : MonoBehaviour
     private ShipIconManager shipMarker;
     [SerializeField]
     private AudioClip selectLocationClip;
+    [SerializeField]
+    private GameObject pfaffenthalFlag;
+    [SerializeField]
+    private GameObject weicherdangeFlag;
+    [SerializeField]
+    private GameObject wormeldangeFlag;
 
     private MapLocationMarker[] locationMarkers;
     private MapTransportationMethods transportationMethods;
@@ -42,6 +48,18 @@ public class Map : MonoBehaviour
             if(LevelInstance.Instance.LevelMode == LevelInstanceMode.Ship)
             {
                 return shipMarker.gameObject;
+            }
+            else if(LevelInstance.Instance.LocationName == "Pfaffenthal")
+            {
+                return pfaffenthalFlag;
+            }
+            else if(LevelInstance.Instance.LocationName == "Wormeldange")
+            {
+                return wormeldangeFlag;
+            }
+            else if(LevelInstance.Instance.LocationName == "Weicherdange")
+            {
+                return weicherdangeFlag;
             }
 
             MapLocationMarker marker = CurrentLocationMarker;

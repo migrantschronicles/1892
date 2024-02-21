@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e602af5fbfecf23489e65a086dbe1f5b, type: 3}
-  m_Name: BirthCertificatePunnels
+  m_Name: ForgedBirthCertificatePunnels
   m_EditorClassIdentifier: 
-  id: birthcertificate_punnels
+  id: forgedbirthcertificate_punnels
   Name:
     m_TableReference:
       m_TableCollectionName: GUID:06dc9da5586dbb9448f72d4c4eb47782
     m_TableEntryReference:
-      m_KeyId: 932688629760
+      m_KeyId: 59461368793993216
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -26,12 +26,12 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:06dc9da5586dbb9448f72d4c4eb47782
     m_TableEntryReference:
-      m_KeyId: 184970457560322048
+      m_KeyId: 185633624590323712
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  technicalName: Ntt_DFAA12B3
+  technicalName: Ntt_CE3C9321
   sprite: {fileID: 21300000, guid: eeeab51f4b614aa49ba798cba407cd1e, type: 3}
   openedSprite: {fileID: 0}
   viewedSprite: {fileID: 0}
@@ -39,10 +39,9 @@ MonoBehaviour:
   Volume: 1
   MaxStackCount: 1
   SetConditions:
-  - Item.BirthCertificate
+  - Item.ForgedBirthCertificate
   - item_pfaffenthal
-  SetConditionsWhenSold:
-  - Health.PeterHomesickness+=1
+  SetConditionsWhenSold: []
   SetConditionWhenOpened: 
   category: {fileID: 0}
   stolenProbabilityWeight: 1

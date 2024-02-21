@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e602af5fbfecf23489e65a086dbe1f5b, type: 3}
-  m_Name: Watch
+  m_Name: LetterFromLui
   m_EditorClassIdentifier: 
-  id: watch
+  id: letterfromlui
   Name:
     m_TableReference:
       m_TableCollectionName: GUID:06dc9da5586dbb9448f72d4c4eb47782
     m_TableEntryReference:
-      m_KeyId: 177312962041810944
+      m_KeyId: 185639604875104256
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
@@ -26,24 +26,24 @@ MonoBehaviour:
     m_TableReference:
       m_TableCollectionName: GUID:06dc9da5586dbb9448f72d4c4eb47782
     m_TableEntryReference:
-      m_KeyId: 177313277008875520
+      m_KeyId: 185639675423297536
       m_Key: 
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []
-  technicalName: Ntt_54F5CE94
-  sprite: {fileID: 21300000, guid: df3f24da150c11d44977d8c69a7addce, type: 3}
+  technicalName: Ntt_B903CB73
+  sprite: {fileID: 21300000, guid: 883099faa08f44f43bfbd8ae16e343e8, type: 3}
   openedSprite: {fileID: 0}
   viewedSprite: {fileID: 0}
-  Price: 130
+  Price: 33
   Volume: 1
   MaxStackCount: 1
-  SetConditions:
-  - Item.PocketWatch
-  SetConditionsWhenSold: []
+  SetConditions: []
+  SetConditionsWhenSold:
+  - CharacterTraits.Corruption+=2
   SetConditionWhenOpened: 
   category: {fileID: 0}
-  stolenProbabilityWeight: 0
+  stolenProbabilityWeight: 1
   references:
     version: 2
     RefIds: []

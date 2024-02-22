@@ -378,15 +378,6 @@ public class LevelInstance : MonoBehaviour
         {
             OpenNewCityDiaryEntry();
         }
-        if (!startedPlayingMusic)
-        {
-            if (LocationName == "Luxembourg")
-            {
-                AudioClip[] luxClip = { auswandererLied };
-                AudioManager.Instance.PlayMusic(luxClip);
-            }
-            startedPlayingMusic = true;
-        }
 
         NewGameManager.Instance.HealthStatus.SetIsOnShip(levelMode == LevelInstanceMode.Ship);
         nextSeasicknessTimer = seasicknessSceneFrequency;

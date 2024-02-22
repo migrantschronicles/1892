@@ -311,6 +311,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  pfaffenthal_OnStarted:
+    m_PersistentCalls:
+      m_Calls: []
   pfaffenthal_OnBasketItemClicked:
     m_PersistentCalls:
       m_Calls: []
@@ -336,6 +339,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   pfaffenthal_OnLuxembourgDiscoveredDiaryOpening:
+    m_PersistentCalls:
+      m_Calls: []
+  pfaffenthal_OnIntroductoryDialog:
+    m_PersistentCalls:
+      m_Calls: []
+  pfaffenthal_OnIntroductoryDialogEnded:
+    m_PersistentCalls:
+      m_Calls: []
+  pfaffenthal_OnIntroductoryDialogExited:
     m_PersistentCalls:
       m_Calls: []
   luxembourg_OnDiaryOpening:
@@ -366,6 +378,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   luxembourg_OnSceneButton:
+    m_PersistentCalls:
+      m_Calls: []
+  luxembourg_OnOpenAgain:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &705376517610133110
@@ -1350,9 +1365,10 @@ MonoBehaviour:
   ui: {fileID: 6980961830404351579}
   defaultScene: 
   musicClips:
-  - {fileID: 8300000, guid: 6cd0e30891b30854a8442dc313ee622b, type: 3}
-  - {fileID: 8300000, guid: 1db79632c7180494285c3290cd9b5915, type: 3}
-  - {fileID: 8300000, guid: ac2ce1c32ba9a31489d0ac5d156004bb, type: 3}
+  - {fileID: 8300000, guid: 48406cb501df4224f91d0c36ac1f05ff, type: 3}
+  - {fileID: 8300000, guid: ab2886cc53a635e4f91ca9889f470cff, type: 3}
+  - {fileID: 8300000, guid: c1ff9f42595d90946852e786fe90333d, type: 3}
+  - {fileID: 8300000, guid: 97f526325aa3cdc44820b81ba42f981e, type: 3}
   auswandererLied: {fileID: 0}
   draggedItemPrefab: {fileID: 4283464061823613427, guid: 1f17660da29aad943be3543cbe4c04fb, type: 3}
   sceneInteractables: {fileID: 8760091906002956751}
@@ -1387,10 +1403,14 @@ MonoBehaviour:
     referencingMode: 0
     lowId: 2928
     highId: 16777216
+  hungryIntroductoryDialogButton: {fileID: 0}
   seasicknessScenePrefab: {fileID: 2911239208605875702, guid: 6a0226022c8445a4fb60ebc74381ac25, type: 3}
   seasicknessSceneTime: 5
   seasicknessSceneFrequency: 60
   introductoryDialogButton: {fileID: 0}
+  introductoryDialogCondition:
+    ConditionType: 0
+    Children: []
   daysDialogButtons: []
   maxDialogsPerDay: 16
   shopPrefab: {fileID: 1011960336168767627, guid: b3c1af09b8ca7144dac22bc7d8a64bbd, type: 3}
@@ -1419,6 +1439,12 @@ MonoBehaviour:
   shouldOverrideProtagonistAnimState: 0
   developerLocationPanelPrefab: {fileID: 3124184666252390237, guid: 8dac1850cb38c2242994b607af18f50e, type: 3}
   OnStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  OnIntroductoryDialogStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDialogClosed:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &8509480061301435036

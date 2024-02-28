@@ -642,4 +642,9 @@ public class Shop : MonoBehaviour
 
         LevelInstance.Instance.OnBack();
     }
+
+    public void RemoveBasketItems()
+    {
+        Basket.ResetItems(new List<Item> { });
+    }
 }

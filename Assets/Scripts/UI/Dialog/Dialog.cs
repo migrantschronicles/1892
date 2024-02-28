@@ -23,6 +23,9 @@ public class Dialog : MonoBehaviour
     public SetCondition[] setFinishedConditions;
     [Tooltip("Where to display the protagonists")]
     public DialogProtagonistMode protagonistMode;
+    [Tooltip("")]
+    public Shop shopToOpenAfterDialogClose;
+    public bool clearShopOnOpen = false;
 
     public ArticyObject ArticyObject { get { return GetComponent<ArticyReference>().reference.GetObject(); } }
 }

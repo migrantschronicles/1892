@@ -455,6 +455,8 @@ public class LevelInstance : MonoBehaviour
 
     public void OnBack()
     {
+        Dialog dialogToCheckOpenShop = null;
+
         if(overlayMode != OverlayMode.None)
         {
             // The back button has been pressed during an overlay (can only happen during a dialog, when a shop or the map is opened),
@@ -549,6 +551,7 @@ public class LevelInstance : MonoBehaviour
             {
                 case Mode.Dialog:
                     // If the dialog was active, notify it to clear its entries.
+                    dialogToCheckOpenShop = dialogSystem.CurrentChat != null ? dialogSystem.CurrentChat.CurrentDialog : null;
                     if(dialogSystem.OnClose())
                     {
                         AudioManager.Instance.PlayFX(dialogSystem.closeClip);
@@ -654,6 +657,20 @@ public class LevelInstance : MonoBehaviour
 
                 mode = Mode.None;
                 UpdateShowSeasickness();
+            }
+        }
+
+        if(dialogToCheckOpenShop != null && dialogToCheckOpenShop.shopToOpenAfterDialogClose)
+        {
+            if(NewGameManager.Instance.conditions.HasCondition("Misc.Shop"))
+            {
+                // Open shop immediately
+                OpenShop(dialogToCheckOpenShop.shopToOpenAfterDialogClose);
+                if (dialogToCheckOpenShop.clearShopOnOpen)
+                {
+                    dialogToCheckOpenShop.shopToOpenAfterDialogClose.RemoveBasketItems();
+                }
+                NewGameManager.Instance.conditions.RemoveCondition("Misc.Shop");
             }
         }
     }

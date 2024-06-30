@@ -45,6 +45,12 @@ public class PopupButton : MonoBehaviour
     [SerializeField]
     private PopupButtonStyle brownStyle = new();
     [SerializeField]
+    private Vector2 smallSize = new(262, 112);
+    [SerializeField]
+    private Vector2 mediumSize = new(364, 114);
+    [SerializeField]
+    private Vector2 largeSize = new(512, 113);
+    [SerializeField]
     private Image background;
     [SerializeField]
     private Text text;
@@ -86,15 +92,16 @@ public class PopupButton : MonoBehaviour
         }
 
         Sprite backgroundSprite = null;
-        switch(size)
+        Vector2 sizeDelta = mediumSize;
+        switch (size)
         {
-            case PopupButtonSize.Small: backgroundSprite = style.small; break;
-            case PopupButtonSize.Medium: backgroundSprite = style.medium; break;
-            case PopupButtonSize.Large: backgroundSprite = style.large; break;
+            case PopupButtonSize.Small: backgroundSprite = style.small; sizeDelta = smallSize; break;
+            case PopupButtonSize.Medium: backgroundSprite = style.medium; sizeDelta = mediumSize; break;
+            case PopupButtonSize.Large: backgroundSprite = style.large; sizeDelta = largeSize; break;
         }
 
         background.sprite = backgroundSprite;
         text.color = style.foregroundColor;
-        GetComponent<RectTransform>().sizeDelta = backgroundSprite.rect.size;
+        GetComponent<RectTransform>().sizeDelta = sizeDelta;
     }
 }

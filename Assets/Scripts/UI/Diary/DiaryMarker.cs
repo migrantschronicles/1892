@@ -18,6 +18,10 @@ public class DiaryMarker : MonoBehaviour
     private Sprite activeSprite;
     [SerializeField]
     private Sprite closedSprite;
+    [SerializeField]
+    private Vector2 defaultSize = new Vector2(69, 67);
+    [SerializeField]
+    private Vector2 activeSize = new Vector2(69, 88);
 
     private bool closed = false;
     private bool active = false;
@@ -59,7 +63,7 @@ public class DiaryMarker : MonoBehaviour
     {
         Sprite sprite = closed ? closedSprite : (active ? activeSprite : defaultSprite);
         image.sprite = sprite;
-        rectTransform.sizeDelta = sprite.rect.size;
+        rectTransform.sizeDelta = active ? activeSize : defaultSize;
         if (!NewGameManager.Instance || NewGameManager.Instance.wantsEndGame)
         {
             GetComponent<Button>().interactable = false;

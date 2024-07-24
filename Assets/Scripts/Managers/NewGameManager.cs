@@ -634,6 +634,7 @@ public class NewGameManager : MonoBehaviour
         if(ShipManager.HasReachedDestination)
         {
             // Ship travel finished, arrived in Elis island.
+            Debug.Log("OnSleepInShip: HasReached");
             LevelInstance.Instance.OnShipArrived();
             return true;
         }

@@ -81,7 +81,7 @@ public class NewGameManager : MonoBehaviour
     public string userName;
     public bool isHistoryMode = false;
     
-    private static bool isInitialized = false;
+    private bool isInitialized = false;
 
     private List<Journey> journeys = new();
     public string nextLocation { get; private set; }

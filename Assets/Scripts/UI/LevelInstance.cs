@@ -532,6 +532,7 @@ public class LevelInstance : MonoBehaviour
                 {
                     // An overlay over the diary can only happen if it's a popup.
                     ui.HideDiary(false);
+                    ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
                     SetBackButtonVisible(true);
                     break;
                 }

@@ -95,6 +95,8 @@ public class TutorialBlur : MonoBehaviour
     private bool luxembourg_ticketSellerClosed = false;
     private Dictionary<Button, bool> prevInteractables = new();
 
+    public bool Pfaffenthal_ShopClosed { get { return pfaffenthal_shopClosed; } }
+
     private void Start()
     {
         DialogSystem.Instance.onDialogDecision += OnDialogDecision;

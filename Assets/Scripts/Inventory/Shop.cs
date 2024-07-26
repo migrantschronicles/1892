@@ -340,8 +340,11 @@ public class Shop : MonoBehaviour
         tradeButton.enabled = CanAccept;
 
         // Back button
-        LevelInstance.Instance.SetBackButtonVisible(CanClose);
-        closeShopButton.interactable = CanClose;
+        if(!LevelInstance.Instance.IsStartLocation || (TutorialManager.Instance == null || TutorialManager.Instance.Blur.Pfaffenthal_ShopClosed))
+        {
+            LevelInstance.Instance.SetBackButtonVisible(CanClose);
+            closeShopButton.interactable = CanClose;
+        }
     }
 
     private int CalculatePrice()

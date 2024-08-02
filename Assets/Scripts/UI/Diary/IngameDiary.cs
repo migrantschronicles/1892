@@ -211,7 +211,14 @@ public class IngameDiary : MonoBehaviour
         popup.OnMainMenu += (popup) =>
         {
             Destroy(popupGO);
-            NewGameManager.Instance.EndGameAndReturnToMainMenu();
+            if(NewGameManager.Instance.wantsEndGame)
+            {
+                NewGameManager.Instance.EndGameAndReturnToMainMenu();
+            }
+            else
+            {
+                NewGameManager.Instance.ReturnToMainMenu();
+            }
         };
     }
 }

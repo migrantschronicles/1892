@@ -1203,10 +1203,15 @@ public class NewGameManager : MonoBehaviour
 
     public void EndGameAndReturnToMainMenu()
     {
+        GetComponent<SaveGameManager>().OnEndGame();
+        ReturnToMainMenu();
+    }
+
+    public void ReturnToMainMenu()
+    {
         AudioManager.Instance.StopMusic();
         Destroy(AudioManager.Instance.gameObject);
         Destroy(gameObject);
-        GetComponent<SaveGameManager>().OnEndGame();
         SceneManager.LoadScene("MainMenu");
     }
 

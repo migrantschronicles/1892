@@ -164,7 +164,23 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private ArticyRef sickDialog;
     [SerializeField]
-    private ArticyRef foreignLanguageDialog;
+    private ArticyRef michelTooHungryDialog;
+    [SerializeField]
+    private ArticyRef michelDailyDialogLimitDialog;
+    [SerializeField]
+    private ArticyRef michelSickDialog;
+    [SerializeField]
+    private ArticyRef peterTooHungryDialog;
+    [SerializeField]
+    private ArticyRef susannaTooHungryDialog;
+    [SerializeField]
+    private ArticyRef punnelsDailDialogLimitDialog;
+    [SerializeField]
+    private ArticyRef peterSickDialog;
+    [SerializeField]
+    private ArticyRef susannaSickDialog;
+    [SerializeField]
+    private ArticyRef foreignLanguageDialog; 
     [SerializeField]
     private DialogButton hungryIntroductoryDialogButton;
     [SerializeField]
@@ -828,22 +844,72 @@ public class LevelInstance : MonoBehaviour
     public void StartTooHungryDialog(DialogButton button, ProtagonistData responsibleCharacter)
     {
         PrepareDialog(button);
-        IArticyObject specialDialog = (responsibleCharacter.isMainProtagonist ? mainTooHungryDialog : sideTooHungryDialog).GetObject();
+
+        IArticyObject specialDialog = null;
+        switch(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter)
+        {
+            case CharacterType.Elis:
+                specialDialog = (responsibleCharacter.isMainProtagonist ? mainTooHungryDialog : sideTooHungryDialog).GetObject();
+                break;
+
+            case CharacterType.Michel:
+                specialDialog = michelTooHungryDialog.GetObject();
+                break;
+
+            case CharacterType.Punnels:
+                specialDialog = (responsibleCharacter.isMainProtagonist ? peterTooHungryDialog : susannaTooHungryDialog).GetObject();
+                break;
+        }
+        
         dialogSystem.StartDialog(button, specialDialog);
         OnDialogStarted();
     }
 
-    public void StartSickDialog(DialogButton button)
+    public void StartSickDialog(DialogButton button, ProtagonistData responsibleCharacter)
     {
         PrepareDialog(button);
-        dialogSystem.StartDialog(button, sickDialog.GetObject());
+
+        IArticyObject specialDialog = null;
+        switch(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter)
+        {
+            case CharacterType.Elis:
+                specialDialog = sickDialog.GetObject();
+                break;
+
+            case CharacterType.Michel:
+                specialDialog = michelSickDialog.GetObject();
+                break;
+
+            case CharacterType.Punnels:
+                specialDialog = (responsibleCharacter.isMainProtagonist ? peterSickDialog : susannaSickDialog).GetObject();
+                break;
+        }
+
+        dialogSystem.StartDialog(button, specialDialog);
         OnDialogStarted();
     }
 
     public void StartDailyDialogLimitDialog(DialogButton button)
     {
         PrepareDialog(button);
-        dialogSystem.StartDialog(button, dailyDialogLimitDialog.GetObject());
+
+        IArticyObject specialDialog = null;
+        switch(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter)
+        {
+            case CharacterType.Elis:
+                specialDialog = dailyDialogLimitDialog.GetObject();
+                break;
+
+            case CharacterType.Michel:
+                specialDialog = michelDailyDialogLimitDialog.GetObject();
+                break;
+
+            case CharacterType.Punnels:
+                specialDialog = punnelsDailDialogLimitDialog.GetObject();
+                break;
+        }
+
+        dialogSystem.StartDialog(button, specialDialog);
         OnDialogStarted();
     }
 

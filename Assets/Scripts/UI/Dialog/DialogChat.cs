@@ -67,6 +67,7 @@ public class DialogChat : MonoBehaviour
     public string LastRightTechnicalName { get { return lastRightTechnicalName; } }
     public Button ContinueButton { get { return continueButton; } }
     public Button CloseButton { get { return closeButton; } }
+    public bool IsSpecialDialog { get { return currentSpecialDialog != null;} }
     public bool WantsRestart
     {
         get

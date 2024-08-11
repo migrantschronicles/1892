@@ -240,6 +240,8 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject cannotTravelAgainTodayPrefab;
     [SerializeField]
+    private GameObject brokePrefab;
+    [SerializeField]
     private string seasicknessRemedy;
     [SerializeField]
     private HealthState overrideProtagonistAnimState;
@@ -1565,5 +1567,23 @@ public class LevelInstance : MonoBehaviour
     public void SetSceneInteractablesEnabled(bool enabled)
     {
         sceneInteractables.SetActive(enabled);
+    }
+
+    public void ShowBrokePopup()
+    {
+        GameObject popupGO = PushPopup(brokePrefab);
+        BrokePopup popup = popupGO.GetComponent<BrokePopup>();
+        popup.OnDownloadPDF += (_) =>
+        {
+            NewGameManager.Instance.GeneratePDF();
+        };
+        popup.OnMainMenu += (_) =>
+        {
+            NewGameManager.Instance.ReturnToMainMenu();
+        };
+        popup.OnContinue += (_) =>
+        {
+            PopPopup();
+        };
     }
 }

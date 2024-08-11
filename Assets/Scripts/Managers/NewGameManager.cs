@@ -104,6 +104,7 @@ public class NewGameManager : MonoBehaviour
 
     private float playtime = 0.0f; 
     public int money;
+    public int moneyWarnLevel = 9;
     // Date
     public DateTime date = new DateTime(1892, 7, 27);
     private int travelCountToday = 0;
@@ -570,8 +571,14 @@ public class NewGameManager : MonoBehaviour
 
     public void SetMoney(int newMoney)
     {
+        int oldMoney = money;
         money = newMoney;
         onMoneyChanged?.Invoke(money);
+
+        if(oldMoney > moneyWarnLevel && money <= moneyWarnLevel)
+        {
+            LevelInstance.Instance.ShowBrokePopup();
+        }
     }
 
     public void SetDate(DateTime newDate)

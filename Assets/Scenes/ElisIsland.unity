@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748171, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3859,6 +3859,8 @@ MonoBehaviour:
       Not: 0
     - Condition: elis_island_immigration_officer_finished
       Not: 0
+    - Condition: Misc.ImmigrationSecondTry
+      Not: 1
 --- !u!1001 &552098154
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5867,16 +5869,28 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8980214664140639007, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
-      propertyPath: condition.Children.Array.size
+      propertyPath: condition.ConditionType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8980214664140639007, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
+      propertyPath: condition.Children.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8980214664140639007, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
       propertyPath: condition.Children.Array.data[0].Not
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8980214664140639007, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
+      propertyPath: condition.Children.Array.data[1].Not
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8980214664140639007, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
       propertyPath: condition.Children.Array.data[0].Condition
       value: elis_island_immigration_officer_finished
+      objectReference: {fileID: 0}
+    - target: {fileID: 8980214664140639007, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
+      propertyPath: condition.Children.Array.data[1].Condition
+      value: Misc.ImmigrationSecondTry
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 97f654634af4ebb4ba3b9f0a47191482, type: 3}
@@ -11219,6 +11233,8 @@ MonoBehaviour:
     - Condition: elis_island_immigration_officer_finished
       Not: 0
     - Condition: Misc.ImmigrationDetention
+      Not: 1
+    - Condition: Misc.ImmigrationSecondTry
       Not: 1
 --- !u!1001 &1670163154
 PrefabInstance:

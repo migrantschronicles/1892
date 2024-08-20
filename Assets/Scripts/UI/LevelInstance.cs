@@ -164,7 +164,23 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private ArticyRef sickDialog;
     [SerializeField]
-    private ArticyRef foreignLanguageDialog;
+    private ArticyRef michelTooHungryDialog;
+    [SerializeField]
+    private ArticyRef michelDailyDialogLimitDialog;
+    [SerializeField]
+    private ArticyRef michelSickDialog;
+    [SerializeField]
+    private ArticyRef peterTooHungryDialog;
+    [SerializeField]
+    private ArticyRef susannaTooHungryDialog;
+    [SerializeField]
+    private ArticyRef punnelsDailDialogLimitDialog;
+    [SerializeField]
+    private ArticyRef peterSickDialog;
+    [SerializeField]
+    private ArticyRef susannaSickDialog;
+    [SerializeField]
+    private ArticyRef foreignLanguageDialog; 
     [SerializeField]
     private DialogButton hungryIntroductoryDialogButton;
     [SerializeField]
@@ -223,6 +239,8 @@ public class LevelInstance : MonoBehaviour
     private GameObject questFailedPrefab;
     [SerializeField]
     private GameObject cannotTravelAgainTodayPrefab;
+    [SerializeField]
+    private GameObject brokePrefab;
     [SerializeField]
     private string seasicknessRemedy;
     [SerializeField]
@@ -532,6 +550,7 @@ public class LevelInstance : MonoBehaviour
                 {
                     // An overlay over the diary can only happen if it's a popup.
                     ui.HideDiary(false);
+                    ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
                     SetBackButtonVisible(true);
                     break;
                 }
@@ -827,22 +846,72 @@ public class LevelInstance : MonoBehaviour
     public void StartTooHungryDialog(DialogButton button, ProtagonistData responsibleCharacter)
     {
         PrepareDialog(button);
-        IArticyObject specialDialog = (responsibleCharacter.isMainProtagonist ? mainTooHungryDialog : sideTooHungryDialog).GetObject();
+
+        IArticyObject specialDialog = null;
+        switch(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter)
+        {
+            case CharacterType.Elis:
+                specialDialog = (responsibleCharacter.isMainProtagonist ? mainTooHungryDialog : sideTooHungryDialog).GetObject();
+                break;
+
+            case CharacterType.Michel:
+                specialDialog = michelTooHungryDialog.GetObject();
+                break;
+
+            case CharacterType.Punnels:
+                specialDialog = (responsibleCharacter.isMainProtagonist ? peterTooHungryDialog : susannaTooHungryDialog).GetObject();
+                break;
+        }
+        
         dialogSystem.StartDialog(button, specialDialog);
         OnDialogStarted();
     }
 
-    public void StartSickDialog(DialogButton button)
+    public void StartSickDialog(DialogButton button, ProtagonistData responsibleCharacter)
     {
         PrepareDialog(button);
-        dialogSystem.StartDialog(button, sickDialog.GetObject());
+
+        IArticyObject specialDialog = null;
+        switch(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter)
+        {
+            case CharacterType.Elis:
+                specialDialog = sickDialog.GetObject();
+                break;
+
+            case CharacterType.Michel:
+                specialDialog = michelSickDialog.GetObject();
+                break;
+
+            case CharacterType.Punnels:
+                specialDialog = (responsibleCharacter.isMainProtagonist ? peterSickDialog : susannaSickDialog).GetObject();
+                break;
+        }
+
+        dialogSystem.StartDialog(button, specialDialog);
         OnDialogStarted();
     }
 
     public void StartDailyDialogLimitDialog(DialogButton button)
     {
         PrepareDialog(button);
-        dialogSystem.StartDialog(button, dailyDialogLimitDialog.GetObject());
+
+        IArticyObject specialDialog = null;
+        switch(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter)
+        {
+            case CharacterType.Elis:
+                specialDialog = dailyDialogLimitDialog.GetObject();
+                break;
+
+            case CharacterType.Michel:
+                specialDialog = michelDailyDialogLimitDialog.GetObject();
+                break;
+
+            case CharacterType.Punnels:
+                specialDialog = punnelsDailDialogLimitDialog.GetObject();
+                break;
+        }
+
+        dialogSystem.StartDialog(button, specialDialog);
         OnDialogStarted();
     }
 
@@ -1165,7 +1234,8 @@ public class LevelInstance : MonoBehaviour
             return null;
         }
 
-        if(mode != Mode.Popup)
+        Debug.Log("PushPopup: " + mode + " / " + overlayMode);
+        if (mode != Mode.Popup)
         {
             if (overlayMode == OverlayMode.None)
             {
@@ -1421,6 +1491,7 @@ public class LevelInstance : MonoBehaviour
     public void OnShipArrived()
     {
         GameObject popupGO = ShowPopup(shipArrivedPrefab);
+        Debug.Log("OnShipArrived: " + (popupGO != null ? "is not null" : "is null"));
         ShipArrivedPopup popup = popupGO.GetComponent<ShipArrivedPopup>();
         popup.OnLeaveShip += (_) =>
         {
@@ -1496,5 +1567,23 @@ public class LevelInstance : MonoBehaviour
     public void SetSceneInteractablesEnabled(bool enabled)
     {
         sceneInteractables.SetActive(enabled);
+    }
+
+    public void ShowBrokePopup()
+    {
+        GameObject popupGO = PushPopup(brokePrefab);
+        BrokePopup popup = popupGO.GetComponent<BrokePopup>();
+        popup.OnDownloadPDF += (_) =>
+        {
+            NewGameManager.Instance.GeneratePDF();
+        };
+        popup.OnMainMenu += (_) =>
+        {
+            NewGameManager.Instance.ReturnToMainMenu();
+        };
+        popup.OnContinue += (_) =>
+        {
+            PopPopup();
+        };
     }
 }

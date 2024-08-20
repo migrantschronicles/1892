@@ -334,12 +334,19 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
             return false;
         }
 
-        if(currentChat && currentChat.CurrentDialog)
+        if(currentChat)
         {
-            switch(currentChat.CurrentDialog.protagonistMode)
+            if(currentChat.CurrentDialog)
             {
-                case DialogProtagonistMode.Any: return true;
-                case DialogProtagonistMode.OnlyMain: return protagonist.isMainProtagonist;
+                switch (currentChat.CurrentDialog.protagonistMode)
+                {
+                    case DialogProtagonistMode.Any: return true;
+                    case DialogProtagonistMode.OnlyMain: return protagonist.isMainProtagonist;
+                }
+            }
+            else if(currentChat.IsSpecialDialog)
+            {
+                return true;
             }
         }
 

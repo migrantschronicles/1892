@@ -27,4 +27,9 @@ public class ShopAcceptTradeButton : MonoBehaviour, IPointerEnterHandler, IPoint
     {
         text.color = defaultColor;
     }
+
+    private void OnEnable()
+    {
+        text.color = defaultColor;
+    }
 }

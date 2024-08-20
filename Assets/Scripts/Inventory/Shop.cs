@@ -331,7 +331,7 @@ public class Shop : MonoBehaviour
         //bool hasNegativeValues = transferChanges.Values.Any((value) => value < 0);
 
         // Money
-        int price = CalculatePrice();
+        int price = freeShop ? 0 : CalculatePrice();
         moneyText.text = (-price).ToString();
         moneyText.gameObject.SetActive(!freeShop);
         tradeInfo.color = price == 0 ? defaultTradeInfoColor : (price > 0 ? looseTradeInfoColor : gainTradeInfoColor);
@@ -340,8 +340,11 @@ public class Shop : MonoBehaviour
         tradeButton.enabled = CanAccept;
 
         // Back button
-        LevelInstance.Instance.SetBackButtonVisible(CanClose);
-        closeShopButton.interactable = CanClose;
+        if(!LevelInstance.Instance.IsStartLocation || (TutorialManager.Instance == null || TutorialManager.Instance.Blur.Pfaffenthal_ShopClosed))
+        {
+            LevelInstance.Instance.SetBackButtonVisible(CanClose);
+            closeShopButton.interactable = CanClose;
+        }
     }
 
     private int CalculatePrice()

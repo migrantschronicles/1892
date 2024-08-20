@@ -67,6 +67,7 @@ public class DialogChat : MonoBehaviour
     public string LastRightTechnicalName { get { return lastRightTechnicalName; } }
     public Button ContinueButton { get { return continueButton; } }
     public Button CloseButton { get { return closeButton; } }
+    public bool IsSpecialDialog { get { return currentSpecialDialog != null;} }
     public bool WantsRestart
     {
         get
@@ -633,10 +634,19 @@ public class DialogChat : MonoBehaviour
 
                     string technicalName = DialogSystem.Instance.GetTechnicalNameOfSpeaker(firstBranch.Target);
                     DialogSystem.Instance.OnDialogDecision(technicalName);
-                    ProtagonistData mainProtagonist = NewGameManager.Instance.PlayerCharacterManager.SelectedData.GetMainProtagonist();
-                    if(mainProtagonist != null)
+                    if(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter == CharacterType.Punnels)
                     {
-                        lastRightTechnicalName = mainProtagonist.technicalName;
+                        // With Punnels, both characters can be on the right.
+                        lastRightTechnicalName = technicalName;
+                    }
+                    else
+                    {
+                        // If it's not the punnels, save the main protagonist, to prevent a child from being displayed on the right.
+                        ProtagonistData mainProtagonist = NewGameManager.Instance.PlayerCharacterManager.SelectedData.GetMainProtagonist();
+                        if (mainProtagonist != null)
+                        {
+                            lastRightTechnicalName = mainProtagonist.technicalName;
+                        }
                     }
                 }
             }

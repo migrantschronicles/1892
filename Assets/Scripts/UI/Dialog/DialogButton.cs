@@ -116,13 +116,13 @@ public class DialogButton : MonoBehaviour
             if(responsibleCharacter.CholeraStatus.IsSick && !canStartEvenIfSick)
             {
                 // The dialog can't be started because the main character is sick.
-                LevelInstance.Instance.StartSickDialog(this);
+                LevelInstance.Instance.StartSickDialog(this, responsibleCharacter.CharacterData);
             }
             else if(responsibleCharacter.CharacterData.isMainProtagonist && responsibleCharacter.HomesickessStatus.Value > 5)
             {
                 // The main protagonist is homesick and can only talk to one person.
                 ///@todo Maybe have a different dialog for homesickness.
-                LevelInstance.Instance.StartSickDialog(this);
+                LevelInstance.Instance.StartSickDialog(this, responsibleCharacter.CharacterData);
             }
             else
             {

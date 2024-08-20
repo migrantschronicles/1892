@@ -20,7 +20,7 @@ public class ShipRoomNavigation : MonoBehaviour
 
     private void Update()
     {
-        if (!shipMovement.IsAutoZooming)
+        if (!shipMovement.IsAutoZooming && LevelInstance.Instance.Mode == Mode.None)
         {
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN
             if (Input.GetMouseButtonDown(0))
@@ -105,6 +105,11 @@ public class ShipRoomNavigation : MonoBehaviour
 
     private void OnClick(Vector2 screenPosition)
     {
+        if(LevelInstance.Instance.Mode != Mode.None)
+        {
+            return;
+        }
+
         RaycastHit2D hit = SpriteCast(screenPosition);
         if(hit.collider != null)
         {

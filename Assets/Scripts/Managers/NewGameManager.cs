@@ -81,7 +81,7 @@ public class NewGameManager : MonoBehaviour
     public string userName;
     public bool isHistoryMode = false;
     
-    private static bool isInitialized = false;
+    private bool isInitialized = false;
 
     private List<Journey> journeys = new();
     public string nextLocation { get; private set; }
@@ -104,6 +104,7 @@ public class NewGameManager : MonoBehaviour
 
     private float playtime = 0.0f; 
     public int money;
+    public int moneyWarnLevel = 9;
     // Date
     public DateTime date = new DateTime(1892, 7, 27);
     private int travelCountToday = 0;
@@ -570,8 +571,14 @@ public class NewGameManager : MonoBehaviour
 
     public void SetMoney(int newMoney)
     {
+        int oldMoney = money;
         money = newMoney;
         onMoneyChanged?.Invoke(money);
+
+        if(oldMoney > moneyWarnLevel && money <= moneyWarnLevel)
+        {
+            LevelInstance.Instance.ShowBrokePopup();
+        }
     }
 
     public void SetDate(DateTime newDate)
@@ -634,6 +641,7 @@ public class NewGameManager : MonoBehaviour
         if(ShipManager.HasReachedDestination)
         {
             // Ship travel finished, arrived in Elis island.
+            Debug.Log("OnSleepInShip: HasReached");
             LevelInstance.Instance.OnShipArrived();
             return true;
         }
@@ -1202,10 +1210,15 @@ public class NewGameManager : MonoBehaviour
 
     public void EndGameAndReturnToMainMenu()
     {
+        GetComponent<SaveGameManager>().OnEndGame();
+        ReturnToMainMenu();
+    }
+
+    public void ReturnToMainMenu()
+    {
         AudioManager.Instance.StopMusic();
         Destroy(AudioManager.Instance.gameObject);
         Destroy(gameObject);
-        GetComponent<SaveGameManager>().OnEndGame();
         SceneManager.LoadScene("MainMenu");
     }
 

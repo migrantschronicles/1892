@@ -37,11 +37,14 @@ public class DialogCondition
         {
             case ConditionType.And:
             {
-                foreach (DialogConditionValue condition in values)
+                if(values != null)
                 {
-                    if (!condition.Test())
+                    foreach (DialogConditionValue condition in values)
                     {
-                        return false;
+                        if (!condition.Test())
+                        {
+                            return false;
+                        }
                     }
                 }
 
@@ -51,14 +54,17 @@ public class DialogCondition
             case ConditionType.Or:
             {
                 int length = 0;
-                foreach (DialogConditionValue condition in values)
+                if(values != null)
                 {
-                    if (condition.Test())
+                    foreach (DialogConditionValue condition in values)
                     {
-                        return true;
-                    }
+                        if (condition.Test())
+                        {
+                            return true;
+                        }
 
-                    ++length;
+                        ++length;
+                    }
                 }
 
                 return length == 0;
@@ -101,7 +107,8 @@ public class DialogCondition
      */
     public IEnumerable<string> GetAllConditions()
     {
-        return Children.Concat(Children2).Select(value => value.Condition).Where(condition => !string.IsNullOrWhiteSpace(condition));
+        return Children.Concat((Children2 != null && Children2.Length > 0) ? Children2 : new DialogConditionValue[] { })
+            .Select(value => value.Condition).Where(condition => !string.IsNullOrWhiteSpace(condition));
     }
 
     public bool IsEmpty()

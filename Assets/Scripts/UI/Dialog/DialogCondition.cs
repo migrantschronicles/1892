@@ -27,14 +27,17 @@ public class DialogCondition
 {
     public ConditionType ConditionType;
     public DialogConditionValue[] Children;
+    public ConditionType ConditionTypeResult;
+    public ConditionType ConditionType2;
+    public DialogConditionValue[] Children2;
 
-    public bool Test()
+    private bool Test(IEnumerable<DialogConditionValue> values, ConditionType type)
     {
-        switch (ConditionType)
+        switch (type)
         {
             case ConditionType.And:
             {
-                foreach (DialogConditionValue condition in Children)
+                foreach (DialogConditionValue condition in values)
                 {
                     if (!condition.Test())
                     {
@@ -47,15 +50,46 @@ public class DialogCondition
 
             case ConditionType.Or:
             {
-                foreach (DialogConditionValue condition in Children)
+                int length = 0;
+                foreach (DialogConditionValue condition in values)
                 {
                     if (condition.Test())
                     {
                         return true;
                     }
+
+                    ++length;
                 }
 
-                return Children.Length == 0;
+                return length == 0;
+            }
+        }
+
+        return true;
+    }
+
+    public bool Test()
+    {
+        switch (ConditionTypeResult)
+        {
+            case ConditionType.And:
+            {
+                if(!Test(Children, ConditionType) || !Test(Children2, ConditionType2))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            case ConditionType.Or:
+            {
+                if(Test(Children, ConditionType) || Test(Children2, ConditionType2))
+                {
+                    return true;
+                }
+
+                return Children.Length == 0 || Children2.Length == 0;
             }
         }
 
@@ -67,12 +101,12 @@ public class DialogCondition
      */
     public IEnumerable<string> GetAllConditions()
     {
-        return Children.Select(value => value.Condition).Where(condition => !string.IsNullOrWhiteSpace(condition));
+        return Children.Concat(Children2).Select(value => value.Condition).Where(condition => !string.IsNullOrWhiteSpace(condition));
     }
 
     public bool IsEmpty()
     {
-        return Children.Length == 0 || !Children.Any(condition => !string.IsNullOrWhiteSpace(condition.Condition));
+        return Children.Length == 0 || Children2.Length == 0 ||!(Children.Concat(Children2).Any(condition => !string.IsNullOrWhiteSpace(condition.Condition)));
     }
 }
 

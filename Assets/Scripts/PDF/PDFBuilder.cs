@@ -375,7 +375,7 @@ public class PDFBuilder
         pdf.FontSize = oldFontSize;
     }
 
-    private void DrawTitlePage(IPDFPlatform pdf, int pageNumber, string username, float playtime)
+    private void DrawTitlePage(IPDFPlatform pdf, ref int pageNumber, string username, float playtime)
     {
         pdf.AddPage();
         pdf.DrawPNG("PDF/PDF_Background_1.png", 0, 0, pdf.PageWidth, pdf.PageHeight);
@@ -396,7 +396,7 @@ public class PDFBuilder
         DrawPageNumber(pdf, ++pageNumber);
     }
 
-    private void DrawJourneyPage(IPDFPlatform pdf, Texture2D mapScreenshot, int pageNumber)
+    private void DrawJourneyPage(IPDFPlatform pdf, Texture2D mapScreenshot, ref int pageNumber)
     {
         pdf.AddPage();
         pdf.FontSize = 12;
@@ -411,9 +411,10 @@ public class PDFBuilder
         {
             pdf.DrawPNG("PDF/Diary-Book_Route.png", screenshotRect.x, screenshotRect.y, screenshotRect.width, screenshotRect.height);
         }
+        DrawPageNumber(pdf, ++pageNumber);
     }
 
-    private void DrawJourneys(IPDFPlatform pdf, List<Journey> journeys, int pageNumber)
+    private void DrawJourneys(IPDFPlatform pdf, List<Journey> journeys, ref int pageNumber)
     {
         int journeyIndex = 0;
         int entryIndex = 0;
@@ -516,13 +517,13 @@ public class PDFBuilder
         Texture2D mapScreenshot = LevelInstance.Instance ? LevelInstance.Instance.TakeMapScreenshot() : null;
 
         // TITLE PAGE
-        DrawTitlePage(pdf, pageNumber, username, playtime);
+        DrawTitlePage(pdf, ref pageNumber, username, playtime);
 
         // JOURNEY
-        DrawJourneyPage(pdf, mapScreenshot, pageNumber);
+        DrawJourneyPage(pdf, mapScreenshot, ref pageNumber);
 
         // JOURNEYS
-        DrawJourneys(pdf, journeys, pageNumber);
+        DrawJourneys(pdf, journeys, ref pageNumber);
 
         // OUTRO
         pdf.AddPage();

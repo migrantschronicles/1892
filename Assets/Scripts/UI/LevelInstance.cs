@@ -249,6 +249,14 @@ public class LevelInstance : MonoBehaviour
     private bool shouldOverrideProtagonistAnimState;
     [SerializeField]
     private GameObject developerLocationPanelPrefab;
+    [SerializeField]
+    private GameObject endOfGameAnimationSuccessPrefab;
+    [SerializeField]
+    private GameObject endOfGameAnimationFailurePreab;
+    [SerializeField]
+    private GameObject endOfGameAnimationNoMoneyPrefab;
+    [SerializeField]
+    private float endOfGameAnimationTime = 3.0f;
 
     private GameObject developerLocationPanel;
 
@@ -1502,7 +1510,47 @@ public class LevelInstance : MonoBehaviour
 
     public void OnEndOfGame(bool success, string technicalName)
     {
-        if(success)
+        StartCoroutine(EndOfGameTransition(success, technicalName));
+    }
+
+    private IEnumerator EndOfGameTransition(bool success, string technicalName)
+    {
+        if (mode != Mode.None)
+        {
+            // A shop / dialog etc is open, we need to hide it.
+            switch (mode)
+            {
+                case Mode.Shop:
+                    currentShop.gameObject.SetActive(false);
+                    break;
+
+                case Mode.Diary:
+                    ui.HideDiary(true);
+                    break;
+
+                case Mode.Dialog:
+                    dialogSystem.gameObject.SetActive(false);
+                    foregroundScene.gameObject.SetActive(false);
+                    break;
+            }
+
+            ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+            SetBackButtonVisible(false);
+        }
+        else
+        {
+            // Nothing is open yet.
+            ui.SetUIElementsVisible(InterfaceVisibilityFlags.None);
+            SetSceneInteractablesEnabled(false);
+            SetBlurEnabled(true);
+        }
+
+        GameObject prefab = success ? endOfGameAnimationSuccessPrefab : endOfGameAnimationFailurePreab;
+        GameObject go = Instantiate(prefab, canvas.transform);
+        yield return new WaitForSeconds(endOfGameAnimationTime);
+        Destroy(go);
+
+        if (success)
         {
             GameObject popupGO = ShowPopup(endGameSuccessPrefab);
             EndGameSuccessPopup popup = popupGO.GetComponent<EndGameSuccessPopup>();

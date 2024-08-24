@@ -1242,8 +1242,7 @@ public class LevelInstance : MonoBehaviour
             return null;
         }
 
-        Debug.Log("PushPopup: " + mode + " / " + overlayMode);
-        if (mode != Mode.Popup)
+        if(mode != Mode.Popup)
         {
             if (overlayMode == OverlayMode.None)
             {
@@ -1499,7 +1498,6 @@ public class LevelInstance : MonoBehaviour
     public void OnShipArrived()
     {
         GameObject popupGO = ShowPopup(shipArrivedPrefab);
-        Debug.Log("OnShipArrived: " + (popupGO != null ? "is not null" : "is null"));
         ShipArrivedPopup popup = popupGO.GetComponent<ShipArrivedPopup>();
         popup.OnLeaveShip += (_) =>
         {

@@ -192,9 +192,6 @@ public class NewGameManager : MonoBehaviour
     //public delegate void OnTimeChangedDelegate(float time);
     //public event OnTimeChangedDelegate onTimeChanged;
 
-    public PlayableCharacterData TEST_PlayableCharacter;
-    //public PlayableCharacterData PlayableCharacterData { get { return TEST_PlayableCharacter; } }
-
     public delegate void OnLocationChanged(string location);
     public event OnLocationChanged onLocationChanged;
 

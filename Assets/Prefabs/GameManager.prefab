@@ -25,6 +25,8 @@ GameObject:
   - component: {fileID: 5446928605071263994}
   - component: {fileID: 5422509885059168735}
   - component: {fileID: 5491753616833974256}
+  - component: {fileID: 4206833959741291196}
+  - component: {fileID: 691043881042985481}
   m_Layer: 5
   m_Name: GameManager
   m_TagString: GameManager
@@ -95,7 +97,6 @@ MonoBehaviour:
   stolenAmountRange: {x: 0, y: 3}
   estrangeWordsOmitCount: {x: 1, y: 5}
   omitWordsFromStartProbability: 0.5
-  TEST_PlayableCharacter: {fileID: 11400000, guid: 06247e9eea8436c489da4ca965f60ad8, type: 2}
 --- !u!114 &7944783083826979776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4919,3 +4920,30 @@ MonoBehaviour:
     Data: {fileID: 11400000, guid: 3a5b0b6b8e63f3b4181f75e97c9092d1, type: 2}
   - Character: 3
     Data: {fileID: 11400000, guid: a3c55bd1105b5454cabd99682d044082, type: 2}
+--- !u!114 &4206833959741291196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a6a2a34ca3804342b8d9177e81b1f54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  familyMainQuest: {fileID: 11400000, guid: 9970645f034ddcf4cac2252b3cfc14fb, type: 2}
+  targetAmount: 100
+--- !u!114 &691043881042985481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195928808235029455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39c144e8b3f0bcc4f939d6d5acf4c403, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  familyMainQuest: {fileID: 11400000, guid: 357c7b164641c7f49a4aaa716735b1a3, type: 2}

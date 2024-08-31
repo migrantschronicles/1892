@@ -3,17 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FamilyMainQuest : MonoBehaviour
+public class PunnelsMainQuest : MonoBehaviour
 {
     [SerializeField]
     private Quest familyMainQuest;
 
-    private DateTime failedDate = new DateTime(1892, 8, 15);
     private string targetLocation = "ElisIsland";
 
     private void Start()
     {
-        if (NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter != CharacterType.Elis)
+        if(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter != CharacterType.Punnels)
         {
             Destroy(this);
             return;
@@ -34,7 +33,6 @@ public class FamilyMainQuest : MonoBehaviour
     {
         if(NewGameManager.Instance)
         {
-            NewGameManager.Instance.onDateChanged -= OnDateChanged;
             NewGameManager.Instance.onLocationChanged -= OnLocationChanged;
         }
     }
@@ -51,28 +49,17 @@ public class FamilyMainQuest : MonoBehaviour
     {
         if(quest == familyMainQuest)
         {
-            NewGameManager.Instance.onDateChanged -= OnDateChanged;
         }
     }
 
     private void OnQuestStarted()
     {
-        NewGameManager.Instance.onDateChanged += OnDateChanged;
         NewGameManager.Instance.onLocationChanged += OnLocationChanged;
-    }
-
-    private void OnDateChanged(DateTime date)
-    {
-        if(date >= failedDate)
-        {
-            OnQuestFailed();
-        }
     }
 
     private void OnQuestFailed()
     {
         NewGameManager.Instance.QuestManager.FailQuest(familyMainQuest);
-        NewGameManager.Instance.onDateChanged -= OnDateChanged;
         NewGameManager.Instance.onLocationChanged -= OnLocationChanged;
     }
     
@@ -80,17 +67,12 @@ public class FamilyMainQuest : MonoBehaviour
     {
         if(location == targetLocation)
         { 
-            if(NewGameManager.Instance.QuestManager.IsQuestActive(familyMainQuest))
-            {
-                OnQuestFinished();
-            }
         }
     }
 
     private void OnQuestFinished()
     {
         NewGameManager.Instance.QuestManager.FinishQuest(familyMainQuest);
-        NewGameManager.Instance.onDateChanged -= OnDateChanged;
         NewGameManager.Instance.onLocationChanged -= OnLocationChanged;
     }
 }

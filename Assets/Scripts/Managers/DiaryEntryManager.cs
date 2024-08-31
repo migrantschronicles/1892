@@ -204,7 +204,8 @@ public class DiaryEntryManager : MonoBehaviour
             case SleepMethod.Ship:
             {
                 string localizedDays = $"{info.daysInCity + 1}";
-                if(!string.IsNullOrEmpty(info.stopoverLocation))
+                // Stopovers are always on day 2
+                if(!string.IsNullOrEmpty(info.stopoverLocation) && info.daysInCity == 1)
                 {
                     string localizedStopover = NewGameManager.Instance.LocationManager.GetLocalizedName(info.stopoverLocation);
                     return LocalizationManager.Instance.GetLocalizedString(container.lastNightShipStopoverDay, localizedDays, localizedStopover);

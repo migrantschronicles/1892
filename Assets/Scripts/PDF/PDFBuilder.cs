@@ -391,7 +391,14 @@ public class PDFBuilder
         int minutes = totalMinutes % 60;
         pdf.DrawText(string.Format("{0:00}h {1:00}m", hours, minutes), 305, 392);
         // Character choice
-        pdf.DrawPNG("PDF/Frame Character.png", 190, 498, 214, 250);
+        string characterFrame = "";
+        switch(NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter)
+        {
+            case CharacterType.Elis: characterFrame = "PDF/PortraitElis.png"; break;
+            case CharacterType.Punnels: characterFrame = "PDF/PortraitPunnels.png"; break;
+            case CharacterType.Michel: characterFrame = "PDF/PortraitMichel.png"; break;
+        }
+        pdf.DrawPNG(characterFrame, 190, 498, 214, 250);
         // Page Number
         DrawPageNumber(pdf, ++pageNumber);
     }

@@ -294,12 +294,15 @@ public class DialogChat : MonoBehaviour
     private bool IsDialogFinished()
     {
         bool finished = true;
-        foreach (var branch in availableBranches)
+        if(availableBranches != null)
         {
-            if (branch.Target is IDialogueFragment)
+            foreach (var branch in availableBranches)
             {
-                finished = false;
-                break;
+                if (branch.Target is IDialogueFragment)
+                {
+                    finished = false;
+                    break;
+                }
             }
         }
         return finished;

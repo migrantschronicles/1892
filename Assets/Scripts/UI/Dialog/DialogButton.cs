@@ -121,8 +121,7 @@ public class DialogButton : MonoBehaviour
             else if(responsibleCharacter.CharacterData.isMainProtagonist && responsibleCharacter.HomesickessStatus.Value > 5)
             {
                 // The main protagonist is homesick and can only talk to one person.
-                ///@todo Maybe have a different dialog for homesickness.
-                LevelInstance.Instance.StartSickDialog(this, responsibleCharacter.CharacterData);
+                LevelInstance.Instance.StartHomesickDialog(this, responsibleCharacter.CharacterData);
             }
             else
             {

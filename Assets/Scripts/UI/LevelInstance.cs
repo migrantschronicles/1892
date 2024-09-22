@@ -164,11 +164,17 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private ArticyRef sickDialog;
     [SerializeField]
+    private ArticyRef mainHomesickDialog;
+    [SerializeField]
+    private ArticyRef sideHomesickDialog;
+    [SerializeField]
     private ArticyRef michelTooHungryDialog;
     [SerializeField]
     private ArticyRef michelDailyDialogLimitDialog;
     [SerializeField]
     private ArticyRef michelSickDialog;
+    [SerializeField]
+    private ArticyRef michelHomesickDialog;
     [SerializeField]
     private ArticyRef peterTooHungryDialog;
     [SerializeField]
@@ -179,6 +185,10 @@ public class LevelInstance : MonoBehaviour
     private ArticyRef peterSickDialog;
     [SerializeField]
     private ArticyRef susannaSickDialog;
+    [SerializeField]
+    private ArticyRef peterHomesickDialog;
+    [SerializeField]
+    private ArticyRef susannaHomesickDialog;
     [SerializeField]
     private ArticyRef foreignLanguageDialog; 
     [SerializeField]
@@ -892,6 +902,30 @@ public class LevelInstance : MonoBehaviour
 
             case CharacterType.Punnels:
                 specialDialog = (responsibleCharacter.isMainProtagonist ? peterSickDialog : susannaSickDialog).GetObject();
+                break;
+        }
+
+        dialogSystem.StartDialog(button, specialDialog);
+        OnDialogStarted();
+    }
+
+    public void StartHomesickDialog(DialogButton button, ProtagonistData responsibleCharacter)
+    {
+        PrepareDialog(button);
+
+        IArticyObject specialDialog = null;
+        switch (NewGameManager.Instance.PlayerCharacterManager.SelectedCharacter)
+        {
+            case CharacterType.Elis:
+                specialDialog = (responsibleCharacter.isMainProtagonist ? mainHomesickDialog : sideHomesickDialog).GetObject();
+                break;
+
+            case CharacterType.Michel:
+                specialDialog = michelHomesickDialog.GetObject();
+                break;
+
+            case CharacterType.Punnels:
+                specialDialog = (responsibleCharacter.isMainProtagonist ? peterHomesickDialog: susannaHomesickDialog).GetObject();
                 break;
         }
 

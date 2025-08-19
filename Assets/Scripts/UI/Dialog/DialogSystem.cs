@@ -3,6 +3,7 @@ using Articy.Unity;
 using Articy.Unity.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -460,6 +461,6 @@ public class DialogSystem : MonoBehaviour, IPointerClickHandler, IScriptMethodPr
             .Replace("[Health.MichelDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Michel")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.MichelDaysHungry]")
             .Replace("[Health.PeterDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Peter")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.PeterDaysHungry]")
             .Replace("[Health.SusannaDaysHungry]", NewGameManager.Instance.HealthStatus.GetHealthStatus("Susanna")?.HungryStatus.DaysWithoutEnoughFood.ToString() ?? "[Health.SusannaDaysHungry]")
-            .Replace("[Misc.Date]", NewGameManager.Instance.date.ToString("m"));
+            .Replace("[Misc.Date]", NewGameManager.Instance.date.ToString("m", new CultureInfo(LocalizationManager.Instance.CurrentLanguageCode)));
     }
 }

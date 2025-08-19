@@ -11,7 +11,7 @@ public class LoadButtonCheck : MonoBehaviour
 
     public void OnEnable()
     {
-        if (sgm.SavedGameExists && !sgm.DataFile.hasFinishedGame) 
+        if (sgm.SavedGameExists) 
         {
             GetComponent<Button>().interactable = true;
         }

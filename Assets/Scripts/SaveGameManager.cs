@@ -115,7 +115,7 @@ public class SaveData
 [System.Serializable]
 public class DataFile
 {
-    public bool hasFinishedGame;
+    public bool hasFinishedGame = false;
 }
 
 public class SaveGameManager : MonoBehaviour
@@ -195,6 +195,7 @@ public class SaveGameManager : MonoBehaviour
     public void OnEndGame()
     {
         File.Delete(filePath);
+        SavedGameExists = false;
 
         dataFile.hasFinishedGame = true;
         SaveDataFile();
@@ -206,5 +207,6 @@ public class SaveGameManager : MonoBehaviour
         {
             File.Delete(filePath);
         }
+        SavedGameExists = false;
     }
 }

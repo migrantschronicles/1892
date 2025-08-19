@@ -1230,15 +1230,15 @@ public class LevelInstance : MonoBehaviour
             return;
         }
 
-        if(mode != Mode.None)
-        {
-            wantsToShowSeasickness = true;
-            return;
-        }
-
         if(show)
         {
-            if(!seasicknessScene)
+            if (mode != Mode.None)
+            {
+                wantsToShowSeasickness = true;
+                return;
+            }
+
+            if (!seasicknessScene)
             {
                 seasicknessScene = Instantiate(seasicknessScenePrefab, canvas.transform);
             }

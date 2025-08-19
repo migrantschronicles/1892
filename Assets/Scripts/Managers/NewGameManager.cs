@@ -1215,6 +1215,7 @@ public class NewGameManager : MonoBehaviour
     {
         AudioManager.Instance.StopMusic();
         Destroy(AudioManager.Instance.gameObject);
+        Destroy(TutorialManager.Instance.gameObject);
         Destroy(gameObject);
         SceneManager.LoadScene("MainMenu");
     }

@@ -199,4 +199,12 @@ public class SaveGameManager : MonoBehaviour
         dataFile.hasFinishedGame = true;
         SaveDataFile();
     }
+
+    public void DeleteSaveGame()
+    {
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+    }
 }

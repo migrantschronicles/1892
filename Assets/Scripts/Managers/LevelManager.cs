@@ -11,6 +11,9 @@ public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
+    [SerializeField]
+    private SaveGameManager saveGameManager;
+
     public CharacterType SelectedCharacter { get; set; }
 
     private void Awake()
@@ -27,6 +30,8 @@ public class LevelManager : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         SelectedCharacter = character;
+
+        saveGameManager.DeleteSaveGame();
 
         AudioManager.Instance.FadeOutMusic();
         string locationToLoad = "";

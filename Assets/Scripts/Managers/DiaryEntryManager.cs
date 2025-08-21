@@ -288,8 +288,9 @@ public class DiaryEntryManager : MonoBehaviour
         else if(info.newHealthProblems.Count > 1)
         {
             string characterNames = GetEnumerationString(new List<string>(info.newHealthProblems.Select(problem => problem.character.name)));
-            string sicknesses = GetEnumerationString(new List<string>(info.newHealthProblems.Select(problem => 
-                GetLocalizedHealthProblemType(problem.sickness))));
+            string sicknesses = GetEnumerationString(new List<string>(info.newHealthProblems
+                .GroupBy(p => p.sickness)
+                .Select(problem => GetLocalizedHealthProblemType(problem.First().sickness))));
             result += LocalizationManager.Instance.GetLocalizedString(container.healthNewProblems, characterNames, sicknesses);
         }
 

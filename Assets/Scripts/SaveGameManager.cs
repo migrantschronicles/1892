@@ -129,8 +129,8 @@ public class SaveGameManager : MonoBehaviour
 
     private void Awake()
     {
-        filePath = Application.persistentDataPath + "/savedata.json";
-        dataFilePath = Application.persistentDataPath + "/data.json";
+        filePath = Path.Combine(Application.persistentDataPath, "savedata.json");
+        dataFilePath = Path.Combine(Application.persistentDataPath, "data.json");
 
         if(File.Exists(dataFilePath))
         {

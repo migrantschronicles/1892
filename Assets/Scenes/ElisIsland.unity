@@ -3881,9 +3881,17 @@ MonoBehaviour:
       Not: 0
     - Condition: Misc.ImmigrationSecondTry
       Not: 1
-    ConditionTypeResult: 0
+    ConditionTypeResult: 1
     ConditionType2: 0
-    Children2: []
+    Children2:
+    - Condition: Misc.ImmigrationDetention
+      Not: 0
+    - Condition: elis_island_customs_check_finished
+      Not: 0
+    - Condition: Misc.ImmigrationSecondTry
+      Not: 1
+    - Condition: Misc.ImmigrationCustoms
+      Not: 0
 --- !u!1001 &552098154
 PrefabInstance:
   m_ObjectHideFlags: 0

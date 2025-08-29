@@ -28,6 +28,7 @@ public class ProtagonistData
     [Tooltip("The probability of this character to be able to get seasick (0-1).")]
     public float canGetSeasickProbability = 0.5f;
     public LocalizedString fullName;
+    public LocalizedString firstName;
     public Sprite neutralPortrait;
     public Sprite angryPortrait;
     public Sprite happyPortrait;

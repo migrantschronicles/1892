@@ -33,13 +33,16 @@ MonoBehaviour:
     m_LocalVariables: []
   technicalName: Ntt_F3392F1D
   sprite: {fileID: 21300000, guid: 863111ee7f29223459643082d315ab4a, type: 3}
-  Price: 0
+  openedSprite: {fileID: 0}
+  viewedSprite: {fileID: 0}
+  Price: 4
   Volume: 1
   MaxStackCount: 1
   SetConditions:
   - Item.PickledPeaches
   SetConditionsWhenSold:
   - CharacterTraits.Corruption+=1
+  SetConditionWhenOpened: 
   category: {fileID: 0}
   stolenProbabilityWeight: 1
   references:

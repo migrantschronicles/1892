@@ -1,7 +1,6 @@
 using Articy.Unity;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
@@ -40,14 +39,6 @@ public class LocalizationManager
             }
 
             return Language.English;
-        }
-    }
-
-    public string CurrentLanguageCode
-    {
-        get
-        {
-            return GetLanguageCode(CurrentLanguage);
         }
     }
 

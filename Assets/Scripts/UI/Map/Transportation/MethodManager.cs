@@ -37,13 +37,6 @@ public class MethodManager : MonoBehaviour
             AudioManager.Instance.PlayFX(selectMethodClip);
             if (!NewGameManager.Instance.LocationManager.IsFromEuropeToAmerica(routeInfo.FromLocation, routeInfo.ToLocation))
             {
-                // Check money
-                if(routeInfo.cost > NewGameManager.Instance.money)
-                {
-                    LevelInstance.Instance.ShowNotEnoughMoneyPopup();
-                    return;
-                }
-
                 // Travel inside continent.
                 NewGameManager.Instance.GoToLocation(routeInfo.ToLocation, Method);
             }

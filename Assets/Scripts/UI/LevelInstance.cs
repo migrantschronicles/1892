@@ -252,8 +252,6 @@ public class LevelInstance : MonoBehaviour
     [SerializeField]
     private GameObject brokePrefab;
     [SerializeField]
-    private GameObject notEnoughMoneyPopupPrefab;
-    [SerializeField]
     private string seasicknessRemedy;
     [SerializeField]
     private HealthState overrideProtagonistAnimState;
@@ -1232,15 +1230,15 @@ public class LevelInstance : MonoBehaviour
             return;
         }
 
+        if(mode != Mode.None)
+        {
+            wantsToShowSeasickness = true;
+            return;
+        }
+
         if(show)
         {
-            if (mode != Mode.None)
-            {
-                wantsToShowSeasickness = true;
-                return;
-            }
-
-            if (!seasicknessScene)
+            if(!seasicknessScene)
             {
                 seasicknessScene = Instantiate(seasicknessScenePrefab, canvas.transform);
             }
@@ -1664,16 +1662,6 @@ public class LevelInstance : MonoBehaviour
             NewGameManager.Instance.ReturnToMainMenu();
         };
         popup.OnContinue += (_) =>
-        {
-            PopPopup();
-        };
-    }
-
-    public void ShowNotEnoughMoneyPopup()
-    {
-        GameObject popupGO = PushPopup(notEnoughMoneyPopupPrefab);
-        NotEnoughMoneyPopup popup = popupGO.GetComponent<NotEnoughMoneyPopup>();
-        popup.OnAccept += (_) =>
         {
             PopPopup();
         };

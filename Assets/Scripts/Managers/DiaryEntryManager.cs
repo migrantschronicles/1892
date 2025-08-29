@@ -281,9 +281,17 @@ public class DiaryEntryManager : MonoBehaviour
         string result = "";
         if(info.newHealthProblems.Count == 1)
         {
-            string localizedName = info.newHealthProblems[0].character.name;
-            string localizedSickness = GetLocalizedHealthProblemType(info.newHealthProblems[0].sickness);
-            result += LocalizationManager.Instance.GetLocalizedString(container.healthNewProblem, localizedName, localizedSickness);
+            if (info.newHealthProblems[0].character.name == "Michel")
+            {
+                string localizedSickness = GetLocalizedHealthProblemType(info.newHealthProblems[0].sickness);
+                result += LocalizationManager.Instance.GetLocalizedString(container.healthNewProblem, localizedSickness);
+            }
+            else
+            {
+                string localizedName = info.newHealthProblems[0].character.name;
+                string localizedSickness = GetLocalizedHealthProblemType(info.newHealthProblems[0].sickness);
+                result += LocalizationManager.Instance.GetLocalizedString(container.healthNewProblem, localizedName, localizedSickness);
+            }
         }
         else if(info.newHealthProblems.Count > 1)
         {
@@ -302,12 +310,23 @@ public class DiaryEntryManager : MonoBehaviour
                 result += " ";
             }
 
-            result += info.existingHealthProblems
-                .Select(problem => 
-                    LocalizationManager.Instance.GetLocalizedString(container.healthExistingProblem, 
-                        LocalizationManager.Instance.GetLocalizedString(problem.character.firstName), 
-                        GetLocalizedHealthProblemType(problem.sickness)))
-                .Aggregate((a, b) => $"{a} {b}");
+            if (info.existingHealthProblems[0].character.name == "Michel")
+            {
+                result += info.existingHealthProblems
+                    .Select(problem =>
+                        LocalizationManager.Instance.GetLocalizedString(container.healthExistingProblem,
+                            GetLocalizedHealthProblemType(problem.sickness)))
+                    .Aggregate((a, b) => $"{a} {b}");
+            }
+            else
+            {
+                result += info.existingHealthProblems
+                    .Select(problem =>
+                        LocalizationManager.Instance.GetLocalizedString(container.healthExistingProblem,
+                            LocalizationManager.Instance.GetLocalizedString(problem.character.firstName),
+                            GetLocalizedHealthProblemType(problem.sickness)))
+                    .Aggregate((a, b) => $"{a} {b}");
+            }
         }
 
         return result;

@@ -212,6 +212,7 @@ public class NewGameManager : MonoBehaviour
                 // If the LevelManager exixts, this is called from the main menu, either start a new game or load a save game.
                 // In both cases, this variable is set.
                 selectedCharacter = LevelManager.Instance.SelectedCharacter;
+                conditions.Reset();
             }
 
             conditions.Init();
@@ -1214,6 +1215,7 @@ public class NewGameManager : MonoBehaviour
     {
         AudioManager.Instance.StopMusic();
         Destroy(AudioManager.Instance.gameObject);
+        Destroy(TutorialManager.Instance.gameObject);
         Destroy(gameObject);
         SceneManager.LoadScene("MainMenu");
     }

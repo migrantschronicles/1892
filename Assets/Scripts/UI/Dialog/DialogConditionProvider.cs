@@ -734,6 +734,16 @@ public class DialogConditionProvider : MonoBehaviour
         }
     }
 
+    public void Reset()
+    {
+        ArticyGlobalVariables.Default.ResetVariables();
+        while(globalConditions.Count > 0)
+        {
+            string condition = globalConditions.First();
+            RemoveCondition(condition);
+        }
+    }
+
     public List<SaveDataCondition> CreateSaveData()
     {
         List<SaveDataCondition> saveConditions = new();

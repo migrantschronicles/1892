@@ -25,7 +25,11 @@ public class PlayerCharacterManager : MonoBehaviour
     {
         if(character == CharacterType.None)
         {
+#if UNITY_EDITOR
             character = CharacterType.Elis;
+#else
+            return;
+#endif
         }
 
         selectedCharacter = character;

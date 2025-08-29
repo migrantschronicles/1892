@@ -120,6 +120,8 @@ public class DataFile
 
 public class SaveGameManager : MonoBehaviour
 {
+    public static CharacterType SaveGameCharacter { get; set; } = CharacterType.None;
+
     public bool SavedGameExists { get; private set; } = false;
     public DataFile DataFile { get { return dataFile; } }
 
@@ -178,11 +180,14 @@ public class SaveGameManager : MonoBehaviour
             saveData.character = CharacterType.Elis;
         }
 
+        SaveGameCharacter = saveData.character;
+
         DontDestroyOnLoad(this);
         LevelManager.Instance.SelectedCharacter = saveData.character;
         SceneManager.LoadScene(saveData.levelName);
         yield return null;
         NewGameManager.Instance.LoadFromSaveGame(saveData);
+        SaveGameCharacter = CharacterType.None;
         Destroy(gameObject);
     }
 

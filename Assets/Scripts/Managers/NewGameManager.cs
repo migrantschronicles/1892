@@ -209,9 +209,14 @@ public class NewGameManager : MonoBehaviour
             CharacterType selectedCharacter = CharacterType.None;
             if(LevelManager.Instance != null)
             {
-                // If the LevelManager exixts, this is called from the main menu, either start a new game or load a save game.
-                // In both cases, this variable is set.
+                // If the LevelManager exixts, this is called from the main menu, and the start of a new game
                 selectedCharacter = LevelManager.Instance.SelectedCharacter;
+                conditions.Reset();
+            }
+            else if(SaveGameManager.SaveGameCharacter != CharacterType.None)
+            {
+                // Load game
+                selectedCharacter = SaveGameManager.SaveGameCharacter;
                 conditions.Reset();
             }
 

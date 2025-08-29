@@ -52,6 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portrait: {fileID: 5177274386688560729}
   foodItem: {fileID: 2858401320523245845}
+  foodItemRight: {fileID: 0}
   counterBackground: {fileID: 6078879934447503174}
   counter: {fileID: 5725347114483163468}
   amount: 0
@@ -437,10 +438,10 @@ RectTransform:
   m_Father: {fileID: 9079390837723855520}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 169.7, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &967720680980973024
 CanvasRenderer:
@@ -464,7 +465,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

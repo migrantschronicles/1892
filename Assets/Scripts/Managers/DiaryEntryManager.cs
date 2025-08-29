@@ -287,11 +287,9 @@ public class DiaryEntryManager : MonoBehaviour
         }
         else if(info.newHealthProblems.Count > 1)
         {
-            string characterNames = GetEnumerationString(new List<string>(info.newHealthProblems
-                .Select(problem => LocalizationManager.Instance.GetLocalizedString(problem.character.firstName))));
-            string sicknesses = GetEnumerationString(new List<string>(info.newHealthProblems
-                .GroupBy(p => p.sickness)
-                .Select(problem => GetLocalizedHealthProblemType(problem.First().sickness))));
+            string characterNames = GetEnumerationString(new List<string>(info.newHealthProblems.Select(problem => problem.character.name)));
+            string sicknesses = GetEnumerationString(new List<string>(info.newHealthProblems.Select(problem => 
+                GetLocalizedHealthProblemType(problem.sickness))));
             result += LocalizationManager.Instance.GetLocalizedString(container.healthNewProblems, characterNames, sicknesses);
         }
 
@@ -304,8 +302,7 @@ public class DiaryEntryManager : MonoBehaviour
 
             result += info.existingHealthProblems
                 .Select(problem => 
-                    LocalizationManager.Instance.GetLocalizedString(container.healthExistingProblem, 
-                        LocalizationManager.Instance.GetLocalizedString(problem.character.firstName), 
+                    LocalizationManager.Instance.GetLocalizedString(container.healthExistingProblem, problem.character.name, 
                         GetLocalizedHealthProblemType(problem.sickness)))
                 .Aggregate((a, b) => $"{a} {b}");
         }

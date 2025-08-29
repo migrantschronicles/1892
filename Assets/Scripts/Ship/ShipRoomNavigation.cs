@@ -98,8 +98,9 @@ public class ShipRoomNavigation : MonoBehaviour
             return new RaycastHit2D();
         }
 
-        Vector2 worldPosition = LevelInstance.Instance.MainCamera.ScreenToWorldPoint(screenPosition);
-        return Physics2D.Raycast(worldPosition, Vector2.zero);
+        Vector3 worldPosition = LevelInstance.Instance.MainCamera.ScreenToWorldPoint(screenPosition);
+        Vector2 ray = new Vector2(worldPosition.x, worldPosition.y);
+        return Physics2D.Raycast(ray, ray, 0.1f);
     }
 
     private void OnClick(Vector2 screenPosition)

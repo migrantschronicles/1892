@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Localization;
 using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 
@@ -15,8 +14,6 @@ public class EndDayPopup : MonoBehaviour, IPopup
     private GameObject endDayHostelPrefab;
     [SerializeField]
     private GameObject endDayOutsidePrefab;
-    [SerializeField]
-    private LocalizedString descriptionTextNotEnoughMoney;
 
     public bool CanClose { get { return true; } }
     public InterfaceVisibilityFlags InterfaceVisibilityFlags { get { return InterfaceVisibilityFlags.ClockButton; } }
@@ -28,13 +25,9 @@ public class EndDayPopup : MonoBehaviour, IPopup
         if(NewGameManager.Instance.money < hostelPopup.HostelFee)
         {
             hostelButton.gameObject.SetActive(false);
-            descriptionLocalizeEvent.StringReference = descriptionTextNotEnoughMoney;
-        }
-        else
-        {
-            descriptionLocalizeEvent.StringReference.Arguments = new List<object> { hostelPopup.HostelFee.ToString() };
         }
 
+        descriptionLocalizeEvent.StringReference.Arguments = new List<object> { hostelPopup.HostelFee.ToString() };
         descriptionLocalizeEvent.RefreshString();
     }
 
